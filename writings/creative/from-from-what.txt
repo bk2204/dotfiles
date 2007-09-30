@@ -1,0 +1,63 @@
+From _From What?  Toward What?_  Toward __What?__: A Rhapsody
+============================================================
+:Author: brian m. carlson
+
+== On Keats and Pirsig ==
+
+Robert M. Pirsig once wrote a book entitled _Zen and the Art of Motorcycle
+Maintenance_.  In this book, he explored a number of concepts, including
+romantic thought and classical thought.  He viewed these concepts—that we
+normally think of as a dichotomy—as a unity, which he called Quality.
+
+Numerous years earlier, John Keats wrote
+
+______
+[verse]
+.....
+Beauty is truth, truth beauty,—that is all	 
+	Ye know on earth, and all ye need to know.
+.....
+_____
+
+Keats, I think, got the same thing that Pirsig did: that both romantic thought
+and classical thought are tightly intertwined, so tightly that they cannot be
+separated.
+
+I often find that when I am programming, I am at peace, in some way.  Thus, my
+classical activity begets a purely romantic one: a feeling of calmness and
+stillness, a quiescence.  Similarly, when I am at peace, I often philosophize:
+my romantic activity begets what Pirsig describes as the highest level of
+classical thought.
+
+== A Gift ==
+
+I find that what I hate most about writing is explaining.  I suppose this
+explains why I prefer writing poetry.  I need not explain, only present an idea,
+a gift of thought, and be done.
+
+Since it is a gift, I need not be concerned with what my recipient makes with
+it.  If I get a friend a blender, thinking he will make smoothies, and in fact
+he makes margaritas, he has made good use of my gift, in a way that suits him.
+If I write a poem, trying to express one idea, but a reader gets another, then
+he has in fact made good use of my gift.  He has thought, felt, considered,
+expressed, wondered about something, _anything_, and is richer for it.
+
+== True Insight ==
+
+I have Bipolar II disorder.  One of the huge questions in any bipolar person’s
+life is whether or not to take medication.  This is true for me as well.  In my
+case, the questions relate to essence:  Can I discover who I am without the
+ability to focus?  Will the medication change who I am?  Will I lose something
+of myself?  Will it make me something I’m not?  Will it cheat me of who I am?
+Can I really gain true insight when I’m moody or angry?
+
+== A Forest of Chips ==
+
+When I go to a restaurant, I will often have a sandwich with chips.  One of the
+first things I do after placing my napkin on my lap, is to open the bag of
+chips and dump them out on the plate.  In this way, I can see what I have: I can
+plan ahead.  I won’t eat half the chips but only a quarter of the sandwich;
+likewise, I won’t eat all of the sandwich but only some of the chips.  They go
+together: they should be in proportion.
+
+// vim: set filetype=asciidoc:
