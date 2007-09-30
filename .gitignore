@@ -74,7 +74,6 @@
 .lbdbrc
 .lesshst
 .lftp
-.libao
 .liferea_1.2
 .liferea_1.4
 .local
@@ -132,11 +131,7 @@
 .xine
 .xmjrc
 .xsession-errors
-.zfunc
-.zlogout
 .zsh_history
-.zshenv
-.zshrc
 Desktop
 Photos
 audio

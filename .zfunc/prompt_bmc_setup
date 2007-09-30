@@ -1,0 +1,124 @@
+# bmc prompt theme, based off of the clint prompt theme from zsh 4.3.2-7.
+# Yes, this does look like angry fruit salad, but I like it that way.
+
+prompt_bmc_help () {
+	cat <<'EOF'
+
+	prompt bmc [<color1> [<color2> [<color3> [<color4> [<color5>]]]]]
+
+	defaults are green, blue, green, yellow, and white, respectively.
+
+EOF
+}
+
+prompt_bmc_setup_base ()
+{
+	local -a pcc
+	local p_user p_pwd p_date p_time p_failed p_retcode p_signame p_priv p_unpriv
+	local p_userpwd p_datetime p_tty p_ret p_pchar p_status
+	local p_shlvl
+	
+	local i j
+
+	c_reset="%{$reset_color%}"
+
+	j=0
+	for i in "$@"
+	do
+		j=$((j + 1))
+		# It breaks if you don't use the subshell echo.  I promise.
+		eval `helper-zsh $j $(echo $i)`
+	done
+
+	p_privuser="$pcc[4]%n$c_reset"
+	p_unprivuser="$pcc[8]%n$c_reset"
+	p_user="%(!.$p_privuser.$p_unprivuser)$pcc[1]@%m$c_reset"
+	p_pwd="$pcc[2]%~$c_reset"
+
+	p_userpwd="$p_user:$p_pwd"
+
+	p_priv="$pcc[4]#$c_reset"
+	p_unpriv="$pcc[3]%%$c_reset"
+
+	p_pchar="%(!.$p_priv.$p_unpriv)"
+
+	# Don't use the %D by itself, because it uses two-digit years.
+	p_date="$pcc[5]%D{%Y-%m-%d}$c_reset"
+	# Similarly, don't use %* by itself, because it is not zero-padded.
+	p_time="$pcc[5]%D{%H:%M:%S}$c_reset"
+
+	p_datetime="$p_date/$p_time"
+
+	p_tty="$pcc[7]%l$c_reset"
+
+	p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
+
+	p_failed="$pcc[6]failed$c_reset"
+	p_retcode="$pcc[6]%?$c_reset"
+	p_signame="$pcc[6]%1v$c_reset"
+
+	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
+	p_ret2="$pcc[9]%m %(?.ok.no)$c_reset"
+
+	#[[ -f /proc/apm ]] && p_apm="%(2v.-%2v-.)"
+
+	POSTEDIT="$reset_color"
+
+	prompt="$p_userpwd
+($p_datetime)($p_tty)$p_shlvl($p_ret)
+$p_ret2 $p_pchar "
+	RPROMPT=""
+	PS2='%(4_.\.)%3_> %E'
+
+	[[ -f /proc/apm ]] &&
+		precmd () { prompt_bmc_precmd ; prompt_bmc_apm_precmd } ||
+		precmd () { prompt_bmc_precmd }
+	preexec () { }
+}
+
+prompt_bmc_setup ()
+{
+	prompt_bmc_setup_base \
+		"yes blue" \
+		"yes green" \
+		"yes white" \
+		"yes red" \
+		"yes magenta" \
+		"yes red" \
+		"yes white" \
+		"yes blue" \
+		"no  cyan"
+}
+
+# In this function, we have to put the setopt after the exitstatus assignment,
+# otherwise we get the result of the setopt (AFAIK, always 0) which is obviously
+# not very useful.
+prompt_bmc_precmd () {
+	local exitstatus=$?
+	setopt noxtrace localoptions
+
+	[[ $exitstatus -ge 128 ]] && psvar[1]="$signals[$exitstatus-127]" || psvar[1]="none"
+
+	case $TERM in
+		xterm*|gnome*)
+			print -Pn '\e]0;%n@%m: %~\a';;
+	esac
+
+	# Don't bother printing the jobs all of the time.
+	#[[ -o interactive ]] && jobs -l
+
+}
+
+prompt_bmc_apm_precmd () {
+	setopt noxtrace localoptions
+	local bat ac
+
+	bat=${${="$(</proc/apm)"}[7]/%/%%}
+	[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
+
+	[[ $bat == ("100%"|"-1%") ]] && psvar[2]=() || psvar[2]="$ac$bat"
+}
+
+prompt_bmc_setup "$@"
+
+# vim:set filetype=zsh:
