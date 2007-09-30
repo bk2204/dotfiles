@@ -1,0 +1,7 @@
+#!/bin/sh
+
+JAR_HOME=/home/bmc/Desktop/msv
+
+[ -n "$JAVA_EXE" ] || JAVA_EXE=java
+
+exec $JAVA_EXE -jar "$JAR_HOME/msv.jar" "$@"

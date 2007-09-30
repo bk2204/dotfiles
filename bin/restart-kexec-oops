@@ -1,0 +1,12 @@
+#!/bin/sh
+
+DRIVERS="uhci-hcd firewire-ohci snd-intel8x0m ipw3945"
+
+for i in $DRIVERS
+do
+	sudo modprobe -r $i
+done
+for i in $DRIVERS
+do
+	sudo modprobe $i
+done

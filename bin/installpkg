@@ -1,0 +1,9 @@
+#!/bin/sh
+
+CWD=`pwd`
+BASE=`basename "$CWD"`
+DIR=`dirname "$CWD"`
+
+printf "%s\n" "$@" > "$DIR/$BASE-installpkg"
+
+sudo aptitude install "$@"

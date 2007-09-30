@@ -1,0 +1,31 @@
+#!/usr/bin/perl -i.bak
+
+$title=$subtitle=$info="";
+
+while (<>)
+{
+	if (/^(\s+<\/info>)\s*$/)
+	{
+		print "$title";
+		print "$info$_" if ($info=~/\n.*\n/);
+		$title=$subtitle=$info="";
+	}
+	elsif (/^(\s+<info>)\s*$/)
+	{
+		$info="$1\n";
+		next;
+	}
+	elsif (/^\s(\s*<(?:sub)?title>.*)$/)
+	{
+		$title.="$1\n";
+		next;
+	}
+	elsif ($info)
+	{
+		$info.=$_;
+	}
+	else
+	{
+		print;
+	}
+}

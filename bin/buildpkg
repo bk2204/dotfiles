@@ -1,0 +1,42 @@
+#!/usr/bin/perl -w
+
+# Disable POSIX compatibility since at least quilt and metaconfig break.
+foreach my $var (qw/POSIXLY_CORRECT POSIXLY_PEDANTIC _POSIX2_VERSION/)
+{
+	delete $ENV{$var};
+}
+
+my $buildbin="$ENV{HOME}/bin/build";
+
+$ENV{PATH}="$buildbin:$ENV{PATH}";
+
+my @args=(
+	"dpkg-buildpackage",
+	"-us",
+	"-uc",
+	"-rfakeroot"
+);
+
+my ($cc, $cxx);
+
+foreach my $arg (@ARGV)
+{
+	push @args, $arg if ($arg=~/^-/);
+	$cxx=$arg if ($arg=~/g\+\+/);
+}
+
+if (defined($cxx))
+{
+	$cc=$cxx;
+	$cc=~s/g\+\+/gcc/;
+}
+
+$ENV{CC}=$ENV{CC_BUILDPKG}=$cc if defined($cc);
+$ENV{CXX}=$ENV{CXX_BUILDPKG}=$cxx if defined($cxx);
+
+print "buildpkg: command line : ", join(' ', @args), "\n";
+print "buildpkg: CC   : $cc\n";
+print "buildpkg: CXX  : $cxx\n";
+print "buildpkg: PATH : $ENV{PATH}\n";
+
+exec { $args[0] } @args;

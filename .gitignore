@@ -135,7 +135,14 @@
 Desktop
 Photos
 audio
-bin
+bin/git*
+bin/fop-*
+bin/build
+bin/hack-website
+bin/sync-music
+bin/learnspam
+bin/learnnonspam
+bin/xml-convert
 build
 checkouts
 data

@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+
+# zsh prompt helper.
+# Invoke as:
+# $0 <entry in pcc array> <foreground bold?> <foreground color>
+#    [<background bold?> <background color>]
+# example:
+# $0 1 no green
+
+sub want_bold
+{
+	my ($text)=@_;
+
+	return 0 unless ($text);
+	return 0 if ($text=~/^\s*(no|off|false|regular|normal|non?-?bold)\s*$/i);
+
+	1;
+}
+
+sub boldness
+{
+	my ($text)=@_;
+
+	want_bold($text)?"":"no_";
+}
+
+sub color
+{
+	my ($text)=@_;
+
+	"$text";
+}
+
+my ($number, $ffont, $fcolor, $bfont, $bcolor)=@ARGV;
+
+print "pcc[$number]=";
+print '%{';
+printf '$fg_%sbold[%s]', boldness($ffont), $fcolor;
+printf '$bg_%sbold[%s]', boldness($bfont), $bcolor if ($bcolor);
+print '%}';
+print "\n";
