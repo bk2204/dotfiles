@@ -1,0 +1,14 @@
+.ll 6.5i
+.ce 1000
+.b "Dagoberto Gilb"
+.i "brian m. carlson"
+.ce 0
+.sp 2
+.pp
+Dagoberto Gilb's work contains significant usage of Spanish, especially when it
+provides precision that is not available in English, or it provides humor value.
+An example of this is the phrase
+.q "\fIburrito sin frijoles\fP\/,"
+which not only clarifies that it is really a small donkey he means, and not a
+gastronomical creation, but provides the humorous idea that we might have
+actually thought he meant the foodstuff.
