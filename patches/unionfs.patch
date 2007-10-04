@@ -1,0 +1,11 @@
+--- unionfs.old/utils/unionimap.c	2006-11-04 23:56:59.000000000 +0000
++++ unionfs-1.4+debian/utils/unionimap.c	2007-05-30 01:40:15.000000000 +0000
+@@ -248,7 +248,7 @@
+ 		goto out;
+ 	}
+ 	fwdheader.usedbranches++;
+-	offset = (int)&(((struct fmaphdr *)(0))->usedbranches);
++	offset = (off_t)&(((struct fmaphdr *)(0))->usedbranches);
+ 	seekres = lseek(fwrdmap, offset, SEEK_SET);
+ 	if (!(seekres == offset)) {
+ 		perror("Couldent seek to usedbranch offset: ");

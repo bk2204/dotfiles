@@ -1,0 +1,23 @@
+diff -ur network-manager.old/gnome/applet/wso-wpa-eap.c network-manager-0.6.4/gnome/applet/wso-wpa-eap.c
+--- network-manager.old/gnome/applet/wso-wpa-eap.c	2006-03-22 19:52:05.000000000 +0000
++++ network-manager-0.6.4/gnome/applet/wso-wpa-eap.c	2007-08-20 19:08:43.000000000 +0000
+@@ -234,6 +234,7 @@
+ 		const char *		name;
+ 		int				value;
+ 	} *list, eap_method_list[] = {
++		{ _("MD5"),		NM_EAP_METHOD_MD5 },
+ 		{ _("PEAP"),		NM_EAP_METHOD_PEAP },
+ 		{ _("TLS"),		NM_EAP_METHOD_TLS },
+ 		{ _("TTLS"),		NM_EAP_METHOD_TTLS },
+diff -ur network-manager.old/src/nm-ap-security-wpa-eap.c network-manager-0.6.4/src/nm-ap-security-wpa-eap.c
+--- network-manager.old/src/nm-ap-security-wpa-eap.c	2006-06-20 18:15:45.000000000 +0000
++++ network-manager-0.6.4/src/nm-ap-security-wpa-eap.c	2007-08-20 19:08:25.000000000 +0000
+@@ -152,6 +152,8 @@
+ {
+ 	switch (eap_method)
+ 	{
++		case NM_EAP_METHOD_MD5:
++			return "MD5";
+ 		case NM_EAP_METHOD_PEAP:
+ 			return "PEAP";
+ 		case NM_EAP_METHOD_TLS:

@@ -1,0 +1,11 @@
+--- kjs/protected_values.cpp.orig	2007-06-04 23:10:44.000000000 +0000
++++ kjs/protected_values.cpp	2007-06-04 23:11:23.000000000 +0000
+@@ -192,7 +192,7 @@
+ template <> static inline unsigned hash<4>(ValueImp *pointer) 
+ {
+   int a = (int)PHI;
+-  int b = (int)pointer;
++  int b = (size_t)pointer;
+   int c = 0;
+ 
+   a -= b; a -= c; a ^= (c>>13);

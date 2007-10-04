@@ -1,0 +1,12 @@
+diff -ur libpam-chroot.old/pam_chroot.c libpam-chroot-0.9/pam_chroot.c
+--- libpam-chroot.old/pam_chroot.c	2007-05-19 16:44:08.000000000 +0000
++++ libpam-chroot-0.9/pam_chroot.c	2007-05-19 16:57:36.000000000 +0000
+@@ -242,7 +242,7 @@
+ 	struct passwd* pwd;
+ 	gid_t *gids;
+ 	char **groups;
+-	char scratch[SCRATCH];
++	char *scratch=alloca(SCRATCH);
+ 
+ 	pwd = getpwnam(user);
+ 	if(pwd == NULL) {

@@ -1,0 +1,41 @@
+--- gatos.old/src/xatitv.cpp	2007-05-30 01:20:32.000000000 +0000
++++ gatos-0.0.5/src/xatitv.cpp	2007-05-30 01:29:04.000000000 +0000
+@@ -433,7 +433,7 @@
+ /* change 0 to 1 to get printout about hash effectiveness */
+ #if 0  
+   print_xutils_stats(); 
+-#endif 0
++#endif /* 0 */
+ 
+ #ifdef CC_CURSES
+   cc_mode(-1); 
+@@ -826,8 +826,8 @@
+ void DragCB(IWindow *w, int b, int x, int y)  {
+   if(xcl >= 0 && (b & Button1Mask)) {
+     int x1, x2, y1, y2;
+-    x1 = x <? xcl; x2 = x >? xcl;
+-    y1 = y <? ycl; y2 = y >? ycl;
++    x1 = std::min(x, xcl); x2 = std::max(x, xcl);
++    y1 = std::min(y, ycl); y2 = std::max(y, ycl);
+     if(farb->State()) {
+       if((y2 - y1) > ((x2 - x1)*gatos_ycaptmax())/gatos_xcaptmax()) {
+ 	if(ycl < y) y2 = y1+((x2 - x1)*gatos_ycaptmax())/gatos_xcaptmax();
+@@ -857,7 +857,8 @@
+     if(y >= mwin->YSize()) y = mwin->YSize()-1;
+     int xp = gatos_xstart(), yp = gatos_ystart();
+     int xs = gatos_xend()-xp, ys = gatos_yend()-yp;
+-    int xb = (xcl <? x), yb = (ycl <? y), xe = (xcl >? x)+1, ye = (ycl >? y)+1;
++    int xb = std::min(xcl, x), yb = std::min(ycl, y);
++    int xe = std::max(xcl, x)+1, ye = std::max(ycl, y)+1;
+     int x1 = xp+(xb*xs)/mwin->XSize(), y1 = yp+(yb*ys)/mwin->YSize();
+     int x2 = xp+(xe*xs)/mwin->XSize(), y2 = yp+(ye*ys)/mwin->YSize();
+     if(x1 >= x2-1 || y1 >= y2-1) { 
+@@ -2728,7 +2729,7 @@
+ 
+ #ifdef USE_DGA
+   gatos_setintvalue("UseDGA=", usedga);
+-#endif USE_DGA
++#endif /* USE_DGA */
+ 
+   gatos_setintvalue("UseDesktopMode=", usedesk);
+   gatos_setintvalue("AlwaysOnTop=", ontop);

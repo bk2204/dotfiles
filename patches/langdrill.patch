@@ -1,0 +1,19 @@
+--- langdrill-0.3/src/main.cc.orig	2007-05-16 23:32:19.000000000 +0000
++++ langdrill-0.3/src/main.cc	2007-05-16 23:32:38.000000000 +0000
+@@ -30,6 +30,7 @@
+ #include "main.hh"
+ #include <locale.h>
+ #include <gdk/gdkkeysyms.h>
++#include <algorithm>
+ 
+ #define SOLUTIONS_PAGE		0
+ #define QUIZZES_PAGE		1
+@@ -462,7 +463,7 @@
+ 
+   // is this minimum operator portable ??
+   // it should work with egcs at least !!
+-  int cols = keyTotalNr <? atoi(_setup.quizzAnswerNr);
++  int cols = std::min(keyTotalNr, atoi(_setup.quizzAnswerNr));
+ 
+   int rows = keyTotalNr;
+   int *set = new int[cols];

@@ -1,0 +1,13 @@
+diff -ur freej.old/lib/flash/swf.h freej-0.8.1/lib/flash/swf.h
+--- freej.old/lib/flash/swf.h	2005-08-06 20:35:03.000000000 +0000
++++ freej-0.8.1/lib/flash/swf.h	2007-06-29 21:06:58.000000000 +0000
+@@ -199,7 +199,9 @@
+ #define true 1
+ #endif
+ 
++extern "C" {
+ extern int shape_size,shape_nb,shaperecord_size,shaperecord_nb,style_size,style_nb;
++}
+ 
+ typedef void (*ScanLineFunc)(void *id, long y, long start, long end);
+ 

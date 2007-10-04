@@ -1,0 +1,43 @@
+--- lprng.old/src/include/plp_snprintf.h	2004-09-24 20:20:00.000000000 +0000
++++ lprng-3.8.28dfsg.1/src/include/plp_snprintf.h	2007-05-19 19:28:03.000000000 +0000
+@@ -12,35 +12,11 @@
+ #ifndef _PLP_SNPRINTF_
+ #define _PLP_SNPRINTF_
+ 
+-/* PRO TO TYPES */
+-/* VARARGS3 */
+-#ifdef HAVE_STDARGS
+- int plp_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
+-#else
+- int plp_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
+-#endif
++#include <stdio.h>
+ 
+-;
+-/* VARARGS3 */
+-#ifdef HAVE_STDARGS
+- int plp_unsafe_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
+-#else
+- int plp_unsafe_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
+-#endif
+-;
+-/* VARARGS3 */
+-#ifdef HAVE_STDARGS
+- int plp_snprintf (char *str,size_t count,const char *fmt,...)
+-#else
+- int plp_snprintf (va_alist) va_dcl
+-#endif
+-;
+-/* VARARGS3 */
+-#ifdef HAVE_STDARGS
+- int plp_unsafe_snprintf (char *str,size_t count,const char *fmt,...)
+-#else
+- int plp_unsafe_snprintf (va_alist) va_dcl
+-#endif
+-;
++#define plp_vsnprintf vsnprintf
++#define plp_unsafe_vsnprintf vsnprintf
++#define plp_snprintf snprintf
++#define plp_unsafe_snprintf snprintf
+ 
+ #endif
