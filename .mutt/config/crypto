@@ -1,0 +1,15 @@
+# Crypto. (Yay!)
+# SSL.
+set ssl_use_sslv3=yes
+set ssl_use_tlsv1=yes
+set ssl_starttls=yes
+set certificate_file=~/.certs/public
+# OpenPGP.
+set crypt_autosign=yes
+set crypt_autosmime=no
+set crypt_replyencrypt=yes
+set crypt_replysign=yes
+set crypt_replysignencrypted=yes
+set crypt_verify_sig=yes
+set crypt_timestamp=yes
+# vim: set syntax=muttrc:

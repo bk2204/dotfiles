@@ -1,0 +1,6 @@
+# Folders.
+set folder=imap://crustytoothpaste.ath.cx/
+set delete_untag=yes
+set postponed="=Drafts"
+set record="=Sent"
+# vim: set syntax=muttrc:

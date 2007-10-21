@@ -86,9 +86,8 @@
 .mog
 .mozilla
 .mplayer
-.mutt
+.mutt/header_cache
 .muttngrc
-.muttrc
 .nautilus
 .nexuiz
 .openoffice.org2

@@ -1,0 +1,26 @@
+# Email Addresses.
+alternates bmc@crustytoothpaste.ath.cx
+alias control control@bugs.debian.org
+# Mailing Lists.
+lists debian-devel@lists.debian.org
+lists debian-project@lists.debian.org
+lists debian-legal@lists.debian.org
+lists debian-bsd@lists.debian.org
+lists debian-curiosa@lists.debian.org
+subscribe debian-news@lists.debian.org
+subscribe debian-security-announce@lists.debian.org
+subscribe debian-devel-announce@lists.debian.org
+subscribe debian-announce@lists.debian.org
+lists glibc-bsd-devel@lists.alioth.debian.org
+subscribe libc-ports@lists.gnu.org
+subscribe groff@lists.gnu.org
+subscribe debian-audit@shellcode.org
+lists bazaar-ng@lists.canonical.com
+lists hatch_houston@groups.yahoo.com
+subscribe UH-UNIX-USERS@LISTSERV.UH.EDU
+lists adduser-devel@lists.alioth.debian.org
+lists spam-l@peach.ease.lsoft.com
+lists gnu-arch-users@lists.gnu.org
+# Query.
+set query_command="lbdbq '%s'"
+# vim: set syntax=muttrc:

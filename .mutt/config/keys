@@ -1,0 +1,8 @@
+# Key bindings.
+bind generic b previous-page
+bind generic - noop
+bind pager,index,attach B bounce-message
+# Macros.
+macro index S s+Spam.Actual\n
+macro pager S s+Spam.Actual\n
+# vim: set syntax=muttrc:

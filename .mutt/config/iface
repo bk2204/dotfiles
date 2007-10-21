@@ -1,0 +1,14 @@
+# Interface.
+set beep=yes
+set beep_new=no
+set charset=utf-8
+set duplicate_threads=yes
+set include=yes
+set locale=en_US.UTF-8
+set quit=ask-no
+set index_format="%4C %Z %[%b %d] %-15.15F (%4c) %s"
+set recall=no
+set sort=threads
+set sort_aux=date
+set wait_key=no
+# vim: set syntax=muttrc:

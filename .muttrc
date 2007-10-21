@@ -1,0 +1,2 @@
+source ~/.mutt/config/muttlike
+set header_cache=~/.mutt/header_cache/
