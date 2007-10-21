@@ -29,4 +29,5 @@ set digest_collapse=yes
 set mailcap_sanitize=yes
 set mime_forward=ask-yes
 set send_charset="us-ascii:utf-8"
+set text_flowed=yes
 # vim: set syntax=muttrc:
