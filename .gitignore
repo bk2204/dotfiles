@@ -1,5 +1,6 @@
 .AbiSuite
 .ICEauthority
+.Trash
 .Xauthority
 .abook
 .aptitude
@@ -120,7 +121,6 @@
 .update-notifier
 .vim
 .viminfo
-.vimrc
 .viper
 .viper~
 .vlc
