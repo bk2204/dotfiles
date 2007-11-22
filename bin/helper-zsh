@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/bin/zsh
 
 # zsh prompt helper.
 # Invoke as:
@@ -7,35 +7,36 @@
 # example:
 # $0 1 no green
 
-sub want_bold
-{
-	my ($text)=@_;
+want_bold () {
+	text=$1;
 
-	return 0 unless ($text);
-	return 0 if ($text=~/^\s*(no|off|false|regular|normal|non?-?bold)\s*$/i);
-
-	1;
+	[ -z "$text" ] && return 1;
+	for i in no off false regular normal non-bold;
+	do
+		[ "$text" = "$i" ] && return 1;
+	done
+	return 0;
 }
 
-sub boldness
-{
-	my ($text)=@_;
-
-	want_bold($text)?"":"no_";
+boldness () {
+	want_bold $1 || printf "no_"
 }
 
-sub color
-{
-	my ($text)=@_;
+number=$1
+ffont=$2
+fcolor=$3
+bfont=$4
+bcolor=$5
 
-	"$text";
-}
-
-my ($number, $ffont, $fcolor, $bfont, $bcolor)=@ARGV;
-
-print "pcc[$number]=";
-print '%{';
-printf '$fg_%sbold[%s]', boldness($ffont), $fcolor;
-printf '$bg_%sbold[%s]', boldness($bfont), $bcolor if ($bcolor);
-print '%}';
-print "\n";
+printf "pcc[%s]=" $number;
+printf '%%{$fg_';
+boldness $ffont
+printf 'bold[%s]' $fcolor;
+if [ -n "$bcolor" ];
+then
+	printf '$bg_'
+	boldness $bfont
+	printf '%sbold[%s]' $bcolor;
+fi
+printf '%%}';
+printf "\n";
