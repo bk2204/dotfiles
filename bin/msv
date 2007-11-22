@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JAR_HOME=/home/bmc/Desktop/msv
+JAR_HOME=$HOME/bin/msv-impl
 
 [ -n "$JAVA_EXE" ] || JAVA_EXE=java
 
