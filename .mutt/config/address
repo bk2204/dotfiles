@@ -2,11 +2,13 @@
 alternates bmc@crustytoothpaste.ath.cx
 alias control control@bugs.debian.org
 # Mailing Lists.
-lists debian-devel@lists.debian.org
+subscribe debian-devel@lists.debian.org
 lists debian-project@lists.debian.org
 lists debian-legal@lists.debian.org
 lists debian-bsd@lists.debian.org
 lists debian-curiosa@lists.debian.org
+subscribe feedvalidator-users@googlegroups.com
+subscribe debian-sparc@lists.debian.org
 subscribe debian-news@lists.debian.org
 subscribe debian-security-announce@lists.debian.org
 subscribe debian-devel-announce@lists.debian.org
