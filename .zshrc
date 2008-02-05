@@ -10,7 +10,7 @@ PROMPT='%n@%m:%~(%?%)%# '
 # Set options.
 setopt shwordsplit bareglobqual
 #setopt promptsubst
-unsetopt bgnice notify
+unsetopt bgnice notify nomatch
 
 # Set history.
 HISTSIZE=400
@@ -18,8 +18,10 @@ SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 
 # Set key bindings.
-bindkey -e
+bindkey -v
 bindkey '^I' complete-word
+bindkey '\eOF' vi-end-of-line
+bindkey '\eOH' vi-beginning-of-line
 
 # Autoload some stuff.
 for func in $^fpath/*(.:t);
