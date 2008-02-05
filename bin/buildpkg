@@ -31,6 +31,9 @@ if (defined($cxx))
 	$cc=~s/g\+\+/gcc/;
 }
 
+$cc="/usr/bin/gcc" unless defined($cc);
+$cxx="/usr/bin/g++" unless defined($cxx);
+
 $ENV{CC}=$ENV{CC_BUILDPKG}=$cc if defined($cc);
 $ENV{CXX}=$ENV{CXX_BUILDPKG}=$cxx if defined($cxx);
 
