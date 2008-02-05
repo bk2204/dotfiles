@@ -1,5 +1,7 @@
 # Folders.
 set folder=imap://crustytoothpaste.ath.cx/
+set spoolfile=imap://crustytoothpaste.ath.cx/INBOX
+set move=no
 set delete_untag=yes
 set postponed="=Drafts"
 set record="=Sent"
