@@ -3,7 +3,8 @@ set smtp_url=smtp://bmc@crustytoothpaste.ath.cx:587/
 set smtp_authenticators="gssapi:digest-md5:cram-md5"
 # IMAP.
 set imap_user=bmc
-set imap_passive=no
+set imap_passive=yes
+set imap_check_subscribed=yes
 set imap_peek=no
 set imap_idle=yes
 set imap_authenticators="gssapi:digest-md5:cram-md5"
