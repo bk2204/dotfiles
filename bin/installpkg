@@ -6,4 +6,4 @@ DIR=`dirname "$CWD"`
 
 printf "%s\n" "$@" > "$DIR/$BASE-installpkg"
 
-sudo aptitude install "$@"
+sudo aptitude --without-recommends install "$@"
