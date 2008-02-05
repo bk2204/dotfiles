@@ -12,4 +12,5 @@ set crypt_replysign=yes
 set crypt_replysignencrypted=yes
 set crypt_verify_sig=yes
 set crypt_timestamp=yes
+set pgp_use_gpg_agent=yes
 # vim: set syntax=muttrc:
