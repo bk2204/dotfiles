@@ -1,0 +1,11 @@
+diff -ur liborigin.old/OPJFile.cpp liborigin-20070926/OPJFile.cpp
+--- liborigin.old/OPJFile.cpp	2007-09-26 12:03:44.000000000 +0000
++++ liborigin-20070926/OPJFile.cpp	2007-12-10 16:03:16.000000000 +0000
+@@ -30,6 +30,7 @@
+ #include <stdio.h>
+ #include <iostream>
+ #include <stdlib.h>
++#include <string.h>
+ #include <math.h>
+ 
+ #include <algorithm> //required for std::swap

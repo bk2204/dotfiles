@@ -1,0 +1,44 @@
+diff -ur libapt-front.old/apt-front/cache/cache.h libapt-front-0.4.0/apt-front/cache/cache.h
+--- libapt-front.old/apt-front/cache/cache.h	2007-06-26 17:31:44.000000000 +0000
++++ libapt-front-0.4.0/apt-front/cache/cache.h	2007-12-28 16:30:51.000000000 +0000
+@@ -4,6 +4,7 @@
+  */
+ #include <map>
+ #include <set>
++#include <cstdlib>
+ 
+ #include <apt-pkg/progress.h> // FIXME
+ 
+diff -ur libapt-front.old/apt-front/init.cpp libapt-front-0.4.0/apt-front/init.cpp
+--- libapt-front.old/apt-front/init.cpp	2006-10-04 12:18:59.000000000 +0000
++++ libapt-front-0.4.0/apt-front/init.cpp	2007-12-28 16:30:12.000000000 +0000
+@@ -1,5 +1,6 @@
+ #include <apt-pkg/init.h>
+ #include <apt-front/init.h>
++#include <libintl.h>
+ 
+ namespace aptFront {
+ 
+diff -ur libapt-front.old/apt-front/updater.cpp libapt-front-0.4.0/apt-front/updater.cpp
+--- libapt-front.old/apt-front/updater.cpp	2006-10-04 19:36:51.000000000 +0000
++++ libapt-front-0.4.0/apt-front/updater.cpp	2007-12-28 16:33:06.000000000 +0000
+@@ -1,6 +1,7 @@
+ #include <apt-front/updater.h>
+ #include <sys/types.h>
+ #include <pwd.h>
++#include <stdlib.h>
+ 
+ /*
+ #include <ept/init.h>
+diff -ur libapt-front.old/tests/tut-main.cpp libapt-front-0.4.0/tests/tut-main.cpp
+--- libapt-front.old/tests/tut-main.cpp	2004-09-16 15:33:08.000000000 +0000
++++ libapt-front-0.4.0/tests/tut-main.cpp	2007-12-28 16:37:53.000000000 +0000
+@@ -1,6 +1,8 @@
+ #include <tut.h>
+ #include <tut_reporter.h>
+ #include <iostream>
++#include <string.h>
++#include <stdlib.h>
+ 
+ namespace tut
+ {

@@ -1,0 +1,10 @@
+--- capi20/capi20.h.old	2007-11-28 06:07:35.000000000 +0000
++++ capi20/capi20.h	2007-11-28 06:07:58.000000000 +0000
+@@ -20,6 +20,7 @@
+ #ifndef __CAPI20_H__
+ #define __CAPI20_H__
+ 
++#include <stddef.h>
+ #include <sys/time.h>
+ 
+ #ifdef __cplusplus

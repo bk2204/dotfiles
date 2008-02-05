@@ -1,0 +1,10 @@
+--- cbm-0.1/src/statistics.hpp.old	2007-12-10 00:38:19.000000000 +0000
++++ cbm-0.1/src/statistics.hpp	2007-12-10 00:39:12.000000000 +0000
+@@ -3,6 +3,7 @@
+ 
+ #include <list>
+ #include <string>
++#include <sys/time.h>
+ 
+ namespace statistics {
+     

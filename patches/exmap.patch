@@ -1,0 +1,33 @@
+diff -ur exmap.old/jutil/jutil.cpp exmap-0.10/jutil/jutil.cpp
+--- exmap.old/jutil/jutil.cpp	2006-09-28 16:52:25.000000000 +0000
++++ exmap-0.10/jutil/jutil.cpp	2007-12-18 17:46:11.000000000 +0000
+@@ -2,6 +2,7 @@
+ 
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <string.h>
+ #include <unistd.h>
+ #include <limits.h>
+ #include <dirent.h>
+diff -ur exmap.old/src/Elf.cpp exmap-0.10/src/Elf.cpp
+--- exmap.old/src/Elf.cpp	2006-09-28 16:52:25.000000000 +0000
++++ exmap-0.10/src/Elf.cpp	2007-12-18 17:47:21.000000000 +0000
+@@ -4,6 +4,7 @@
+ #include "Elf.hpp"
+ 
+ #include <sstream>
++#include <cstring>
+ #include <unistd.h> // getpagesize()
+ 
+ using namespace std;
+diff -ur exmap.old/src/exmtool.cpp exmap-0.10/src/exmtool.cpp
+--- exmap.old/src/exmtool.cpp	2006-09-28 16:52:25.000000000 +0000
++++ exmap-0.10/src/exmtool.cpp	2007-12-18 17:46:38.000000000 +0000
+@@ -6,6 +6,7 @@
+ #include <sstream>
+ #include <iostream>
+ #include <vector>
++#include <cstring>
+ 
+ using namespace std;
+ using namespace Exmap;

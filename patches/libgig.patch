@@ -1,0 +1,33 @@
+diff -ur libgig.old/src/DLS.cpp libgig-3.2.1/src/DLS.cpp
+--- libgig.old/src/DLS.cpp	2007-10-14 12:06:32.000000000 +0000
++++ libgig-3.2.1/src/DLS.cpp	2007-12-18 20:05:36.000000000 +0000
+@@ -23,6 +23,7 @@
+ 
+ #include "DLS.h"
+ 
++#include <algorithm>
+ #include <time.h>
+ 
+ #ifdef __APPLE__
+diff -ur libgig.old/src/gig.cpp libgig-3.2.1/src/gig.cpp
+--- libgig.old/src/gig.cpp	2007-11-25 17:29:37.000000000 +0000
++++ libgig-3.2.1/src/gig.cpp	2007-12-18 20:06:24.000000000 +0000
+@@ -27,6 +27,7 @@
+ 
+ #include <math.h>
+ #include <iostream>
++#include <algorithm>
+ 
+ /// Initial size of the sample buffer which is used for decompression of
+ /// compressed sample wave streams - this value should always be bigger than
+diff -ur libgig.old/src/RIFF.cpp libgig-3.2.1/src/RIFF.cpp
+--- libgig.old/src/RIFF.cpp	2007-10-26 10:58:41.000000000 +0000
++++ libgig-3.2.1/src/RIFF.cpp	2007-12-18 20:04:56.000000000 +0000
+@@ -21,6 +21,7 @@
+  *   MA  02111-1307  USA                                                   *
+  ***************************************************************************/
+ 
++#include <algorithm>
+ #include <string.h>
+ 
+ #include "RIFF.h"

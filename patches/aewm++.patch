@@ -1,0 +1,36 @@
+diff -ur aewm++.old/client.cc aewm++-1.1.2/client.cc
+--- aewm++.old/client.cc	2005-02-20 02:07:22.000000000 +0000
++++ aewm++-1.1.2/client.cc	2007-12-22 00:47:35.000000000 +0000
+@@ -6,6 +6,8 @@
+  */
+ #include "aewm.hh"
+ 
++#include <string.h>
++
+ Client::Client(Display *d, Window new_client)
+ {
+ 	initialize(d);
+diff -ur aewm++.old/main.cc aewm++-1.1.2/main.cc
+--- aewm++.old/main.cc	2005-02-12 03:38:32.000000000 +0000
++++ aewm++-1.1.2/main.cc	2007-12-22 00:47:56.000000000 +0000
+@@ -6,6 +6,8 @@
+  */
+  #include "aewm.hh"
+ 
++#include <string.h>
++
+ // Dunno where I ripped this from. Kudos to the author whoever he is!
+ void forkExec(char *cmd)
+ {
+diff -ur aewm++.old/windowmanager.cc aewm++-1.1.2/windowmanager.cc
+--- aewm++.old/windowmanager.cc	2007-12-22 00:46:39.000000000 +0000
++++ aewm++-1.1.2/windowmanager.cc	2007-12-22 00:47:17.000000000 +0000
+@@ -6,6 +6,8 @@
+  */
+ #include "aewm.hh"
+ 
++#include <string.h>
++
+ WindowManager* wm;
+ 
+ #define AEWM_KEY_ALT_COUNT 4

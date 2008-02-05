@@ -1,0 +1,118 @@
+diff -ur spew.old/src/common.cpp spew-1.0.5/src/common.cpp
+--- spew.old/src/common.cpp	2005-09-20 21:41:39.000000000 +0000
++++ spew-1.0.5/src/common.cpp	2007-12-10 16:09:49.000000000 +0000
+@@ -28,6 +28,7 @@
+ 
+ #include <stdio.h>
+ #include <stdarg.h>
++#include <string.h>
+ #include <unistd.h>
+ #include <math.h>
+ #include <mntent.h>
+diff -ur spew.old/src/common.h spew-1.0.5/src/common.h
+--- spew.old/src/common.h	2005-09-20 21:41:48.000000000 +0000
++++ spew-1.0.5/src/common.h	2007-12-10 16:12:43.000000000 +0000
+@@ -47,12 +47,12 @@
+ ///////////////////////////  Typedefs  ///////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////
+ 
+-typedef enum Verbosity_t 
++typedef enum 
+ {
+    VERBOSITY_NONE, 
+    VERBOSITY_SHORT, 
+    VERBOSITY_LONG,
+-};
++} Verbosity_t;
+ 
+ typedef enum
+ {
+diff -ur spew.old/src/Log.cpp spew-1.0.5/src/Log.cpp
+--- spew.old/src/Log.cpp	2005-09-20 21:41:44.000000000 +0000
++++ spew-1.0.5/src/Log.cpp	2007-12-10 16:10:18.000000000 +0000
+@@ -28,6 +28,7 @@
+ 
+ #include <stdio.h>
+ #include <stdarg.h>
++#include <string.h>
+ #include <errno.h>
+ 
+ #include "common.h"
+diff -ur spew.old/src/NumbersTransfer.cpp spew-1.0.5/src/NumbersTransfer.cpp
+--- spew.old/src/NumbersTransfer.cpp	2005-09-20 21:41:36.000000000 +0000
++++ spew-1.0.5/src/NumbersTransfer.cpp	2007-12-10 16:10:43.000000000 +0000
+@@ -26,6 +26,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
+ #include <unistd.h>
+ #include <errno.h>
+ 
+diff -ur spew.old/src/RandomTransfer.cpp spew-1.0.5/src/RandomTransfer.cpp
+--- spew.old/src/RandomTransfer.cpp	2005-09-20 21:41:37.000000000 +0000
++++ spew-1.0.5/src/RandomTransfer.cpp	2007-12-10 16:11:06.000000000 +0000
+@@ -26,6 +26,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
+ #include <unistd.h>
+ #include <errno.h>
+ 
+diff -ur spew.old/src/RandomTransferInfoList.cpp spew-1.0.5/src/RandomTransferInfoList.cpp
+--- spew.old/src/RandomTransferInfoList.cpp	2005-09-20 21:41:48.000000000 +0000
++++ spew-1.0.5/src/RandomTransferInfoList.cpp	2007-12-10 16:13:04.000000000 +0000
+@@ -26,6 +26,8 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
++
+ #include "common.h"
+ #include "Random.h"
+ #include "RandomTransferInfoList.h"
+diff -ur spew.old/src/SpewConsole.cpp spew-1.0.5/src/SpewConsole.cpp
+--- spew.old/src/SpewConsole.cpp	2005-09-20 21:41:34.000000000 +0000
++++ spew-1.0.5/src/SpewConsole.cpp	2007-12-10 16:13:36.000000000 +0000
+@@ -27,6 +27,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include "common.h"
+ #include "SpewConsole.h"
+ 
+diff -ur spew.old/src/SpewTuiHelpWindow.cpp spew-1.0.5/src/SpewTuiHelpWindow.cpp
+--- spew.old/src/SpewTuiHelpWindow.cpp	2005-09-20 21:41:33.000000000 +0000
++++ spew-1.0.5/src/SpewTuiHelpWindow.cpp	2007-12-10 16:14:13.000000000 +0000
+@@ -23,6 +23,7 @@
+ using namespace std;
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include <stdarg.h>
+ #include <ncurses.h>
+ 
+diff -ur spew.old/src/SpewTuiProgressWindow.cpp spew-1.0.5/src/SpewTuiProgressWindow.cpp
+--- spew.old/src/SpewTuiProgressWindow.cpp	2005-09-20 21:41:36.000000000 +0000
++++ spew-1.0.5/src/SpewTuiProgressWindow.cpp	2007-12-10 16:14:52.000000000 +0000
+@@ -24,6 +24,7 @@
+ 
+ #include <stdio.h>
+ #include <stdarg.h>
++#include <string.h>
+ #include <ncurses.h>
+ 
+ #ifdef HAVE_CONFIG_H
+diff -ur spew.old/src/ZerosTransfer.cpp spew-1.0.5/src/ZerosTransfer.cpp
+--- spew.old/src/ZerosTransfer.cpp	2005-09-20 21:41:43.000000000 +0000
++++ spew-1.0.5/src/ZerosTransfer.cpp	2007-12-10 16:11:39.000000000 +0000
+@@ -26,6 +26,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <string.h>
+ #include <unistd.h>
+ #include <errno.h>
+ 

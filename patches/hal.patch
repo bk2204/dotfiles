@@ -1,0 +1,125 @@
+diff -ur hal.old/hald/linux/addons/addon-storage.c hal-0.5.10/hald/linux/addons/addon-storage.c
+--- hal.old/hald/linux/addons/addon-storage.c	2007-07-26 18:00:28.000000000 +0000
++++ hal-0.5.10/hald/linux/addons/addon-storage.c	2007-12-17 02:17:58.000000000 +0000
+@@ -405,33 +405,37 @@
+ 		 *
+ 		 * @todo Use MMC-2 API if applicable
+ 		 */
+-		drive = ioctl (fd, CDROM_DRIVE_STATUS, CDSL_CURRENT);
+-		switch (drive) {
+-		case CDS_NO_INFO:
+-		case CDS_NO_DISC:
+-		case CDS_TRAY_OPEN:
+-		case CDS_DRIVE_NOT_READY:
+-			break;
+-			
+-		case CDS_DISC_OK:
++		if (support_media_changed) {
+ 			/* some CD-ROMs report CDS_DISK_OK even with an open
+ 			 * tray; if media check has the same value two times in
+ 			 * a row then this seems to be the case and we must not
+ 			 * report that there is a media in it. */
+-			if (support_media_changed &&
+-			    ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT) && 
+-			    ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT)) {
+-			} else {
++		    if (ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT) &&
++					ioctl(fd, CDROM_DRIVE_STATUS, CDSL_CURRENT) == CDS_DISC_OK
++					&& !ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT)) {
+ 				got_media = TRUE;
+ 			}
+-			break;
+-			
+-		case -1:
+-			HAL_ERROR (("CDROM_DRIVE_STATUS failed: %s\n", strerror(errno)));
+-			break;
+-			
+-		default:
+-			break;
++		} else {
++			drive = ioctl (fd, CDROM_DRIVE_STATUS, CDSL_CURRENT);
++			switch (drive) {
++				/* explicit fallthrough */
++			case CDS_NO_INFO:
++			case CDS_NO_DISC:
++			case CDS_TRAY_OPEN:
++			case CDS_DRIVE_NOT_READY:
++				break;
++				
++			case CDS_DISC_OK:
++				got_media = TRUE;
++				break;
++				
++			case -1:
++				HAL_ERROR (("Error: CDROM_DRIVE_STATUS failed: %s\n", strerror(errno)));
++				break;
++				
++			default:
++				break;
++			}
+ 		}
+ 		
+ 		/* check if eject button was pressed */
+diff -ur hal.old/hald/linux/probing/probe-storage.c hal-0.5.10/hald/linux/probing/probe-storage.c
+--- hal.old/hald/linux/probing/probe-storage.c	2007-10-11 20:09:58.000000000 +0000
++++ hal-0.5.10/hald/linux/probing/probe-storage.c	2007-12-17 02:14:46.000000000 +0000
+@@ -352,34 +352,37 @@
+ 		 *
+ 		 * @todo Use MMC-2 API if applicable
+ 		 */
+-		drive = ioctl (fd, CDROM_DRIVE_STATUS, CDSL_CURRENT);
+-		switch (drive) {
+-			/* explicit fallthrough */
+-		case CDS_NO_INFO:
+-		case CDS_NO_DISC:
+-		case CDS_TRAY_OPEN:
+-		case CDS_DRIVE_NOT_READY:
+-			break;
+-			
+-		case CDS_DISC_OK:
++		if (support_media_changed) {
+ 			/* some CD-ROMs report CDS_DISK_OK even with an open
+ 			 * tray; if media check has the same value two times in
+ 			 * a row then this seems to be the case and we must not
+ 			 * report that there is a media in it. */
+-			if (support_media_changed &&
+-			    ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT) && 
+-			    ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT)) {
+-			} else {
++		    if (ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT) &&
++					ioctl(fd, CDROM_DRIVE_STATUS, CDSL_CURRENT) == CDS_DISC_OK
++					&& !ioctl (fd, CDROM_MEDIA_CHANGED, CDSL_CURRENT)) {
++				got_media = TRUE;
++			}
++		} else {
++			drive = ioctl (fd, CDROM_DRIVE_STATUS, CDSL_CURRENT);
++			switch (drive) {
++				/* explicit fallthrough */
++			case CDS_NO_INFO:
++			case CDS_NO_DISC:
++			case CDS_TRAY_OPEN:
++			case CDS_DRIVE_NOT_READY:
++				break;
++				
++			case CDS_DISC_OK:
+ 				got_media = TRUE;
++				break;
++				
++			case -1:
++				HAL_ERROR (("Error: CDROM_DRIVE_STATUS failed: %s\n", strerror(errno)));
++				break;
++				
++			default:
++				break;
+ 			}
+-			break;
+-			
+-		case -1:
+-			HAL_ERROR (("Error: CDROM_DRIVE_STATUS failed: %s\n", strerror(errno)));
+-			break;
+-			
+-		default:
+-			break;
+ 		}
+ 
+ 		if (got_media) {
