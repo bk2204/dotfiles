@@ -105,5 +105,7 @@ if ! is_ssh_session && ! is_sudo_session && ! is_kerberos_session; then
 	export GPG_TTY
 fi
 
+set_sane_term
+
 # Succeed.
 true
