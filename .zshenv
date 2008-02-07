@@ -44,15 +44,6 @@ BROWSER=firefox
 FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 
-# Set up termcap colors for less (from grml).
-export LESS_TERMCAP_mb="$fg_bold[red]"
-export LESS_TERMCAP_md="$fg_bold[red]"
-export LESS_TERMCAP_me="$reset_color"
-export LESS_TERMCAP_se="$reset_color"
-export LESS_TERMCAP_so="$bg_bold[blue]$fg_bold[yellow]"
-export LESS_TERMCAP_ue="$reset_color"
-export LESS_TERMCAP_us="$fg_bold[green]"
-
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
 	unset XML_CATALOG_FILES
 fi

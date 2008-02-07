@@ -105,6 +105,15 @@ if ! is_ssh_session && ! is_sudo_session && ! is_kerberos_session; then
 	export GPG_TTY
 fi
 
+# Set up termcap colors for less (from grml).
+export LESS_TERMCAP_mb="$fg_bold[red]"
+export LESS_TERMCAP_md="$fg_bold[red]"
+export LESS_TERMCAP_me="$reset_color"
+export LESS_TERMCAP_se="$reset_color"
+export LESS_TERMCAP_so="$bg_bold[blue]$fg_bold[yellow]"
+export LESS_TERMCAP_ue="$reset_color"
+export LESS_TERMCAP_us="$fg_bold[green]"
+
 set_sane_term
 
 # Succeed.
