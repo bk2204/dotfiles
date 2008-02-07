@@ -31,7 +31,10 @@ do
 	fi
 done
 
-autoload -U promptinit
+for i in promptinit compctl complete complist computil;
+do
+	autoload -U $i
+done
 
 # Set up the prompt.
 promptinit
