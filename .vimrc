@@ -68,7 +68,7 @@ if filereadable('/etc/papersize')
   unlet! s:papersize
 endif
 
-colorscheme oceandeep
+colorscheme navajo-night
 
 if has("gui_running")
 set lines=24 " Needed on drpepper.
