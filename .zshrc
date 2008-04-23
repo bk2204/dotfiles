@@ -35,7 +35,7 @@ for i in promptinit compctl complete complist computil;
 do
 	autoload -U $i
 done
-compinit 2>/dev/null
+compinit -u 2>/dev/null
 
 # Set up the prompt.
 promptinit
