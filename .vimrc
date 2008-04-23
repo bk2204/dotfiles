@@ -55,7 +55,7 @@ autocmd FileType c			setlocal cin cino=t0
 autocmd FileType cpp		setlocal cin cino=t0
 autocmd FileType cs			setlocal cin cino=t0
 autocmd FileType rst		setlocal et si ts=2 sw=2
-autocmd FileType mail		setlocal tw=72 fo+=w
+autocmd FileType mail		setlocal tw=72
 "autocmd FileType parrot		set 
 
 
