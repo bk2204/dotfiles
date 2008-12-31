@@ -165,7 +165,10 @@ prompt_bmc_apm_precmd () {
 	has_ac=0
 	has_bat=0
 
-	[ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
+	if [ -d /sys/class/power_supply/AC ];
+	then
+		[ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
+	fi
 	if [ -d /sys/class/power_supply/BAT0 ];
 	then
 		has_bat=1
@@ -180,7 +183,7 @@ prompt_bmc_apm_precmd () {
 	#bat=${${="$(</proc/apm)"}[7]/%/%%}
 	#[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
 
-	[[ $bat == ("100%"|"-1%") ]] && psvar[2]=() || psvar[2]="$ac$bat"
+	[[ $has_ac = 0 -a $has_bat = 0 ]] && psvar[2]=() || psvar[2]="$ac$bat"
 }
 
 prompt_bmc_setup "$@"
