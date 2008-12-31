@@ -235,13 +235,13 @@ if ! is_ssh_session && ! is_sudo_session && ! is_kerberos_session; then
 fi
 
 # Set up termcap colors for less (from grml).
-export LESS_TERMCAP_mb="$fg_bold[red]"
-export LESS_TERMCAP_md="$fg_bold[red]"
-export LESS_TERMCAP_me="$reset_color"
-export LESS_TERMCAP_se="$reset_color"
-export LESS_TERMCAP_so="$bg_bold[blue]$fg_bold[yellow]"
-export LESS_TERMCAP_ue="$reset_color"
-export LESS_TERMCAP_us="$fg_bold[green]"
+export LESS_TERMCAP_mb=`print -P %B%F{red}`
+export LESS_TERMCAP_md=`print -P %B%F{red}`
+export LESS_TERMCAP_me=`print -P %b`
+export LESS_TERMCAP_se=`print -P %b`
+export LESS_TERMCAP_so=`print -P %B%F{blue}%S%K{yellow}`
+export LESS_TERMCAP_ue=`print -P %b`
+export LESS_TERMCAP_us=`print -P %B%F{green}`
 
 set_sane_term
 setup_completion
