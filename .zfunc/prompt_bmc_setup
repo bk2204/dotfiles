@@ -183,7 +183,7 @@ prompt_bmc_apm_precmd () {
 	#bat=${${="$(</proc/apm)"}[7]/%/%%}
 	#[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
 
-	[[ $has_ac = 0 -a $has_bat = 0 ]] && psvar[2]=() || psvar[2]="$ac$bat"
+	[[ $has_ac = 0 ]] && [[ $has_bat = 0 ]] && psvar[2]=() || psvar[2]="$ac$bat"
 }
 
 prompt_bmc_setup "$@"
