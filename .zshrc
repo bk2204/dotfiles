@@ -214,10 +214,6 @@ setup_completion ()
 
 # Set locales.
 set_tty
-if is_pseudo_tty; then
-	LC_ALL=en_US.UTF-8
-	export LC_ALL
-fi
 
 # Set up keychain stuff.
 if ! is_ssh_session && ! is_sudo_session && ! is_kerberos_session; then
