@@ -98,6 +98,7 @@ prompt_bmc_setup_base ()
 	p_tty="$pcc[7]%l$c_reset"
 
 	p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
+	p_power="%(2v.($pcc[7]%2v$c_reset).)"
 
 	p_failed="$pcc[6]failed$c_reset"
 	p_retcode="$pcc[6]%?$c_reset"
@@ -111,12 +112,12 @@ prompt_bmc_setup_base ()
 	POSTEDIT="$reset_color"
 
 	prompt="$p_userpwd
-($p_datetime)($p_tty)$p_shlvl($p_ret)
+($p_datetime)($p_tty)$p_shlvl$p_power($p_ret)
 $p_ret2 $p_pchar "
 	RPROMPT=""
 	PS2='%(4_.\.)%3_> %E'
 
-	[[ -f /proc/apm ]] &&
+	[[ -d /sys/class/power_supply ]] &&
 		precmd () { prompt_bmc_precmd ; prompt_bmc_apm_precmd } ||
 		precmd () { prompt_bmc_precmd }
 	preexec () { }
@@ -158,9 +159,26 @@ prompt_bmc_precmd () {
 prompt_bmc_apm_precmd () {
 	setopt noxtrace localoptions
 	local bat ac
+	local bat_now bat_full
+	local has_ac has_bat
 
-	bat=${${="$(</proc/apm)"}[7]/%/%%}
-	[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
+	has_ac=0
+	has_bat=0
+
+	[ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
+	if [ -d /sys/class/power_supply/BAT0 ];
+	then
+		has_bat=1
+		bat_now=$(</sys/class/power_supply/BAT0/energy_now)
+		bat_full=$(</sys/class/power_supply/BAT0/energy_full)
+
+		bat=$((100 * bat_now / bat_full))"%"
+	fi
+	[ $has_ac = 1 ] && ac="ac"
+	[ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
+
+	#bat=${${="$(</proc/apm)"}[7]/%/%%}
+	#[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
 
 	[[ $bat == ("100%"|"-1%") ]] && psvar[2]=() || psvar[2]="$ac$bat"
 }
