@@ -11,23 +11,69 @@ prompt_bmc_help () {
 EOF
 }
 
+prompt_bmc_want_bold ()
+{
+	text=$1
+
+	[ -z "text" ] && return 1;
+	for i in no off false regular normal non-bold;
+	do
+		[ "$text" = "$i" ] && return 1
+	done
+	return 0;
+}
+
+prompt_bmc_boldness ()
+{
+	if prompt_bmc_want_bold $1
+	then
+		printf '%%B'
+	else
+		printf '%%F'
+	fi
+	#prompt_bmc_want_bold $1 && printf '%%B'
+}
+
+prompt_bmc_setup_colors ()
+{
+	number=$1
+	ffont=$2
+	fcolor=$3
+	bfont=$4
+	bcolor=$5
+
+	printf 'pcc[%s]=' $number
+	prompt_bmc_boldness $ffont
+	printf '%%F{%s' $fcolor
+	if [ -n "$bcolor" ]
+	then
+		printf '$bg_'
+		prompt_bmc_boldness $bfont
+		# Originally had printf '%sbold[%s]' $bcolor, but that was probably a
+		# typo.
+		printf 'bold[%s]' $bcolor
+	fi
+	printf '%%}\n'
+}
+
 prompt_bmc_setup_base ()
 {
 	local -a pcc
 	local p_user p_pwd p_date p_time p_failed p_retcode p_signame p_priv p_unpriv
 	local p_userpwd p_datetime p_tty p_ret p_pchar p_status
 	local p_shlvl
+	local p_power
 	
 	local i j
 
-	c_reset="%{$reset_color%}"
+	c_reset="%b%{$reset_color%}"
 
 	j=0
 	for i in "$@"
 	do
 		j=$((j + 1))
 		# It breaks if you don't use the subshell echo.  I promise.
-		eval `helper-zsh $j $(echo $i)`
+		eval `prompt_bmc_setup_colors $j $(echo $i)`
 	done
 
 	p_privuser="$pcc[4]%n$c_reset"
