@@ -1,14 +1,31 @@
 #!/usr/bin/perl -w
 
+sub set_values
+{
+	my ($ref) = @_;
+	my $adjusted = 0;
+	my $buildbin="$ENV{HOME}/bin/build";
+
+	foreach my $i (keys %$ref) {
+		if (defined($ref->{$i}[0])) {
+			if (!$adjusted) {
+				$adjusted = 1;
+				$ENV{PATH}="$buildbin:$ENV{PATH}";
+			}
+		}
+		foreach my $elem (@{$ref->{$i}}) {
+			next unless defined $elem;
+			$ENV{$i} = $ENV{"$i\_BUILDPKG"} = $elem;
+			last;
+		}
+	}
+}
+
 # Disable POSIX compatibility since at least quilt and metaconfig break.
 foreach my $var (qw/POSIXLY_CORRECT POSIXLY_PEDANTIC _POSIX2_VERSION/)
 {
 	delete $ENV{$var};
 }
-
-my $buildbin="$ENV{HOME}/bin/build";
-
-$ENV{PATH}="$buildbin:$ENV{PATH}";
 
 my @args=(
 	"dpkg-buildpackage",
@@ -31,15 +48,14 @@ if (defined($cxx))
 	$cc=~s/g\+\+/gcc/;
 }
 
-$cc="/usr/bin/gcc" unless defined($cc);
-$cxx="/usr/bin/g++" unless defined($cxx);
+set_values({CC=>[$cc, "gcc", "cc"], CXX=>[$cxx, "g++", "c++"]});
 
-$ENV{CC}=$ENV{CC_BUILDPKG}=$cc if defined($cc);
-$ENV{CXX}=$ENV{CXX_BUILDPKG}=$cxx if defined($cxx);
+die "No CC?" unless exists $ENV{CC};
+die "No CXX?" unless exists $ENV{CXX};
 
 print "buildpkg: command line : ", join(' ', @args), "\n";
-print "buildpkg: CC   : $cc\n";
-print "buildpkg: CXX  : $cxx\n";
+print "buildpkg: CC   : $ENV{CC}\n";
+print "buildpkg: CXX  : $ENV{CXX}\n";
 print "buildpkg: PATH : $ENV{PATH}\n";
 
 exec { $args[0] } @args;
