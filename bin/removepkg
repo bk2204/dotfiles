@@ -1,0 +1,10 @@
+#!/bin/sh
+
+AUTOPKGS=""
+
+for i in "$@"
+do
+	AUTOPKGS="$AUTOPKGS `cat $i`"
+done
+
+sudo aptitude markauto $AUTOPKGS
