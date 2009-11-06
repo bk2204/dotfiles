@@ -3,7 +3,9 @@
 CWD=`pwd`
 BASE=`basename "$CWD"`
 DIR=`dirname "$CWD"`
+FILENAME="$DIR/$BASE-installpkg"
 
-printf "%s\n" "$@" > "$DIR/$BASE-installpkg"
+printf "%s\n" "$@" | perl -e '$_=join(" ",<>);print STDERR "$_\n";' \
+	-e 'print join(" ", (grep{!m/(^\(|\)$)/}split /\s+/)), "\n";' > "$FILENAME"
 
-sudo aptitude --without-recommends install "$@"
+sudo aptitude --without-recommends install $(cat "$FILENAME")
