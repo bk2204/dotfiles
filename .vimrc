@@ -49,7 +49,7 @@ augroup filetype
 augroup END
 
 autocmd FileType python		setlocal et si
-autocmd FileType docbkxml	setlocal sts=4 sw=4 et cms=<!--%s-->
+autocmd FileType docbkxml	setlocal cms=<!--%s-->
 autocmd FileType xslt		setlocal tw=0 ts=2 sw=2
 autocmd FileType c			setlocal cin cino=t0
 autocmd FileType cpp		setlocal cin cino=t0
