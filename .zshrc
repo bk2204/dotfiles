@@ -9,6 +9,7 @@ PROMPT='%n@%m:%~(%?%)%# '
 
 # Set options.
 setopt shwordsplit bareglobqual
+setopt interactivecomments
 #setopt promptsubst
 unsetopt bgnice notify nomatch
 

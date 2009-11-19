@@ -4,6 +4,7 @@
 unlimit
 limit core 0
 limit stack 8192
+limit memoryuse 1048576k
 
 # Set up umask (sanitized for your protection).
 umask 022
