@@ -16,6 +16,8 @@ set history=50
 set ruler
 set foldmethod=marker
 
+set makeprg=pmake
+
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
 " We know xterm-debian is a color terminal
