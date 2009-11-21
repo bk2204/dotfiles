@@ -83,3 +83,5 @@ elseif has("gui_x11")
 else
 endif
 endif
+
+" vim: set ts=2 sw=2 noet:
