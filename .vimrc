@@ -42,7 +42,7 @@ endif
 augroup setf
 	au BufEnter,BufRead,BufNewFile reportbug.*	setf mail
 	au BufEnter,BufRead,BufNewFile reportbug-*	setf mail
-	au BufEnter,BufRead,BufNewFile *.mx					setf nroff
+	au BufEnter,BufRead,BufNewFile *.mx					setf groff
 	au BufEnter,BufRead,BufNewFile *.xml				setf docbkxml
 	au BufEnter,BufRead,BufNewFile *.xsl				setf xslt
 	au BufEnter,BufRead,BufNewFile *.dbx				setf docbkxml
