@@ -1,5 +1,6 @@
 .AbiSuite
 .ICEauthority
+.Private
 .Trash
 .Xauthority
 .abook
@@ -164,7 +165,12 @@
 .xdvirc
 .zcompdump
 Desktop
+Documents
+Download
+Music
 Photos
+Pictures
+Private
 audio
 bin/git*
 bin/fop-*
@@ -178,9 +184,12 @@ bin/xml-convert
 build
 checkouts
 data
+emul
 image
 lib
 man
+mnt
+patches
 share
 source
 text
