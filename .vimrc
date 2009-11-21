@@ -22,9 +22,9 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 
 " We know xterm-debian is a color terminal
 if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
-  set t_Co=16
-  set t_Sf=[3%dm
-  set t_Sb=[4%dm
+	set t_Co=16
+	set t_Sf=[3%dm
+	set t_Sb=[4%dm
 endif
 
 vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
@@ -33,10 +33,10 @@ syntax enable
 
 
 if has("autocmd")
- " Enabled file type detection
- " Use the default filetype settings. If you also want to load indent files
- " to automatically do language-dependent indenting add 'indent' as well.
- filetype plugin indent on
+	" Enabled file type detection
+	" Use the default filetype settings. If you also want to load indent files
+	" to automatically do language-dependent indenting add 'indent' as well.
+	filetype plugin indent on
 endif
 
 augroup setf
@@ -64,11 +64,11 @@ augroup end
 
 " Set paper size from /etc/papersize if available (Debian-specific)
 if filereadable('/etc/papersize')
-  let s:papersize = matchstr(system('/bin/cat /etc/papersize'), '\p*')
-  if strlen(s:papersize)
-    let &printoptions = "paper:" . s:papersize
-  endif
-  unlet! s:papersize
+	let s:papersize = matchstr(system('/bin/cat /etc/papersize'), '\p*')
+	if strlen(s:papersize)
+		let &printoptions = "paper:" . s:papersize
+	endif
+	unlet! s:papersize
 endif
 
 colorscheme desert
