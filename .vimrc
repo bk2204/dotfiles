@@ -39,26 +39,27 @@ if has("autocmd")
  filetype plugin indent on
 endif
 
-augroup filetype
-  au BufRead reportbug.*		set ft=mail
-  au BufRead reportbug-*		set ft=mail
-  au BufRead *.mx				set ft=nroff
-  au BufRead *.xml				set ft=docbkxml
-  au BufRead *.xsl				set ft=xslt
-  au BufRead *.dbx				set ft=docbkxml
-  au BufEnter,BufRead,BufNewFile *.pasm setfiletype parrot 
-  au BufEnter,BufRead,BufNewFile *.pir setfiletype pir 
-augroup END
+augroup setf
+	au BufEnter,BufRead,BufNewFile reportbug.*	setf mail
+	au BufEnter,BufRead,BufNewFile reportbug-*	setf mail
+	au BufEnter,BufRead,BufNewFile *.mx				setf nroff
+	au BufEnter,BufRead,BufNewFile *.xml			setf docbkxml
+	au BufEnter,BufRead,BufNewFile *.xsl			setf xslt
+	au BufEnter,BufRead,BufNewFile *.dbx			setf docbkxml
+	au BufEnter,BufRead,BufNewFile *.pasm			setf parrot 
+	au BufEnter,BufRead,BufNewFile *.pir			setf pir 
+augroup end
 
-autocmd FileType python		setlocal et si
-autocmd FileType docbkxml	setlocal cms=<!--%s-->
-autocmd FileType xslt		setlocal tw=0 ts=2 sw=2
-autocmd FileType c			setlocal cin cino=t0
-autocmd FileType cpp		setlocal cin cino=t0
-autocmd FileType cs			setlocal cin cino=t0
-autocmd FileType rst		setlocal et si ts=2 sw=2
-autocmd FileType mail		setlocal tw=72
-"autocmd FileType parrot		set 
+augroup setl
+  au FileType python		setl et si
+  au FileType docbkxml	setl cms=<!--%s-->
+  au FileType xslt			setl tw=0 ts=2 sw=2
+  au FileType c					setl cin cino=t0
+  au FileType cpp				setl cin cino=t0
+  au FileType cs				setl cin cino=t0
+  au FileType rst				setl et si ts=2 sw=2
+  au FileType mail			setl tw=72
+augroup end
 
 
 " Set paper size from /etc/papersize if available (Debian-specific)
