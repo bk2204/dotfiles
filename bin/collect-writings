@@ -2,14 +2,15 @@
 
 use List::Util qw(shuffle);
 
-sub expand_directories($)
+sub expand_directories($;$)
 {
-	my $dir = shift;
+	my ($dir, $recurse) = @_;
 
 	return ($dir) unless -d $dir;
 
 	opendir DH, $dir or die "$!";
-	my @files = grep { -f $_ } map { "$dir/$_" } readdir DH;
+	my @files = map { $recurse ? expand_directories($_) : $_ }
+		grep { -f $_ } map { "$dir/$_" } readdir DH;
 	closedir DH or die "$!";
 
 	@files
