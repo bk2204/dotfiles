@@ -7,7 +7,7 @@ sub expand_directories($;$)
 	return ($dir) unless -d $dir;
 
 	opendir DH, $dir or die "$!";
-	my @files = map { $recurse ? expand_directories($_) : $_ }
+	my @files = map { $recurse ? expand_directories($_, 1) : $_ }
 		grep { -f $_ } map { "$dir/$_" } readdir DH;
 	closedir DH or die "$!";
 
