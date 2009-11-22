@@ -1,0 +1,48 @@
+#!/usr/bin/perl -w
+
+use List::Util qw(shuffle);
+
+sub expand_directories($)
+{
+	my $dir = shift;
+
+	return ($dir) unless -d $dir;
+
+	opendir DH, $dir or die "$!";
+	my @files = grep { -f $_ } map { "$dir/$_" } readdir DH;
+	closedir DH or die "$!";
+
+	@files
+}
+
+my $home = $ENV{HOME};
+my @files = (
+	"$home/.dasher/training_english_GB.txt",
+	"$home/checkouts/writings/creative",
+	"$home/checkouts/writings/creative/school",
+	"$home/checkouts/writings/creative/school/engl4354"
+);
+
+@files = grep {
+	!/\.p(?:s|df)$/
+} map {
+	expand_directories($_)
+} @files;
+
+my @data;
+
+foreach my $file (@files) {
+	open(FH, $file) or die "$!";
+	push @data, <FH>;
+	close(FH) or die "$!";
+}
+
+print grep {
+	!/^\./
+} map {
+	s/\\.(.|\(..)//g;
+	s/^\.(?:q|i|b)(\s+)/$1/g;
+	s/<[^>]>//g;
+	s/\\\S+//g;
+	$_
+} @data;
