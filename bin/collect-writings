@@ -23,12 +23,17 @@ my @files = (
 	"$home/checkouts/writings/creative/school",
 	"$home/checkouts/writings/creative/school/engl4354"
 );
+my @recursives = (
+	"$home/checkouts/aoif"
+);
 
 @files = grep {
-	!/\.p(?:s|df)$/
+	!/[Mm]akefile/ &&
+	!/\.(?:fo|mk|p(?:s|df))$/ &&
+	!/\/\.[^\/]+/
 } map {
 	expand_directories($_)
-} @files;
+} (@files, map { expand_directories($_, 1) } @recursives);
 
 my @data;
 
