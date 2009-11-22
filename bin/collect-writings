@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 
-use List::Util qw(shuffle);
-
 sub expand_directories($;$)
 {
 	my ($dir, $recurse) = @_;
