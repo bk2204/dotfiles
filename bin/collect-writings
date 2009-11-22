@@ -38,12 +38,23 @@ foreach my $file (@files) {
 	close(FH) or die "$!";
 }
 
-print grep {
-	!/^\./
+my $text = join '', grep {
+	!/^\./ && !/^\s*$/
 } map {
-	s/\\.(.|\(..)//g;
+	# Handle groff syntax.
+	s/\\.([^\(]|\(..)//g;
 	s/^\.(?:q|i|b)(\s+)/$1/g;
-	s/<[^>]>//g;
+	s/\\\(../ /g;
 	s/\\\S+//g;
+	# Remove most XML tags and comments.
+	s/<[^>]+>//g;
+	s/<!--//g;
+	s/-->//g;
+	# Sometimes when XML tags are stripped, text from different tags gets stuck
+	# together.  This often happens with names in DocBook.  Strip this text.
+	s/[a-zA-Z]+(\.[a-zA-Z]+)+//g;
 	$_
 } @data;
+
+$text =~ s/<[^>]+>//gm;
+print $text;
