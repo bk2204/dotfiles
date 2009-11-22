@@ -1,7 +1,27 @@
 #!/bin/sh
 
+set -e
+
 JAR_HOME=$HOME/bin/msv-impl
+JAR_DIR=/usr/share/java
 
 [ -n "$JAVA_EXE" ] || JAVA_EXE=java
 
-exec $JAVA_EXE -jar "$JAR_HOME/msv.jar" "$@"
+add_to_classpath () {
+	test -e "$1" || ( echo "couldn't find $1"; exit 2 )
+	if [ -n "$CLASSPATH" ]; then
+		CLASSPATH="$CLASSPATH:$1"
+	else
+		CLASSPATH="$1"
+	fi
+}
+
+add_to_classpath /etc/xml/resolver
+add_to_classpath "$JAR_DIR/xml-commons-resolver-1.1.jar"
+add_to_classpath "$JAR_DIR/xercesImpl.jar"
+add_to_classpath "$JAR_DIR/xmlParserAPIs.jar"
+add_to_classpath "$JAR_HOME/isorelax.jar"
+add_to_classpath "$JAR_HOME/relaxngDatatype.jar"
+add_to_classpath "$JAR_HOME/xsdlib.jar"
+
+exec $JAVA_EXE -cp "$CLASSPATH" -jar "$JAR_HOME/msv.jar" "$@"
