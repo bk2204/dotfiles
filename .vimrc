@@ -71,18 +71,20 @@ if filereadable('/etc/papersize')
 	unlet! s:papersize
 endif
 
-colorscheme desert
 
 if has("gui_running")
 	set lines=24 " Needed on drpepper.
 	set columns=80
 	let &guicursor = &guicursor . ",a:blinkon0"
+	colorscheme desert
 	if has("gui_gtk")
 		set guifont=Monospace\ 9
 	elseif has("gui_kde")
 	elseif has("gui_x11")
 	else
 	endif
+else
+	colorscheme desert256
 endif
 
 " vim: set ts=2 sw=2 noet:
