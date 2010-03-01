@@ -1,8 +1,10 @@
 # Key bindings.
-bind generic b previous-page
-bind generic - noop
+bind generic,pager,index,attach b previous-page
+bind generic,pager,index,attach - noop
 bind pager,index,attach B bounce-message
 # Macros.
-macro index S s+Spam.Actual\n
-macro pager S s+Spam.Actual\n
+macro index S <tag-prefix><pipe-entry>learnspam\n<tag-prefix><save-message>+Spam.Actual\n
+macro pager S <tag-prefix><pipe-entry>learnspam\n<tag-prefix><save-message>+Spam.Actual\n
+macro index H <tag-prefix><pipe-entry>learnnonspam\n
+macro pager H <tag-prefix><pipe-entry>learnnonspam\n
 # vim: set syntax=muttrc:
