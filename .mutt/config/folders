@@ -1,8 +1,9 @@
 # Folders.
-set folder=imap://crustytoothpaste.ath.cx/
-set spoolfile=imap://crustytoothpaste.ath.cx/INBOX
+set folder=imap://imap.crustytoothpaste.net/
+set spoolfile=imap://imap.crustytoothpaste.net/INBOX
 set move=no
 set delete_untag=yes
 set postponed="=Drafts"
 set record="=Sent"
+set pipe_split=yes
 # vim: set syntax=muttrc:

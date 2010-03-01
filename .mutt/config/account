@@ -1,5 +1,5 @@
 # SMTP.
-set smtp_url=smtp://bmc@crustytoothpaste.ath.cx:587/
+set smtp_url=smtp://bmc@castro.crustytoothpaste.net:587/
 set smtp_authenticators="gssapi:digest-md5:cram-md5"
 # IMAP.
 set imap_user=bmc
