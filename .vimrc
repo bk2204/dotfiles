@@ -27,8 +27,6 @@ if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
-vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
-
 syntax enable
 
 
