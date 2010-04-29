@@ -247,5 +247,7 @@ export LESS_TERMCAP_us=`print -P %B%F{green}`
 set_sane_term
 setup_completion
 
+unset i
+
 # Succeed.
 true
