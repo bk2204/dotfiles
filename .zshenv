@@ -54,7 +54,6 @@ LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
 EDITOR=vim
-BROWSER=firefox
 FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 
@@ -67,6 +66,15 @@ fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=`hostname`
 fi
+for i in firefox iceweasel
+do
+	if command -v "$i" >/dev/null 2>&1
+	then
+		BROWSER="$i"
+		break
+	fi
+done
+unset i
 
 VISUAL="$EDITOR"
 
@@ -86,3 +94,4 @@ unsetopt allexport
 #export DEBEMAIL DEBFULLNAME
 #export HOSTNAME
 #export VISUAL EDITOR EMAIL BROWSER
+true
