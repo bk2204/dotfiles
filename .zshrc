@@ -151,10 +151,16 @@ setup_completion ()
 	# Ignore completion functions for commands you don't have:
 	zstyle ':completion::(^approximate*):*:functions' ignored-patterns '_*'
 
+	# Provide more processes in completion of programs like killall:
+	zstyle ':completion:*:processes-names' command 'ps c -u ${USER} -o command | uniq'
+
 	# complete manual by their section
 	zstyle ':completion:*:manuals'    separate-sections true
 	zstyle ':completion:*:manuals.*'  insert-sections   true
 	zstyle ':completion:*:man:*'      menu yes select
+	
+	# provide .. as a completion
+	zstyle ':completion:*' special-dirs ..
 
 	# run rehash on completion so new installed program are found automatically:
 	_force_rehash() {
