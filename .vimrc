@@ -51,12 +51,13 @@ augroup end
 augroup setl
   au FileType python		setl et si
   au FileType docbkxml	setl cms=<!--%s-->
-  au FileType xslt			setl tw=0 ts=2 sw=2
+  au FileType xslt			setl tw=0 ts=2 sw=2 et
   au FileType c					setl cin cino=t0
   au FileType cpp				setl cin cino=t0
   au FileType cs				setl cin cino=t0
   au FileType rst				setl et si ts=2 sw=2
   au FileType mail			setl tw=72
+  au FileType asciidoc	setl ts=2 sw=2
 augroup end
 
 
