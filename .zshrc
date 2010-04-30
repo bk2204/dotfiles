@@ -213,7 +213,10 @@ setup_completion ()
 
 	# use generic completion system for programs not yet defined; (_gnu_generic works
 	# with commands that provide a --help option with "standard" gnu-like output.)
-	compdef _gnu_generic tail head feh cp mv df stow uname ipacsum fetchipac
+	for compcom in	cp deborphan df feh fetchipac head hnb ipacsum mv \
+					pal stow tail uname ; do
+		[[ -z ${_comps[$compcom]} ]] && compdef _gnu_generic ${compcom}
+	done; unset compcom
 
 	# see upgrade function in this file
 	compdef _hosts upgrade
