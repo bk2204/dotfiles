@@ -55,7 +55,8 @@ augroup end
 augroup setl
   au FileType python		setl et si
   au FileType docbkxml	setl cms=<!--%s-->
-  au FileType xslt			setl tw=0 ts=2 sw=2 et
+  au FileType xslt			setl tw=0 ts=2 sw=2 noet
+  au FileType sass			setl tw=0 ts=4 sw=4 noet
   au FileType c					setl cin cino=t0
   au FileType cpp				setl cin cino=t0
   au FileType cs				setl cin cino=t0
