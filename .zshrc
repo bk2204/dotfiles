@@ -10,7 +10,7 @@ PROMPT='%n@%m:%~(%?%)%# '
 # Set options.
 setopt shwordsplit bareglobqual
 setopt interactivecomments
-#setopt promptsubst
+setopt promptsubst
 unsetopt bgnice notify nomatch
 
 # Set history.
@@ -28,7 +28,7 @@ bindkey '\eOH' vi-beginning-of-line
 for func in $^fpath/*(.:t);
 do
 	if [[ -n $func ]]; then
-		autoload $func
+		autoload -U $func
 	fi
 done
 

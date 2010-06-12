@@ -60,7 +60,7 @@ prompt_bmc_setup_base ()
 {
 	local -a pcc
 	local p_user p_pwd p_date p_time p_failed p_retcode p_signame p_priv p_unpriv
-	local p_userpwd p_datetime p_tty p_ret p_pchar p_status
+	local p_userpwd p_datetime p_tty p_ret p_pchar p_status p_branch
 	local p_shlvl
 	local p_power
 	
@@ -75,6 +75,10 @@ prompt_bmc_setup_base ()
 		# It breaks if you don't use the subshell echo.  I promise.
 		eval `prompt_bmc_setup_colors $j $(echo $i)`
 	done
+
+	zstyle ':vcs_info:*' actionformats "[%b|%a]" "%R"
+	zstyle ':vcs_info:*' formats       "[%b]" "%R"
+	zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat "%b:%r"
 
 	p_privuser="$pcc[4]%n$c_reset"
 	p_unprivuser="$pcc[8]%n$c_reset"
@@ -106,6 +110,8 @@ prompt_bmc_setup_base ()
 
 	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
 	p_ret2="$pcc[9]%m %(?.ok.no)$c_reset"
+
+	p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
 
 	#[[ -f /proc/apm ]] && p_apm="%(2v.-%2v-.)"
 
@@ -150,6 +156,8 @@ prompt_bmc_precmd () {
 		xterm*|gnome*)
 			print -Pn '\e]0;%n@%m: %~\a';;
 	esac
+
+	vcs_info
 
 	# Don't bother printing the jobs all of the time.
 	#[[ -o interactive ]] && jobs -l
