@@ -17,6 +17,7 @@ set ruler
 set foldmethod=marker
 
 set makeprg=pmake
+set modeline
 
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
