@@ -11,6 +11,8 @@ lists debian-legal@lists.debian.org
 lists debian-bsd@lists.debian.org
 lists debian-curiosa@lists.debian.org
 subscribe feedvalidator-users@googlegroups.com
+subscribe debian-amd64@lists.debian.org
+subscribe debian-powerpc@lists.debian.org
 subscribe debian-sparc@lists.debian.org
 subscribe debian-news@lists.debian.org
 subscribe debian-security-announce@lists.debian.org
