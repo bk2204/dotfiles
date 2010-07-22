@@ -66,6 +66,8 @@ augroup setl
   au FileType asciidoc	setl ts=2 sw=2
 augroup end
 
+" For /bin/sh.
+let g:is_posix=1
 
 " Set paper size from /etc/papersize if available (Debian-specific)
 if filereadable('/etc/papersize')
