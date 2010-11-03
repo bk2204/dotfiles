@@ -66,7 +66,7 @@ fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=`hostname`
 fi
-for i in firefox iceweasel chromium-browser
+for i in chromium-browser firefox iceweasel
 do
 	if command -v "$i" >/dev/null 2>&1
 	then
