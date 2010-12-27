@@ -166,11 +166,6 @@ prompt_bmc_precmd () {
 
 	[[ $exitstatus -ge 128 ]] && psvar[1]="$signals[$exitstatus-127]" || psvar[1]="none"
 
-	case $TERM in
-		xterm*|gnome*)
-			print -Pn '\e]0;%n@%m: %~\a';;
-	esac
-
 	vcs_info
 
 	# Don't bother printing the jobs all of the time.
