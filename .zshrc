@@ -11,6 +11,7 @@ PROMPT='%n@%m:%~(%?%)%# '
 setopt shwordsplit bareglobqual
 setopt interactivecomments
 setopt promptsubst
+setopt rmstarsilent
 unsetopt bgnice notify nomatch
 
 # Set history.
