@@ -76,8 +76,8 @@ prompt_bmc_setup_base ()
 		eval `prompt_bmc_setup_colors $j $(echo $i)`
 	done
 
-	zstyle ':vcs_info:*' actionformats "%b|%a" "%R"
-	zstyle ':vcs_info:*' formats       "%b" "%R"
+	zstyle ':vcs_info:*' actionformats "(%b|%a%)" "%R"
+	zstyle ':vcs_info:*' formats       "(%b%)" "%R"
 	zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat "%b:%r"
 
 	p_privuser="$pcc[4]%n$c_reset"
@@ -117,7 +117,7 @@ prompt_bmc_setup_base ()
 
 	POSTEDIT="$reset_color"
 
-	prompt="$p_userpwd%(!..($p_branch%))
+	prompt="$p_userpwd%(!..$p_branch)
 ($p_datetime)($p_tty)$p_shlvl$p_power($p_ret)
 $p_ret2 $p_pchar "
 	RPROMPT=""
