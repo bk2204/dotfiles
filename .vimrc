@@ -50,6 +50,7 @@ augroup setf
 	au BufEnter,BufRead,BufNewFile *.dbx				setf docbkxml
 	au BufEnter,BufRead,BufNewFile *.pasm				setf parrot 
 	au BufEnter,BufRead,BufNewFile *.pir				setf pir 
+	au BufEnter,BufRead,BufNewFile *.txt				setf asciidoc 
 augroup end
 
 augroup setl
