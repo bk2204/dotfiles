@@ -25,24 +25,6 @@ bindkey '^I' complete-word
 bindkey '\eOF' vi-end-of-line
 bindkey '\eOH' vi-beginning-of-line
 
-# Autoload some stuff.
-for func in $^fpath/*(.:t);
-do
-	if [[ -n $func ]]; then
-		autoload -U $func
-	fi
-done
-
-for i in promptinit compctl complete complist computil;
-do
-	autoload -U $i
-done
-compinit -u 2>/dev/null
-
-# Set up the prompt.
-promptinit
-prompt bmc
-
 # Some useful features.
 source_if_present ()
 {
@@ -83,6 +65,29 @@ set_sane_term ()
 		*) ;;
 	esac
 }
+
+# Do this before any sort of importing or prompt setup, so that the prompt can
+# take advantage of terminal features such as 256-color support.
+set_sane_term
+
+# Autoload some stuff.
+for func in $^fpath/*(.:t);
+do
+	if [[ -n $func ]]; then
+		autoload -U $func
+	fi
+done
+
+for i in promptinit compctl complete complist computil;
+do
+	autoload -U $i
+done
+compinit -u 2>/dev/null
+
+# Set up the prompt.
+promptinit
+prompt bmc
+
 # This is from grml.  GPLv2.
 setup_completion ()
 {
@@ -256,7 +261,6 @@ export LESS_TERMCAP_so=`print -P %B%F{blue}%S%K{yellow}`
 export LESS_TERMCAP_ue=`print -P %b`
 export LESS_TERMCAP_us=`print -P %B%F{green}`
 
-set_sane_term
 setup_completion
 
 unset i
