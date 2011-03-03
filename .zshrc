@@ -56,6 +56,24 @@ set_tty ()
 }
 set_sane_term ()
 {
+	# Make sure our terminal definition works right.
+	if ! echotc co >/dev/null 2>/dev/null
+	then
+		# No column results?  Do we have any working terminal definitions?
+		local echotc_works=""
+		for i in vt220 ansi xterm linux dumb
+		do
+			if TERM=$i echotc co >/dev/null 2>/dev/null
+			then
+				# Yes, we do.
+				echotc_works=1
+				break
+			fi
+		done
+		# Yes, we do, so we just have a bad TERM definition. vt220 is a good
+		# fallback.
+		[[ -n $echotc_works ]] && export TERM=vt220
+	fi
 	is_ssh_session && return 0
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*gnome-terminal)
