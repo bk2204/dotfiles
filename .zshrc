@@ -78,6 +78,8 @@ set_sane_term ()
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*gnome-terminal)
 			export TERM=gnome-256color;;
+		xterm:*evilvte)
+			export TERM=gnome-256color;;
 		screen:*)
 			export TERM=screen-256color;;
 		*) ;;
