@@ -131,7 +131,7 @@ $p_ret2 $p_pchar "
 
 prompt_bmc_setup ()
 {
-	if [ $(echotc Co) = 256 ]
+	if echotc Co >/dev/null 2>/dev/null && [[ $(echotc Co) = 256 ]]
 	then
 		prompt_bmc_setup_base \
 			"yes 33" \
