@@ -5,7 +5,12 @@ BASE=`basename "$CWD"`
 DIR=`dirname "$CWD"`
 FILENAME="$DIR/$BASE-installpkg"
 
-printf "%s\n" "$@" | perl -e '$_=join(" ",<>);' \
+(if [ -n "$1" ];
+then
+	printf "%s\n" "$@"
+else
+	dpkg-checkbuilddeps 2>&1 | perl -pe 's/^.*dependencies: //'
+fi) | perl -e '$_=join(" ",<>);' \
 	-e 'print join(" ", (grep{!m/(^\(|\)$)/}split /\s+/)), "\n";' >> "$FILENAME"
 
 sudo aptitude --without-recommends install $(cat "$FILENAME")
