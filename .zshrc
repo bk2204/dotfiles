@@ -54,6 +54,11 @@ set_tty ()
 	[[ -n $SSH_TTY ]] && TTY=$SSH_TTY && return 0
 	TTY=`tty` || TTY=""
 }
+has_term ()
+{
+	local termname="$1"
+	TERM=$termname echotc co >/dev/null 2>/dev/null
+}
 set_sane_term ()
 {
 	# Make sure our terminal definition works right.
@@ -63,7 +68,7 @@ set_sane_term ()
 		local echotc_works=""
 		for i in vt220 ansi xterm linux dumb
 		do
-			if TERM=$i echotc co >/dev/null 2>/dev/null
+			if has_term $i
 			then
 				# Yes, we do.
 				echotc_works=1
@@ -77,11 +82,15 @@ set_sane_term ()
 	is_ssh_session && return 0
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*gnome-terminal)
-			export TERM=gnome-256color;;
+			has_term gnome-256color && export TERM=gnome-256color;;
 		xterm:*evilvte)
-			export TERM=gnome-256color;;
+			has_term gnome-256color && export TERM=gnome-256color;;
+		xterm:*konsole)
+			has_term konsole-256color && export TERM=konsole-256color;;
 		screen:*)
-			export TERM=screen-256color;;
+			has_term screen-256color && export TERM=screen-256color;;
+		rxvt:*mrxvt-full)
+			has_term screen-256color && export TERM=screen-256color;;
 		*) ;;
 	esac
 }
