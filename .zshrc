@@ -90,7 +90,7 @@ set_sane_term ()
 		screen:*)
 			has_term screen-256color && export TERM=screen-256color;;
 		rxvt:*mrxvt-full)
-			has_term screen-256color && export TERM=screen-256color;;
+			has_term rxvt-256color && export TERM=rxvt-256color;;
 		*) ;;
 	esac
 }
