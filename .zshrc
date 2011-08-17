@@ -290,6 +290,9 @@ export LESS_TERMCAP_so=`print -P %B%F{blue}%S%K{yellow}`
 export LESS_TERMCAP_ue=`print -P %b`
 export LESS_TERMCAP_us=`print -P %B%F{green}`
 
+# Help less handle compressed files better.
+which lesspipe >/dev/null 2>/dev/null && eval $(lesspipe)
+
 setup_completion
 
 unset i
