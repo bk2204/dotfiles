@@ -41,7 +41,7 @@ is_sudo_session ()
 }
 is_kerberos_session ()
 {
-	command -v klist >/dev/null && klist -5s
+	whence klist >/dev/null && klist -5s
 }
 is_pseudo_tty ()
 {
@@ -291,7 +291,7 @@ export LESS_TERMCAP_ue=`print -P %b`
 export LESS_TERMCAP_us=`print -P %B%F{green}`
 
 # Help less handle compressed files better.
-which lesspipe >/dev/null 2>/dev/null && eval $(lesspipe)
+whence lesspipe >/dev/null && eval $(lesspipe)
 
 setup_completion
 
