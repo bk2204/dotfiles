@@ -262,25 +262,6 @@ setup_completion ()
 # Set locales.
 set_tty
 
-# Set up keychain stuff.
-if ! is_ssh_session && ! is_sudo_session && ! is_kerberos_session; then
-	ssh_keys=(id_rsa id_dsa)
-	gpg_keys=`perl -ne 'print "$1\n" if (/^default-key\s+([A-Fa-f0-9]{8})/);' ~/.gnupg/gpg.conf`
-	existing_keys=()
-	for key in $ssh_keys;
-	do
-		[[ -f ~/.ssh/$key ]] && existing_keys=($existing_keys $key)
-	done
-	# 10080 minutes is 1 week.
-	which keychain >/dev/null && keychain --timeout 10080 -q $existing_keys $gpg_keys
-	source_if_present $HOME/.keychain/$HOSTNAME-sh
-	source_if_present $HOME/.keychain/$HOSTNAME-sh-gpg
-
-	# Set up keychain environment variables.
-	GPG_TTY=`tty`
-	export GPG_TTY
-fi
-
 # Set up termcap colors for less (from grml).
 export LESS_TERMCAP_mb=`print -P %B%F{red}`
 export LESS_TERMCAP_md=`print -P %B%F{red}`
