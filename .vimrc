@@ -18,6 +18,8 @@ set foldmethod=marker
 
 set modeline
 
+set encoding=utf-8
+
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
 " We know xterm-debian is a color terminal
