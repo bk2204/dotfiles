@@ -21,7 +21,9 @@ subscribe debian-announce@lists.debian.org
 lists glibc-bsd-devel@lists.alioth.debian.org
 subscribe libc-ports@lists.gnu.org
 subscribe groff@lists.gnu.org
+subscribe groff@gnu.org
 subscribe debian-audit@shellcode.org
+subscribe gnupg-users@gnupg.org
 lists bazaar-ng@lists.canonical.com
 lists hatch_houston@groups.yahoo.com
 subscribe UH-UNIX-USERS@LISTSERV.UH.EDU
