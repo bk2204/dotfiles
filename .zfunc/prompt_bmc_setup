@@ -196,8 +196,15 @@ prompt_bmc_apm_precmd () {
 	if [ -d /sys/class/power_supply/BAT0 ];
 	then
 		has_bat=1
-		bat_now=$(</sys/class/power_supply/BAT0/energy_now)
-		bat_full=$(</sys/class/power_supply/BAT0/energy_full)
+
+		if [ -x /sys/class/power_supply/BAT0/charge_now ];
+		then
+			bat_now=$(</sys/class/power_supply/BAT0/charge_now)
+			bat_full=$(</sys/class/power_supply/BAT0/charge_full)
+		else
+			bat_now=$(</sys/class/power_supply/BAT0/energy_now)
+			bat_full=$(</sys/class/power_supply/BAT0/energy_full)
+		fi
 
 		bat=$((100 * bat_now / bat_full))"%"
 	fi
