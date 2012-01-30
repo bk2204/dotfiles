@@ -86,7 +86,7 @@ if has("gui_running")
 	set lines=24 " Needed on drpepper.
 	set columns=80
 	let &guicursor = &guicursor . ",a:blinkon0"
-	colorscheme zenburn
+	colorscheme desert
 	if has("gui_gtk")
 		set guifont=Monospace\ 9
 	elseif has("gui_kde")
@@ -94,9 +94,9 @@ if has("gui_running")
 	else
 	endif
 elseif &t_Co == 256
-	colorscheme zenburn256
+	colorscheme desert256
 else
-	colorscheme zenburn
+	colorscheme desert256
 endif
 
 " vim: set ts=2 sw=2 noet:
