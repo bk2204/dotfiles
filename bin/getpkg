@@ -1,4 +1,0 @@
-#!/bin/sh
-
-apt-get source "$1"
-cp -R "$1"-* "$1.old"
