@@ -51,6 +51,7 @@ GROFF_TMAC_PATH="$HOME/checkouts/tenorsax/tmac"
 LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
+PAGER="less -R"
 EDITOR=vim
 FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
