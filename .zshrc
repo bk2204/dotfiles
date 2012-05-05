@@ -2,7 +2,10 @@
 # For interactive use.
 
 # Set up some aliases.
-alias ls='ls --color=auto'
+if ls --color=auto >/dev/null 2>/dev/null
+then
+	alias ls='ls --color=auto'
+fi
 
 # Set prompts.
 PROMPT='%n@%m:%~(%?%)%# '
