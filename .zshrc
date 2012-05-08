@@ -2,7 +2,10 @@
 # For interactive use.
 
 # Set up some aliases.
-alias ls='ls --color=auto'
+if ls --color=auto >/dev/null 2>/dev/null
+then
+	alias ls='ls --color=auto'
+fi
 
 # Set prompts.
 PROMPT='%n@%m:%~(%?%)%# '
@@ -77,7 +80,24 @@ set_sane_term ()
 		done
 		# Yes, we do, so we just have a bad TERM definition. vt220 is a good
 		# fallback.
-		[[ -n $echotc_works ]] && export TERM=vt220
+		if [[ -n $echotc_works ]]
+		then
+			local -a preferred
+			if [[ ${TERM#screen} != ${TERM} ]]
+			then
+				preferred=(screen vt220)
+			elif [[ -z ${TERM:#*256color} ]]
+			then
+				preferred=(xterm-256color xterm vt220)
+			else
+				preferred=(vt220)
+			fi
+			for i in $preferred
+			do
+				has_term $i && export TERM=$i
+				break
+			done
+		fi
 	fi
 	is_ssh_session && return 0
 	case "$TERM:`readlink /proc/$PPID/exe`" in

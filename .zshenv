@@ -51,7 +51,9 @@ GROFF_TMAC_PATH="$HOME/checkouts/tenorsax/tmac"
 LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
+PAGER="less -R"
 EDITOR=vim
+CLICOLOR=1
 FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 
@@ -64,7 +66,7 @@ fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=`hostname`
 fi
-for i in chromium-browser chromium firefox iceweasel
+for i in google-chrome chromium-browser chromium firefox iceweasel
 do
 	if command -v "$i" >/dev/null 2>&1
 	then
