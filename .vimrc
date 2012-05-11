@@ -30,11 +30,6 @@ if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
-map <C-y> "*y
-map <C-x> "*x
-map <C-d> "*d
-map <C-p> "*gP
-
 syntax enable
 
 if has("autocmd")
