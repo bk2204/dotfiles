@@ -15,6 +15,7 @@ set viminfo='20,\"50
 set history=50	
 set ruler
 set foldmethod=marker
+set wildmode=longest,full
 
 set modeline
 
@@ -29,10 +30,7 @@ if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
-map <C-y> "*y
-map <C-x> "*x
-map <C-d> "*d
-map <C-p> "*gP
+call pathogen#infect()
 
 syntax enable
 
