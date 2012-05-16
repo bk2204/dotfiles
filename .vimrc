@@ -30,6 +30,8 @@ if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
+call pathogen#infect()
+
 syntax enable
 
 if has("autocmd")
