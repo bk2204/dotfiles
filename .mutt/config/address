@@ -30,6 +30,7 @@ subscribe UH-UNIX-USERS@LISTSERV.UH.EDU
 lists adduser-devel@lists.alioth.debian.org
 lists spam-l@peach.ease.lsoft.com
 lists gnu-arch-users@lists.gnu.org
+subscribe help-gnutls@gnu.org
 # Query.
 set query_command="lbdbq '%s'"
 # vim: set syntax=muttrc:
