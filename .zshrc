@@ -102,11 +102,11 @@ set_sane_term ()
 	is_ssh_session && return 0
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*xfce4-terminal)
-			has_term gnome-256color && export TERM=gnome-256color;;
+			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*gnome-terminal)
-			has_term gnome-256color && export TERM=gnome-256color;;
+			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*evilvte)
-			has_term gnome-256color && export TERM=gnome-256color;;
+			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*konsole)
 			has_term konsole-256color && export TERM=konsole-256color;;
 		screen:*)
