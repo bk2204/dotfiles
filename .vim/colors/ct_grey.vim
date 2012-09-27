@@ -255,6 +255,8 @@ hi link htmlTag         Keyword
 hi link htmlTagName     Conditional 
 hi link htmlEndTag      Identifier 
 
+hi link diffAdded		String
+hi link diffRemoved		Number
 
 " Special for Javascript
 hi link javaScriptNumber      Number 
