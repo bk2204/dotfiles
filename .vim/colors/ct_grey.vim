@@ -68,7 +68,7 @@ let colors_name = "ct_grey"
 
 " General colors
 hi Normal           guifg=#f6f3e8     guibg=#1c1c1c       gui=NONE      ctermfg=NONE        ctermbg=NONE        cterm=NONE
-hi NonText          guifg=#070707     guibg=#1c1c1c       gui=NONE      ctermfg=black       ctermbg=NONE        cterm=NONE
+hi NonText          guifg=#2c43db     guibg=#1c1c1c       gui=NONE      ctermfg=blue       ctermbg=NONE        cterm=NONE
 
 hi Cursor           guifg=black       guibg=white       gui=NONE      ctermfg=black       ctermbg=white       cterm=reverse
 hi LineNr           guifg=#3D3D3D     guibg=#1c1c1c       gui=NONE      ctermfg=darkgray    ctermbg=NONE        cterm=NONE
@@ -126,7 +126,7 @@ hi Operator         guifg=#5fd7ff     guibg=NONE        gui=NONE      ctermfg=wh
 
 if &t_Co == 256
 	hi Normal           ctermfg=230        ctermbg=234        cterm=NONE
-	hi NonText          ctermfg=232       ctermbg=NONE        cterm=NONE
+	hi NonText          ctermfg=blue       ctermbg=NONE        cterm=NONE
 
 	hi Cursor           ctermfg=black       ctermbg=white       cterm=reverse
 	hi LineNr           ctermfg=237    ctermbg=NONE        cterm=NONE
