@@ -1,6 +1,5 @@
 source ~/.mutt/config/iface
 source ~/.mutt/config/keys
-source ~/.mutt/config/folders
 source ~/.mutt/config/mime
 source ~/.mutt/config/address
 source ~/.mutt/config/account
