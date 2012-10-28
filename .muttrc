@@ -1,2 +1,2 @@
-source ~/.mutt/config/muttlike
+source ~/.mutt/profile.active
 set header_cache=~/.mutt/header_cache/

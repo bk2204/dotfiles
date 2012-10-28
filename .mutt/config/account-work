@@ -1,0 +1,27 @@
+# SMTP.
+set smtp_url=smtps://brian.carlson%40cpanel.net@mail.cpanel.net/
+set smtp_authenticators="plain"
+# IMAP.
+set imap_user=brian.carlson@cpanel.net
+set imap_passive=no
+set imap_check_subscribed=yes
+set imap_peek=no
+set imap_idle=yes
+set imap_authenticators="plain"
+set imap_check_subscribed=yes
+set imap_list_subscribed=yes
+set imap_headers="X-CRM114-STATUS"
+# Folders.
+set folder=imaps://mail.cpanel.net/
+set spoolfile=imaps://mail.cpanel.net/INBOX
+set move=no
+set delete_untag=yes
+set postponed="=INBOX.Drafts"
+set record="=INBOX.Sent"
+set pipe_split=yes
+# Headers.
+set hostname=vauxhall.crustytoothpaste.net
+my_hdr From: brian m. carlson <brian.carlson@cpanel.net>
+# Crypto.
+set pgp_sign_as="0x74227D70!"
+# vim: set syntax=muttrc:
