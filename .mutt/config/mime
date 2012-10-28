@@ -8,9 +8,6 @@ unignore X-CRM114-Status
 color header black yellow ^X-CRM114-Status:.*UNSURE.*
 spam "X-CRM114-Status:.*SPAM" CRM114
 nospam "X-CRM114-Status:.*Good"
-set hostname=crustytoothpaste.ath.cx
-my_hdr From: brian m. carlson <sandals@crustytoothpaste.net>
-my_hdr X-No-CC: If you CC me on this list, I will feed you to Branden Robinson.
 my_hdr X-Machine: Running on `uname -n` using `uname -o` on `uname -m` (`uname -s` kernel `uname -r`)
 set header=no
 set edit_headers=yes
