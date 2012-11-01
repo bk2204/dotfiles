@@ -25,6 +25,7 @@ HISTFILE=~/.zsh_history
 # Set key bindings.
 bindkey -v
 bindkey '^I' complete-word
+bindkey '^R' history-incremental-search-backward
 bindkey '\eOF' vi-end-of-line
 bindkey '\eOH' vi-beginning-of-line
 
