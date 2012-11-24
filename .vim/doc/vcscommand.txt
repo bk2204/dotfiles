@@ -1,0 +1,1 @@
+../bundle/vcscommand/doc/vcscommand.txt

@@ -1,0 +1,26 @@
+[giggle]
+	compact-mode = false
+	main-window-geometry = 0x0+0+0
+	main-window-maximized = true
+	history-view-vpane-position = 369
+	main-window-view = HistoryView
+	file-view-vpane-position = 161
+[alias]
+	los = log --simplify-merges
+	lops = log -p --simplify-merges
+[repack]
+	UseDeltaBaseOffset = true
+[user]
+	email = 
+	name = 
+	signingkey = 1F52F68B!
+[push]
+	default = matching
+[transfer]
+	unpackLimit = 5
+[url "git+ssh://git.crustytoothpaste.net/srv/scm/git/bmc/repo/"]
+	insteadOf = dct:
+[url "git@github.com:bk2204/"]
+	insteadOf = gh:
+[color]
+	ui = auto
