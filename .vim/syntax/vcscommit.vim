@@ -1,0 +1,1 @@
+../bundle/vcscommand/syntax/vcscommit.vim
