@@ -30,7 +30,12 @@ if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
-call pathogen#infect()
+" Ignore vcscommand and pathogen in old versions of vim.
+if v:version < 700
+	let VCSCommandDisableAll = 1
+else
+	call pathogen#infect()
+endif
 
 syntax enable
 
