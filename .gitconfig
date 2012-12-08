@@ -6,6 +6,7 @@
 	main-window-view = HistoryView
 	file-view-vpane-position = 161
 [alias]
+	co = checkout
 	los = log --simplify-merges
 	lops = log -p --simplify-merges
 [repack]
