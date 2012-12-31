@@ -16,6 +16,7 @@ set history=50
 set ruler
 set foldmethod=marker
 set wildmode=longest,full
+set formatoptions+=n
 
 set modeline
 
