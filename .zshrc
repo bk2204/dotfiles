@@ -18,7 +18,7 @@ setopt rmstarsilent
 unsetopt bgnice notify nomatch
 
 # Set history.
-HISTSIZE=400
+HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 
@@ -26,6 +26,7 @@ HISTFILE=~/.zsh_history
 bindkey -v
 bindkey '^I' complete-word
 bindkey '^R' history-incremental-search-backward
+bindkey '^S' history-incremental-search-forward
 bindkey '\eOF' vi-end-of-line
 bindkey '\eOH' vi-beginning-of-line
 
@@ -222,6 +223,16 @@ setup_completion ()
 	zstyle ':completion:*:manuals.*'  insert-sections   true
 	zstyle ':completion:*:man:*'      menu yes select
 	
+	# Search path for sudo completion
+	zstyle ':completion:*:sudo:*' command-path \
+		/usr/local/sbin \
+		/usr/local/bin  \
+		/usr/sbin       \
+		/usr/bin        \
+		/sbin           \
+		/bin			\
+		$HOME/bin
+
 	# provide .. as a completion
 	zstyle ':completion:*' special-dirs ..
 
