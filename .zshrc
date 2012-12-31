@@ -116,6 +116,9 @@ set_sane_term ()
 			has_term rxvt-256color && export TERM=rxvt-256color;;
 		*) ;;
 	esac
+
+	# Turn off flow control.
+	stty -ixon -ixoff >/dev/null 2>&1
 }
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
