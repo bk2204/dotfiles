@@ -18,7 +18,7 @@ setopt rmstarsilent
 unsetopt bgnice notify nomatch
 
 # Set history.
-HISTSIZE=400
+HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 
