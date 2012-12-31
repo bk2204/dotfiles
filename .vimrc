@@ -24,6 +24,9 @@ set encoding=utf-8
 
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
+" Show highlighting groups under cursor.
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 " We know xterm-debian is a color terminal
 if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Co=16
