@@ -223,6 +223,16 @@ setup_completion ()
 	zstyle ':completion:*:manuals.*'  insert-sections   true
 	zstyle ':completion:*:man:*'      menu yes select
 	
+	# Search path for sudo completion
+	zstyle ':completion:*:sudo:*' command-path \
+		/usr/local/sbin \
+		/usr/local/bin  \
+		/usr/sbin       \
+		/usr/bin        \
+		/sbin           \
+		/bin			\
+		$HOME/bin
+
 	# provide .. as a completion
 	zstyle ':completion:*' special-dirs ..
 
