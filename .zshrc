@@ -101,7 +101,7 @@ set_sane_term ()
 			done
 		fi
 	fi
-	is_ssh_session && return 0
+	is_ssh_session && [[ $SSH_TTY == $TTY ]] && return 0
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*xfce4-terminal)
 			has_term xterm-256color && export TERM=xterm-256color;;
