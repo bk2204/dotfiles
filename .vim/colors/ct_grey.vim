@@ -74,8 +74,8 @@ hi Cursor           guifg=black       guibg=white       gui=NONE      ctermfg=bl
 hi LineNr           guifg=#3D3D3D     guibg=#1c1c1c       gui=NONE      ctermfg=darkgray    ctermbg=NONE        cterm=NONE
 
 hi VertSplit        guifg=#202020     guibg=#202020     gui=NONE      ctermfg=darkgray    ctermbg=darkgray    cterm=NONE
-hi StatusLine       guifg=#CCCCCC     guibg=#202020     gui=NONE    ctermfg=white       ctermbg=darkgray    cterm=NONE
-hi StatusLineNC     guifg=#808080     guibg=#202020     gui=NONE      ctermfg=blue        ctermbg=darkgray    cterm=NONE
+hi StatusLine       guifg=#CCCCCC     guibg=#242424     gui=NONE    ctermfg=white       ctermbg=darkgray    cterm=NONE
+hi StatusLineNC     guifg=#808080     guibg=#242424     gui=NONE      ctermfg=blue        ctermbg=darkgray    cterm=NONE
 
 hi Folded           guifg=#a0a8b0     guibg=#384048     gui=NONE      ctermfg=NONE        ctermbg=NONE        cterm=NONE
 hi Title            guifg=#f6f3e8     guibg=NONE        gui=bold      ctermfg=NONE        ctermbg=NONE        cterm=NONE
@@ -134,8 +134,8 @@ if &t_Co == 256
 	hi LineNr           ctermfg=237    ctermbg=NONE        cterm=NONE
 
 	hi VertSplit        ctermfg=darkgray    ctermbg=darkgray    cterm=NONE
-	hi StatusLine       ctermfg=252       ctermbg=darkgray    cterm=NONE
-	hi StatusLineNC     ctermfg=blue        ctermbg=darkgray    cterm=NONE
+	hi StatusLine       ctermfg=252       ctermbg=235    cterm=NONE
+	hi StatusLineNC     ctermfg=blue        ctermbg=235    cterm=NONE
 
 	hi Folded           ctermfg=146        ctermbg=NONE        cterm=NONE
 	hi Title            ctermfg=230        ctermbg=NONE        cterm=NONE
