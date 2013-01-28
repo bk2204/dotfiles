@@ -24,4 +24,5 @@ set hostname=vauxhall.crustytoothpaste.net
 my_hdr From: brian m. carlson <brian.carlson@cpanel.net>
 # Crypto.
 set pgp_sign_as="0x74227D70!"
+set signature=~/.signature-work
 # vim: set syntax=muttrc:
