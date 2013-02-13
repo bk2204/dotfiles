@@ -140,6 +140,28 @@ do
 done
 compinit -u 2>/dev/null
 
+choose_prompt () {
+	local km=$1
+	[[ -n $km ]] || km=$KEYMAP
+	case $km in
+		vicmd)		psvar[3]="◈◈";;
+		viins|main)	psvar[3]=();;
+	esac
+}
+
+function zle-keymap-select {
+	choose_prompt
+	zle reset-prompt
+}
+
+function zle-line-init zle-line-finish {
+	choose_prompt "main"
+}
+
+zle -N zle-line-init
+zle -N zle-line-finish
+zle -N zle-keymap-select
+
 # Set up the prompt.
 promptinit
 prompt bmc

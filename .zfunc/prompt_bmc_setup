@@ -63,6 +63,7 @@ prompt_bmc_setup_base ()
 	local p_userpwd p_datetime p_tty p_ret p_pchar p_status p_branch
 	local p_shlvl
 	local p_power
+	local p_mode
 	
 	local i j
 
@@ -107,9 +108,10 @@ prompt_bmc_setup_base ()
 	p_failed="$pcc[6]failed$c_reset"
 	p_retcode="$pcc[6]%?$c_reset"
 	p_signame="$pcc[6]%1v$c_reset"
+	p_mode="%(3v.%3v.%(?.ok.no))"
 
 	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
-	p_ret2="$pcc[9]%m %(?.ok.no)$c_reset"
+	p_ret2="$pcc[9]%m $p_mode$c_reset"
 
 	p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
 
@@ -157,6 +159,8 @@ prompt_bmc_setup ()
 			"no  cyan" \
 			"no  cyan"
 	fi
+
+	choose_prompt "main"
 }
 
 # In this function, we have to put the setopt after the exitstatus assignment,
