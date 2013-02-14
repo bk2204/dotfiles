@@ -103,12 +103,12 @@ prompt_bmc_setup_base ()
 	p_tty="$pcc[7]%l$c_reset"
 
 	p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
-	p_power="%(2v.($pcc[7]%2v$c_reset).)"
+	p_power="%(2V.($pcc[7]%2v$c_reset).)"
 
 	p_failed="$pcc[6]failed$c_reset"
 	p_retcode="$pcc[6]%?$c_reset"
 	p_signame="$pcc[6]%1v$c_reset"
-	p_mode="%(3v.%3v.%(?.ok.no))"
+	p_mode="%(3V.%3v.%(?.ok.no))"
 
 	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
 	p_ret2="$pcc[9]%m $p_mode$c_reset"
