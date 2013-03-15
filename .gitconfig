@@ -7,6 +7,11 @@
 	file-view-vpane-position = 161
 [alias]
 	co = checkout
+	st = status
+	pff = pull --ff-only
+	pnff = pull --no-ff
+	mff = merge --ff-only
+	mnff = merge --no-ff
 	los = log --simplify-merges
 	lops = log -p --simplify-merges
 [repack]
