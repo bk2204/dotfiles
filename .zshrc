@@ -111,7 +111,8 @@ set_sane_term ()
 			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*konsole)
 			has_term konsole-256color && export TERM=konsole-256color;;
-		screen:*)
+		screen*:*)
+			EDITOR=vim;
 			has_term screen-256color && export TERM=screen-256color;;
 		rxvt:*mrxvt-full)
 			has_term rxvt-256color && export TERM=rxvt-256color;;
@@ -125,6 +126,8 @@ set_sane_term ()
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
 set_sane_term
+
+VISUAL="$EDITOR"
 
 # Autoload some stuff.
 for func in $^fpath/*(.:t);

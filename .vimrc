@@ -80,6 +80,8 @@ augroup end
 " For /bin/sh.
 let g:is_posix=1
 
+let g:syntastic_perl_lib_path = './lib'
+
 " Set paper size from /etc/papersize if available (Debian-specific)
 if filereadable('/etc/papersize')
 	let s:papersize = matchstr(system('/bin/cat /etc/papersize'), '\p*')
