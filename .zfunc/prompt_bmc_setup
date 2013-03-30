@@ -175,6 +175,8 @@ prompt_bmc_precmd () {
 	case $TERM in
 		xterm*|gnome*)
 			print -Pn '\e]0;%n@%m: %~\a';;
+		screen*)
+			print -Pn '\ek%n@%m: %~\e\\';;
 	esac
 
 	vcs_info
