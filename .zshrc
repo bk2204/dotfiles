@@ -7,6 +7,8 @@ then
 	alias ls='ls --color=auto'
 fi
 
+alias loadenv='eval `cat $HOME/.environment`'
+
 # Set prompts.
 PROMPT='%n@%m:%~(%?%)%# '
 
@@ -126,6 +128,14 @@ set_sane_term ()
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
 set_sane_term
+
+if is_ssh_session
+then
+	(
+		[[ -n $SSH_AUTH_SOCK ]] && print "SSH_AUTH_SOCK=$SSH_AUTH_SOCK";
+		[[ -n $DISPLAY ]] && print "DISPLAY=$DISPLAY";
+	) > $HOME/.environment
+fi
 
 VISUAL="$EDITOR"
 
