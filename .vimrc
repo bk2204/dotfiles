@@ -2,6 +2,7 @@
 
 set ts=4
 set sw=4
+set sts=4
 set uc=0
 set noet
 
@@ -72,7 +73,7 @@ augroup setl
   au FileType c					setl cin cino=t0
   au FileType cpp				setl cin cino=t0
   au FileType cs				setl cin cino=t0
-  au FileType rst				setl et si ts=2 sw=2
+  au FileType rst				setl et si ts=2 sw=2 sts=2
   au FileType mail			setl tw=72
   au FileType asciidoc	setl ts=2 sw=2
 augroup end
