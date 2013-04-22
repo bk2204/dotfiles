@@ -67,15 +67,15 @@ augroup end
 augroup setl
   au FileType python		setl et si
   au FileType docbkxml	setl cms=<!--%s-->
-  au FileType xslt			setl tw=0 ts=2 sw=2 noet
-  au FileType sass			setl tw=0 ts=4 sw=4 noet
-  au FileType scss			setl tw=0 ts=4 sw=4 noet
+  au FileType xslt			setl tw=0 ts=2 sw=2 sts=2 noet
+  au FileType sass			setl tw=0 ts=4 sw=4 sts=4 noet
+  au FileType scss			setl tw=0 ts=4 sw=4 sts=4 noet
   au FileType c					setl cin cino=t0
   au FileType cpp				setl cin cino=t0
   au FileType cs				setl cin cino=t0
   au FileType rst				setl et si ts=2 sw=2 sts=2
   au FileType mail			setl tw=72
-  au FileType asciidoc	setl ts=2 sw=2
+  au FileType asciidoc	setl ts=2 sw=2 sts=2
 augroup end
 
 " For /bin/sh.
