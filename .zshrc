@@ -124,10 +124,70 @@ set_sane_term ()
 	# Turn off flow control.
 	stty -ixon -ixoff >/dev/null 2>&1
 }
+set_keybindings () {
+	# Set up key handling for non-Debian systems.  This is already handled
+	# properly in Debian, since this code has been taken from Debian's
+	# /etc/zsh/zshrc.
+	typeset -A key
+	key=(
+		BackSpace  "${terminfo[kbs]}"
+		Home       "${terminfo[khome]}"
+		End        "${terminfo[kend]}"
+		Insert     "${terminfo[kich1]}"
+		Delete     "${terminfo[kdch1]}"
+		Up         "${terminfo[kcuu1]}"
+		Down       "${terminfo[kcud1]}"
+		Left       "${terminfo[kcub1]}"
+		Right      "${terminfo[kcuf1]}"
+		PageUp     "${terminfo[kpp]}"
+		PageDown   "${terminfo[knp]}"
+	)
+
+	function bind2maps () {
+		local i sequence widget
+		local -a maps
+
+		while [[ "$1" != "--" ]]; do
+			maps+=( "$1" )
+			shift
+		done
+		shift
+
+		sequence="${key[$1]}"
+		widget="$2"
+
+		[[ -z "$sequence" ]] && return 1
+
+		for i in "${maps[@]}"; do
+			bindkey -M "$i" "$sequence" "$widget"
+		done
+	}
+
+	bind2maps emacs             -- BackSpace   backward-delete-char
+	bind2maps       viins       -- BackSpace   vi-backward-delete-char
+	bind2maps             vicmd -- BackSpace   vi-backward-char
+	bind2maps emacs             -- Home        beginning-of-line
+	bind2maps       viins vicmd -- Home        vi-beginning-of-line
+	bind2maps emacs             -- End         end-of-line
+	bind2maps       viins vicmd -- End         vi-end-of-line
+	bind2maps emacs viins       -- Insert      overwrite-mode
+	bind2maps             vicmd -- Insert      vi-insert
+	bind2maps emacs             -- Delete      delete-char
+	bind2maps       viins vicmd -- Delete      vi-delete-char
+	bind2maps emacs viins vicmd -- Up          up-line-or-history
+	bind2maps emacs viins vicmd -- Down        down-line-or-history
+	bind2maps emacs             -- Left        backward-char
+	bind2maps       viins vicmd -- Left        vi-backward-char
+	bind2maps emacs             -- Right       forward-char
+	bind2maps       viins vicmd -- Right       vi-forward-char
+
+	unfunction bind2maps
+}
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
 set_sane_term
+set_keybindings
 
 if is_ssh_session
 then
@@ -167,7 +227,18 @@ function zle-keymap-select {
 	zle reset-prompt
 }
 
-function zle-line-init zle-line-finish {
+function zle-line-init () {
+	if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
+		emulate -L zsh
+		printf '%s' ${terminfo[smkx]}
+	fi
+	choose_prompt "main"
+}
+function zle-line-finish () {
+	if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
+		emulate -L zsh
+		printf '%s' ${terminfo[rmkx]}
+	fi
 	choose_prompt "main"
 }
 
@@ -257,7 +328,7 @@ setup_completion ()
 	zstyle ':completion:*:manuals'    separate-sections true
 	zstyle ':completion:*:manuals.*'  insert-sections   true
 	zstyle ':completion:*:man:*'      menu yes select
-	
+
 	# Search path for sudo completion
 	zstyle ':completion:*:sudo:*' command-path \
 		/usr/local/sbin \
@@ -284,7 +355,7 @@ setup_completion ()
 
 	# caching
 	[[ -d $ZSHDIR/cache ]] && zstyle ':completion:*' use-cache yes && \
-	zstyle ':completion::complete:*' cache-path $ZSHDIR/cache/
+		zstyle ':completion::complete:*' cache-path $ZSHDIR/cache/
 
 	# host completion /* add brackets as vim can't parse zsh's complex cmdlines 8-) {{{ */
 	[[ -r ~/.ssh/known_hosts ]] && _ssh_hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[\|]*}%%\ *}%%,*}) || _ssh_hosts=()
@@ -323,7 +394,7 @@ setup_completion ()
 	# use generic completion system for programs not yet defined; (_gnu_generic works
 	# with commands that provide a --help option with "standard" gnu-like output.)
 	for compcom in	cp deborphan df feh fetchipac head hnb ipacsum mv \
-					pal stow tail uname ; do
+		pal stow tail uname ; do
 		[[ -z ${_comps[$compcom]} ]] && compdef _gnu_generic ${compcom}
 	done; unset compcom
 
