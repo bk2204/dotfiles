@@ -18,6 +18,7 @@ set ruler
 set foldmethod=marker
 set wildmode=longest,full
 set formatoptions+=n
+set laststatus=2
 
 set modeline
 
@@ -82,6 +83,8 @@ augroup end
 let g:is_posix=1
 
 let g:syntastic_perl_lib_path = './lib'
+let g:Powerline_symbols = 'unicode'
+let g:Powerline_colorscheme = 'solarized256'
 
 " Set paper size from /etc/papersize if available (Debian-specific)
 if filereadable('/etc/papersize')
