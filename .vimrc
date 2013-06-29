@@ -118,4 +118,4 @@ else
 	colorscheme ct_grey
 endif
 
-" vim: set ts=2 sw=2 noet:
+" vim: set ts=2 sw=2 sts=2 noet:
