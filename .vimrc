@@ -19,6 +19,7 @@ set foldmethod=marker
 set wildmode=longest,full
 set formatoptions+=n
 set laststatus=2
+set spc=
 
 set modeline
 
@@ -54,29 +55,31 @@ if has("autocmd")
 endif
 
 augroup setf
-	au BufEnter,BufRead,BufNewFile reportbug.*	setf mail
-	au BufEnter,BufRead,BufNewFile reportbug-*	setf mail
-	au BufEnter,BufRead,BufNewFile *.mx					setf groff
-	au BufEnter,BufRead,BufNewFile *.xml				setf xml
-	au BufEnter,BufRead,BufNewFile *.xsl				setf xslt
-	au BufEnter,BufRead,BufNewFile *.dbx				setf docbkxml
-	au BufEnter,BufRead,BufNewFile *.pasm				setf parrot 
-	au BufEnter,BufRead,BufNewFile *.pir				setf pir 
-	au BufEnter,BufRead,BufNewFile *.txt				setf asciidoc 
+	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
+	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
+	au BufEnter,BufRead,BufNewFile *.mx											setf groff
+	au BufEnter,BufRead,BufNewFile *.xml										setf xml
+	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
+	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
+	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
+	au BufEnter,BufRead,BufNewFile *.pir										setf pir
+	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
+	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
 augroup end
 
 augroup setl
-  au FileType python		setl et si
-  au FileType docbkxml	setl cms=<!--%s-->
-  au FileType xslt			setl tw=0 ts=2 sw=2 sts=2 noet
-  au FileType sass			setl tw=0 ts=4 sw=4 sts=4 noet
-  au FileType scss			setl tw=0 ts=4 sw=4 sts=4 noet
-  au FileType c					setl cin cino=t0
-  au FileType cpp				setl cin cino=t0
-  au FileType cs				setl cin cino=t0
-  au FileType rst				setl et si ts=2 sw=2 sts=2
-  au FileType mail			setl tw=72
-  au FileType asciidoc	setl ts=2 sw=2 sts=2
+	au FileType python		setl et si
+	au FileType docbkxml	setl cms=<!--%s-->
+	au FileType xslt			setl tw=0 ts=2 sw=2 sts=2 noet
+	au FileType sass			setl tw=0 ts=4 sw=4 sts=4 noet
+	au FileType scss			setl tw=0 ts=4 sw=4 sts=4 noet
+	au FileType c					setl cin cino=t0
+	au FileType cpp				setl cin cino=t0
+	au FileType cs				setl cin cino=t0
+	au FileType rst				setl et si ts=2 sw=2 sts=2 spell
+	au FileType mail			setl tw=72 spell
+	au FileType asciidoc	setl ts=2 sw=2 sts=2 spell
+	au FileType gitcommit	setl spell
 augroup end
 
 " For /bin/sh.
@@ -85,6 +88,8 @@ let g:is_posix=1
 let g:syntastic_perl_lib_path = './lib'
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'solarized256'
+let g:ctrlp_extensions = ['buffertag']
+let g:ctrlp_clear_cache_on_exit = 0
 
 " Set paper size from /etc/papersize if available (Debian-specific)
 if filereadable('/etc/papersize')
@@ -113,4 +118,4 @@ else
 	colorscheme ct_grey
 endif
 
-" vim: set ts=2 sw=2 noet:
+" vim: set ts=2 sw=2 sts=2 noet:
