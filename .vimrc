@@ -55,15 +55,16 @@ if has("autocmd")
 endif
 
 augroup setf
-	au BufEnter,BufRead,BufNewFile reportbug.*	setf mail
-	au BufEnter,BufRead,BufNewFile reportbug-*	setf mail
-	au BufEnter,BufRead,BufNewFile *.mx					setf groff
-	au BufEnter,BufRead,BufNewFile *.xml				setf xml
-	au BufEnter,BufRead,BufNewFile *.xsl				setf xslt
-	au BufEnter,BufRead,BufNewFile *.dbx				setf docbkxml
-	au BufEnter,BufRead,BufNewFile *.pasm				setf parrot 
-	au BufEnter,BufRead,BufNewFile *.pir				setf pir 
-	au BufEnter,BufRead,BufNewFile *.txt				setf asciidoc 
+	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
+	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
+	au BufEnter,BufRead,BufNewFile *.mx											setf groff
+	au BufEnter,BufRead,BufNewFile *.xml										setf xml
+	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
+	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
+	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
+	au BufEnter,BufRead,BufNewFile *.pir										setf pir
+	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
+	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
 augroup end
 
 augroup setl
