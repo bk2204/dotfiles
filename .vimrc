@@ -88,6 +88,8 @@ let g:is_posix=1
 let g:syntastic_perl_lib_path = './lib'
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'solarized256'
+let g:ctrlp_extensions = ['buffertag']
+let g:ctrlp_clear_cache_on_exit = 0
 
 " Set paper size from /etc/papersize if available (Debian-specific)
 if filereadable('/etc/papersize')
