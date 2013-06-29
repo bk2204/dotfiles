@@ -19,6 +19,7 @@ set foldmethod=marker
 set wildmode=longest,full
 set formatoptions+=n
 set laststatus=2
+set spc=
 
 set modeline
 
@@ -74,9 +75,10 @@ augroup setl
   au FileType c					setl cin cino=t0
   au FileType cpp				setl cin cino=t0
   au FileType cs				setl cin cino=t0
-  au FileType rst				setl et si ts=2 sw=2 sts=2
-  au FileType mail			setl tw=72
-  au FileType asciidoc	setl ts=2 sw=2 sts=2
+  au FileType rst				setl et si ts=2 sw=2 sts=2 spell
+  au FileType mail			setl tw=72 spell
+  au FileType asciidoc	setl ts=2 sw=2 sts=2 spell
+  au FileType gitcommit	setl spell
 augroup end
 
 " For /bin/sh.
