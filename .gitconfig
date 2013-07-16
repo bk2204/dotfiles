@@ -30,3 +30,14 @@
 	insteadOf = gh:
 [color]
 	ui = auto
+[sendemail]
+	smtpuser = bmc
+	smtppass =
+	smtpencryption = tls
+	smtpserver = castro.crustytoothpaste.net
+	smtpserverport = 587
+	suppresscc = all
+	assume8bitEncoding = UTF-8
+	confirm = always
+	composeencoding = UTF-8
+	chainreplyto = false

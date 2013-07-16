@@ -85,6 +85,8 @@ augroup end
 " For /bin/sh.
 let g:is_posix=1
 
+let g:perl_include_pod = 0
+
 let g:syntastic_perl_lib_path = './lib'
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'solarized256'
