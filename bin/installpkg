@@ -10,7 +10,10 @@ then
 	printf "%s\n" "$@"
 else
 	dpkg-checkbuilddeps 2>&1 | perl -pe 's/^.*dependencies: //'
-fi) | perl -e '$_=join(" ",<>);' \
-	-e 'print join(" ", (grep{!m/(^\(|\)$)/}split /\s+/)), "\n";' >> "$FILENAME"
+fi) | \
+	perl -E '$_=join(" ",<>);' \
+	-E '@x = split /\s+/, s/([a-z0-9.-]+)(\s*\|\s*([a-z0-9.-]+))*/$1/gr;' \
+	-E 'print join(" ", (grep{ !m/(^\(|\)$) / } @x)), "\n";' \
+	>> "$FILENAME"
 
 sudo aptitude --without-recommends install $(cat "$FILENAME")
