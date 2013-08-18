@@ -43,7 +43,7 @@ if v:version < 700
 	let VCSCommandDisableAll = 1
 else
 	let Fn = function("pathogen#infect")
-	call Fn()
+	execute Fn()
 endif
 
 syntax enable
