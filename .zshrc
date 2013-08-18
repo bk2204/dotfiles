@@ -400,6 +400,11 @@ setup_completion ()
 
 	# see upgrade function in this file
 	compdef _hosts upgrade
+
+	# Fix extreme slowness in large repositories.
+	function __git_files () {
+		_wanted files expl 'local files' _files
+	}
 }
 
 # Set locales.
