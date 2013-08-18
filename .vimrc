@@ -29,6 +29,7 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 
 " Show highlighting groups under cursor.
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+map <Leader><Leader> "*
 
 " We know xterm-debian is a color terminal
 if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
@@ -42,7 +43,7 @@ if v:version < 700
 	let VCSCommandDisableAll = 1
 else
 	let Fn = function("pathogen#infect")
-	call Fn()
+	execute Fn()
 endif
 
 syntax enable
