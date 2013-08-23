@@ -12,8 +12,9 @@ else
 	dpkg-checkbuilddeps 2>&1 | perl -pe 's/^.*dependencies: //'
 fi) | \
 	perl -E '$_=join(" ",<>);' \
-	-E '@x = split /\s+/, s/([a-z0-9.-]+)(\s*\|\s*([a-z0-9.-]+))*/$1/gr;' \
-	-E 'print join(" ", (grep{ !m/(^\(|\)$) / } @x)), "\n";' \
+	-E 's/\(.*?\)/ /g;' \
+	-E 's/([a-z0-9.-]+)(\s*\|\s*([a-z0-9.-]+))*/$1/g;' \
+	-E 'print join(" ", split /\s+/), "\n";' \
 	>> "$FILENAME"
 
 sudo aptitude --without-recommends install $(cat "$FILENAME")
