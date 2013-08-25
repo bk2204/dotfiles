@@ -123,6 +123,12 @@ set_sane_term ()
 
 	# Turn off flow control.
 	stty -ixon -ixoff >/dev/null 2>&1
+
+	if [[ -x $(which tabs) ]] && [[ -x $(which perl) ]] && [[ -n $COLUMNS ]]
+	then
+		# Set up 4-space tabs.
+		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
+	fi
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
