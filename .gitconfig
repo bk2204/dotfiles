@@ -5,6 +5,10 @@
 	history-view-vpane-position = 369
 	main-window-view = HistoryView
 	file-view-vpane-position = 161
+[user]
+	name =
+	email =
+	signingkey = 1F52F68B!
 [alias]
 	co = checkout
 	st = status
@@ -14,20 +18,20 @@
 	mnff = merge --no-ff
 	los = log --simplify-merges
 	lops = log -p --simplify-merges
+[i18n]
+	commitencoding = UTF-8
 [repack]
 	UseDeltaBaseOffset = true
-[user]
-	email = 
-	name = 
-	signingkey = 1F52F68B!
-[push]
-	default = matching
 [transfer]
 	unpackLimit = 5
 [url "git+ssh://git.crustytoothpaste.net/srv/scm/git/bmc/repo/"]
 	insteadOf = dct:
 [url "git@github.com:bk2204/"]
 	insteadOf = gh:
+[push]
+	default = matching
+[pull]
+	rebase = false
 [color]
 	ui = auto
 [sendemail]
