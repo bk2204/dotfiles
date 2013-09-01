@@ -22,6 +22,8 @@
 	signingkey = 1F52F68B!
 [push]
 	default = matching
+[pull]
+	rebase = false
 [transfer]
 	unpackLimit = 5
 [url "git+ssh://git.crustytoothpaste.net/srv/scm/git/bmc/repo/"]
