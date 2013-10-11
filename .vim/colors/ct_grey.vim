@@ -88,7 +88,7 @@ hi PmenuSbar        guifg=black       guibg=white       gui=NONE      ctermfg=bl
 "hi Ignore           guifg=gray        guibg=#1c1c1c       gui=NONE      ctermfg=NONE        ctermbg=NONE        cterm=NONE
 
 hi ErrorMsg         guifg=white       guibg=#a81d1d     gui=BOLD      ctermfg=white       ctermbg=red         cterm=NONE
-hi WarningMsg       guifg=white       guibg=#a81d1d     gui=BOLD      ctermfg=white       ctermbg=red         cterm=NONE
+hi WarningMsg       guifg=#1c1c1c     guibg=yellow      gui=BOLD      ctermfg=black       ctermbg=yellow      cterm=NONE
 
 " Message displayed in lower left, such as --INSERT--
 hi ModeMsg          guifg=black       guibg=#C6C5FE     gui=BOLD      ctermfg=black       ctermbg=cyan        cterm=BOLD
@@ -148,7 +148,7 @@ if &t_Co == 256
 
 	hi Error            ctermfg=white       ctermbg=203         cterm=NONE
 	hi ErrorMsg         ctermfg=white       ctermbg=203         cterm=NONE
-	hi WarningMsg       ctermfg=white       ctermbg=203         cterm=NONE
+	hi WarningMsg       ctermfg=234         ctermbg=yellow         cterm=NONE
 
 	hi ModeMsg          ctermfg=black       ctermbg=147        cterm=BOLD
 
