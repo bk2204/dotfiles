@@ -47,3 +47,7 @@
 	confirm = always
 	composeencoding = UTF-8
 	chainreplyto = false
+[diff]
+	renames = copies
+[merge]
+	conflictstyle = diff3
