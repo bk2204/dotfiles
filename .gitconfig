@@ -51,3 +51,4 @@
 	renames = copies
 [merge]
 	conflictstyle = diff3
+# vim: set noet:
