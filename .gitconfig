@@ -24,7 +24,7 @@
 	UseDeltaBaseOffset = true
 [transfer]
 	unpackLimit = 5
-[url "git+ssh://git.crustytoothpaste.net/srv/scm/git/bmc/repo/"]
+[url "https://bmc@git.crustytoothpaste.net/git/bmc/"]
 	insteadOf = dct:
 [url "git@github.com:bk2204/"]
 	insteadOf = gh:
@@ -51,3 +51,4 @@
 	renames = copies
 [merge]
 	conflictstyle = diff3
+# vim: set noet:
