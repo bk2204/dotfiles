@@ -17,11 +17,12 @@ add_to_classpath () {
 }
 
 add_to_classpath /etc/xml/resolver
-add_to_classpath "$JAR_DIR/xml-commons-resolver-1.1.jar"
+add_to_classpath "$JAR_DIR/xml-resolver.jar"
 add_to_classpath "$JAR_DIR/xercesImpl.jar"
 add_to_classpath "$JAR_DIR/xmlParserAPIs.jar"
-add_to_classpath "$JAR_HOME/isorelax.jar"
-add_to_classpath "$JAR_HOME/relaxngDatatype.jar"
-add_to_classpath "$JAR_HOME/xsdlib.jar"
+add_to_classpath "$JAR_DIR/iri.jar"
+add_to_classpath "$JAR_DIR/isorelax.jar"
+add_to_classpath "$JAR_DIR/relaxngDatatype.jar"
+add_to_classpath "$JAR_DIR/xsdlib.jar"
 
 exec $JAVA_EXE -cp "$CLASSPATH" -jar "$JAR_HOME/msv.jar" "$@"
