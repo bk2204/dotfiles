@@ -19,6 +19,8 @@ set foldmethod=marker
 set wildmode=longest,full
 set laststatus=2
 set spc=
+" The vim packages I'm using don't have sorted tag files for the help.
+set notagbsearch
 
 set modeline
 
