@@ -64,6 +64,7 @@ augroup setf
 	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
 	au BufEnter,BufRead,BufNewFile *.pir										setf pir
 	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
+	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
 	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
 augroup end
 
