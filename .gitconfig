@@ -18,6 +18,7 @@
 	mnff = merge --no-ff
 	los = log --simplify-merges
 	lops = log -p -C --simplify-merges
+	lsf = ls-files
 [i18n]
 	commitencoding = UTF-8
 [repack]
