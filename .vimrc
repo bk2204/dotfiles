@@ -70,6 +70,7 @@ augroup end
 
 augroup setl
 	au FileType python		setl et si
+	au FileType ruby			setl ts=2 sw=2 sts=2 et si
 	au FileType docbkxml	setl cms=<!--%s-->
 	au FileType xslt			setl tw=0 ts=2 sw=2 sts=2 noet
 	au FileType sass			setl tw=0 ts=4 sw=4 sts=4 noet
