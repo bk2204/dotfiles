@@ -19,6 +19,8 @@ set foldmethod=marker
 set wildmode=longest,full
 set laststatus=2
 set spc=
+set flp=^[-*+]\\+\\s\\+
+set fo+=n
 " The vim packages I'm using don't have sorted tag files for the help.
 set notagbsearch
 
@@ -72,6 +74,7 @@ augroup end
 
 augroup setl
 	au FileType python		setl et si
+	au FileType ruby			setl ts=2 sw=2 sts=2 et si
 	au FileType docbkxml	setl cms=<!--%s-->
 	au FileType xslt			setl tw=0 ts=2 sw=2 sts=2 noet
 	au FileType sass			setl tw=0 ts=4 sw=4 sts=4 noet
@@ -81,8 +84,8 @@ augroup setl
 	au FileType cs				setl cin cino=t0
 	au FileType rst				setl et si ts=2 sw=2 sts=2 spell
 	au FileType mail			setl tw=72 spell
-	au FileType asciidoc	setl ts=2 sw=2 sts=2 spell com=b://
-	au FileType gitcommit	setl spell com=b:#
+	au FileType asciidoc	setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType gitcommit	setl tw=80 spell com=b:#
 augroup end
 
 " For /bin/sh.

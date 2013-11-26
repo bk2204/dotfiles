@@ -129,6 +129,9 @@ set_sane_term ()
 		# Set up 4-space tabs.
 		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
 	fi
+
+	# Make sure that other people can't mess with our terminal.
+	mesg n >/dev/null 2>&1
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
