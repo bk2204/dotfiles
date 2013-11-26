@@ -19,6 +19,8 @@ set foldmethod=marker
 set wildmode=longest,full
 set laststatus=2
 set spc=
+set flp=^[-*+]\\+\\s\\+
+set fo+=n
 
 set modeline
 
