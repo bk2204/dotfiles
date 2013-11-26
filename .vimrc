@@ -82,8 +82,8 @@ augroup setl
 	au FileType cs				setl cin cino=t0
 	au FileType rst				setl et si ts=2 sw=2 sts=2 spell
 	au FileType mail			setl tw=72 spell
-	au FileType asciidoc	setl ts=2 sw=2 sts=2 spell com=b://
-	au FileType gitcommit	setl spell com=b:#
+	au FileType asciidoc	setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType gitcommit	setl tw=80 spell com=b:#
 augroup end
 
 " For /bin/sh.
