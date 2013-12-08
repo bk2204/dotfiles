@@ -104,19 +104,20 @@ set_sane_term ()
 		fi
 	fi
 	is_ssh_session && [[ $SSH_TTY == $TTY ]] && return 0
+	# Add the * to the end to catch the potential " (deleted)" that may occur.
 	case "$TERM:`readlink /proc/$PPID/exe`" in
-		xterm:*xfce4-terminal)
+		xterm:*xfce4-terminal*)
 			has_term xterm-256color && export TERM=xterm-256color;;
-		xterm:*gnome-terminal)
+		xterm:*gnome-terminal*)
 			has_term xterm-256color && export TERM=xterm-256color;;
-		xterm:*evilvte)
+		xterm:*evilvte*)
 			has_term xterm-256color && export TERM=xterm-256color;;
-		xterm:*konsole)
+		xterm:*konsole*)
 			has_term konsole-256color && export TERM=konsole-256color;;
 		screen*:*)
 			EDITOR=vim;
 			has_term screen-256color && export TERM=screen-256color;;
-		rxvt:*mrxvt-full)
+		rxvt:*mrxvt-full*)
 			has_term rxvt-256color && export TERM=rxvt-256color;;
 		*) ;;
 	esac
