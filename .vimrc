@@ -45,6 +45,7 @@ endif
 if v:version < 700
 	let VCSCommandDisableAll = 1
 else
+	runtime autoload/pathogen.vim
 	let Fn = function("pathogen#infect")
 	execute Fn()
 endif
