@@ -72,19 +72,21 @@ augroup setf
 augroup end
 
 augroup setl
-	au FileType python		setl et si
-	au FileType ruby			setl ts=2 sw=2 sts=2 et si
-	au FileType docbkxml	setl cms=<!--%s-->
-	au FileType xslt			setl tw=0 ts=2 sw=2 sts=2 noet
-	au FileType sass			setl tw=0 ts=4 sw=4 sts=4 noet
-	au FileType scss			setl tw=0 ts=4 sw=4 sts=4 noet
-	au FileType c					setl cin cino=t0
-	au FileType cpp				setl cin cino=t0
-	au FileType cs				setl cin cino=t0
-	au FileType rst				setl et si ts=2 sw=2 sts=2 spell
-	au FileType mail			setl tw=72 spell com=n:>
-	au FileType asciidoc	setl tw=80 ts=2 sw=2 sts=2 spell com=b://
-	au FileType gitcommit	setl tw=80 spell com=b:#
+	au FileType python			setl et si
+	au FileType ruby				setl ts=2 sw=2 sts=2 et si
+	au FileType docbkxml		setl cms=<!--%s-->
+	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
+	au FileType sass				setl tw=0 ts=4 sw=4 sts=4 noet
+	au FileType scss				setl tw=0 ts=4 sw=4 sts=4 noet
+	au FileType c						setl cin cino=t0
+	au FileType cpp					setl cin cino=t0
+	au FileType cs					setl cin cino=t0
+	au FileType java				setl cin cino=t0,j1
+	au FileType javascript	setl cin cino=t0,j1,J1
+	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
+	au FileType mail				setl tw=72 spell com=n:>
+	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType gitcommit		setl tw=80 spell com=b:#
 augroup end
 
 " For /bin/sh.
