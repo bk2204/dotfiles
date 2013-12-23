@@ -33,7 +33,7 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 noremap <Leader><Leader> "*
 
 " We know xterm-debian is a color terminal
-if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
+if &term =~ "xterm" || &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
 	set t_Co=16
 	set t_Sf=[3%dm
 	set t_Sb=[4%dm
