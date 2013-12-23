@@ -57,6 +57,15 @@ if has("autocmd")
 	filetype plugin indent on
 endif
 
+function! s:SelectPerlSyntasticCheckers()
+	" If the file has at least 1000 lines
+	if len(getline(500, 500)) == 1 || !filereadable(expand("$HOME") . '/.perlcriticrc')
+		let b:syntastic_checkers = ['perl']
+	else
+		let b:syntastic_checkers = ['perl', 'perlcritic']
+	endif
+endfunction
+
 augroup setf
 	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
 	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
@@ -87,6 +96,10 @@ augroup setl
 	au FileType mail				setl tw=72 spell com=n:>
 	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
 	au FileType gitcommit		setl tw=80 spell com=b:#
+augroup end
+
+augroup call
+	au FileType perl				call s:SelectPerlSyntasticCheckers()
 augroup end
 
 " For /bin/sh.
