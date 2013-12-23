@@ -67,35 +67,35 @@ function! s:SelectPerlSyntasticCheckers()
 endfunction
 
 augroup setf
-	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
-	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
+	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
+	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
+	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
+	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
 	au BufEnter,BufRead,BufNewFile *.mx											setf groff
+	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
+	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
 	au BufEnter,BufRead,BufNewFile *.xml										setf xml
 	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
-	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
 	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
 	au BufEnter,BufRead,BufNewFile *.pir										setf pir
-	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
-	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
-	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
 augroup end
 
 augroup setl
-	au FileType python			setl et si
-	au FileType ruby				setl ts=2 sw=2 sts=2 et si
+	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType cpp					setl cin cino=t0
+	au FileType c						setl cin cino=t0
+	au FileType cs					setl cin cino=t0
 	au FileType docbkxml		setl cms=<!--%s-->
-	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
+	au FileType gitcommit		setl tw=80 spell com=b:#
+	au FileType javascript	setl cin cino=t0,j1,J1
+	au FileType java				setl cin cino=t0,j1
+	au FileType mail				setl tw=72 spell com=n:>
+	au FileType python			setl et si
+	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
+	au FileType ruby				setl ts=2 sw=2 sts=2 et si
 	au FileType sass				setl tw=0 ts=4 sw=4 sts=4 noet
 	au FileType scss				setl tw=0 ts=4 sw=4 sts=4 noet
-	au FileType c						setl cin cino=t0
-	au FileType cpp					setl cin cino=t0
-	au FileType cs					setl cin cino=t0
-	au FileType java				setl cin cino=t0,j1
-	au FileType javascript	setl cin cino=t0,j1,J1
-	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
-	au FileType mail				setl tw=72 spell com=n:>
-	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
-	au FileType gitcommit		setl tw=80 spell com=b:#
+	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
 augroup end
 
 augroup call
