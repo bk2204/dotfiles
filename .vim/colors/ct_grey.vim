@@ -100,9 +100,6 @@ if version >= 700 " Vim 7.x specific colors
   hi Pmenu          guifg=#f6f3e8     guibg=#444444     gui=NONE      ctermfg=NONE        ctermbg=NONE        cterm=NONE
   hi PmenuSel       guifg=#000000     guibg=#cae682     gui=NONE      ctermfg=NONE        ctermbg=NONE        cterm=NONE
   hi Search         guifg=NONE        guibg=NONE        gui=underline ctermfg=NONE        ctermbg=NONE        cterm=underline
-  hi Error          guifg=NONE        guibg=NONE        gui=undercurl ctermfg=white       ctermbg=red         cterm=NONE     guisp=#a81d1d " undercurl color
-else
-  hi Error          guifg=white       guibg=#a81d1d     gui=NONE      ctermfg=white       ctermbg=red         cterm=NONE
 endif
 
 " Syntax highlighting
@@ -114,6 +111,7 @@ hi Keyword          guifg=#96CBFE     guibg=NONE        gui=NONE      ctermfg=bl
 hi PreProc          guifg=#96CBFE     guibg=NONE        gui=NONE      ctermfg=blue        ctermbg=NONE        cterm=NONE
 hi Conditional      guifg=#6699CC     guibg=NONE        gui=NONE      ctermfg=blue        ctermbg=NONE        cterm=NONE  " if else end
 
+hi Error            guifg=white       guibg=#a81d1d     gui=NONE      ctermfg=white       ctermbg=red         cterm=NONE
 hi Todo             guifg=#f6f3e8     guibg=#ff5f5f        gui=NONE      ctermfg=red         ctermbg=NONE        cterm=NONE
 hi Constant         guifg=#99CC99     guibg=NONE        gui=NONE      ctermfg=cyan        ctermbg=NONE        cterm=NONE
 
