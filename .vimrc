@@ -58,7 +58,7 @@ if has("autocmd")
 endif
 
 function! s:SelectPerlSyntasticCheckers()
-	" If the file has at least 1000 lines
+	" If the file has at least 500 lines or there's not a ~/.perlcriticrc...
 	if len(getline(500, 500)) == 1 || !filereadable(expand("$HOME") . '/.perlcriticrc')
 		let b:syntastic_checkers = ['perl']
 	else
