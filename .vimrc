@@ -31,6 +31,7 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 " Show highlighting groups under cursor.
 noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 noremap <Leader><Leader> "*
+noremap <Leader>w :%s/\v\s+$//g<CR>
 
 " We know xterm-debian is a color terminal
 if &term =~ "xterm" || &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
@@ -100,6 +101,16 @@ augroup end
 
 augroup call
 	au FileType perl				call s:SelectPerlSyntasticCheckers()
+augroup end
+
+augroup whitespace
+	au BufWinEnter *				match bmcTrailingWhitespace /\v\s+$/
+	" This is currently broken, at least in Vim 7.4.
+	au InsertEnter *				match bmcTrailingWhitespace /\v\s+\%#\@<!$/
+	au InsertLeave *				match bmcTrailingWhitespace /\v\s+$/
+	" Prevent a memory leak in old versions of Vim.
+	au BufWinLeave *				call clearmatches()
+	au ColorScheme *				hi def link bmcTrailingWhitespace	Error
 augroup end
 
 " For /bin/sh.
