@@ -13,7 +13,7 @@ set ai					" autoindent
 set tw=80				" textwidth
 set nobk				" nobackup
 set viminfo='20,\"50
-set history=50	
+set history=50
 set ruler
 set foldmethod=marker
 set wildmode=longest,full
