@@ -1,1 +1,0 @@
-../bundle/vcscommand/syntax/gitannotate.vim
