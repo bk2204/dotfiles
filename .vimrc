@@ -32,6 +32,7 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 noremap <Leader><Leader> "*
 noremap <Leader>w :%s/\v(^--)@<!\s+$//g<CR>
+noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 
 " We know xterm-debian is a color terminal
 if &term =~ "xterm" || &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
@@ -65,6 +66,56 @@ function! s:SelectPerlSyntasticCheckers()
 	else
 		let b:syntastic_checkers = ['perl', 'perlcritic']
 	endif
+endfunction
+
+function! s:EnableWhitespaceChecking()
+	if !exists('b:whitespace_enabled')
+		let b:whitespace_enabled = -1
+	endif
+	if b:whitespace_enabled == -1
+		if &ft == 'help'
+			let b:whitespace_enabled = 0
+		else
+			let b:whitespace_enabled = 1
+		endif
+		let b:whitespace_pattern = -1
+	endif
+endfunction
+
+function! s:ToggleWhitespaceChecking()
+	let b:whitespace_enabled = !b:whitespace_enabled
+	call s:SetWhitespacePattern(0)
+endfunction
+
+function! s:SetWhitespacePattern(mode)
+	call s:EnableWhitespaceChecking()
+	if b:whitespace_pattern != -1
+		try
+			call matchdelete(b:whitespace_pattern)
+		catch /.*/
+		endtry
+	end
+	if b:whitespace_enabled
+		if a:mode == 1
+			let pattern = s:SetWhitespacePatternGeneral() . '%#@<!$'
+		elseif a:mode == 0
+			let pattern = s:SetWhitespacePatternGeneral() . '$'
+		end
+		let b:whitespace_pattern = matchadd('bmcTrailingWhitespace', pattern)
+	else
+		let b:whitespace_pattern = -1
+	endif
+endfunction
+
+function! s:SetWhitespacePatternGeneral()
+	if &ft == "mail"
+		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:))@<!\s+'
+	elseif &ft == "diff" || &ft == "review"
+		let pattern = '\v^@<!\s+'
+	else
+		let pattern = '\v\s+'
+	endif
+	return pattern
 endfunction
 
 augroup setf
@@ -104,12 +155,13 @@ augroup call
 augroup end
 
 augroup whitespace
-	au BufWinEnter *				match bmcTrailingWhitespace /\v(^--)@<!\s+$/
-	au InsertEnter *				match bmcTrailingWhitespace /\v(^--)@<!\s+%#@<!$/
-	au InsertLeave *				match bmcTrailingWhitespace /\v(^--)@<!\s+$/
+	au BufWinEnter	*				call s:SetWhitespacePattern(0)
+	au InsertEnter	*				call s:SetWhitespacePattern(1)
+	au InsertLeave	*				call s:SetWhitespacePattern(0)
 	" Prevent a memory leak in old versions of Vim.
-	au BufWinLeave *				call clearmatches()
-	au ColorScheme *				hi def link bmcTrailingWhitespace	Error
+	au BufWinLeave	*				call clearmatches()
+	au Syntax				*				call s:SetWhitespacePattern(0)
+	au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
 augroup end
 
 " For /bin/sh.
