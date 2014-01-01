@@ -64,7 +64,7 @@ prompt_bmc_setup_base ()
 	local p_shlvl
 	local p_power
 	local p_mode
-	
+
 	local i j
 
 	c_reset="%b%{$reset_color%}"
