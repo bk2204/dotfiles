@@ -109,7 +109,7 @@ endfunction
 
 function! s:SetWhitespacePatternGeneral()
 	if &ft == "mail"
-		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:))@<!\s+'
+		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:|[> ]*\>))@<!\s+'
 	elseif &ft == "diff" || &ft == "review"
 		let pattern = '\v^@<!\s+'
 	else
