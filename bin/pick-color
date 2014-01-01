@@ -1,0 +1,63 @@
+#!/usr/bin/ruby
+# Compute the closest xterm-256color color for the hex value specified on the
+# command line.  Uses the CIE XYZ to find the color which looks the best.
+
+def generate_16_colors
+  pattern = [
+    0x000000, 0x110000, 0x001100, 0x111100,
+    0x000011, 0x110011, 0x001111, 0x111111
+  ]
+  result = pattern.map { |x| x * 0xa }
+  result += result.map { |x| x + 0x555555 }
+  result
+end
+
+def generate_cube_colors
+  result = []
+  table = [0x00, 0x5f, 0x87, 0xaf, 0xd7, 0xff]
+  6.times do |r|
+    6.times do |g|
+      6.times do |b|
+        result << (((table[r] << 16) | (table[g] << 8)) | table[b])
+      end
+    end
+  end
+  result
+end
+
+def generate_greys
+  result = []
+  24.times do |g|
+    result << (g * 10 + 8) * 0x010101
+  end
+  result
+end
+
+# Formula from https://en.wikipedia.org/wiki/CIE_1931_color_space
+def rgb_to_ciexyz(r, g, b)
+  x = r * 0.49 + g * 0.31 + b * 0.20
+  y = r * 0.17697 + g * 0.81240 + b * 0.01063
+  z = g * 0.01 + b * 0.99
+  [x, y, z]
+end
+
+def generate_colors
+  generate_16_colors + generate_cube_colors + generate_greys
+end
+
+def find_closest(color, items)
+  distances = items.map do |item|
+    Math.sqrt(item.zip(color).map { |x| (x[0] - x[1]) ** 2 }.inject(:+))
+  end
+  distances.index(distances.min)
+end
+
+rgbs = generate_colors
+xyzs = rgbs.map { |x| rgb_to_ciexyz(x >> 16, (x >> 8) & 0xff, x & 0xff) }
+
+color = ARGV[0].to_s.to_i(16)
+puts "color: %06x" % color
+xyz = rgb_to_ciexyz(color >> 16, (color >> 8) & 0xff, color & 0xff)
+
+closest = find_closest(xyz, xyzs)
+puts "\x1b[48;5;#{closest}m #{closest} \#%06x" % rgbs[closest]
