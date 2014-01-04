@@ -36,24 +36,14 @@ prompt_bmc_boldness ()
 
 prompt_bmc_setup_colors ()
 {
-	number=$1
-	ffont=$2
-	fcolor=$3
-	bfont=$4
-	bcolor=$5
+	local number=$1
+	local ffont=$2
+	local fcolor=$3
+	local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
 
-	printf 'pcc[%s]=' $number
-	prompt_bmc_boldness $ffont
-	printf '%%F{%s' $fcolor
-	if [ -n "$bcolor" ]
-	then
-		printf '$bg_'
-		prompt_bmc_boldness $bfont
-		# Originally had printf '%sbold[%s]' $bcolor, but that was probably a
-		# typo.
-		printf 'bold[%s]' $bcolor
-	fi
-	printf '%%}\n'
+	printf 'pcc[%s]="' $number
+	color_fg $fcolor $fbold
+	printf '"'
 }
 
 prompt_bmc_setup_base ()
