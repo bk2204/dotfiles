@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+# Print a prompt code (valid for print -P) that sets the appropriate foreground
+# color.  The color can be a name that zsh understands or a numerical value
+# appropriate for the terminal.
+color_fg ()
+{
+	local color="$1"
+	local bold="$2"
+
+	printf "%%{"
+	[[ -n $bold ]] && printf "%%B"
+	if is-at-least 4.3.9
+	then
+		printf "%%F{%s}" $color
+	elif [[ $(($color + 0)) -eq 0 ]]
+	then
+		# color name
+		printf '$fg_bold[%s]' $color
+	else
+		# Do some hacky parsing of setaf.  Remove all the conditionals but the
+		# final one, and substitute the color in the proper place.
+		tput setaf | sed -e 's/%?.*%e//' -e "s/%p1%d/$color/"
+	fi
+	printf "%%}"
+}
