@@ -155,7 +155,7 @@ prompt_bmc_precmd () {
 			print -Pn '\ek%n@%m: %~\e\\';;
 	esac
 
-	vcs_info
+	command -v vcs_info >/dev/null 2>/dev/null && vcs_info
 
 	# Don't bother printing the jobs all of the time.
 	#[[ -o interactive ]] && jobs -l
