@@ -23,17 +23,6 @@ prompt_bmc_want_bold ()
 	return 0;
 }
 
-prompt_bmc_boldness ()
-{
-	if prompt_bmc_want_bold $1
-	then
-		printf '%%B'
-	else
-		printf '%%F'
-	fi
-	#prompt_bmc_want_bold $1 && printf '%%B'
-}
-
 prompt_bmc_setup_colors ()
 {
 	local number=$1
