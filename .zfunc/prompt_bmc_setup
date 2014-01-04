@@ -156,10 +156,6 @@ prompt_bmc_precmd () {
 	esac
 
 	command -v vcs_info >/dev/null 2>/dev/null && vcs_info
-
-	# Don't bother printing the jobs all of the time.
-	#[[ -o interactive ]] && jobs -l
-
 }
 
 prompt_bmc_apm_precmd () {
@@ -193,12 +189,9 @@ prompt_bmc_apm_precmd () {
 	[ $has_ac = 1 ] && ac="ac"
 	[ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
 
-	#bat=${${="$(</proc/apm)"}[7]/%/%%}
-	#[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
-
 	[[ $has_ac = 0 ]] && [[ $has_bat = 0 ]] && psvar[2]=() || psvar[2]="$ac$bat"
 }
 
 prompt_bmc_setup "$@"
 
-# vim:set filetype=zsh:
+# vim: set filetype=zsh:
