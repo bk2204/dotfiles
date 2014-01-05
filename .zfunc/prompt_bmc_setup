@@ -84,7 +84,7 @@ prompt_bmc_setup_base ()
 	p_failed="$pcc[6]failed$c_reset"
 	p_retcode="$pcc[6]%?$c_reset"
 	p_signame="$pcc[6]%1v$c_reset"
-	p_mode="%(3V.%3v.%(?.ok.no))"
+	p_mode='${psvar[3]:-%(?.ok.no)}'
 
 	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
 	p_ret2="$pcc[9]%m $p_mode$c_reset"
