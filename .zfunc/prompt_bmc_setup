@@ -4,10 +4,7 @@
 prompt_bmc_help () {
 	cat <<'EOF'
 
-	prompt bmc [<color1> [<color2> [<color3> [<color4> [<color5>]]]]]
-
-	defaults are green, blue, green, yellow, and white, respectively.
-
+	prompt bmc
 EOF
 }
 
@@ -23,37 +20,16 @@ prompt_bmc_want_bold ()
 	return 0;
 }
 
-prompt_bmc_boldness ()
-{
-	if prompt_bmc_want_bold $1
-	then
-		printf '%%B'
-	else
-		printf '%%F'
-	fi
-	#prompt_bmc_want_bold $1 && printf '%%B'
-}
-
 prompt_bmc_setup_colors ()
 {
-	number=$1
-	ffont=$2
-	fcolor=$3
-	bfont=$4
-	bcolor=$5
+	local number=$1
+	local ffont=$2
+	local fcolor=$3
+	local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
 
-	printf 'pcc[%s]=' $number
-	prompt_bmc_boldness $ffont
-	printf '%%F{%s' $fcolor
-	if [ -n "$bcolor" ]
-	then
-		printf '$bg_'
-		prompt_bmc_boldness $bfont
-		# Originally had printf '%sbold[%s]' $bcolor, but that was probably a
-		# typo.
-		printf 'bold[%s]' $bcolor
-	fi
-	printf '%%}\n'
+	printf 'pcc[%s]="' $number
+	color_fg $fcolor $fbold
+	printf '"'
 }
 
 prompt_bmc_setup_base ()
@@ -108,7 +84,7 @@ prompt_bmc_setup_base ()
 	p_failed="$pcc[6]failed$c_reset"
 	p_retcode="$pcc[6]%?$c_reset"
 	p_signame="$pcc[6]%1v$c_reset"
-	p_mode="%(3V.%3v.%(?.ok.no))"
+	p_mode='${psvar[3]:-%(?.ok.no)}'
 
 	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
 	p_ret2="$pcc[9]%m $p_mode$c_reset"
@@ -179,11 +155,7 @@ prompt_bmc_precmd () {
 			print -Pn '\ek%n@%m: %~\e\\';;
 	esac
 
-	vcs_info
-
-	# Don't bother printing the jobs all of the time.
-	#[[ -o interactive ]] && jobs -l
-
+	command -v vcs_info >/dev/null 2>/dev/null && vcs_info
 }
 
 prompt_bmc_apm_precmd () {
@@ -217,12 +189,9 @@ prompt_bmc_apm_precmd () {
 	[ $has_ac = 1 ] && ac="ac"
 	[ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
 
-	#bat=${${="$(</proc/apm)"}[7]/%/%%}
-	#[[ ${${="$(</proc/apm)"}[4]} == "0x01" ]] && ac="AC+"
-
 	[[ $has_ac = 0 ]] && [[ $has_bat = 0 ]] && psvar[2]=() || psvar[2]="$ac$bat"
 }
 
 prompt_bmc_setup "$@"
 
-# vim:set filetype=zsh:
+# vim: set filetype=zsh:

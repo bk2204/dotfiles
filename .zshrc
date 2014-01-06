@@ -426,21 +426,24 @@ setup_completion ()
 # Set locales.
 set_tty
 
+blue="blue"
+[[ $(echotc Co) = 256 ]] && blue=33
+
 # Set up termcap colors for less (from grml).
-export LESS_TERMCAP_mb=`print -P %B%F{red}`
-export LESS_TERMCAP_md=`print -P %B%F{red}`
-export LESS_TERMCAP_me=`print -P %b`
-export LESS_TERMCAP_se=`print -P %b`
-export LESS_TERMCAP_so=`print -P %B%F{blue}%S%K{yellow}`
-export LESS_TERMCAP_ue=`print -P %b`
-export LESS_TERMCAP_us=`print -P %B%F{green}`
+export LESS_TERMCAP_mb=`print -P $(color_fg red yes)`
+export LESS_TERMCAP_md=`print -P $(color_fg red yes)`
+export LESS_TERMCAP_me=`print -P $(color_reset)`
+export LESS_TERMCAP_se=`print -P $(color_reset)`
+export LESS_TERMCAP_so=`print -P $(color_fg $blue yes)`
+export LESS_TERMCAP_ue=`print -P $(color_reset)`
+export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
 
 # Help less handle compressed files better.
 whence lesspipe >/dev/null && eval $(lesspipe)
 
 setup_completion
 
-unset i
+unset i blue
 
 # Succeed.
 true

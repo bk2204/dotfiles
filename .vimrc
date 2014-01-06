@@ -156,15 +156,18 @@ augroup call
 	au FileType perl				call s:SelectPerlSyntasticCheckers()
 augroup end
 
-augroup whitespace
-	au BufWinEnter	*				call s:SetWhitespacePattern(0)
-	au InsertEnter	*				call s:SetWhitespacePattern(1)
-	au InsertLeave	*				call s:SetWhitespacePattern(0)
-	" Prevent a memory leak in old versions of Vim.
-	au BufWinLeave	*				call clearmatches()
-	au Syntax				*				call s:SetWhitespacePattern(0)
-	au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
-augroup end
+" matchadd and friends showed up in Vim 7.1.40.
+if v:version >= 702 || (v:version == 701 && has("patch40"))
+	augroup whitespace
+		au BufWinEnter	*				call s:SetWhitespacePattern(0)
+		au InsertEnter	*				call s:SetWhitespacePattern(1)
+		au InsertLeave	*				call s:SetWhitespacePattern(0)
+		" Prevent a memory leak in old versions of Vim.
+		au BufWinLeave	*				call clearmatches()
+		au Syntax				*				call s:SetWhitespacePattern(0)
+		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
+	augroup end
+endif
 
 " For /bin/sh.
 let g:is_posix=1
