@@ -158,10 +158,12 @@ augroup end
 if v:version >= 702 || (v:version == 701 && has("patch40"))
 	augroup whitespace
 		au BufWinEnter	*				call s:SetWhitespacePattern(0)
+		au WinEnter			*				call s:SetWhitespacePattern(0)
 		au InsertEnter	*				call s:SetWhitespacePattern(1)
 		au InsertLeave	*				call s:SetWhitespacePattern(0)
 		" Prevent a memory leak in old versions of Vim.
 		au BufWinLeave	*				call clearmatches()
+		au WinLeave			*				call clearmatches()
 		au Syntax				*				call s:SetWhitespacePattern(0)
 		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
 	augroup end
