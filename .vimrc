@@ -79,6 +79,7 @@ function! s:EnableWhitespaceChecking()
 			let b:whitespace_enabled = 1
 		endif
 		let b:whitespace_pattern = -1
+		let b:spacetab_pattern = -1
 	endif
 endfunction
 
@@ -89,21 +90,24 @@ endfunction
 
 function! s:SetWhitespacePattern(mode)
 	call s:EnableWhitespaceChecking()
-	if b:whitespace_pattern != -1
+	for i in ['b:whitespace_pattern', 'b:spacetab_pattern']
 		try
-			call matchdelete(b:whitespace_pattern)
-		catch /.*/
+			call matchdelete(eval(i))
+		catch /E80[23]/
 		endtry
-	end
+	endfor
 	if b:whitespace_enabled
 		if a:mode == 1
 			let pattern = s:SetWhitespacePatternGeneral() . '%#@<!$'
 		elseif a:mode == 0
 			let pattern = s:SetWhitespacePatternGeneral() . '$'
 		end
+		let stpat = '\v +\ze\t+'
 		let b:whitespace_pattern = matchadd('bmcTrailingWhitespace', pattern)
+		let b:spacetab_pattern = matchadd('bmcSpaceTabWhitespace', stpat)
 	else
 		let b:whitespace_pattern = -1
+		let b:spacetab_pattern = -1
 	endif
 endfunction
 
@@ -166,6 +170,7 @@ if v:version >= 702 || (v:version == 701 && has("patch40"))
 		au WinLeave			*				call clearmatches()
 		au Syntax				*				call s:SetWhitespacePattern(0)
 		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
+		au ColorScheme	*				hi def link bmcSpaceTabWhitespace	Error
 	augroup end
 endif
 
