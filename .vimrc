@@ -69,35 +69,40 @@ function! s:SelectPerlSyntasticCheckers()
 endfunction
 
 function! s:EnableWhitespaceChecking()
-	if !exists('b:whitespace_enabled')
-		let b:whitespace_enabled = -1
+	if !exists('b:whitespace')
+		let b:whitespace = {'enabled': -1, 'patterns': {}}
 	endif
-	if b:whitespace_enabled == -1
+	if b:whitespace['enabled'] == -1
 		if &ft == 'help'
-			let b:whitespace_enabled = 0
+			let b:whitespace['enabled'] = 0
 		else
-			let b:whitespace_enabled = 1
+			let b:whitespace['enabled'] = 1
 		endif
-		let b:whitespace_pattern = -1
-		let b:spacetab_pattern = -1
-		let b:newline_pattern = -1
+		for i in s:GetPatternList()
+			"let b:whitespace['patterns'] = {}
+			let b:whitespace['patterns'][i] = -1
+		endfor
 	endif
 endfunction
 
 function! s:ToggleWhitespaceChecking()
-	let b:whitespace_enabled = !b:whitespace_enabled
+	let b:whitespace['enabled'] = !b:whitespace['enabled']
 	call s:SetWhitespacePattern(0)
+endfunction
+
+function! s:GetPatternList()
+	return ['trailing', 'spacetab', 'newline']
 endfunction
 
 function! s:SetWhitespacePattern(mode)
 	call s:EnableWhitespaceChecking()
-	for i in ['b:whitespace_pattern', 'b:spacetab_pattern', 'b:newline_pattern']
+	for i in s:GetPatternList()
 		try
-			call matchdelete(eval(i))
+			call matchdelete(b:whitespace['patterns'][i])
 		catch /E80[23]/
 		endtry
 	endfor
-	if b:whitespace_enabled
+	if b:whitespace['enabled']
 		if a:mode == 1
 			let pattern = s:SetWhitespacePatternGeneral() . '%#@<!$'
 		elseif a:mode == 0
@@ -105,13 +110,16 @@ function! s:SetWhitespacePattern(mode)
 		end
 		let stpat = '\v +\ze\t+'
 		let tnpat = '\v\n%$'
-		let b:whitespace_pattern = matchadd('bmcTrailingWhitespace', pattern)
-		let b:spacetab_pattern = matchadd('bmcSpaceTabWhitespace', stpat)
-		let b:newline_pattern = matchadd('bmcTrailingNewline', stpat)
+		let patterns = {}
+		let patterns['trailing'] = matchadd('bmcTrailingWhitespace', pattern)
+		let patterns['spacetab'] = matchadd('bmcSpaceTabWhitespace', stpat)
+		let patterns['newline'] = matchadd('bmcTrailingNewline', stpat)
+		let b:whitespace['patterns'] = patterns
 	else
-		let b:whitespace_pattern = -1
-		let b:spacetab_pattern = -1
-		let b:newline_pattern = -1
+		let b:whitespace['patterns'] = {}
+		for i in s:GetPatternList()
+			let b:whitespace['patterns'][i] = -1
+		endfor
 	endif
 endfunction
 
