@@ -1,66 +1,83 @@
 " Configuration file for vim
 
+"" Set up options.
+" First things first.
+set nocp
+
+" Spacing and indentation.
 set ts=4
 set sw=4
 set sts=4
-set uc=0
 set noet
+set ai
 
-set nocompatible
-set backspace=indent,eol,start
+" Backups, saving, and statefulness.
+set uc=0				" No swap file.
+set nobk				" No backups.
+set vi='20,\"50	" 20 marks and 50 lines.
+set hi=50				" 50 items in command line history.
 
-set ai					" autoindent
-set tw=80				" textwidth
-set nobk				" nobackup
-set viminfo='20,\"50
-set history=50
-set ruler
-set foldmethod=marker
-set wildmode=longest,full
-set laststatus=2
-set spc=
-set flp=^[-*+]\\+\\s\\+
-set fo+=n
-" The vim packages I'm using don't have sorted tag files for the help.
-set notagbsearch
+" Status line.
+set ru					" Turn on ruler.
+set ls=2				" Always show a status bar for powerline.
 
-set modeline
+" Folding.
+set fdm=marker
 
-set encoding=utf-8
+" Text handling.
+set spc=				" Don't complain about uncapitalized words starting a sentence.
+set flp=^[-*+]\\+\\s\\+	" Don't indent lines starting with a number and a dot.
+set fo+=n				" Indent lists properly.
+set tw=80
+set bs=indent,eol,start
 
-set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+" Loading files.
+set ml					" Modelines are nice.
+set enc=utf-8		" Always use UTF-8.
+set wim=longest,full
+set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
-" Show highlighting groups under cursor.
-noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-noremap <Leader><Leader> "*
-noremap <Leader>w :%s/\v(^--)@<!\s+$//g<CR>
-noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
+" Help.
+set notbs				" The vim packages I'm using have unsorted help tag files.
 
-" We know xterm-debian is a color terminal
+"" Terminal issues.
+" These terminals are capable of supporting 16 colors, but they lie and only
+" claim support for 8.  Fix it so things don't look ugly.
 if &term == "xterm" || &term == "xterm-debian" || &term == "xterm-xfree86"
 	set t_Co=16
 	set t_Sf=[3%dm
 	set t_Sb=[4%dm
 endif
 
-" Ignore vcscommand and pathogen in old versions of vim.
-if v:version < 700
-	let VCSCommandDisableAll = 1
-else
+"" Maps.
+" Show highlighting groups under cursor.
+noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+" "* is hard to type.  Map it to something easier.
+noremap <Leader><Leader> "*
+" Trim trailing whitespace.
+noremap <Leader>w :%s/\v(^--)@<!\s+$//g<CR>
+" Toggle whitespace highlighting.
+noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
+
+"" Automatic file handling.
+if has("autocmd")
+	filetype plugin indent on
+endif
+
+syntax enable
+
+"" Bundles.
+" Vim 6.3 has a major problem trying to load Pathogen.
+if v:version >= 700
+	" Some versions of Vim have a broken autoload, or at least it doesn't work in
+	" this case, so help it out.
 	runtime autoload/pathogen.vim
 	let Fn = function("pathogen#infect")
 	execute Fn()
 endif
 
-syntax enable
-
-if has("autocmd")
-	" Enabled file type detection
-	" Use the default filetype settings. If you also want to load indent files
-	" to automatically do language-dependent indenting add 'indent' as well.
-	filetype plugin indent on
-endif
-
+"" Language-specific functions.
+" perlcritic is *extremely* slow on large files.
 function! s:SelectPerlSyntasticCheckers()
 	" If the file has at least 500 lines or there's not a ~/.perlcriticrc...
 	if len(getline(500, 500)) == 1 || !filereadable(expand("$HOME") . '/.perlcriticrc')
@@ -70,6 +87,8 @@ function! s:SelectPerlSyntasticCheckers()
 	endif
 endfunction
 
+"" Whitespace handling functions.
+" Turn it on.
 function! s:EnableWhitespaceChecking()
 	if !exists('b:whitespace')
 		let b:whitespace = {'enabled': -1, 'patterns': {}}
@@ -81,21 +100,23 @@ function! s:EnableWhitespaceChecking()
 			let b:whitespace['enabled'] = 1
 		endif
 		for i in s:GetPatternList()
-			"let b:whitespace['patterns'] = {}
 			let b:whitespace['patterns'][i] = -1
 		endfor
 	endif
 endfunction
 
+" Toggle it.
 function! s:ToggleWhitespaceChecking()
 	let b:whitespace['enabled'] = !b:whitespace['enabled']
 	call s:SetWhitespacePattern(0)
 endfunction
 
+" List of all the patterns.
 function! s:GetPatternList()
 	return ['trailing', 'spacetab', 'newline']
 endfunction
 
+" Set up the patterns.
 function! s:SetWhitespacePattern(mode)
 	call s:EnableWhitespaceChecking()
 	for i in s:GetPatternList()
@@ -125,10 +146,17 @@ function! s:SetWhitespacePattern(mode)
 	endif
 endfunction
 
+" Create a language-specific trailing whitespace pattern.
 function! s:SetWhitespacePatternGeneral()
 	if &ft == "mail"
+		" ExtEdit puts trailing whitespace in header fields.  Don't warn about this,
+		" since it will strip it off.  mutt always inserts "> " for indents; don't
+		" warn about that either.  And finally, don't warn about the signature
+		" delimiter, since there's nothing we can do about that.
 		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:\s*|[> ]*\>))@<!\s+'
 	elseif &ft == "diff" || &ft == "review"
+		" Don't complain about extra spaces if they start at the beginning of a
+		" line.  git and diff insert these.
 		let pattern = '\v(^\s*)@<!\s+'
 	else
 		let pattern = '\v\s+'
@@ -136,6 +164,8 @@ function! s:SetWhitespacePatternGeneral()
 	return pattern
 endfunction
 
+"" Autocommands.
+" Setting file type.
 augroup setf
 	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
 	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
@@ -150,6 +180,7 @@ augroup setf
 	au BufEnter,BufRead,BufNewFile *.pir										setf pir
 augroup end
 
+" File type-specific parameters.
 augroup setl
 	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
 	au FileType cpp					setl cin cino=t0
@@ -168,12 +199,14 @@ augroup setl
 	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
 augroup end
 
+" Language-specific setup.
 augroup call
 	au FileType perl				call s:SelectPerlSyntasticCheckers()
 augroup end
 
-" matchadd and friends showed up in Vim 7.1.40.
+" Whitespace-related autocommands.
 if v:version >= 702 || (v:version == 701 && has("patch40"))
+	" matchadd and friends showed up in Vim 7.1.40.
 	augroup whitespace
 		au BufWinEnter	*				call s:SetWhitespacePattern(0)
 		au WinEnter			*				call s:SetWhitespacePattern(0)
@@ -189,18 +222,25 @@ if v:version >= 702 || (v:version == 701 && has("patch40"))
 	augroup end
 endif
 
-" For /bin/sh.
+"" Miscellaneous variables.
+" Make sh highlighting POSIXy.
 let g:is_posix=1
 
+" Better just to leave POD as a big comment block.
 let g:perl_include_pod = 0
 
+" Make editing git repositories of Perl modules easier.
 let g:syntastic_perl_lib_path = ['./lib']
+
+" Powerline settings.
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'solarized256'
+
+" Ctrl-P settings.  Regenerating the cache is expensive on large repos.
 let g:ctrlp_extensions = ['buffertag']
 let g:ctrlp_clear_cache_on_exit = 0
 
-" Set paper size from /etc/papersize if available (Debian-specific)
+"" Print settings.
 if filereadable('/etc/papersize')
 	let s:papersize = matchstr(system('/bin/cat /etc/papersize'), '\p*')
 	if strlen(s:papersize)
@@ -209,7 +249,7 @@ if filereadable('/etc/papersize')
 	unlet! s:papersize
 endif
 
-
+"" Display settings.
 if has("gui_running")
 	set lines=24 " Needed on drpepper.
 	set columns=80
