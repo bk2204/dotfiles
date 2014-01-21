@@ -37,6 +37,9 @@ set enc=utf-8		" Always use UTF-8.
 set wim=longest,full
 set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
+" Search.
+set nohls
+
 " Help.
 set notbs				" The vim packages I'm using have unsorted help tag files.
 
