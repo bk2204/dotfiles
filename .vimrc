@@ -37,6 +37,9 @@ set enc=utf-8		" Always use UTF-8.
 set wim=longest,full
 set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
+" Search.
+set nohls
+
 "" Terminal issues.
 " These terminals are capable of supporting 16 colors, but they lie and only
 " claim support for 8.  Fix it so things don't look ugly.
