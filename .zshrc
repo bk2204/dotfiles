@@ -64,12 +64,12 @@ set_tty ()
 has_term ()
 {
 	local termname="$1"
-	TERM=$termname echotc co >/dev/null 2>/dev/null
+	TERM=$termname echotc xo >/dev/null 2>/dev/null
 }
 set_sane_term ()
 {
 	# Make sure our terminal definition works right.
-	if ! echotc co >/dev/null 2>/dev/null
+	if ! echotc xo >/dev/null 2>/dev/null
 	then
 		# No column results?  Do we have any working terminal definitions?
 		local echotc_works=""
