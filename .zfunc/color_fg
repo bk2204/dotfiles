@@ -16,7 +16,7 @@ color_fg ()
 	elif ! grep -qsE '^[0-9]+$' "$color"
 	then
 		# color name
-		printf '$fg_bold[%s]' $color
+		printf '$fg[%s]' $color
 	else
 		# Do some hacky parsing of setaf.  Remove all the conditionals but the
 		# final one, and substitute the color in the proper place.
