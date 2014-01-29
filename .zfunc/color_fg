@@ -13,7 +13,7 @@ color_fg ()
 	if is-at-least 4.3.9
 	then
 		printf "%%F{%s}" $color
-	elif [[ $(($color + 0)) -eq 0 ]]
+	elif ! grep -qsE '^[0-9]+$' "$color"
 	then
 		# color name
 		printf '$fg_bold[%s]' $color
