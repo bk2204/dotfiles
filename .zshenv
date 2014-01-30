@@ -19,7 +19,7 @@ typeset -U path cdpath manpath fpath
 # Set up miscellaneous paths.
 manpath=(~/man /usr/share/man /usr/X11R6/man /usr/local/share/man)
 path=(~/bin /usr/local/bin /usr/local/sbin /usr/bin /usr/sbin /bin /sbin /usr/bin/X11 /usr/games)
-fpath=($fpath[2,-1] ~/.zfunc)
+fpath=($fpath[2,-1] ~/.zsh)
 
 # Export miscellaneous paths.
 export MANPATH PATH
