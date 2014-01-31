@@ -57,6 +57,7 @@ LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
 PAGER="less -R"
+LESS="-R"
 EDITOR=vim
 GIT_MERGE_AUTOEDIT=no
 CLICOLOR=1
