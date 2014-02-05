@@ -56,6 +56,7 @@ GROFF_TMAC_PATH="$HOME/checkouts/tenorsax/tmac"
 LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
+GIT_PAGER="less -FRSX"
 PAGER="less -R"
 LESS="-R"
 EDITOR=vim
