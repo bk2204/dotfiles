@@ -17,7 +17,7 @@ setopt shwordsplit bareglobqual
 setopt interactivecomments
 setopt promptsubst
 setopt rmstarsilent
-unsetopt bgnice notify nomatch
+unsetopt bgnice notify nomatch banghist
 
 # Set history.
 HISTSIZE=10000
