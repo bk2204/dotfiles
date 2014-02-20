@@ -6,6 +6,10 @@ if ls --color=auto >/dev/null 2>/dev/null
 then
 	alias ls='ls --color=auto'
 fi
+if which prename >/dev/null 2>&1
+then
+	alias rename='prename'
+fi
 
 alias loadenv='eval `cat $HOME/.environment`'
 
