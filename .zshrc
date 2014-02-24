@@ -129,11 +129,7 @@ set_sane_term ()
 	# Turn off flow control.
 	stty -ixon -ixoff >/dev/null 2>&1
 
-	function exists () {
-		[[ -x $(which "$1" 2>/dev/null) ]]
-	}
-
-	if exists tabs && exists perl && [[ -n $COLUMNS ]]
+	if which tabs >/dev/null && which perl >/dev/null && [[ -n $COLUMNS ]]
 	then
 		# Set up 4-space tabs.
 		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
