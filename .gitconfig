@@ -50,6 +50,7 @@
 	chainreplyto = false
 [diff]
 	renames = copies
+	algorithm = patience
 [merge]
 	conflictstyle = diff3
 # vim: set noet:
