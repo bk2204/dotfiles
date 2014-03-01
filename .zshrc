@@ -135,8 +135,6 @@ set_sane_term ()
 		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
 	fi
 
-	unfunction exists
-
 	# Make sure that other people can't mess with our terminal.
 	mesg n >/dev/null 2>&1
 }
