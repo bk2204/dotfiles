@@ -61,6 +61,9 @@ noremap <Leader><Leader> "*
 noremap <Leader>w :%s/\v(^--)@<!\s+$//g<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
+" Beautify files.
+vnoremap <Leader>b :call <SID>DoTidy(1)<CR>
+nnoremap <Leader>b :call <SID>DoTidy(0)<CR>
 
 "" Automatic file handling.
 if has("autocmd")
@@ -88,6 +91,23 @@ function! s:SelectPerlSyntasticCheckers()
 	else
 		let b:syntastic_checkers = ['perl', 'perlcritic']
 	endif
+endfunction
+
+" Tidy code.
+function! s:DoTidy(visual) range
+	let cmd = "cat"
+	if &ft == "perl"
+		let cmd = "perltidy -q"
+	elseif &ft == "python"
+		let cmd = "pythontidy"
+	endif
+	if a:visual == 0
+		let text = ":%!" . cmd
+		execute text
+	elseif a:visual == 1
+		let text = ":'<,'>!" . cmd
+		execute text
+	end
 endfunction
 
 "" Whitespace handling functions.
