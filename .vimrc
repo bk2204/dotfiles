@@ -96,6 +96,7 @@ endfunction
 " Tidy code.
 function! s:DoTidy(visual) range
 	let cmd = "cat"
+	let winview = winsaveview()
 	if &ft == "perl"
 		let cmd = "perltidy -q"
 	elseif &ft == "python"
@@ -108,6 +109,7 @@ function! s:DoTidy(visual) range
 		let text = ":'<,'>!" . cmd
 		execute text
 	end
+	call winrestview(winview)
 endfunction
 
 "" Whitespace handling functions.
