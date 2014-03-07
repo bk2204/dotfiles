@@ -1,16 +1,15 @@
 # brian m. carlson's zshrc.
 # For interactive use.
 
+# Preparatory functions.
+silent () {
+	"$@" >/dev/null 2>&1
+}
+
 # Set up some aliases.
-if ls --color=auto >/dev/null 2>/dev/null
-then
-	alias ls='ls --color=auto'
-fi
-if which prename >/dev/null 2>&1
-then
-	alias rename='prename'
-fi
-which vim >/dev/null 2>&1 && alias vi=vim
+silent ls --color=auto && alias ls='ls --color=auto'
+silent which prename && alias rename='prename'
+silent which vim && alias vi=vim
 
 alias loadenv='eval `cat $HOME/.environment`'
 
@@ -53,11 +52,11 @@ is_sudo_session ()
 }
 is_kerberos_session ()
 {
-	whence klist >/dev/null && klist -5s
+	silent whence klist && klist -5s
 }
 is_pseudo_tty ()
 {
-	echo $TTY | grep pts >/dev/null
+	echo $TTY | grep -qs pts
 }
 set_tty ()
 {
@@ -69,12 +68,12 @@ set_tty ()
 has_term ()
 {
 	local termname="$1"
-	TERM=$termname echotc xo >/dev/null 2>/dev/null
+	TERM=$termname silent echotc xo
 }
 set_sane_term ()
 {
 	# Make sure our terminal definition works right.
-	if ! echotc xo >/dev/null 2>/dev/null
+	if ! silent echotc xo
 	then
 		# No column results?  Do we have any working terminal definitions?
 		local echotc_works=""
@@ -128,16 +127,16 @@ set_sane_term ()
 	esac
 
 	# Turn off flow control.
-	stty -ixon -ixoff >/dev/null 2>&1
+	silent stty -ixon -ixoff
 
-	if which tabs >/dev/null && which perl >/dev/null && [[ -n $COLUMNS ]]
+	if silent which tabs && silent which perl && [[ -n $COLUMNS ]]
 	then
 		# Set up 4-space tabs.
 		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
 	fi
 
 	# Make sure that other people can't mess with our terminal.
-	mesg n >/dev/null 2>&1
+	silent mesg n
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
@@ -438,7 +437,7 @@ export LESS_TERMCAP_ue=`print -P $(color_reset)`
 export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
 
 # Help less handle compressed files better.
-whence lesspipe >/dev/null && eval $(lesspipe)
+silent whence lesspipe && eval $(lesspipe)
 
 setup_completion
 
