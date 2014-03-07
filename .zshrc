@@ -10,6 +10,7 @@ if which prename >/dev/null 2>&1
 then
 	alias rename='prename'
 fi
+which vim >/dev/null 2>&1 && alias vi=vim
 
 alias loadenv='eval `cat $HOME/.environment`'
 
