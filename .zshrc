@@ -137,6 +137,12 @@ set_sane_term ()
 
 	# Make sure that other people can't mess with our terminal.
 	silent mesg n
+
+	# Ensure key bindings are set up appropriately.
+	if [[ -n $DISPLAY ]] && which xmodmap && [[ -e $HOME/.Xmodmap ]]
+	then
+		xmodmap $HOME/.Xmodmap
+	fi
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
