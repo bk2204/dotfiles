@@ -139,7 +139,7 @@ set_sane_term ()
 	silent mesg n
 
 	# Ensure key bindings are set up appropriately.
-	if [[ -n $DISPLAY ]] && which xmodmap && [[ -e $HOME/.Xmodmap ]]
+	if [[ -n $DISPLAY ]] && silent which xmodmap && [[ -e $HOME/.Xmodmap ]]
 	then
 		xmodmap $HOME/.Xmodmap
 	fi
