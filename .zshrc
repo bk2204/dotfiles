@@ -114,6 +114,8 @@ set_sane_term ()
 			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*gnome-terminal*)
 			has_term xterm-256color && export TERM=xterm-256color;;
+		xterm:*mate-terminal*)
+			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*evilvte*)
 			has_term xterm-256color && export TERM=xterm-256color;;
 		xterm:*konsole*)
