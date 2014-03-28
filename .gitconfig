@@ -18,6 +18,7 @@
 	mnff = merge --no-ff
 	los = log --simplify-merges
 	lops = log -p -C --simplify-merges
+	setup = "!f() { git init && git add -f . && git commit -m 'initial import' && git tag start; };f"
 	lsf = ls-files
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
 [i18n]
