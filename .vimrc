@@ -84,9 +84,14 @@ endif
 function! s:SelectPerlSyntasticCheckers()
 	" If the file has at least 500 lines or there's not a ~/.perlcriticrc...
 	if len(getline(500, 500)) == 1 || !filereadable(expand("$HOME") . '/.perlcriticrc')
-		let b:syntastic_checkers = ['perl']
+		let b:syntastic_checkers = []
 	else
-		let b:syntastic_checkers = ['perl', 'perlcritic']
+		let b:syntastic_checkers = ['perlcritic']
+	endif
+	if exists('g:syntastic_enable_perl_checker')
+		if g:syntastic_enable_perl_checker
+			call add(b:syntastic_checkers, "perl")
+		endif
 	endif
 endfunction
 
