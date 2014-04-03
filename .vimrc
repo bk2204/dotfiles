@@ -259,6 +259,9 @@ let g:perl_include_pod = 0
 " Make editing git repositories of Perl modules easier.
 let g:syntastic_perl_lib_path = ['./lib']
 
+" Allow running perl -wc on Perl files.
+let g:syntastic_enable_perl_checker = 1
+
 " Powerline settings.
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'solarized256'
