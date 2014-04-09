@@ -69,6 +69,11 @@ hi Special					guifg=#E18964	guibg=NONE			gui=NONE			ctermfg=white			ctermbg=NON
 hi Delimiter				guifg=#00A0A0	guibg=NONE			gui=NONE			ctermfg=cyan			ctermbg=NONE			cterm=NONE
 hi Operator					guifg=#5fd7ff	guibg=NONE			gui=NONE			ctermfg=white			ctermbg=NONE			cterm=NONE
 
+hi DiffAdd					guifg=#f6f3e8	guibg=#336633		gui=NONE			ctermfg=white			ctermbg=green			cterm=NONE
+hi DiffDelete				guifg=#f6f3e8	guibg=#a81d1d		gui=NONE			ctermfg=white			ctermbg=red			cterm=NONE
+hi DiffChange				guifg=#f6f3e8	guibg=#262d51		gui=NONE			ctermfg=white			ctermbg=cyan		cterm=NONE
+hi DiffText					guifg=#384048	guibg=#96cbfe		gui=NONE			ctermfg=NONE			ctermbg=blue		cterm=NONE
+
 if &t_Co == 256
 	hi Normal					ctermfg=230				ctermbg=234				cterm=NONE
 	hi NonText				ctermfg=blue			ctermbg=NONE			cterm=NONE
@@ -125,6 +130,10 @@ if &t_Co == 256
 	hi Delimiter			ctermfg=37				ctermbg=NONE			cterm=NONE
 	hi Operator				ctermfg=81				ctermbg=NONE			cterm=NONE
 
+	hi DiffAdd				ctermfg=230				ctermbg=34			cterm=NONE
+	hi DiffDelete			ctermfg=230				ctermbg=203			cterm=NONE
+	hi DiffChange			ctermfg=230				ctermbg=60			cterm=NONE
+	hi DiffText				ctermfg=238				ctermbg=117			cterm=NONE
 endif
 
 hi link Character				Constant
