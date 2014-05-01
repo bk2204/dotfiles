@@ -55,4 +55,6 @@
 	algorithm = patience
 [merge]
 	conflictstyle = diff3
+[core]
+	precomposeunicode = true
 # vim: set noet:
