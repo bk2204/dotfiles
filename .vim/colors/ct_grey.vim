@@ -1,6 +1,7 @@
 " ct_grey color scheme
-" based off ir_black
+" based off Todd Werth's ir_black
 " More at: http://blog.infinitered.com/entries/show/8
+" MIT License.
 
 
 set background=dark
