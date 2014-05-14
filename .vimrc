@@ -175,6 +175,13 @@ endfunction
 
 " Create a language-specific trailing whitespace pattern.
 function! s:SetWhitespacePatternGeneral()
+	if &et
+		let indent = repeat(' ', &sw)
+		let nonindent = '(\t| {' . (&sw+1) . '}| {1,' . (&sw-1) . '})'
+	else
+		let indent = '\t'
+		let nonindent = '( +)'
+	end
 	if &ft == "mail"
 		" ExtEdit puts trailing whitespace in header fields.  Don't warn about this,
 		" since it will strip it off.  mutt always inserts "> " for indents; don't
@@ -185,6 +192,10 @@ function! s:SetWhitespacePatternGeneral()
 		" Don't complain about extra spaces if they start at the beginning of a
 		" line.  git and diff insert these.
 		let pattern = '\v(^\s*)@<!\s+'
+	elseif &ft == "perl" || &ft == "pod"
+		" Unfortunately, Pod uses spaces to delimit a verbatim block, so don't
+		" complain about spaces if they use the standard indent.
+		let pattern = '\v(^' . indent . '\s+|^(' . nonindent . ')|(\S)@<=\s+)'
 	else
 		let pattern = '\v\s+'
 	endif
