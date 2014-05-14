@@ -158,7 +158,7 @@ function! s:SetWhitespacePattern(mode)
 		elseif a:mode == 0
 			let pattern = s:SetWhitespacePatternGeneral() . '$'
 		end
-		let stpat = '\v +\ze\t+'
+		let stpat = s:SetWhitespacePatternSpaceTab()
 		let tnpat = '\v\n%$'
 		let patterns = {}
 		let patterns['trailing'] = matchadd('bmcTrailingWhitespace', pattern)
@@ -187,6 +187,18 @@ function! s:SetWhitespacePatternGeneral()
 		let pattern = '\v(^\s*)@<!\s+'
 	else
 		let pattern = '\v\s+'
+	endif
+	return pattern
+endfunction
+
+" Create a language-specific space-followed-by-tab pattern.
+function! s:SetWhitespacePatternSpaceTab()
+	if &ft == "diff" || &ft == "review"
+		" Don't complain about extra spaces if they start at the beginning of a
+		" line.  git and diff insert these.
+		let pattern = '\v(^)@<! +\ze\t+'
+	else
+		let pattern = '\v +\ze\t+'
 	endif
 	return pattern
 endfunction
