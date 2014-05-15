@@ -55,7 +55,7 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 " "* is hard to type.  Map it to something easier.
 noremap <Leader><Leader> "*
 " Trim trailing whitespace.
-noremap <Leader>w :%s/\v(^--)@<!\s+$//g<CR>
+noremap <Leader>w :call <SID>ClearTrailingWhitespace()<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
@@ -212,6 +212,12 @@ function! s:SetWhitespacePatternSpaceTab()
 		let pattern = '\v +\ze\t+'
 	endif
 	return pattern
+endfunction
+
+function! s:ClearTrailingWhitespace()
+	let pattern = s:SetWhitespacePatternGeneral() . '$'
+	let command = '%s/' . pattern . '//g'
+	execute command
 endfunction
 
 "" Autocommands.
