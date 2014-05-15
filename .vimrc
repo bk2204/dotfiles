@@ -58,7 +58,7 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 " "* is hard to type.  Map it to something easier.
 noremap <Leader><Leader> "*
 " Trim trailing whitespace.
-noremap <Leader>w :%s/\v(^--)@<!\s+$//g<CR>
+noremap <Leader>w :call <SID>ClearTrailingWhitespace()<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
@@ -161,7 +161,7 @@ function! s:SetWhitespacePattern(mode)
 		elseif a:mode == 0
 			let pattern = s:SetWhitespacePatternGeneral() . '$'
 		end
-		let stpat = '\v +\ze\t+'
+		let stpat = s:SetWhitespacePatternSpaceTab()
 		let tnpat = '\v\n%$'
 		let patterns = {}
 		let patterns['trailing'] = matchadd('bmcTrailingWhitespace', pattern)
@@ -178,6 +178,13 @@ endfunction
 
 " Create a language-specific trailing whitespace pattern.
 function! s:SetWhitespacePatternGeneral()
+	if &et
+		let indent = repeat(' ', &sw)
+		let nonindent = '(\t| {' . (&sw+1) . '}| {1,' . (&sw-1) . '})'
+	else
+		let indent = '\t'
+		let nonindent = '( +)'
+	end
 	if &ft == "mail"
 		" ExtEdit puts trailing whitespace in header fields.  Don't warn about this,
 		" since it will strip it off.  mutt always inserts "> " for indents; don't
@@ -188,10 +195,32 @@ function! s:SetWhitespacePatternGeneral()
 		" Don't complain about extra spaces if they start at the beginning of a
 		" line.  git and diff insert these.
 		let pattern = '\v(^\s*)@<!\s+'
+	elseif &ft == "perl" || &ft == "pod"
+		" Unfortunately, Pod uses spaces to delimit a verbatim block, so don't
+		" complain about spaces if they use the standard indent.
+		let pattern = '\v(^' . indent . '\s+|^(' . nonindent . ')|(\S)@<=\s+)'
 	else
 		let pattern = '\v\s+'
 	endif
 	return pattern
+endfunction
+
+" Create a language-specific space-followed-by-tab pattern.
+function! s:SetWhitespacePatternSpaceTab()
+	if &ft == "diff" || &ft == "review"
+		" Don't complain about extra spaces if they start at the beginning of a
+		" line.  git and diff insert these.
+		let pattern = '\v(^)@<! +\ze\t+'
+	else
+		let pattern = '\v +\ze\t+'
+	endif
+	return pattern
+endfunction
+
+function! s:ClearTrailingWhitespace()
+	let pattern = s:SetWhitespacePatternGeneral() . '$'
+	let command = '%s/' . pattern . '//g'
+	execute command
 endfunction
 
 "" Autocommands.
