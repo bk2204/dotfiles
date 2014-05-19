@@ -52,7 +52,7 @@
 	chainreplyto = false
 [diff]
 	renames = copies
-	algorithm = patience
+	algorithm = histogram
 [merge]
 	conflictstyle = diff3
 [core]

@@ -59,6 +59,7 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 noremap <Leader><Leader> "*
 " Trim trailing whitespace.
 noremap <Leader>w :call <SID>ClearTrailingWhitespace()<CR>
+noremap <Leader>zw :%s/\v(^--)@<!\s+$//g<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
