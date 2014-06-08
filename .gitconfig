@@ -29,8 +29,12 @@
 	unpackLimit = 5
 [url "https://bmc@git.crustytoothpaste.net/git/bmc/"]
 	insteadOf = dct:
+[url "bmc@git.crustytoothpaste.net:/srv/scm/git/bmc/"]
+	insteadOf = dcts:
 [url "git@github.com:bk2204/"]
 	insteadOf = gh:
+[url "https://github.com/"]
+	insteadOf = ghp:
 [push]
 	default = matching
 [pull]
