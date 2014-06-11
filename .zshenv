@@ -74,6 +74,7 @@ fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=`hostname`
 fi
+local i
 for i in chromium-browser chromium google-chrome iceweasel firefox
 do
 	if command -v "$i" >/dev/null 2>&1
@@ -82,7 +83,6 @@ do
 		break
 	fi
 done
-unset i
 
 VISUAL="$EDITOR"
 
