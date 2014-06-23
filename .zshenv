@@ -105,20 +105,6 @@ VISUAL="$EDITOR"
 unsetopt allexport
 # End exporting variables.
 
-# Export other variables.
-#export LC_ALL
-#export _POSIX2_VERSION POSIXLY_PEDANTIC POSIXLY_CORRECT
-#export CVS_RSH
-#export BK_LICENSE
-#export ARCH_BACKEND
-#export BZREMAIL BZR_EMAIL
-#export GIT_COMMITER_EMAIL GIT_AUTHOR_EMAIL
-#export LARCH_PATH LCLIMPORTDIR
-#export PERLDOC_PAGER
-#export DEBEMAIL DEBFULLNAME
-#export HOSTNAME
-#export VISUAL EDITOR EMAIL BROWSER
-
 unfunction has_locale
 
 true
