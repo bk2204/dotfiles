@@ -1,5 +1,18 @@
 # brian m. carlson's zshenv.
 
+# Useful functions used in this file.  General definitions go in .zshrc.
+function has_locale () {
+	local locale="$1"
+
+	# On Debian sid, locale always exits successfully, but prints messages to
+	# standard error if the locale doesn't exist.  Sanity-check that this is the
+	# case for other versions by using the same algorithm for C, which we know
+	# exists.  If this assumption is violated, assume the locale does not exist.
+	[[ -z "$(LC_ALL=C locale 2>&1 >/dev/null)" ]] && \
+		[[ -z "$(LC_ALL="$locale" locale 2>&1 >/dev/null)" ]] && return 0
+	return 1
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -74,6 +87,9 @@ fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=`hostname`
 fi
+if has_locale en_DK.UTF-8; then
+	LC_TIME=en_DK.UTF-8
+fi
 local i
 for i in chromium-browser chromium google-chrome iceweasel firefox
 do
@@ -102,4 +118,7 @@ unsetopt allexport
 #export DEBEMAIL DEBFULLNAME
 #export HOSTNAME
 #export VISUAL EDITOR EMAIL BROWSER
+
+unfunction has_locale
+
 true
