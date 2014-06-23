@@ -11,6 +11,7 @@ silent ls --color=auto && alias ls='ls --color=auto'
 silent which prename && alias rename='prename'
 silent which vim && alias vi=vim
 
+alias rless='env -u LESSOPEN less'
 alias loadenv='eval `cat $HOME/.environment`'
 
 # Set prompts.
