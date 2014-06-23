@@ -253,6 +253,7 @@ augroup setl
 	au FileType ruby				setl ts=2 sw=2 sts=2 et si
 	au FileType sass				setl tw=0 noet
 	au FileType scss				setl tw=0 noet
+	au FileType vim					setl ts=2 sw=2 sts=2 noet
 	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
 augroup end
 
