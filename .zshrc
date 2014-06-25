@@ -135,7 +135,7 @@ set_sane_term ()
 	if silent which tabs && silent which perl && [[ -n $COLUMNS ]]
 	then
 		# Set up 4-space tabs.
-		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
+		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g') | tr '\n' '\r'
 	fi
 
 	# Make sure that other people can't mess with our terminal.
