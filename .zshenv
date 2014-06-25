@@ -90,7 +90,7 @@ fi
 if has_locale en_DK.UTF-8; then
 	LC_TIME=en_DK.UTF-8
 fi
-local i
+local i=""
 for i in chromium-browser chromium google-chrome iceweasel firefox
 do
 	if command -v "$i" >/dev/null 2>&1
