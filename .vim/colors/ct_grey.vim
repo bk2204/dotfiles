@@ -200,4 +200,6 @@ hi link csXmlTag							Keyword
 hi link perlStringStartEnd		rubyStringDelimiter
 hi link perlVStringV					String
 
+hi link pythonStringDelimiter	rubyStringDelimiter
+
 " vim: set ts=2 sw=2 sts=2 noet:

@@ -1,5 +1,18 @@
 # brian m. carlson's zshenv.
 
+# Useful functions used in this file.  General definitions go in .zshrc.
+function has_locale () {
+	local locale="$1"
+
+	# On Debian sid, locale always exits successfully, but prints messages to
+	# standard error if the locale doesn't exist.  Sanity-check that this is the
+	# case for other versions by using the same algorithm for C, which we know
+	# exists.  If this assumption is violated, assume the locale does not exist.
+	[[ -z "$(LC_ALL=C locale 2>&1 >/dev/null)" ]] && \
+		[[ -z "$(LC_ALL="$locale" locale 2>&1 >/dev/null)" ]] && return 0
+	return 1
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -58,7 +71,7 @@ LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
 GIT_PAGER="less -FRSX"
 PAGER="less -R"
-LESS="-R"
+LESS="-fR"
 EDITOR=vim
 GIT_MERGE_AUTOEDIT=no
 CLICOLOR=1
@@ -74,7 +87,10 @@ fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=`hostname`
 fi
-local i
+if has_locale en_DK.UTF-8; then
+	LC_TIME=en_DK.UTF-8
+fi
+local i=""
 for i in chromium-browser chromium google-chrome iceweasel firefox
 do
 	if command -v "$i" >/dev/null 2>&1
@@ -89,17 +105,6 @@ VISUAL="$EDITOR"
 unsetopt allexport
 # End exporting variables.
 
-# Export other variables.
-#export LC_ALL
-#export _POSIX2_VERSION POSIXLY_PEDANTIC POSIXLY_CORRECT
-#export CVS_RSH
-#export BK_LICENSE
-#export ARCH_BACKEND
-#export BZREMAIL BZR_EMAIL
-#export GIT_COMMITER_EMAIL GIT_AUTHOR_EMAIL
-#export LARCH_PATH LCLIMPORTDIR
-#export PERLDOC_PAGER
-#export DEBEMAIL DEBFULLNAME
-#export HOSTNAME
-#export VISUAL EDITOR EMAIL BROWSER
+unfunction has_locale
+
 true

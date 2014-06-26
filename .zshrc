@@ -11,6 +11,7 @@ silent ls --color=auto && alias ls='ls --color=auto'
 silent which prename && alias rename='prename'
 silent which vim && alias vi=vim
 
+alias rless='env -u LESSOPEN less'
 alias loadenv='eval `cat $HOME/.environment`'
 
 # Set prompts.
@@ -128,23 +129,24 @@ set_sane_term ()
 		*) ;;
 	esac
 
+	# Ensure key bindings are set up appropriately.
+	if [[ -n $DISPLAY ]] && silent which xmodmap && [[ -e $HOME/.Xmodmap ]]
+	then
+		xmodmap $HOME/.Xmodmap
+	fi
+}
+adjust_term_settings () {
 	# Turn off flow control.
 	silent stty -ixon -ixoff
 
 	if silent which tabs && silent which perl && [[ -n $COLUMNS ]]
 	then
 		# Set up 4-space tabs.
-		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g')
+		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g') | tr '\n' '\r'
 	fi
 
 	# Make sure that other people can't mess with our terminal.
 	silent mesg n
-
-	# Ensure key bindings are set up appropriately.
-	if [[ -n $DISPLAY ]] && silent which xmodmap && [[ -e $HOME/.Xmodmap ]]
-	then
-		xmodmap $HOME/.Xmodmap
-	fi
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
@@ -209,6 +211,7 @@ set_keybindings () {
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
 set_sane_term
+adjust_term_settings
 set_keybindings
 
 if is_ssh_session
