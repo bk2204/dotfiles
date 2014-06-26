@@ -129,6 +129,13 @@ set_sane_term ()
 		*) ;;
 	esac
 
+	# Ensure key bindings are set up appropriately.
+	if [[ -n $DISPLAY ]] && silent which xmodmap && [[ -e $HOME/.Xmodmap ]]
+	then
+		xmodmap $HOME/.Xmodmap
+	fi
+}
+adjust_term_settings () {
 	# Turn off flow control.
 	silent stty -ixon -ixoff
 
@@ -140,12 +147,6 @@ set_sane_term ()
 
 	# Make sure that other people can't mess with our terminal.
 	silent mesg n
-
-	# Ensure key bindings are set up appropriately.
-	if [[ -n $DISPLAY ]] && silent which xmodmap && [[ -e $HOME/.Xmodmap ]]
-	then
-		xmodmap $HOME/.Xmodmap
-	fi
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
@@ -210,6 +211,7 @@ set_keybindings () {
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
 set_sane_term
+adjust_term_settings
 set_keybindings
 
 if is_ssh_session
