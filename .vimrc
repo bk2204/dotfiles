@@ -306,9 +306,9 @@ let g:ctrlp_clear_cache_on_exit = 0
 
 "" Print settings.
 if filereadable('/etc/papersize')
-	let s:papersize = matchstr(system('/bin/cat /etc/papersize'), '\p*')
+	let s:papersize = matchstr(readfile('/etc/papersize', '', 1), '\p*')
 	if strlen(s:papersize)
-		let &printoptions = "paper:" . s:papersize
+		exe "set printoptions+=paper:" . s:papersize
 	endif
 	unlet! s:papersize
 endif
