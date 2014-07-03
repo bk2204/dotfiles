@@ -126,6 +126,9 @@ set_sane_term ()
 			has_term screen-256color && export TERM=screen-256color;;
 		rxvt:*mrxvt-full*)
 			has_term rxvt-256color && export TERM=rxvt-256color;;
+		*:*fbterm*)
+			# fbterm supports 256 colors.
+			has_term fbterm && export TERM=fbterm;;
 		*) ;;
 	esac
 
