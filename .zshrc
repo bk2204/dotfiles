@@ -161,7 +161,7 @@ adjust_term_settings () {
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
 	# properly in Debian, since this code has been taken from Debian's
-	# /etc/zsh/zshrc.
+	# /etc/zsh/zshrc.  Modified slightly with changes from grml's zshrc.
 	typeset -A key
 	key=(
 		BackSpace  "${terminfo[kbs]}"
@@ -187,7 +187,12 @@ set_keybindings () {
 		done
 		shift
 
-		sequence="${key[$1]}"
+		if [[ "$1" == "-s" ]]; then
+			shift
+			sequence="$1"
+		else
+			sequence="${key[$1]}"
+		fi
 		widget="$2"
 
 		[[ -z "$sequence" ]] && return 1
@@ -214,6 +219,7 @@ set_keybindings () {
 	bind2maps       viins vicmd -- Left        vi-backward-char
 	bind2maps emacs             -- Right       forward-char
 	bind2maps       viins vicmd -- Right       vi-forward-char
+	bind2maps emacs viins       -- -s '^xi'    insert-unicode-char
 
 	unfunction bind2maps
 }
@@ -243,9 +249,9 @@ do
 	fi
 done
 
-for i in promptinit compctl complete complist computil;
+for i in promptinit compctl complete complist computil insert-unicode-char;
 do
-	autoload -U $i
+	autoload -Uz $i
 done
 compinit -u 2>/dev/null
 
@@ -281,6 +287,7 @@ function zle-line-finish () {
 zle -N zle-line-init
 zle -N zle-line-finish
 zle -N zle-keymap-select
+zle -N insert-unicode-char
 
 # Set up the prompt.
 promptinit
