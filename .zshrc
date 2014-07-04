@@ -69,7 +69,8 @@ set_tty ()
 has_term ()
 {
 	local termname="$1"
-	TERM=$termname silent echotc xo
+	# Redirection is required because zsh complains about bad TERM.
+	TERM=$termname silent echotc xo 2>/dev/null
 }
 set_if_has_term ()
 {
