@@ -71,6 +71,11 @@ has_term ()
 	local termname="$1"
 	TERM=$termname silent echotc xo
 }
+set_if_has_term ()
+{
+	local termname="$1"
+	has_term "$termname" && export TERM="$termname";
+}
 set_sane_term ()
 {
 	# Make sure our terminal definition works right.
@@ -103,7 +108,7 @@ set_sane_term ()
 			fi
 			for i in $preferred
 			do
-				has_term $i && export TERM=$i
+				set_if_has_term $i
 				break
 			done
 		fi
@@ -112,23 +117,23 @@ set_sane_term ()
 	# Add the * to the end to catch the potential " (deleted)" that may occur.
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*xfce4-terminal*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*gnome-terminal*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*mate-terminal*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*evilvte*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*konsole*)
-			has_term konsole-256color && export TERM=konsole-256color;;
+			set_if_has_term konsole-256color;;
 		screen*:*)
 			EDITOR=vim;
-			has_term screen-256color && export TERM=screen-256color;;
+			set_if_has_term screen-256color;;
 		rxvt:*mrxvt-full*)
-			has_term rxvt-256color && export TERM=rxvt-256color;;
+			set_if_has_term rxvt-256color;;
 		*:*fbterm*)
 			# fbterm supports 256 colors.
-			has_term fbterm && export TERM=fbterm;;
+			set_if_has_term fbterm;;
 		*) ;;
 	esac
 
