@@ -202,4 +202,8 @@ hi link perlVStringV					String
 
 hi link pythonStringDelimiter	rubyStringDelimiter
 
+hi link zshStringDelimiter		rubyStringDelimiter
+
+hi link shQuote								rubyStringDelimiter
+
 " vim: set ts=2 sw=2 sts=2 noet:
