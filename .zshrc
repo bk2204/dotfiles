@@ -219,6 +219,7 @@ set_keybindings () {
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
+set_tty
 set_sane_term
 adjust_term_settings
 set_keybindings
@@ -442,8 +443,6 @@ setup_completion ()
 }
 
 # Set locales.
-set_tty
-
 blue="blue"
 [[ $(echotc Co) = 256 ]] && blue=33
 
