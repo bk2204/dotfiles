@@ -245,7 +245,7 @@ augroup setl
 	au FileType c						setl cin cino=t0
 	au FileType cs					setl cin cino=t0
 	au FileType docbkxml		setl cms=<!--%s-->
-	au FileType gitcommit		setl tw=76 spell com=b:#
+	au FileType gitcommit		setl tw=72 spell com=b:#
 	au FileType javascript	setl cin cino=t0,j1,J1
 	au FileType java				setl cin cino=t0,j1
 	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
