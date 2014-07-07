@@ -64,6 +64,4 @@
 	conflictstyle = diff3
 [core]
 	precomposeunicode = true
-[format]
-	thread = shallow
 # vim: set noet:
