@@ -22,3 +22,6 @@
 [submodule ".vim/bundle/vim-ruby"]
 	path = .vim/bundle/vim-ruby
 	url = https://github.com/vim-ruby/vim-ruby.git
+[submodule ".vim/bundle/perlomni.vim"]
+	path = .vim/bundle/perlomni.vim
+	url = https://github.com/c9s/perlomni.vim.git
