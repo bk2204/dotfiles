@@ -452,7 +452,7 @@ setup_completion ()
 
 # Set up termcap colors for less (from grml).
 blue="blue"
-[[ $(echotc Co) = 256 ]] && blue=33
+[[ $(echotc Co 2>/dev/null) = 256 ]] && blue=33
 
 export LESS_TERMCAP_mb=`print -P $(color_fg red yes)`
 export LESS_TERMCAP_md=`print -P $(color_fg red yes)`
