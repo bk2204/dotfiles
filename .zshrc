@@ -149,12 +149,6 @@ adjust_term_settings () {
 	# Turn off flow control.
 	silent stty -ixon -ixoff
 
-	if silent which tabs && silent which perl && [[ -n $COLUMNS ]]
-	then
-		# Set up 4-space tabs.
-		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g') | tr '\n' '\r'
-	fi
-
 	# Make sure that other people can't mess with our terminal.
 	silent mesg n
 }
