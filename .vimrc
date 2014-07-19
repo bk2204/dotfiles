@@ -230,6 +230,7 @@ augroup setf
 	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
 	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
 	au BufEnter,BufRead,BufNewFile *.mx											setf groff
+	au BufEnter,BufRead,BufNewFile $VIMRUNTIME/doc/*.txt		setf help
 	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
 	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
 	au BufEnter,BufRead,BufNewFile *.xml										setf xml
