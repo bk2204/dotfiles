@@ -145,8 +145,20 @@ function! s:GetPatternList()
 	return ['trailing', 'spacetab', 'newline']
 endfunction
 
+function! s:GetDefaultWhitespaceMode()
+	if &ft == "help" && &readonly
+		return 0
+	else
+		return 1
+	endif
+endfunction
+
 " Set up the patterns.
 function! s:SetWhitespacePattern(mode)
+	if !s:GetDefaultWhitespaceMode()
+		call clearmatches()
+		return
+	endif
 	call s:EnableWhitespaceChecking()
 	for i in s:GetPatternList()
 		try
