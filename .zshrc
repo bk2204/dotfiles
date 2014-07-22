@@ -444,6 +444,8 @@ setup_completion ()
 	}
 }
 
+[[ -f $HOME/.dircolors ]] && eval "$(dircolors $HOME/.dircolors 2>/dev/null)"
+
 # Set up termcap colors for less (from grml).
 blue="blue"
 [[ $(echotc Co 2>/dev/null) = 256 ]] && blue=33
