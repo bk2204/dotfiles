@@ -23,7 +23,7 @@ setopt shwordsplit bareglobqual
 setopt interactivecomments
 setopt promptsubst
 setopt rmstarsilent
-setopt sharehistory histignorespace
+setopt histignorespace
 unsetopt bgnice notify nomatch banghist
 
 # Set history.
