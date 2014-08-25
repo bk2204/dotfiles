@@ -13,6 +13,18 @@ function has_locale () {
 	return 1
 }
 
+function preferred_locale () {
+	local locale=$(printf "$LANG\n" | sed -e 's/.utf8$/.UTF-8/')
+	if [[ -z ${locale##en*.UTF-8} ]] && has_locale 'en_US.UTF-8'; then
+		printf "en_US.UTF-8"
+		return 0
+	elif [[ -z ${locale##(en|es|fr)*.UTF-8} ]]; then
+		printf "$locale"
+		return 0
+	fi
+	printf "en_US.UTF-8"
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -40,15 +52,15 @@ export MANPATH PATH
 # Set other variables.
 setopt allexport
 
-LANG=en_US.UTF-8
+LANG=$(preferred_locale)
 LC_ADDRESS=en_US.UTF-8
-LC_COLLATE=en_US.UTF-8
-LC_CTYPE=en_US.UTF-8
-LC_IDENTIFICATION=en_US.UTF-8
+LC_COLLATE=$(preferred_locale)
+LC_CTYPE=$(preferred_locale)
+LC_IDENTIFICATION=$(preferred_locale)
 LC_MONETARY=en_US.UTF-8
 LC_MEASUREMENT=POSIX
-LC_MESSAGES=en_US.UTF-8
-LC_NAME=en_US.UTF-8
+LC_MESSAGES=$(preferred_locale)
+LC_NAME=$(preferred_locale)
 LC_NUMERIC=en_US.UTF-8
 LC_PAPER=en_US.UTF-8
 LC_TIME=POSIX
@@ -106,5 +118,6 @@ unsetopt allexport
 # End exporting variables.
 
 unfunction has_locale
+unfunction preferred_locale
 
 true
