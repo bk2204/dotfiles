@@ -24,6 +24,7 @@ setopt interactivecomments
 setopt promptsubst
 setopt rmstarsilent
 setopt histignorespace
+setopt incappendhistory
 unsetopt bgnice notify nomatch banghist
 
 # Set history.
