@@ -38,12 +38,15 @@ else
 	umask 022
 fi
 
+ANDROID_HOME="$HOME/apps/android-sdk"
+export ANDROID_HOME
+
 # Nuke dupes.
 typeset -U path cdpath manpath fpath
 
 # Set up miscellaneous paths.
 manpath=(~/man /usr/share/man /usr/local/share/man)
-path=(~/bin /usr/local/bin /usr/local/sbin /usr/bin /usr/sbin /bin /sbin /usr/games)
+path=(~/bin /usr/local/bin /usr/local/sbin /usr/bin /usr/sbin /bin /sbin /usr/games $ANDROID_HOME/tools $ANDROID_HOME/platform-tools)
 fpath=($fpath[2,-1] ~/.zsh)
 
 # Export miscellaneous paths.
