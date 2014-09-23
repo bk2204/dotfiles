@@ -460,6 +460,7 @@ export LESS_TERMCAP_se=`print -P $(color_reset)`
 export LESS_TERMCAP_so=`print -P $(color_fg $blue yes)`
 export LESS_TERMCAP_ue=`print -P $(color_reset)`
 export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
+export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
 
 # Help less handle compressed files better.
 silent whence lesspipe && eval $(lesspipe)
