@@ -63,6 +63,8 @@ noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
 vnoremap <Leader>b :call <SID>DoTidy(1)<CR>
 nnoremap <Leader>b :call <SID>DoTidy(0)<CR>
+nnoremap <Leader>pp :set paste!<CR>
+nnoremap <Leader>ll :set list!<CR>
 
 "" Automatic file handling.
 if has("autocmd")
