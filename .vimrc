@@ -34,6 +34,7 @@ set bs=indent,eol,start
 " Loading files.
 set ml					" Modelines are nice.
 set enc=utf-8		" Always use UTF-8.
+set tenc=utf-8
 set wim=longest,full
 set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set hid					" Don't force saving when changing buffers.
