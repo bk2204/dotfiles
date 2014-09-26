@@ -242,7 +242,7 @@ endfunction
 " Setting file type.
 augroup setf
 	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
-	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
+	au BufEnter,BufRead,BufNewFile ~/*.txt									setf asciidoc
 	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
 	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
 	au BufEnter,BufRead,BufNewFile *.mx											setf groff
