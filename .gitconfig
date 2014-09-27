@@ -65,4 +65,5 @@
 	conflictstyle = diff3
 [core]
 	precomposeunicode = true
+	logAllRefUpdates = true
 # vim: set noet:
