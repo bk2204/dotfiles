@@ -79,7 +79,6 @@ DEBEMAIL="$EMAIL"
 BZREMAIL="$EMAIL"
 BZR_EMAIL="$EMAIL"
 GIT_COMMITTER_EMAIL="$EMAIL"
-GIT_AUTHOR_EMAIL="$EMAIL"
 GROFF_TMAC_PATH="$HOME/checkouts/tenorsax-resources/tmac"
 LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
