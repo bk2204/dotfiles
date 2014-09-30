@@ -26,6 +26,7 @@ setopt promptsubst
 setopt rmstarsilent
 setopt histignorespace
 setopt incappendhistory
+setopt extendedglob
 unsetopt bgnice notify nomatch banghist
 
 # Set history.
