@@ -7,6 +7,8 @@ color_bg ()
 {
 	local color="$1"
 
+	[[ $TERM = dumb ]] && return 0
+
 	printf "%%{"
 	if is-at-least 4.3.9
 	then
