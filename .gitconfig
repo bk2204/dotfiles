@@ -16,8 +16,8 @@
 	pnff = pull --no-ff
 	mff = merge --ff-only
 	mnff = merge --no-ff
-	los = log --simplify-merges
-	lops = log -p -C --simplify-merges
+	los = log --simplify-merges --topo-order
+	lops = log -p -C --simplify-merges --topo-order
 	gr = log --graph --decorate
 	grs = log --graph --decorate --simplify-merges
 	sui = submodule update --init
