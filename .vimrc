@@ -280,6 +280,11 @@ augroup call
 	au FileType perl				call s:SelectPerlSyntasticCheckers()
 augroup end
 
+" Syntax commands.
+augroup syntax
+	au FileType asciidoc		syn sync clear
+augroup end
+
 " Whitespace-related autocommands.
 if v:version >= 702 || (v:version == 701 && has("patch40"))
 	" matchadd and friends showed up in Vim 7.1.40.
