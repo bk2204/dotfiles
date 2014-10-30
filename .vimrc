@@ -81,15 +81,19 @@ endif
 syntax enable
 colorscheme ct_grey
 
-"" Bundles.
-" Vim 6.3 has a major problem trying to load Pathogen.
-if v:version >= 700
-	" Some versions of Vim have a broken autoload, or at least it doesn't work in
-	" this case, so help it out.
-	runtime autoload/pathogen.vim
-	let Fn = function("pathogen#infect")
-	execute Fn()
+"" Graceful exit.
+" Vim 6.3 gets very upset if it sees lists or dictionaries, or, for that matter,
+" Pathogen.
+if v:version < 700
+	finish
 endif
+
+"" Bundles.
+" Some versions of Vim have a broken autoload, or at least it doesn't work in
+" this case, so help it out.
+runtime autoload/pathogen.vim
+let Fn = function("pathogen#infect")
+execute Fn()
 
 "" Language-specific functions.
 " perlcritic is *extremely* slow on large files.
