@@ -42,6 +42,12 @@ set hid					" Don't force saving when changing buffers.
 " Search.
 set nohls
 
+" GUI settings.
+set lines=24
+set co=80
+set gcr+=",a:blinkon0"
+set gfn=Monospace\ 9
+
 "" Terminal issues.
 " These terminals are capable of supporting 16 colors, but they lie and only
 " claim support for 8.  Fix it so things don't look ugly.
@@ -73,6 +79,7 @@ if has("autocmd")
 endif
 
 syntax enable
+colorscheme ct_grey
 
 "" Bundles.
 " Vim 6.3 has a major problem trying to load Pathogen.
@@ -331,24 +338,6 @@ if filereadable('/etc/papersize')
 		exe "set printoptions+=paper:" . s:papersize
 	endif
 	unlet! s:papersize
-endif
-
-"" Display settings.
-if has("gui_running")
-	set lines=24 " Needed on drpepper.
-	set columns=80
-	let &guicursor = &guicursor . ",a:blinkon0"
-	colorscheme ct_grey
-	if has("gui_gtk")
-		set guifont=Monospace\ 9
-	elseif has("gui_kde")
-	elseif has("gui_x11")
-	else
-	endif
-elseif &t_Co == 256
-	colorscheme ct_grey
-else
-	colorscheme ct_grey
 endif
 
 " vim: set ts=2 sw=2 sts=2 noet:
