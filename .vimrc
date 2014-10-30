@@ -45,7 +45,7 @@ set nohls
 " GUI settings.
 set lines=24
 set co=80
-set gcr+=",a:blinkon0"
+set gcr+=a:blinkon0
 set gfn=Monospace\ 9
 
 "" Terminal issues.
