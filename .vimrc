@@ -47,6 +47,7 @@ set lines=24
 set co=80
 set gcr+=a:blinkon0
 set gfn=Monospace\ 9
+set go-=tT			" Disable tearoffs and toolbar.
 
 "" Terminal issues.
 " These terminals are capable of supporting 16 colors, but they lie and only
