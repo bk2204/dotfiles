@@ -30,6 +30,7 @@ set flp=^[-*+]\\+\\s\\+	" Don't indent lines starting with a number and a dot.
 set fo+=n				" Indent lists properly.
 set tw=80
 set bs=indent,eol,start
+set wrap
 
 " Loading files.
 set ml					" Modelines are nice.
@@ -294,7 +295,7 @@ augroup end
 
 " Syntax commands.
 augroup syntax
-	au FileType asciidoc		syn sync clear
+	au FileType asciidoc		syn sync clear | syn sync minlines=25
 augroup end
 
 " Whitespace-related autocommands.
