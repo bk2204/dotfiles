@@ -252,7 +252,7 @@ done
 
 for i in promptinit compctl complete complist computil insert-unicode-char;
 do
-	autoload -Uz $i
+	autoload -U $i
 done
 compinit -u 2>/dev/null
 
