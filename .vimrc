@@ -118,9 +118,11 @@ augroup setl
 augroup end
 
 " Language-specific setup.
-augroup call
-	au FileType perl				call s:SelectPerlSyntasticCheckers()
-augroup end
+if v:version >= 700
+	augroup call
+		au FileType perl				call s:SelectPerlSyntasticCheckers()
+	augroup end
+endif
 
 " Syntax commands.
 augroup syntax
