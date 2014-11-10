@@ -80,6 +80,72 @@ if has("autocmd")
 	filetype plugin indent on
 endif
 
+"" Autocommands.
+" Setting file type.
+augroup setf
+	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
+	au BufEnter,BufRead,BufNewFile ~/*.txt									setf asciidoc
+	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
+	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
+	au BufEnter,BufRead,BufNewFile *.mx											setf groff
+	au BufEnter,BufRead,BufNewFile $VIMRUNTIME/doc/*.txt		setf help
+	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
+	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
+	au BufEnter,BufRead,BufNewFile *.xml										setf xml
+	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
+	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
+	au BufEnter,BufRead,BufNewFile *.pir										setf pir
+augroup end
+
+" File type-specific parameters.
+augroup setl
+	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType cpp					setl cin cino=t0
+	au FileType c						setl cin cino=t0
+	au FileType cs					setl cin cino=t0
+	au FileType docbkxml		setl cms=<!--%s-->
+	au FileType gitcommit		setl tw=72 spell com=b:#
+	au FileType javascript	setl cin cino=t0,j1,J1
+	au FileType java				setl cin cino=t0,j1
+	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
+	au FileType python			setl et si tw=79
+	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
+	au FileType ruby				setl ts=2 sw=2 sts=2 et si
+	au FileType sass				setl tw=0 noet
+	au FileType scss				setl tw=0 noet
+	au FileType vim					setl ts=2 sw=2 sts=2 noet
+	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
+augroup end
+
+" Language-specific setup.
+augroup call
+	au FileType perl				call s:SelectPerlSyntasticCheckers()
+augroup end
+
+" Syntax commands.
+augroup syntax
+	au FileType asciidoc		syn sync clear | syn sync minlines=25
+augroup end
+
+" Whitespace-related autocommands.
+if v:version >= 702 || (v:version == 701 && has("patch40"))
+	" matchadd and friends showed up in Vim 7.1.40.
+	augroup whitespace
+		au BufWinEnter	*				call s:SetWhitespacePattern(0)
+		au WinEnter			*				call s:SetWhitespacePattern(0)
+		au InsertEnter	*				call s:SetWhitespacePattern(1)
+		au InsertLeave	*				call s:SetWhitespacePattern(0)
+		" Prevent a memory leak in old versions of Vim.
+		au BufWinLeave	*				call clearmatches()
+		au WinLeave			*				call clearmatches()
+		au Syntax				*				call s:SetWhitespacePattern(0)
+		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
+		au ColorScheme	*				hi def link bmcSpaceTabWhitespace	Error
+		au ColorScheme	*				hi def link bmcTrailingNewline	Error
+	augroup end
+endif
+
+"" Syntax highlighting.
 syntax enable
 colorscheme ct_grey
 
@@ -250,71 +316,6 @@ function! s:ClearTrailingWhitespace()
 	let command = '%s/' . pattern . '//g'
 	execute command
 endfunction
-
-"" Autocommands.
-" Setting file type.
-augroup setf
-	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
-	au BufEnter,BufRead,BufNewFile ~/*.txt									setf asciidoc
-	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
-	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
-	au BufEnter,BufRead,BufNewFile *.mx											setf groff
-	au BufEnter,BufRead,BufNewFile $VIMRUNTIME/doc/*.txt		setf help
-	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
-	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
-	au BufEnter,BufRead,BufNewFile *.xml										setf xml
-	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
-	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
-	au BufEnter,BufRead,BufNewFile *.pir										setf pir
-augroup end
-
-" File type-specific parameters.
-augroup setl
-	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
-	au FileType cpp					setl cin cino=t0
-	au FileType c						setl cin cino=t0
-	au FileType cs					setl cin cino=t0
-	au FileType docbkxml		setl cms=<!--%s-->
-	au FileType gitcommit		setl tw=72 spell com=b:#
-	au FileType javascript	setl cin cino=t0,j1,J1
-	au FileType java				setl cin cino=t0,j1
-	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
-	au FileType python			setl et si tw=79
-	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
-	au FileType ruby				setl ts=2 sw=2 sts=2 et si
-	au FileType sass				setl tw=0 noet
-	au FileType scss				setl tw=0 noet
-	au FileType vim					setl ts=2 sw=2 sts=2 noet
-	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
-augroup end
-
-" Language-specific setup.
-augroup call
-	au FileType perl				call s:SelectPerlSyntasticCheckers()
-augroup end
-
-" Syntax commands.
-augroup syntax
-	au FileType asciidoc		syn sync clear | syn sync minlines=25
-augroup end
-
-" Whitespace-related autocommands.
-if v:version >= 702 || (v:version == 701 && has("patch40"))
-	" matchadd and friends showed up in Vim 7.1.40.
-	augroup whitespace
-		au BufWinEnter	*				call s:SetWhitespacePattern(0)
-		au WinEnter			*				call s:SetWhitespacePattern(0)
-		au InsertEnter	*				call s:SetWhitespacePattern(1)
-		au InsertLeave	*				call s:SetWhitespacePattern(0)
-		" Prevent a memory leak in old versions of Vim.
-		au BufWinLeave	*				call clearmatches()
-		au WinLeave			*				call clearmatches()
-		au Syntax				*				call s:SetWhitespacePattern(0)
-		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
-		au ColorScheme	*				hi def link bmcSpaceTabWhitespace	Error
-		au ColorScheme	*				hi def link bmcTrailingNewline	Error
-	augroup end
-endif
 
 "" Miscellaneous variables.
 " Make sh highlighting POSIXy.
