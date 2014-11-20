@@ -64,6 +64,7 @@ endif
 noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 " "* is hard to type.  Map it to something easier.
 noremap <Leader><Leader> "*
+noremap <Leader>c "+
 " Trim trailing whitespace.
 noremap <Leader>w :call <SID>ClearTrailingWhitespace()<CR>
 noremap <Leader>zw :%s/\v(^--)@<!\s+$//g<CR>
