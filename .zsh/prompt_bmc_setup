@@ -27,9 +27,7 @@ prompt_bmc_setup_colors ()
 	local fcolor=$3
 	local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
 
-	printf 'pcc[%s]="' $number
-	color_fg $fcolor $fbold
-	printf '"'
+	printf 'pcc[%s]="%s"' $number $(color_fg $fcolor $fbold)
 }
 
 prompt_bmc_setup_base ()
@@ -50,7 +48,7 @@ prompt_bmc_setup_base ()
 	do
 		j=$((j + 1))
 		# It breaks if you don't use the subshell echo.  I promise.
-		eval `prompt_bmc_setup_colors $j $(echo $i)`
+		eval $(prompt_bmc_setup_colors $j $(echo $i))
 	done
 
 	zstyle ':vcs_info:*' actionformats "($pcc[10]%b|%a%$c_reset%)" "%R"
