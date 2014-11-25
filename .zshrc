@@ -15,7 +15,7 @@ silent which prename && alias rename='prename'
 silent which vim && alias vi=vim
 
 has_colors && alias grep='grep --color=auto'
-alias rless='env -u LESSOPEN less'
+alias rless='env -u LESSOPEN -u LESSCLOSE less'
 alias loadenv='eval `cat $HOME/.environment`'
 alias sudo='sudo '
 
@@ -223,6 +223,13 @@ set_keybindings () {
 	bind2maps emacs viins       -- -s '^xi'    insert-unicode-char
 
 	unfunction bind2maps
+}
+sless () {
+	(
+		# Help less handle compressed files better.
+		silent whence lesspipe && eval $(lesspipe)
+		less "$@"
+	)
 }
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
@@ -467,9 +474,6 @@ if has_colors; then
 	export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
 	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
 fi
-
-# Help less handle compressed files better.
-silent whence lesspipe && eval $(lesspipe)
 
 setup_completion
 
