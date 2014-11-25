@@ -80,6 +80,7 @@ nnoremap <Leader>ll :set list!<CR>
 if has("autocmd")
 	filetype plugin indent on
 endif
+syntax enable
 
 "" Autocommands.
 " Setting file type.
@@ -148,8 +149,7 @@ if v:version >= 702 || (v:version == 701 && has("patch40"))
 	augroup end
 endif
 
-"" Syntax highlighting.
-syntax enable
+"" Color scheme.
 colorscheme ct_grey
 
 "" Graceful exit.
