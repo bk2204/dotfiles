@@ -140,6 +140,10 @@ set_sane_term ()
 			set_if_has_term screen-256color;;
 		rxvt:*mrxvt-full*)
 			set_if_has_term rxvt-256color;;
+		linux:*)
+			# Usually /proc/$PPID/exe will be inaccessible because it's
+			# /bin/login and owned by root, so don't try to match on it.
+			set_if_has_term linux-16color;;
 		*:*fbterm*)
 			# fbterm supports 256 colors.
 			set_if_has_term fbterm;;
