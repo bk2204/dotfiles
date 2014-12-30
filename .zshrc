@@ -17,7 +17,7 @@ silent which vim && alias vi=vim
 has_colors && alias grep='grep --color=auto'
 alias rless='env -u LESSOPEN -u LESSCLOSE less'
 alias loadenv='eval `cat $HOME/.environment`'
-alias sudo='sudo '
+alias sudo='sudo -E '
 
 # Set prompts.
 PROMPT='%n@%m:%~(%?%)%# '
