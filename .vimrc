@@ -28,6 +28,7 @@ set fdm=marker
 set spc=				" Don't complain about uncapitalized words starting a sentence.
 set flp=^[-*+]\\+\\s\\+	" Don't indent lines starting with a number and a dot.
 set fo+=n				" Indent lists properly.
+set fo+=j				" Remove comment characters when joining lines.
 set tw=80
 set bs=indent,eol,start
 set wrap
