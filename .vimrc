@@ -290,7 +290,14 @@ function! s:SetWhitespacePatternGeneral()
 		" since it will strip it off.  mutt always inserts "> " for indents; don't
 		" warn about that either.  And finally, don't warn about the signature
 		" delimiter, since there's nothing we can do about that.
-		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:\s*|[> ]*\>))@<!\s+'
+		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:\s*|[> ]*\>))@<!'
+		" If we're in format=flowed mode, ignore a single trailing space at the end
+		" of a nonempty line.
+		if &fo =~ 'w'
+			let pattern .= '(\s{2,}|\t\s*|^\s+)'
+		else
+			let pattern .= '\s+'
+		endif
 	elseif &ft == "diff" || &ft == "review"
 		" Don't complain about extra spaces if they start at the beginning of a
 		" line.  git and diff insert these.
