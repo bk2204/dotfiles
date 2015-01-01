@@ -62,6 +62,9 @@ if &term == "xterm" || &term == "xterm-debian" || &term == "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
+"" Comamnds.
+command -range=% DoTidy		call <SID>DoTidy(<line1>, <line2>)
+
 "" Maps.
 " Show highlighting groups under cursor.
 noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
@@ -74,8 +77,7 @@ noremap <Leader>zw :%s/\v(^--)@<!\s+$//g<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
-vnoremap <Leader>b :call <SID>DoTidy(1)<CR>
-nnoremap <Leader>b :call <SID>DoTidy(0)<CR>
+noremap <Leader>b :DoTidy<CR>
 nnoremap <Leader>pp :set paste!<CR>
 nnoremap <Leader>ll :set list!<CR>
 
@@ -186,21 +188,22 @@ function! s:SelectPerlSyntasticCheckers()
 endfunction
 
 " Tidy code.
-function! s:DoTidy(visual) range
+function! s:DoTidy(start, end)
 	let cmd = "cat"
-	let winview = winsaveview()
 	if &ft == "perl"
 		let cmd = "perltidy -q"
 	elseif &ft == "python"
 		let cmd = "pythontidy"
 	endif
-	if a:visual == 0
-		let text = ":%!" . cmd
-		execute text
-	elseif a:visual == 1
-		let text = ":'<,'>!" . cmd
-		execute text
-	end
+	call s:ForRange(a:start, a:end, "!" . cmd)
+endfunction
+
+"" General functions.
+" Do an ex command for a range.
+function! s:ForRange(start, end, command)
+	let winview = winsaveview()
+	let text = ":" . a:start . "," . a:end . a:command
+	execute text
 	call winrestview(winview)
 endfunction
 
