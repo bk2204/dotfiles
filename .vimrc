@@ -63,7 +63,9 @@ if &term == "xterm" || &term == "xterm-debian" || &term == "xterm-xfree86"
 endif
 
 "" Comamnds.
-command -range=% DoTidy		call <SID>DoTidy(<line1>, <line2>)
+command -range=% DoTidy				call <SID>DoTidy(<line1>, <line2>)
+command -range=% Trailing			call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
+command -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
 
 "" Maps.
 " Show highlighting groups under cursor.
@@ -72,8 +74,8 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 noremap <Leader><Leader> "*
 noremap <Leader>c "+
 " Trim trailing whitespace.
-noremap <Leader>w :call <SID>ClearTrailingWhitespace()<CR>
-noremap <Leader>zw :%s/\v(^--)@<!\s+$//g<CR>
+noremap <Leader>w :Trailing<CR>
+noremap <Leader>zw :TrailingAll<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
@@ -327,10 +329,14 @@ function! s:SetWhitespacePatternSpaceTab()
 	return pattern
 endfunction
 
-function! s:ClearTrailingWhitespace()
-	let pattern = s:SetWhitespacePatternGeneral() . '$'
-	let command = '%s/' . pattern . '//g'
-	execute command
+function! s:ClearTrailingWhitespace(start, end, pattern)
+	if a:pattern
+		let pattern = a:pattern
+	else
+		let pattern = s:SetWhitespacePatternGeneral() . '$'
+	end
+	echo 's/' . pattern . '//g'
+	call s:ForRange(a:start, a:end, 's/' . pattern . '//g')
 endfunction
 
 "" Miscellaneous variables.
