@@ -142,6 +142,7 @@ augroup end
 if v:version >= 702 || (v:version == 701 && has("patch40"))
 	" matchadd and friends showed up in Vim 7.1.40.
 	augroup whitespace
+		au FileType			*				call s:SetWhitespacePattern(0)
 		au BufWinEnter	*				call s:SetWhitespacePattern(0)
 		au WinEnter			*				call s:SetWhitespacePattern(0)
 		au InsertEnter	*				call s:SetWhitespacePattern(1)
