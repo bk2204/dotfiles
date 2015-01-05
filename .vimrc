@@ -347,6 +347,9 @@ let g:is_posix=1
 " Better just to leave POD as a big comment block.
 let g:perl_include_pod = 0
 
+" Show us the real contents of the file.
+let g:vim_json_syntax_conceal = 0
+
 " Make editing git repositories of Perl modules easier.
 let g:syntastic_perl_lib_path = ['./lib']
 
