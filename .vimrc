@@ -116,7 +116,7 @@ augroup setl
 	au FileType gitcommit		setl tw=72 spell com=b:#
 	au FileType javascript	setl cin cino=t0,j1,J1
 	au FileType java				setl cin cino=t0,j1
-	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
+	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:> fo+=w
 	au FileType python			setl et si tw=79
 	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
 	au FileType ruby				setl ts=2 sw=2 sts=2 et si
