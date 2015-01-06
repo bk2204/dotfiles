@@ -5,14 +5,19 @@
 silent () {
 	"$@" >/dev/null 2>&1
 }
+has_colors () {
+	[[ $TERM != dumb ]]
+}
 
 # Set up some aliases.
-silent ls --color=auto && alias ls='ls --color=auto'
+silent ls --color=auto && has_colors && alias ls='ls --color=auto'
 silent which prename && alias rename='prename'
 silent which vim && alias vi=vim
 
-alias rless='env -u LESSOPEN less'
+has_colors && alias grep='grep --color=auto'
+alias rless='env -u LESSOPEN -u LESSCLOSE less'
 alias loadenv='eval `cat $HOME/.environment`'
+alias sudo='sudo -E '
 
 # Set prompts.
 PROMPT='%n@%m:%~(%?%)%# '
@@ -22,6 +27,9 @@ setopt shwordsplit bareglobqual
 setopt interactivecomments
 setopt promptsubst
 setopt rmstarsilent
+setopt histignorespace
+setopt incappendhistory
+setopt extendedglob
 unsetopt bgnice notify nomatch banghist
 
 # Set history.
@@ -69,7 +77,13 @@ set_tty ()
 has_term ()
 {
 	local termname="$1"
-	TERM=$termname silent echotc xo
+	# Redirection is required because zsh complains about bad TERM.
+	TERM=$termname silent echotc xo 2>/dev/null
+}
+set_if_has_term ()
+{
+	local termname="$1"
+	has_term "$termname" && export TERM="$termname";
 }
 set_sane_term ()
 {
@@ -103,7 +117,7 @@ set_sane_term ()
 			fi
 			for i in $preferred
 			do
-				has_term $i && export TERM=$i
+				set_if_has_term $i
 				break
 			done
 		fi
@@ -112,20 +126,27 @@ set_sane_term ()
 	# Add the * to the end to catch the potential " (deleted)" that may occur.
 	case "$TERM:`readlink /proc/$PPID/exe`" in
 		xterm:*xfce4-terminal*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*gnome-terminal*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*mate-terminal*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*evilvte*)
-			has_term xterm-256color && export TERM=xterm-256color;;
+			set_if_has_term xterm-256color;;
 		xterm:*konsole*)
-			has_term konsole-256color && export TERM=konsole-256color;;
+			set_if_has_term konsole-256color;;
 		screen*:*)
 			EDITOR=vim;
-			has_term screen-256color && export TERM=screen-256color;;
+			set_if_has_term screen-256color;;
 		rxvt:*mrxvt-full*)
-			has_term rxvt-256color && export TERM=rxvt-256color;;
+			set_if_has_term rxvt-256color;;
+		linux:*)
+			# Usually /proc/$PPID/exe will be inaccessible because it's
+			# /bin/login and owned by root, so don't try to match on it.
+			set_if_has_term linux-16color;;
+		*:*fbterm*)
+			# fbterm supports 256 colors.
+			set_if_has_term fbterm;;
 		*) ;;
 	esac
 
@@ -139,19 +160,13 @@ adjust_term_settings () {
 	# Turn off flow control.
 	silent stty -ixon -ixoff
 
-	if silent which tabs && silent which perl && [[ -n $COLUMNS ]]
-	then
-		# Set up 4-space tabs.
-		tabs $(seq 1 4 $COLUMNS | perl -0777pe 's/\n/,/g') | tr '\n' '\r'
-	fi
-
 	# Make sure that other people can't mess with our terminal.
 	silent mesg n
 }
 set_keybindings () {
 	# Set up key handling for non-Debian systems.  This is already handled
 	# properly in Debian, since this code has been taken from Debian's
-	# /etc/zsh/zshrc.
+	# /etc/zsh/zshrc.  Modified slightly with changes from grml's zshrc.
 	typeset -A key
 	key=(
 		BackSpace  "${terminfo[kbs]}"
@@ -177,7 +192,12 @@ set_keybindings () {
 		done
 		shift
 
-		sequence="${key[$1]}"
+		if [[ "$1" == "-s" ]]; then
+			shift
+			sequence="$1"
+		else
+			sequence="${key[$1]}"
+		fi
 		widget="$2"
 
 		[[ -z "$sequence" ]] && return 1
@@ -204,12 +224,21 @@ set_keybindings () {
 	bind2maps       viins vicmd -- Left        vi-backward-char
 	bind2maps emacs             -- Right       forward-char
 	bind2maps       viins vicmd -- Right       vi-forward-char
+	bind2maps emacs viins       -- -s '^xi'    insert-unicode-char
 
 	unfunction bind2maps
+}
+sless () {
+	(
+		# Help less handle compressed files better.
+		silent whence lesspipe && eval $(lesspipe)
+		less "$@"
+	)
 }
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
+set_tty
 set_sane_term
 adjust_term_settings
 set_keybindings
@@ -232,7 +261,7 @@ do
 	fi
 done
 
-for i in promptinit compctl complete complist computil;
+for i in promptinit compctl complete complist computil insert-unicode-char;
 do
 	autoload -U $i
 done
@@ -270,6 +299,7 @@ function zle-line-finish () {
 zle -N zle-line-init
 zle -N zle-line-finish
 zle -N zle-keymap-select
+zle -N insert-unicode-char
 
 # Set up the prompt.
 promptinit
@@ -432,23 +462,22 @@ setup_completion ()
 	}
 }
 
-# Set locales.
-set_tty
+if has_colors; then
+	[[ -f $HOME/.dircolors ]] && eval "$(dircolors $HOME/.dircolors 2>/dev/null)"
 
-blue="blue"
-[[ $(echotc Co) = 256 ]] && blue=33
+	# Set up termcap colors for less (from grml).
+	blue="blue"
+	[[ $(echotc Co 2>/dev/null) = 256 ]] && blue=33
 
-# Set up termcap colors for less (from grml).
-export LESS_TERMCAP_mb=`print -P $(color_fg red yes)`
-export LESS_TERMCAP_md=`print -P $(color_fg red yes)`
-export LESS_TERMCAP_me=`print -P $(color_reset)`
-export LESS_TERMCAP_se=`print -P $(color_reset)`
-export LESS_TERMCAP_so=`print -P $(color_fg $blue yes)`
-export LESS_TERMCAP_ue=`print -P $(color_reset)`
-export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
-
-# Help less handle compressed files better.
-silent whence lesspipe && eval $(lesspipe)
+	export LESS_TERMCAP_mb=`print -P $(color_fg red yes)`
+	export LESS_TERMCAP_md=`print -P $(color_fg red yes)`
+	export LESS_TERMCAP_me=`print -P $(color_reset)`
+	export LESS_TERMCAP_se=`print -P $(color_reset)`
+	export LESS_TERMCAP_so=`print -P $(color_fg $blue yes)`
+	export LESS_TERMCAP_ue=`print -P $(color_reset)`
+	export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
+	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
+fi
 
 setup_completion
 

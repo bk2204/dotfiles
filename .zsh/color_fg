@@ -8,6 +8,8 @@ color_fg ()
 	local color="$1"
 	local bold="$2"
 
+	[[ $TERM = dumb ]] && return 0
+
 	printf "%%{"
 	[[ -n $bold ]] && printf "%%B"
 	if is-at-least 4.3.9

@@ -2,6 +2,8 @@
 bind generic,pager,index,attach b previous-page
 bind generic,pager,index,attach - noop
 bind pager,index,attach B bounce-message
+bind index,pager <Tab> next-unread
+bind index,pager <Esc><Tab> previous-unread
 # Macros.
 macro index S <tag-prefix><save-message>+Spam.Reprocess\n
 macro pager S <save-message>+Spam.Reprocess\n

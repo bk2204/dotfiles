@@ -6,7 +6,7 @@
 	main-window-view = HistoryView
 	file-view-vpane-position = 161
 [user]
-	name =
+	name = brian m. carlson
 	email =
 	signingkey = 1F52F68B!
 [alias]
@@ -16,10 +16,16 @@
 	pnff = pull --no-ff
 	mff = merge --ff-only
 	mnff = merge --no-ff
-	los = log --simplify-merges
-	lops = log -p -C --simplify-merges
-	graph = log --graph
+	los = log --simplify-merges --topo-order
+	lops = log -p -C --simplify-merges --topo-order
+	gr = log --graph --decorate
+	grs = log --graph --decorate --simplify-merges
+	sui = submodule update --init
+	diffc = diff --cached
+	# Import a tarball in such a way as to produce predictable SHA-1 values.
 	setup = "!f() { git init && git add -f . && GIT_COMMITTER_DATE=451521442 GIT_AUTHOR_DATE=451521442 git commit -m 'initial import' && git tag start; };f"
+	# Import patches in such a way as to produce predictable SHA-1 values.
+	import-patches = "!f() { GIT_COMMITTER_DATE=451521442 GIT_AUTHOR_DATE=451521442 git am -3 \"$@\"; };f"
 	lsf = ls-files
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
 [i18n]
@@ -62,6 +68,5 @@
 	conflictstyle = diff3
 [core]
 	precomposeunicode = true
-[format]
-	thread = shallow
+	logAllRefUpdates = true
 # vim: set noet:

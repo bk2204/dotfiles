@@ -28,20 +28,33 @@ set fdm=marker
 set spc=				" Don't complain about uncapitalized words starting a sentence.
 set flp=^[-*+]\\+\\s\\+	" Don't indent lines starting with a number and a dot.
 set fo+=n				" Indent lists properly.
+set fo+=j				" Remove comment characters when joining lines.
 set tw=80
 set bs=indent,eol,start
+set wrap
 
 " Loading files.
 set ml					" Modelines are nice.
 set enc=utf-8		" Always use UTF-8.
+set tenc=utf-8
 set wim=longest,full
 set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set hid					" Don't force saving when changing buffers.
 
 " Search.
 set nohls
 
 " Help.
 set notbs				" The vim packages I'm using have unsorted help tag files.
+
+" GUI settings.
+if has("gui_running")
+	set lines=24
+	set co=80
+	set gcr+=a:blinkon0
+	set gfn=Monospace\ 9
+	set go-=tT			" Disable tearoffs and toolbar.
+endif
 
 "" Terminal issues.
 " These terminals are capable of supporting 16 colors, but they lie and only
@@ -52,36 +65,117 @@ if &term == "xterm" || &term == "xterm-debian" || &term == "xterm-xfree86"
 	set t_Sb=[4%dm
 endif
 
+"" Comamnds.
+command -range=% DoTidy				call <SID>DoTidy(<line1>, <line2>)
+command -range=% Trailing			call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
+command -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
+
 "" Maps.
 " Show highlighting groups under cursor.
 noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 " "* is hard to type.  Map it to something easier.
 noremap <Leader><Leader> "*
+noremap <Leader>c "+
 " Trim trailing whitespace.
-noremap <Leader>w :call <SID>ClearTrailingWhitespace()<CR>
-noremap <Leader>zw :%s/\v(^--)@<!\s+$//g<CR>
+noremap <Leader>w :Trailing<CR>
+noremap <Leader>zw :TrailingAll<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Beautify files.
-vnoremap <Leader>b :call <SID>DoTidy(1)<CR>
-nnoremap <Leader>b :call <SID>DoTidy(0)<CR>
+noremap <Leader>b :DoTidy<CR>
+nnoremap <Leader>pp :set paste!<CR>
+nnoremap <Leader>ll :set list!<CR>
 
 "" Automatic file handling.
 if has("autocmd")
 	filetype plugin indent on
 endif
-
 syntax enable
 
-"" Bundles.
-" Vim 6.3 has a major problem trying to load Pathogen.
+"" Autocommands.
+" Setting file type.
+augroup setf
+	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
+	au BufEnter,BufRead,BufNewFile ~/*.txt									setf asciidoc
+	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
+	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
+	au BufEnter,BufRead,BufNewFile *.mx											setf groff
+	au BufEnter,BufRead,BufNewFile $VIMRUNTIME/doc/*.txt		setf help
+	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
+	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
+	au BufEnter,BufRead,BufNewFile *.xml										setf xml
+	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
+	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
+	au BufEnter,BufRead,BufNewFile *.pir										setf pir
+augroup end
+
+" File type-specific parameters.
+augroup setl
+	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType cpp					setl cin cino=t0
+	au FileType c						setl cin cino=t0
+	au FileType cs					setl cin cino=t0
+	au FileType docbkxml		setl cms=<!--%s-->
+	au FileType gitcommit		setl tw=72 spell com=b:#
+	au FileType javascript	setl cin cino=t0,j1,J1
+	au FileType java				setl cin cino=t0,j1
+	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
+	au FileType python			setl et si tw=79
+	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
+	au FileType ruby				setl ts=2 sw=2 sts=2 et si
+	au FileType sass				setl tw=0 noet
+	au FileType scss				setl tw=0 noet
+	au FileType vim					setl ts=2 sw=2 sts=2 noet
+	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
+augroup end
+
+" Language-specific setup.
 if v:version >= 700
-	" Some versions of Vim have a broken autoload, or at least it doesn't work in
-	" this case, so help it out.
-	runtime autoload/pathogen.vim
-	let Fn = function("pathogen#infect")
-	execute Fn()
+	augroup call
+		au FileType perl				call s:SelectPerlSyntasticCheckers()
+	augroup end
 endif
+
+" Syntax commands.
+augroup syntax
+	au FileType asciidoc		syn sync clear | syn sync minlines=25
+augroup end
+
+" Whitespace-related autocommands.
+if v:version >= 702 || (v:version == 701 && has("patch40"))
+	" matchadd and friends showed up in Vim 7.1.40.
+	augroup whitespace
+		au FileType			*				call s:SetWhitespacePattern(0)
+		au BufWinEnter	*				call s:SetWhitespacePattern(0)
+		au WinEnter			*				call s:SetWhitespacePattern(0)
+		au InsertEnter	*				call s:SetWhitespacePattern(1)
+		au InsertLeave	*				call s:SetWhitespacePattern(0)
+		" Prevent a memory leak in old versions of Vim.
+		au BufWinLeave	*				call clearmatches()
+		au WinLeave			*				call clearmatches()
+		au Syntax				*				call s:SetWhitespacePattern(0)
+		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
+		au ColorScheme	*				hi def link bmcSpaceTabWhitespace	Error
+		au ColorScheme	*				hi def link bmcTrailingNewline	Error
+	augroup end
+endif
+
+"" Color scheme.
+colorscheme ct_grey
+
+"" Graceful exit.
+" Vim 6.3 gets very upset if it sees lists or dictionaries, or, for that matter,
+" Pathogen.
+if v:version < 700
+	finish
+endif
+
+"" Bundles.
+" Some versions of Vim have a broken autoload, or at least it doesn't work in
+" this case, so help it out.
+runtime autoload/pathogen.vim
+let Fn = function("pathogen#infect")
+execute Fn()
 
 "" Language-specific functions.
 " perlcritic is *extremely* slow on large files.
@@ -100,21 +194,22 @@ function! s:SelectPerlSyntasticCheckers()
 endfunction
 
 " Tidy code.
-function! s:DoTidy(visual) range
+function! s:DoTidy(start, end)
 	let cmd = "cat"
-	let winview = winsaveview()
 	if &ft == "perl"
 		let cmd = "perltidy -q"
 	elseif &ft == "python"
 		let cmd = "pythontidy"
 	endif
-	if a:visual == 0
-		let text = ":%!" . cmd
-		execute text
-	elseif a:visual == 1
-		let text = ":'<,'>!" . cmd
-		execute text
-	end
+	call s:ForRange(a:start, a:end, "!" . cmd)
+endfunction
+
+"" General functions.
+" Do an ex command for a range.
+function! s:ForRange(start, end, command)
+	let winview = winsaveview()
+	let text = ":" . a:start . "," . a:end . a:command
+	execute text
 	call winrestview(winview)
 endfunction
 
@@ -147,8 +242,20 @@ function! s:GetPatternList()
 	return ['trailing', 'spacetab', 'newline']
 endfunction
 
+function! s:GetDefaultWhitespaceMode()
+	if &ft == "help" && &readonly
+		return 0
+	else
+		return 1
+	endif
+endfunction
+
 " Set up the patterns.
 function! s:SetWhitespacePattern(mode)
+	if !s:GetDefaultWhitespaceMode()
+		call clearmatches()
+		return
+	endif
 	call s:EnableWhitespaceChecking()
 	for i in s:GetPatternList()
 		try
@@ -186,17 +293,25 @@ function! s:SetWhitespacePatternGeneral()
 		let indent = '\t'
 		let nonindent = '( +)'
 	end
+	let pod_indent = exists('g:bmcPodIndentOk') && g:bmcPodIndentOk
 	if &ft == "mail"
 		" ExtEdit puts trailing whitespace in header fields.  Don't warn about this,
 		" since it will strip it off.  mutt always inserts "> " for indents; don't
 		" warn about that either.  And finally, don't warn about the signature
 		" delimiter, since there's nothing we can do about that.
-		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:\s*|[> ]*\>))@<!\s+'
+		let pattern = '\v(^(--|[A-Z]+[a-zA-Z-]+:\s*|[> ]*\>))@<!'
+		" If we're in format=flowed mode, ignore a single trailing space at the end
+		" of a nonempty line.
+		if &fo =~ 'w'
+			let pattern .= '(\s{2,}|\t\s*|^\s+)'
+		else
+			let pattern .= '\s+'
+		endif
 	elseif &ft == "diff" || &ft == "review"
 		" Don't complain about extra spaces if they start at the beginning of a
 		" line.  git and diff insert these.
 		let pattern = '\v(^\s*)@<!\s+'
-	elseif &ft == "perl" || &ft == "pod"
+	elseif (&ft == "perl" || &ft == "pod") && pod_indent
 		" Unfortunately, Pod uses spaces to delimit a verbatim block, so don't
 		" complain about spaces if they use the standard indent.
 		let pattern = '\v(^' . indent . '\s+|^(' . nonindent . ')|(\S)@<=\s+)'
@@ -218,70 +333,15 @@ function! s:SetWhitespacePatternSpaceTab()
 	return pattern
 endfunction
 
-function! s:ClearTrailingWhitespace()
-	let pattern = s:SetWhitespacePatternGeneral() . '$'
-	let command = '%s/' . pattern . '//g'
-	execute command
+function! s:ClearTrailingWhitespace(start, end, pattern)
+	if a:pattern
+		let pattern = a:pattern
+	else
+		let pattern = s:SetWhitespacePatternGeneral() . '$'
+	end
+	echo 's/' . pattern . '//g'
+	call s:ForRange(a:start, a:end, 's/' . pattern . '//g')
 endfunction
-
-"" Autocommands.
-" Setting file type.
-augroup setf
-	au BufEnter,BufRead,BufNewFile *.adoc										setf asciidoc
-	au BufEnter,BufRead,BufNewFile *.txt										setf asciidoc
-	au BufEnter,BufRead,BufNewFile merge_request_testing.*	setf asciidoc
-	au BufEnter,BufRead,BufNewFile *.dbx										setf docbkxml
-	au BufEnter,BufRead,BufNewFile *.mx											setf groff
-	au BufEnter,BufRead,BufNewFile reportbug-*							setf mail
-	au BufEnter,BufRead,BufNewFile reportbug.*							setf mail
-	au BufEnter,BufRead,BufNewFile *.xml										setf xml
-	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
-	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
-	au BufEnter,BufRead,BufNewFile *.pir										setf pir
-augroup end
-
-" File type-specific parameters.
-augroup setl
-	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
-	au FileType cpp					setl cin cino=t0
-	au FileType c						setl cin cino=t0
-	au FileType cs					setl cin cino=t0
-	au FileType docbkxml		setl cms=<!--%s-->
-	au FileType gitcommit		setl tw=76 spell com=b:#
-	au FileType javascript	setl cin cino=t0,j1,J1
-	au FileType java				setl cin cino=t0,j1
-	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
-	au FileType python			setl et si
-	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
-	au FileType ruby				setl ts=2 sw=2 sts=2 et si
-	au FileType sass				setl tw=0 noet
-	au FileType scss				setl tw=0 noet
-	au FileType vim					setl ts=2 sw=2 sts=2 noet
-	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
-augroup end
-
-" Language-specific setup.
-augroup call
-	au FileType perl				call s:SelectPerlSyntasticCheckers()
-augroup end
-
-" Whitespace-related autocommands.
-if v:version >= 702 || (v:version == 701 && has("patch40"))
-	" matchadd and friends showed up in Vim 7.1.40.
-	augroup whitespace
-		au BufWinEnter	*				call s:SetWhitespacePattern(0)
-		au WinEnter			*				call s:SetWhitespacePattern(0)
-		au InsertEnter	*				call s:SetWhitespacePattern(1)
-		au InsertLeave	*				call s:SetWhitespacePattern(0)
-		" Prevent a memory leak in old versions of Vim.
-		au BufWinLeave	*				call clearmatches()
-		au WinLeave			*				call clearmatches()
-		au Syntax				*				call s:SetWhitespacePattern(0)
-		au ColorScheme	*				hi def link bmcTrailingWhitespace	Error
-		au ColorScheme	*				hi def link bmcSpaceTabWhitespace	Error
-		au ColorScheme	*				hi def link bmcTrailingNewline	Error
-	augroup end
-endif
 
 "" Miscellaneous variables.
 " Make sh highlighting POSIXy.
@@ -289,6 +349,9 @@ let g:is_posix=1
 
 " Better just to leave POD as a big comment block.
 let g:perl_include_pod = 0
+
+" Show us the real contents of the file.
+let g:vim_json_syntax_conceal = 0
 
 " Make editing git repositories of Perl modules easier.
 let g:syntastic_perl_lib_path = ['./lib']
@@ -311,24 +374,6 @@ if filereadable('/etc/papersize')
 		exe "set printoptions+=paper:" . s:papersize
 	endif
 	unlet! s:papersize
-endif
-
-"" Display settings.
-if has("gui_running")
-	set lines=24 " Needed on drpepper.
-	set columns=80
-	let &guicursor = &guicursor . ",a:blinkon0"
-	colorscheme ct_grey
-	if has("gui_gtk")
-		set guifont=Monospace\ 9
-	elseif has("gui_kde")
-	elseif has("gui_x11")
-	else
-	endif
-elseif &t_Co == 256
-	colorscheme ct_grey
-else
-	colorscheme ct_grey
 endif
 
 " vim: set ts=2 sw=2 sts=2 noet:

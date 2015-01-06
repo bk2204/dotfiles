@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# Extract the portion of an ANSI code that can be used in LS_COLORS or
+# GREP_COLORS.
+
+color_fg_ansi () {
+	# Coalesce the bold attribute and the color into one statement if possible.
+	print -Pn $(color_fg "$@") | \
+		perl -pe 's/\033\[(.*)m\033\[(.*)m/$1;$2/; s/\033\[(.*)m/$1/'
+}

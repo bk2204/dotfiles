@@ -13,6 +13,18 @@ function has_locale () {
 	return 1
 }
 
+function preferred_locale () {
+	local locale=$(printf "$LANG\n" | sed -e 's/.utf8$/.UTF-8/')
+	if [[ -z ${locale##en*.UTF-8} ]] && has_locale 'en_US.UTF-8'; then
+		printf "en_US.UTF-8"
+		return 0
+	elif [[ -z ${locale##(en|es|fr)*.UTF-8} ]]; then
+		printf "$locale"
+		return 0
+	fi
+	printf "en_US.UTF-8"
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -26,12 +38,15 @@ else
 	umask 022
 fi
 
+ANDROID_HOME="$HOME/apps/android-sdk"
+export ANDROID_HOME
+
 # Nuke dupes.
 typeset -U path cdpath manpath fpath
 
 # Set up miscellaneous paths.
-manpath=(~/man /usr/share/man /usr/X11R6/man /usr/local/share/man)
-path=(~/bin /usr/local/bin /usr/local/sbin /usr/bin /usr/sbin /bin /sbin /usr/bin/X11 /usr/games)
+manpath=(~/man /usr/share/man /usr/local/share/man)
+path=(~/bin /usr/local/bin /usr/local/sbin /usr/bin /usr/sbin /bin /sbin /usr/games $ANDROID_HOME/tools $ANDROID_HOME/platform-tools)
 fpath=($fpath[2,-1] ~/.zsh)
 
 # Export miscellaneous paths.
@@ -40,15 +55,15 @@ export MANPATH PATH
 # Set other variables.
 setopt allexport
 
-LANG=en_US.UTF-8
+LANG=$(preferred_locale)
 LC_ADDRESS=en_US.UTF-8
-LC_COLLATE=en_US.UTF-8
-LC_CTYPE=en_US.UTF-8
-LC_IDENTIFICATION=en_US.UTF-8
+LC_COLLATE=$(preferred_locale)
+LC_CTYPE=$(preferred_locale)
+LC_IDENTIFICATION=$(preferred_locale)
 LC_MONETARY=en_US.UTF-8
-LC_MEASUREMENT=en_US.UTF-8
-LC_MESSAGES=en_US.UTF-8
-LC_NAME=en_US.UTF-8
+LC_MEASUREMENT=POSIX
+LC_MESSAGES=$(preferred_locale)
+LC_NAME=$(preferred_locale)
 LC_NUMERIC=en_US.UTF-8
 LC_PAPER=en_US.UTF-8
 LC_TIME=POSIX
@@ -64,8 +79,7 @@ DEBEMAIL="$EMAIL"
 BZREMAIL="$EMAIL"
 BZR_EMAIL="$EMAIL"
 GIT_COMMITTER_EMAIL="$EMAIL"
-GIT_AUTHOR_EMAIL="$EMAIL"
-GROFF_TMAC_PATH="$HOME/checkouts/tenorsax/tmac"
+GROFF_TMAC_PATH="$HOME/checkouts/tenorsax-resources/tmac"
 LARCH_PATH=/usr/share/splint/lib/
 LCLIMPORTDIR=/usr/share/splint/imports/
 PERLDOC_PAGER="less -R"
@@ -77,6 +91,8 @@ GIT_MERGE_AUTOEDIT=no
 CLICOLOR=1
 FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
+# Don't prompt for credentials, just fail.
+GIT_ASKPASS="/bin/echo"
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
 	unset XML_CATALOG_FILES
@@ -106,5 +122,6 @@ unsetopt allexport
 # End exporting variables.
 
 unfunction has_locale
+unfunction preferred_locale
 
 true
