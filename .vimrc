@@ -203,9 +203,14 @@ endfunction
 
 "" General functions.
 " Do an ex command for a range.
-function! s:ForRange(start, end, command)
+function! s:ForRange(start, end, command, ...)
 	let winview = winsaveview()
-	let text = ":" . a:start . "," . a:end . a:command
+	let text = ":"
+	" Optional prefix.  Can be used for :silent
+	if a:0
+		let text .= a:1 . " "
+	end
+	let text .= a:start . "," . a:end . a:command
 	execute text
 	call winrestview(winview)
 endfunction
@@ -337,7 +342,7 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
 		let pattern = s:SetWhitespacePatternGeneral() . '$'
 	end
 	echo 's/' . pattern . '//g'
-	call s:ForRange(a:start, a:end, 's/' . pattern . '//g')
+	call s:ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
 endfunction
 
 "" Miscellaneous variables.
