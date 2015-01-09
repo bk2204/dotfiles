@@ -63,9 +63,9 @@ if &term == "xterm" || &term == "xterm-debian" || &term == "xterm-xfree86"
 endif
 
 "" Comamnds.
-command -range=% DoTidy				call <SID>DoTidy(<line1>, <line2>)
-command -range=% Trailing			call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
-command -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
+command! -range=% DoTidy			call <SID>DoTidy(<line1>, <line2>)
+command! -range=% Trailing		call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
+command! -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
 
 "" Maps.
 " Show highlighting groups under cursor.
