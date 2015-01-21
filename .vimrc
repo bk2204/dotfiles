@@ -365,6 +365,9 @@ let g:syntastic_enable_perl_checker = 1
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'solarized256'
 
+" Ctrl-P settings.
+let g:ctrlp_max_files = 60000
+
 " Ctrl-P settings.  Regenerating the cache is expensive on large repos.
 let g:ctrlp_extensions = ['buffertag']
 let g:ctrlp_clear_cache_on_exit = 0
