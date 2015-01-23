@@ -44,6 +44,11 @@ set hid					" Don't force saving when changing buffers.
 " Search.
 set nohls
 
+" Rendering.
+if exists("$SSH_CONNECTION")
+	set notf			" Speed up redrawing on slow SSH connections.
+end
+
 " GUI settings.
 if has("gui_running")
 	set lines=24
