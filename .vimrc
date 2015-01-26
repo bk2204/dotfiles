@@ -22,7 +22,9 @@ set ru					" Turn on ruler.
 set ls=2				" Always show a status bar for powerline.
 
 " Folding.
-set fdm=marker
+if has("folding")
+	set fdm=marker
+end
 
 " Text handling.
 set spc=				" Don't complain about uncapitalized words starting a sentence.
