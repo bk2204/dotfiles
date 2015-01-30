@@ -95,9 +95,6 @@ noremap <Leader>b :DoTidy<CR>
 nnoremap <Leader>pp :set paste!<CR>
 nnoremap <Leader>ll :set list!<CR>
 
-"" Color scheme.
-colorscheme ct_grey
-
 "" Graceful exit.
 " Versions of Vim without +eval will exit here.
 if 0 | finish | endif
@@ -175,6 +172,11 @@ if v:version >= 702 || (v:version == 701 && has("patch40"))
 		au ColorScheme	*				hi def link bmcTrailingNewline	Error
 	augroup end
 endif
+
+"" Color scheme.
+" This needs to go after the whitespace handling, since it can cause warnings if
+" placed before it.
+colorscheme ct_grey
 
 "" Graceful exit.
 " Vim 6.3 gets very upset if it sees lists or dictionaries, or, for that matter,
