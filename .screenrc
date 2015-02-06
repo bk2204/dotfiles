@@ -3,3 +3,4 @@ vbell off
 defutf8 on
 caption always "%{=b kb}$USER@%H  %{ky}(load: %l)  %-21=%{wk}%D %Y-%m-%d %0c"
 hardstatus alwayslastline "%{+b kR}%n%f %t %{-b kw} | %?%-Lw%?%{+b kB}%n*%f %t%?(%u)%?%{kw}%?%+Lw%? %{wd}"
+termcapinfo xterm* ti@:te@
