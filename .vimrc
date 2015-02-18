@@ -240,11 +240,7 @@ function! s:EnableWhitespaceChecking()
 		let b:whitespace = {'enabled': -1, 'patterns': {}}
 	endif
 	if b:whitespace['enabled'] == -1
-		if &ft == 'help'
-			let b:whitespace['enabled'] = 0
-		else
-			let b:whitespace['enabled'] = 1
-		endif
+		let b:whitespace['enabled'] = s:GetDefaultWhitespaceMode()
 		for i in s:GetPatternList()
 			let b:whitespace['patterns'][i] = -1
 		endfor
