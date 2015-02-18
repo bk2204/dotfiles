@@ -263,11 +263,7 @@ function! s:GetPatternList()
 endfunction
 
 function! s:GetDefaultWhitespaceMode()
-	if &ft == "help" && &readonly
-		return 0
-	else
-		return 1
-	endif
+	return &ft == "help" && &readonly ? 0 : 1
 endfunction
 
 " Set up the patterns.
