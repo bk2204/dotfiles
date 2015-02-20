@@ -16,7 +16,7 @@ if has("eval")
 endif
 
 " General colors
-hi Normal						guifg=#f6f3e8	guibg=#1c1c1c		gui=NONE			ctermfg=NONE			ctermbg=NONE			cterm=NONE
+hi Normal						guifg=#f6f3e8	guibg=#1c1c1c		gui=NONE			ctermfg=NONE			ctermbg=black			cterm=NONE
 hi NonText					guifg=#2c43db	guibg=#1c1c1c		gui=NONE			ctermfg=blue			ctermbg=NONE			cterm=NONE
 
 hi Cursor						guifg=black		guibg=white			gui=NONE			ctermfg=black			ctermbg=white			cterm=reverse
