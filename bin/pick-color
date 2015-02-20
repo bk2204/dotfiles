@@ -2,6 +2,8 @@
 # Compute the closest xterm-256color color for the hex value specified on the
 # command line.  Uses the CIE XYZ to find the color which looks the best.
 
+require 'optparse'
+
 def generate_16_colors
   pattern = [
     0x000000, 0x110000, 0x001100, 0x111100,
@@ -52,12 +54,27 @@ def find_closest(color, items)
   distances.index(distances.min)
 end
 
-rgbs = generate_colors
-xyzs = rgbs.map { |x| rgb_to_ciexyz(x >> 16, (x >> 8) & 0xff, x & 0xff) }
+def parse_args(args)
+  ncolors = 256
+  OptionParser.new do |opts|
+    opts.on('-c', '--colors NUMBER', "Use NUMBER colors instead of 256") do |c|
+      ncolors = c.to_i
+    end
+  end.parse!(args)
+  raise "No color?" unless args[0] =~ /^#?([0-9a-fA-F]{6})/;
+  return [$~[1].to_i(16), ncolors]
+end
 
-color = ARGV[0].to_s.to_i(16)
-puts "color: %06x" % color
-xyz = rgb_to_ciexyz(color >> 16, (color >> 8) & 0xff, color & 0xff)
+def main(args)
+  color, ncolors = parse_args(args)
+  rgbs = ncolors == 16 ? generate_16_colors : generate_colors
+  xyzs = rgbs.map { |x| rgb_to_ciexyz(x >> 16, (x >> 8) & 0xff, x & 0xff) }
 
-closest = find_closest(xyz, xyzs)
-puts "\x1b[48;5;#{closest}m #{closest} \#%06x" % rgbs[closest]
+  puts "color: %06x" % color
+  xyz = rgb_to_ciexyz(color >> 16, (color >> 8) & 0xff, color & 0xff)
+
+  closest = find_closest(xyz, xyzs)
+  puts "\x1b[48;5;#{closest}m #{closest} \#%06x" % rgbs[closest]
+end
+
+main(ARGV)
