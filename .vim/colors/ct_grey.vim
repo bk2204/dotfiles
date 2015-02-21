@@ -77,6 +77,15 @@ hi DiffDelete				guifg=#f6f3e8	guibg=#a81d1d		gui=NONE			ctermfg=white			ctermbg
 hi DiffChange				guifg=#f6f3e8	guibg=#262d51		gui=NONE			ctermfg=white			ctermbg=cyan		cterm=NONE
 hi DiffText					guifg=#384048	guibg=#96cbfe		gui=NONE			ctermfg=NONE			ctermbg=blue		cterm=NONE
 
+" Special handling for certain languages.
+hi rubyRegexp									guifg=#B18A3D	guibg=NONE	gui=NONE		ctermfg=brown		ctermbg=NONE		cterm=NONE
+hi rubyRegexpDelimiter				guifg=#FF8000	guibg=NONE	gui=NONE		ctermfg=brown		ctermbg=NONE		cterm=NONE
+hi rubyInterpolationDelimiter	guifg=#00A0A0	guibg=NONE	gui=NONE		ctermfg=blue		ctermbg=NONE		cterm=NONE
+hi rubyStringDelimiter				guifg=#336633	guibg=NONE	gui=NONE		ctermfg=lightgreen	ctermbg=NONE		cterm=NONE
+
+hi javaDocSeeTag							guifg=#CCCCCC	guibg=NONE	gui=NONE		ctermfg=darkgray	ctermbg=NONE		cterm=NONE
+
+
 if &t_Co == 256
 	hi Normal					ctermfg=230				ctermbg=234				cterm=NONE
 	hi NonText				ctermfg=blue			ctermbg=NONE			cterm=NONE
@@ -137,6 +146,13 @@ if &t_Co == 256
 	hi DiffDelete			ctermfg=230				ctermbg=203			cterm=NONE
 	hi DiffChange			ctermfg=230				ctermbg=60			cterm=NONE
 	hi DiffText				ctermfg=238				ctermbg=117			cterm=NONE
+
+	hi rubyRegexp			ctermfg=137				ctermbg=NONE		cterm=NONE
+	hi rubyRegexpDelimiter	ctermfg=208	ctermbg=NONE		cterm=NONE
+	hi rubyInterpolationDelimiter	ctermfg=6	ctermbg=NONE	cterm=NONE
+	hi rubyStringDelimiter	ctermfg=22	ctermbg=NONE		cterm=NONE
+
+	hi javaDocSeeTag	ctermfg=252				ctermbg=NONE		cterm=NONE
 endif
 
 hi link Character				Constant
@@ -157,14 +173,6 @@ hi link SpecialChar			Special
 hi link SpecialComment	Special
 hi link Debug						Special
 
-" Special handling for certain languages.
-hi rubyRegexp									guifg=#B18A3D	guibg=NONE	gui=NONE		ctermfg=brown		ctermbg=NONE		cterm=NONE
-hi rubyRegexpDelimiter				guifg=#FF8000	guibg=NONE	gui=NONE		ctermfg=brown		ctermbg=NONE		cterm=NONE
-hi rubyEscape									guifg=white		guibg=NONE	gui=NONE		ctermfg=cyan		ctermbg=NONE		cterm=NONE
-hi rubyInterpolationDelimiter	guifg=#00A0A0	guibg=NONE	gui=NONE		ctermfg=blue		ctermbg=NONE		cterm=NONE
-hi rubyControl								guifg=#6699CC	guibg=NONE	gui=NONE		ctermfg=blue		ctermbg=NONE		cterm=NONE
-hi rubyStringDelimiter				guifg=#336633	guibg=NONE	gui=NONE		ctermfg=lightgreen	ctermbg=NONE		cterm=NONE
-
 hi link rubyClass							Keyword
 hi link rubyModule						Keyword
 hi link rubyKeyword						Keyword
@@ -174,15 +182,13 @@ hi link rubyInstanceVariable  Identifier
 hi link rubyGlobalVariable		Identifier
 hi link rubyClassVariable			Identifier
 hi link rubyConstant					Type
+hi link rubyControl						Conditional
 
 hi link javaScopeDecl					Identifier
 hi link javaCommentTitle			javaDocSeeTag
 hi link javaDocTags						javaDocSeeTag
 hi link javaDocParam					javaDocSeeTag
 hi link javaDocSeeTagParam		javaDocSeeTag
-
-hi javaDocSeeTag							guifg=#CCCCCC		guibg=NONE		gui=NONE		ctermfg=darkgray	ctermbg=NONE		cterm=NONE
-hi javaDocSeeTag							guifg=#CCCCCC		guibg=NONE		gui=NONE		ctermfg=darkgray	ctermbg=NONE		cterm=NONE
 
 hi link xmlTag								Keyword
 hi link xmlTagName						Conditional
