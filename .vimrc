@@ -373,10 +373,10 @@ let g:syntastic_enable_perl_checker = 1
 
 " Powerline settings.
 let g:Powerline_symbols = 'unicode'
-if &t_Co <= 16
-	let g:Powerline_colorscheme = 'solarized'
-else
+if has("gui_running") || &t_Co > 16
 	let g:Powerline_colorscheme = 'solarized256'
+else
+	let g:Powerline_colorscheme = 'solarized'
 endif
 
 " Ctrl-P settings.
