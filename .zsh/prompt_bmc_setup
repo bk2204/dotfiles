@@ -146,11 +146,12 @@ prompt_bmc_precmd () {
 
 	[[ $exitstatus -ge 128 ]] && psvar[1]="$signals[$exitstatus-127]" || psvar[1]="none"
 
+	local statusline='%n@%m: %~'
 	case $TERM in
 		xterm*|gnome*)
-			print -Pn '\e]0;%n@%m: %~\a';;
+			print -Pn "\e]0;$statusline\a";;
 		screen*)
-			print -Pn '\ek%n@%m: %~\e\\';;
+			print -Pn "\ek$statusline\e\\";;
 	esac
 
 	command -v vcs_info >/dev/null 2>/dev/null && vcs_info
