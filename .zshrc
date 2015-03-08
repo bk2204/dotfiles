@@ -456,6 +456,9 @@ setup_completion ()
 	# see upgrade function in this file
 	compdef _hosts upgrade
 
+	# Fix completion with libpam-tmpdir.
+	zstyle ':completion:*' accept-exact-dirs true
+
 	# Fix extreme slowness in large repositories.
 	function __git_files () {
 		_wanted files expl 'local files' _files
