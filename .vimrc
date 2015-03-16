@@ -371,6 +371,9 @@ let g:syntastic_perl_lib_path = ['./lib']
 " Allow running perl -wc on Perl files.
 let g:syntastic_enable_perl_checker = 1
 
+" Populate the location list to make finding errors easier.
+let g:syntastic_always_populate_loc_list = 1
+
 " Powerline settings.
 let g:Powerline_symbols = 'unicode'
 if has("gui_running") || &t_Co > 16
