@@ -69,4 +69,6 @@
 [core]
 	precomposeunicode = true
 	logAllRefUpdates = true
+[rerere]
+	enabled = true
 # vim: set noet:
