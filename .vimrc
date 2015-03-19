@@ -366,7 +366,7 @@ let g:perl_include_pod = 0
 let g:vim_json_syntax_conceal = 0
 
 " Make editing git repositories of Perl modules easier.
-let g:syntastic_perl_lib_path = ['./lib']
+let g:syntastic_perl_lib_path = ['./lib', './t/lib', './build-tools']
 
 " Allow running perl -wc on Perl files.
 let g:syntastic_enable_perl_checker = 1
