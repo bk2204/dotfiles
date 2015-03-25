@@ -20,9 +20,9 @@ hi Normal						guifg=#f6f3e8	guibg=#1c1c1c		gui=NONE			ctermfg=NONE			ctermbg=bl
 hi NonText					guifg=#2c43db	guibg=#1c1c1c		gui=NONE			ctermfg=blue			ctermbg=NONE			cterm=NONE
 
 hi Cursor						guifg=black		guibg=white			gui=NONE			ctermfg=black			ctermbg=white			cterm=reverse
-hi LineNr						guifg=#3D3D3D	guibg=#1c1c1c		gui=NONE			ctermfg=darkgray	ctermbg=NONE			cterm=NONE
+hi LineNr						guifg=#3D3D3D	guibg=#1c1c1c		gui=NONE			ctermfg=darkgray	ctermbg=NONE			cterm=BOLD
 
-hi VertSplit				guifg=#202020	guibg=#202020		gui=NONE			ctermfg=darkgray	ctermbg=darkgray	cterm=NONE
+hi VertSplit				guifg=#202020	guibg=#202020		gui=NONE			ctermfg=darkgray	ctermbg=darkgray	cterm=BOLD
 hi StatusLine				guifg=#CCCCCC	guibg=#242424		gui=NONE			ctermfg=white			ctermbg=darkgray	cterm=NONE
 hi StatusLineNC			guifg=#808080	guibg=#242424		gui=NONE			ctermfg=blue			ctermbg=darkgray	cterm=NONE
 
@@ -51,7 +51,7 @@ if version >= 700 " Vim 7.x specific colors
 endif
 
 " Syntax highlighting
-hi Comment					guifg=#7C7C7C	guibg=NONE			gui=NONE			ctermfg=darkgray	ctermbg=NONE			cterm=NONE
+hi Comment					guifg=#7C7C7C	guibg=NONE			gui=NONE			ctermfg=darkgray	ctermbg=NONE			cterm=BOLD
 hi String						guifg=#5fd787	guibg=NONE			gui=NONE			ctermfg=green			ctermbg=NONE			cterm=NONE
 hi Number						guifg=#ff5f5f	guibg=NONE			gui=NONE			ctermfg=darkred		ctermbg=NONE			cterm=NONE
 
