@@ -52,7 +52,7 @@ endif
 
 " Syntax highlighting
 hi Comment					guifg=#7C7C7C	guibg=NONE			gui=NONE			ctermfg=darkgray	ctermbg=NONE			cterm=BOLD
-hi String						guifg=#5fd787	guibg=NONE			gui=NONE			ctermfg=green			ctermbg=NONE			cterm=NONE
+hi String						guifg=#5fd787	guibg=NONE			gui=NONE			ctermfg=lightgreen ctermbg=NONE			cterm=BOLD
 hi Number						guifg=#ff5f5f	guibg=NONE			gui=NONE			ctermfg=darkred		ctermbg=NONE			cterm=NONE
 
 hi Keyword					guifg=#96CBFE	guibg=NONE			gui=NONE			ctermfg=blue			ctermbg=NONE			cterm=NONE
@@ -81,7 +81,7 @@ hi DiffText					guifg=#384048	guibg=#96cbfe		gui=NONE			ctermfg=NONE			ctermbg=b
 hi rubyRegexp									guifg=#B18A3D	guibg=NONE	gui=NONE		ctermfg=brown		ctermbg=NONE		cterm=NONE
 hi rubyRegexpDelimiter				guifg=#FF8000	guibg=NONE	gui=NONE		ctermfg=brown		ctermbg=NONE		cterm=NONE
 hi rubyInterpolationDelimiter	guifg=#00A0A0	guibg=NONE	gui=NONE		ctermfg=blue		ctermbg=NONE		cterm=NONE
-hi rubyStringDelimiter				guifg=#336633	guibg=NONE	gui=NONE		ctermfg=lightgreen	ctermbg=NONE		cterm=NONE
+hi rubyStringDelimiter				guifg=#336633	guibg=NONE	gui=NONE		ctermfg=darkgreen	ctermbg=NONE		cterm=NONE
 
 hi javaDocSeeTag							guifg=#CCCCCC	guibg=NONE	gui=NONE		ctermfg=darkgray	ctermbg=NONE		cterm=NONE
 
