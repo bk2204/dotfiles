@@ -1,20 +1,67 @@
 #!/usr/bin/ruby
 
+require 'optparse'
+
 DATA_FILE = '/usr/share/unicode/UnicodeData.txt'
 
-re = Regexp.new(ARGV.join(' ').downcase)
+def parse(args)
+  # Don't change parameters.
+  args = args.dup
+  options = {:format => :smart}
 
-f = File.new(DATA_FILE)
-lines = f.readlines.map { |l| l.split(';') }
-entries = {}
-lines.each { |l| entries[l[1].downcase] = l[0].to_i(16) }
+  OptionParser.new do |opts|
+    opts.on('-e', 'Only allow exact matches') do
+      options[:exact] = true
+    end
 
-results = entries.select { |k, _| re.match(k) }
+    opts.on('-s', '--short', '--codepoints', 'List only codepoints') do
+      options[:format] = :codepoints
+    end
 
-if results.size == 1
-  puts results.values[0].chr(Encoding::UTF_8)
-else
+    opts.on('-l', '--long', '--full', 'List full information') do
+      options[:format] = :full
+    end
+  end.parse!(args)
+
+  [options, args]
+end
+
+def codepoints(output, results)
+  results.each { |_, codepoint| output.puts codepoint.chr(Encoding::UTF_8) }
+end
+
+def full(output, results)
   results.each do |name, codepoint|
-    $stderr.puts "#{name}: #{codepoint}: #{codepoint.chr(Encoding::UTF_8)}"
+    output.puts "#{name}: #{codepoint}: #{codepoint.chr(Encoding::UTF_8)}"
   end
 end
+
+def smart(output, results)
+  if results.size == 1
+    codepoints($stderr, results)
+  else
+    full(output, results)
+  end
+end
+
+def format(options, results)
+  method(options[:format]).call($stdout, results)
+end
+
+def main(args)
+  options, args = parse(args)
+  pattern = args.join(' ').downcase
+  pattern = "^#{Regexp.escape(pattern)}$" if options[:exact]
+  re = Regexp.new(pattern)
+
+  f = File.new(DATA_FILE)
+  lines = f.readlines.map { |l| l.split(';') }
+  entries = {}
+  lines.each { |l| entries[l[1].downcase] = l[0].to_i(16) }
+
+  results = entries.select { |k, _| re.match(k) }
+
+  format(options, results)
+end
+
+main(ARGV) if __FILE__ == $PROGRAM_NAME
