@@ -228,6 +228,10 @@ set_keybindings () {
 
 	unfunction bind2maps
 }
+remove_perl_overrides () {
+	[ -n "$PERL_LOCAL_LIB_ROOT" ] && path=("${(@)path:#$PERL_LOCAL_LIB_ROOT/bin}")
+	unset PERL_MB_OPT PERL_MM_OPT PERL_LOCAL_LIB_ROOT PERL5LIB
+}
 sless () {
 	(
 		# Help less handle compressed files better.
@@ -242,6 +246,7 @@ set_tty
 set_sane_term
 adjust_term_settings
 set_keybindings
+remove_perl_overrides
 
 if is_ssh_session
 then
