@@ -55,14 +55,6 @@ is_ssh_session ()
 {
 	[[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
 }
-is_sudo_session ()
-{
-	[[ -n $SUDO_COMMAND ]] || [[ -n $SUDO_USER ]] || [[ -n $SUDO_UID ]]
-}
-is_kerberos_session ()
-{
-	silent whence klist && klist -5s
-}
 is_pseudo_tty ()
 {
 	echo $TTY | grep -qs pts
