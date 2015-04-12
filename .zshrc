@@ -55,10 +55,6 @@ is_ssh_session ()
 {
 	[[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
 }
-is_pseudo_tty ()
-{
-	echo $TTY | grep -qs pts
-}
 set_tty ()
 {
 	[[ -n $TTY ]] && return 0
