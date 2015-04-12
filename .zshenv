@@ -97,7 +97,7 @@ if [[ -n $DISPLAY ]]; then
 	EDITOR="gvim-f"
 fi
 if [[ -z $HOSTNAME ]]; then
-	HOSTNAME=`hostname`
+	HOSTNAME=$(hostname)
 fi
 if has_locale en_DK.UTF-8; then
 	LC_TIME=en_DK.UTF-8

@@ -16,7 +16,7 @@ silent which vim && alias vi=vim
 
 has_colors && alias grep='grep --color=auto'
 alias rless='env -u LESSOPEN -u LESSCLOSE less'
-alias loadenv='eval `cat $HOME/.environment`'
+alias loadenv='eval $(cat $HOME/.environment)'
 alias sudo='sudo -E '
 
 # Set prompts.
@@ -60,7 +60,7 @@ set_tty ()
 	[[ -n $TTY ]] && return 0
 	[[ -n $GPG_TTY ]] && TTY=$GPG_TTY && return 0
 	[[ -n $SSH_TTY ]] && TTY=$SSH_TTY && return 0
-	TTY=`tty` || TTY=""
+	TTY=$(tty) || TTY=""
 }
 has_term ()
 {
@@ -112,7 +112,7 @@ set_sane_term ()
 	fi
 	is_ssh_session && [[ $SSH_TTY == $TTY ]] && return 0
 	# Add the * to the end to catch the potential " (deleted)" that may occur.
-	case "$TERM:`readlink /proc/$PPID/exe`" in
+	case "$TERM:$(readlink /proc/$PPID/exe)" in
 		xterm:*xfce4-terminal*)
 			set_if_has_term xterm-256color;;
 		xterm:*gnome-terminal*)
@@ -465,13 +465,13 @@ if has_colors; then
 	blue="blue"
 	[[ $(echotc Co 2>/dev/null) = 256 ]] && blue=33
 
-	export LESS_TERMCAP_mb=`print -P $(color_fg red yes)`
-	export LESS_TERMCAP_md=`print -P $(color_fg red yes)`
-	export LESS_TERMCAP_me=`print -P $(color_reset)`
-	export LESS_TERMCAP_se=`print -P $(color_reset)`
-	export LESS_TERMCAP_so=`print -P $(color_fg $blue yes)`
-	export LESS_TERMCAP_ue=`print -P $(color_reset)`
-	export LESS_TERMCAP_us=`print -P $(color_fg green yes)`
+	export LESS_TERMCAP_mb=$(print -P $(color_fg red yes))
+	export LESS_TERMCAP_md=$(print -P $(color_fg red yes))
+	export LESS_TERMCAP_me=$(print -P $(color_reset))
+	export LESS_TERMCAP_se=$(print -P $(color_reset))
+	export LESS_TERMCAP_so=$(print -P $(color_fg $blue yes))
+	export LESS_TERMCAP_ue=$(print -P $(color_reset))
+	export LESS_TERMCAP_us=$(print -P $(color_fg green yes))
 	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
 fi
 
