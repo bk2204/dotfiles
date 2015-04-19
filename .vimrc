@@ -36,6 +36,7 @@ endif
 set tw=80
 set bs=indent,eol,start
 set wrap
+set nf=alpha,hex,octal	" Make Ctrl-A and Ctrl-X work on text.
 
 " Loading files.
 set ml					" Modelines are nice.
