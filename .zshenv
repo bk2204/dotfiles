@@ -91,6 +91,7 @@ FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 # Don't prompt for credentials, just fail.
 GIT_ASKPASS="/bin/echo"
+MODULE_SIGNATURE_CIPHER=SHA512
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
 	unset XML_CATALOG_FILES
