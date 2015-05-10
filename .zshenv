@@ -11,6 +11,8 @@ function has_locale () {
 
 function preferred_locale () {
 	local locale=$(printf "$LANG\n" | sed -e 's/.utf8$/.UTF-8/')
+	# If we're using English, prefer US English; otherwise, accept English,
+	# Spanish, or French locales.  Otherwise, fall back to US English.
 	if [[ -z ${locale##en*.UTF-8} ]] && has_locale 'en_US.UTF-8'; then
 		printf "en_US.UTF-8"
 		return 0
