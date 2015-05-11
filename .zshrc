@@ -475,6 +475,8 @@ if has_colors; then
 	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
 fi
 
+silent whence lesspipe && eval $(lesspipe)
+
 setup_completion
 
 unset i blue
