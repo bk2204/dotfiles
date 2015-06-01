@@ -87,7 +87,6 @@ LESS="-fR"
 EDITOR=vim
 GIT_MERGE_AUTOEDIT=no
 CLICOLOR=1
-FAKE_TAR_LOG="$HOME/fake-tar-log"
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 # Don't prompt for credentials, just fail.
 GIT_ASKPASS="/bin/echo"
