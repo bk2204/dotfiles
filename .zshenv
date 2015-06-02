@@ -69,13 +69,9 @@ LC_TELEPHONE=en_US.UTF-8
 TZ=UTC
 
 CVS_RSH=ssh
-BK_LICENSE=ACCEPTED
-ARCH_BACKEND=baz
 DEBFULLNAME="brian m. carlson"
 EMAIL="sandals@crustytoothpaste.net"
 DEBEMAIL="$EMAIL"
-BZREMAIL="$EMAIL"
-BZR_EMAIL="$EMAIL"
 GIT_COMMITTER_EMAIL="$EMAIL"
 GROFF_TMAC_PATH="$HOME/checkouts/tenorsax-resources/tmac"
 LARCH_PATH=/usr/share/splint/lib/
