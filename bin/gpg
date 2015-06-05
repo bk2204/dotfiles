@@ -1,0 +1,10 @@
+#!/bin/sh
+
+PATH="$(echo $PATH | sed -e "s,$HOME/bin:,,")"
+
+if which gpg2 >/dev/null 2>&1
+then
+	exec gpg2 "$@"
+else
+	exec gpg "$@"
+fi
