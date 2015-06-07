@@ -121,6 +121,7 @@ augroup setf
 	au BufEnter,BufRead,BufNewFile *.xsl										setf xslt
 	au BufEnter,BufRead,BufNewFile *.pasm										setf parrot
 	au BufEnter,BufRead,BufNewFile *.pir										setf pir
+	au BufEnter,BufRead,BufNewFile *.iced										setf coffee
 augroup end
 
 " File type-specific parameters.
