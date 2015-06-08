@@ -357,6 +357,12 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
 	call s:ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
 endfunction
 
+function! s:SetUpLanguageHooks()
+	if has("perl") && isdirectory(expand("$HOME") . '/lib/perl5')
+		perl splice @INC, -1, 0, "$ENV{'HOME'}/lib/perl5"
+	endif
+endfunction
+
 "" Miscellaneous variables.
 " Make sh highlighting POSIXy.
 let g:is_posix=1
@@ -399,5 +405,8 @@ if filereadable('/etc/papersize')
 	endif
 	unlet! s:papersize
 endif
+
+"" Other language-specific setup.
+call s:SetUpLanguageHooks()
 
 " vim: set ts=2 sw=2 sts=2 noet:
