@@ -22,6 +22,26 @@ function preferred_locale () {
 	fi
 	printf "en_US.UTF-8"
 }
+function setup_tmp () {
+	if [[ -z $TMPDIR ]] || [[ $TMPDIR = /tmp ]]
+	then
+		local uid=$(id -u)
+		local upath="/tmp/user/$uid"
+		if [[ -d $upath ]] && [[ -O $upath ]]
+		then
+			TMPDIR="$upath"
+			chmod 700 "$TMPDIR"
+		else
+			mkdir -p "$upath" && chown $(id -un) "$TMPDIR" && {
+				TMPDIR="$upath"
+				chmod 700 "$TMPDIR"
+			}
+		fi
+	fi
+	[[ -n $TMPDIR ]] && export TMPDIR
+	[[ -z $TMP ]] && export TMP=$TMPDIR
+	[[ -z $TEMP ]] && export TEMP=$TMPDIR
+}
 
 # Set up some limits.
 unlimit
@@ -115,7 +135,10 @@ VISUAL="$EDITOR"
 unsetopt allexport
 # End exporting variables.
 
+setup_tmp
+
 unfunction has_locale
 unfunction preferred_locale
+unfunction setup_tmp
 
 true
