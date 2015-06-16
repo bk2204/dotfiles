@@ -35,5 +35,5 @@ subscribe help-gnutls@gnu.org
 lists git@vger.kernel.org
 subscribe asciidoc@googlegroups.com
 # Query.
-set query_command="lbdbq '%s'"
+set query_command="goobook query '%s'"
 # vim: set syntax=muttrc:
