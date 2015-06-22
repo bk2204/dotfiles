@@ -71,4 +71,6 @@
 	logAllRefUpdates = true
 [rerere]
 	enabled = true
+[commit]
+	gpgsign = true
 # vim: set noet:
