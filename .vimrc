@@ -28,7 +28,7 @@ end
 
 " Text handling.
 set spc=				" Don't complain about uncapitalized words starting a sentence.
-set flp=^[-*+]\\+\\s\\+	" Don't indent lines starting with a number and a dot.
+set flp=^[-*+•]\\+\\s\\+	" Don't indent lines starting with a number and a dot.
 set fo+=n				" Indent lists properly.
 if v:version >= 704 || (v:version == 703 && has("patch541"))
 	set fo+=j				" Remove comment characters when joining lines.
