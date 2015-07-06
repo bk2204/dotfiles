@@ -9,7 +9,7 @@ FILENAME="$DIR/$BASE-installpkg"
 then
 	printf "%s\n" "$@"
 else
-	dpkg-checkbuilddeps 2>&1 | perl -pe 's/^.*dependencies: //'
+	dpkg-checkbuilddeps 2>&1 | perl -pe 's/^.*?: .*?: //'
 fi) | \
 	perl -E '$_=join(" ",<>);' \
 	-E 's/\(.*?\)/ /g;' \
