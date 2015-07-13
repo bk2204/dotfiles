@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 PATH="$(echo $PATH | sed -e "s,$HOME/bin:,,")"
 
-if which gpg2 >/dev/null 2>&1
+(if which gpg2 >/dev/null 2>&1
 then
 	exec gpg2 "$@"
 else
 	exec gpg "$@"
-fi
+fi) 2> >(grep -vF 'gpg: WARNING: unsafe ownership' 1>&2)
