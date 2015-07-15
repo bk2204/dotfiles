@@ -33,7 +33,7 @@ setopt extendedglob
 unsetopt bgnice notify nomatch banghist
 
 # Set history.
-HISTSIZE=10000
+HISTSIZE=1000000
 SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 
