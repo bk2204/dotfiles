@@ -111,28 +111,29 @@ set_sane_term ()
 		fi
 	fi
 	is_ssh_session && [[ $SSH_TTY == $TTY ]] && return 0
-	# Add the * to the end to catch the potential " (deleted)" that may occur.
-	case "$TERM:$(readlink /proc/$PPID/exe)" in
-		xterm:*xfce4-terminal*)
+	local parent_exe="$(readlink /proc/$PPID/exe |
+		sed -e 's/(deleted)//; s/ //')"
+	case "$TERM:$parent_exe" in
+		xterm:*xfce4-terminal)
 			set_if_has_term xterm-256color;;
-		xterm:*gnome-terminal*)
+		xterm:*gnome-terminal)
 			set_if_has_term xterm-256color;;
-		xterm:*mate-terminal*)
+		xterm:*mate-terminal)
 			set_if_has_term xterm-256color;;
-		xterm:*evilvte*)
+		xterm:*evilvte)
 			set_if_has_term xterm-256color;;
-		xterm:*konsole*)
+		xterm:*konsole)
 			set_if_has_term konsole-256color;;
 		screen*:*)
 			EDITOR=vim;
 			set_if_has_term screen-256color;;
-		rxvt:*mrxvt-full*)
+		rxvt:*mrxvt-full)
 			set_if_has_term rxvt-256color;;
 		linux:*)
 			# Usually /proc/$PPID/exe will be inaccessible because it's
 			# /bin/login and owned by root, so don't try to match on it.
 			set_if_has_term linux-16color;;
-		*:*fbterm*)
+		*:*fbterm)
 			# fbterm supports 256 colors.
 			set_if_has_term fbterm;;
 		*) ;;
