@@ -114,13 +114,7 @@ set_sane_term ()
 	local parent_exe="$(readlink /proc/$PPID/exe |
 		sed -e 's/(deleted)//; s/ //')"
 	case "$TERM:$parent_exe" in
-		xterm:*xfce4-terminal)
-			set_if_has_term xterm-256color;;
-		xterm:*gnome-terminal)
-			set_if_has_term xterm-256color;;
-		xterm:*mate-terminal)
-			set_if_has_term xterm-256color;;
-		xterm:*evilvte)
+		xterm:*xfce4-terminal|xterm:*gnome-terminal|xterm:*mate-terminal)
 			set_if_has_term xterm-256color;;
 		xterm:*konsole)
 			set_if_has_term konsole-256color;;
