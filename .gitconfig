@@ -52,7 +52,7 @@
 	smtpuser = bmc
 	smtppass =
 	smtpencryption = tls
-	smtpserver = castro.crustytoothpaste.net
+	smtpserver = mail.crustytoothpaste.net
 	smtpserverport = 587
 	suppresscc = author
 	suppresscc = self
