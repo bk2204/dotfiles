@@ -12,7 +12,13 @@ has_colors () {
 # Set up some aliases.
 silent ls --color=auto && has_colors && alias ls='ls --color=auto'
 silent which prename && alias rename='prename'
-silent which vim && alias vi=vim
+if silent which vimx
+then
+	alias vi=vimx
+elif silent which vim
+then
+	alias vi=vim
+fi
 
 has_colors && alias grep='grep --color=auto'
 alias rless='env -u LESSOPEN -u LESSCLOSE less'
@@ -119,7 +125,7 @@ set_sane_term ()
 		xterm:*konsole)
 			set_if_has_term konsole-256color;;
 		screen*:*)
-			EDITOR=vim;
+			EDITOR=$(silent which vimx && echo "vimx" || echo "vim");
 			set_if_has_term screen-256color;;
 		rxvt:*mrxvt-full)
 			set_if_has_term rxvt-256color;;
