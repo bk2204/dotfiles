@@ -15,6 +15,7 @@ silent which prename && alias rename='prename'
 if silent which vimx
 then
 	alias vi=vimx
+	alias vim=vimx
 elif silent which vim
 then
 	alias vi=vim
