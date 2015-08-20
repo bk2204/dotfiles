@@ -392,6 +392,7 @@ endif
 
 " Ctrl-P settings.
 let g:ctrlp_max_files = 60000
+let g:ctrlp_match_window = 'results:75'
 
 " Ctrl-P settings.  Regenerating the cache is expensive on large repos.
 let g:ctrlp_extensions = ['buffertag']
