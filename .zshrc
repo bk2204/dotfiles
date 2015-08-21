@@ -236,6 +236,12 @@ sless () {
 		less "$@"
 	)
 }
+dumpenv () {
+	(
+		[[ -n $SSH_AUTH_SOCK ]] && print "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK";
+		[[ -n $DISPLAY ]] && print "export DISPLAY=$DISPLAY";
+	) > $HOME/.environment
+}
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
@@ -246,13 +252,7 @@ set_keybindings
 setup_ssh_agent
 remove_perl_overrides
 
-if is_ssh_session
-then
-	(
-		[[ -n $SSH_AUTH_SOCK ]] && print "SSH_AUTH_SOCK=$SSH_AUTH_SOCK";
-		[[ -n $DISPLAY ]] && print "DISPLAY=$DISPLAY";
-	) > $HOME/.environment
-fi
+is_ssh_session && dumpenv
 
 VISUAL="$EDITOR"
 
