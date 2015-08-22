@@ -127,6 +127,7 @@ augroup end
 " File type-specific parameters.
 augroup setl
 	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+	au FileType clojure			setl ts=2 sw=2 sts=2 et
 	au FileType cpp					setl cin cino=t0
 	au FileType c						setl cin cino=t0
 	au FileType cs					setl cin cino=t0
