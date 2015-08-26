@@ -69,6 +69,7 @@
 [core]
 	precomposeunicode = true
 	logAllRefUpdates = true
+	abbrev = 8
 [rerere]
 	enabled = true
 [commit]
