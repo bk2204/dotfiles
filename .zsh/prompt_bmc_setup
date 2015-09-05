@@ -93,7 +93,7 @@ prompt_bmc_setup_base ()
 
 	POSTEDIT="$reset_color"
 
-	prompt="$p_userpwd%(!..$p_branch)
+	prompt="$p_userpwd$p_branch
 ($p_datetime)($p_tty)$p_shlvl$p_power($p_ret)
 $p_ret2 $p_pchar "
 	RPROMPT=""
