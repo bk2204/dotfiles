@@ -80,7 +80,6 @@ PERLDOC_PAGER="$PAGER"
 LESS="-fR"
 EDITOR=$(which vimx >/dev/null 2>&1 && echo "vimx" || echo "vim")
 GIT_MERGE_AUTOEDIT=no
-CLICOLOR=1
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 # Don't prompt for credentials, just fail.
 GIT_ASKPASS="/bin/echo"

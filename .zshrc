@@ -483,6 +483,7 @@ if has_colors; then
 	export LESS_TERMCAP_ue=$(print -P $(color_reset))
 	export LESS_TERMCAP_us=$(print -P $(color_fg green yes))
 	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
+	export CLICOLOR=1
 fi
 
 silent whence lesspipe && eval $(lesspipe)
