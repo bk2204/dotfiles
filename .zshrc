@@ -236,6 +236,9 @@ sless () {
 		less "$@"
 	)
 }
+ggrep () {
+	grep -r "$@" *
+}
 dumpenv () {
 	(
 		[[ -n $SSH_AUTH_SOCK ]] && print "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK";
