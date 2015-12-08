@@ -188,6 +188,11 @@ if v:version < 700
 	finish
 endif
 
+" Syntastic complains to the terminal if its requirements aren't met.
+if v:version == 700 && !has('patch175')
+	let g:loaded_syntastic_plugin = 1
+endif
+
 "" Bundles.
 " Some versions of Vim have a broken autoload, or at least it doesn't work in
 " this case, so help it out.
