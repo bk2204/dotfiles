@@ -244,6 +244,7 @@ dumpenv () {
 		[[ -n $SSH_AUTH_SOCK ]] && print "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK";
 		[[ -n $DISPLAY ]] && print "export DISPLAY=$DISPLAY";
 	) > $HOME/.environment
+	true
 }
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
