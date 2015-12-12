@@ -50,7 +50,7 @@ set hid					" Don't force saving when changing buffers.
 set nohls
 
 " Rendering.
-if exists("$SSH_CONNECTION")
+if exists("$SSH_CONNECTION") || filereadable(expand("$HOME") . '/.slowbox')
 	set notf			" Speed up redrawing on slow SSH connections.
 end
 
