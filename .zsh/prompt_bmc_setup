@@ -154,7 +154,19 @@ prompt_bmc_precmd () {
 			print -Pn "\ek$statusline\e\\";;
 	esac
 
-	command -v vcs_info >/dev/null 2>/dev/null && vcs_info
+	prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>/dev/null && vcs_info
+}
+
+prompt_bmc_need_refresh () {
+	local last="$(fc -ln -1)"
+	[[ -f "$HOME/.slowbox" ]] || return 0
+	# If we're on a slow box, we want to refresh on cd, pushd, popd, git, and
+	# empty text.
+	[[ -z ${last/cd*} ]] && return 0
+	[[ -z ${last/pushd*} ]] && return 0
+	[[ -z ${last/popd*} ]] && return 0
+	[[ -z ${last/git*} ]] && return 0
+	return 1
 }
 
 prompt_bmc_apm_precmd () {
