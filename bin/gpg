@@ -2,9 +2,20 @@
 
 PATH="$(echo $PATH | sed -e "s,$HOME/bin:,,")"
 
-(if which gpg2 >/dev/null 2>&1
+redirect () {
+	# Deal with inaccessible /dev/fd.
+	if [ -d '/dev/fd' ]
+	then
+		exec "$@" 2> >(grep -vF 'gpg: WARNING: unsafe ownership' 1>&2)
+	else
+		exec "$@"
+	fi
+}
+
+
+if which gpg2 >/dev/null 2>&1
 then
-	exec gpg2 "$@"
+	redirect gpg2 "$@"
 else
-	exec gpg "$@"
-fi) 2> >(grep -vF 'gpg: WARNING: unsafe ownership' 1>&2)
+	redirect gpg "$@"
+fi
