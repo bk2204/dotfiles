@@ -166,6 +166,7 @@ prompt_bmc_need_refresh () {
 	[[ -z ${last/pushd*} ]] && return 0
 	[[ -z ${last/popd*} ]] && return 0
 	[[ -z ${last/git*} ]] && return 0
+	[[ -z $last ]] && return 0
 	return 1
 }
 
