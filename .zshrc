@@ -35,7 +35,8 @@ setopt interactivecomments
 setopt promptsubst
 setopt rmstarsilent
 setopt histignorespace
-setopt incappendhistory
+setopt extendedhistory
+setopt incappendhistorytime
 setopt extendedglob
 unsetopt bgnice notify nomatch banghist
 
