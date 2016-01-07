@@ -102,9 +102,9 @@ set_sane_term ()
 		if [[ -n $echotc_works ]]
 		then
 			local -a preferred
-			if [[ ${TERM#screen} != ${TERM} ]]
+			if [[ -z ${TERM##screen*} ]]
 			then
-				preferred=(screen vt220)
+				preferred=(screen-256color screen vt220)
 			elif [[ -z ${TERM:#*256color} ]]
 			then
 				preferred=(xterm-256color xterm vt220)
