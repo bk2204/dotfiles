@@ -24,7 +24,7 @@ set ls=2				" Always show a status bar for powerline.
 " Folding.
 if has("folding")
 	set fdm=marker
-end
+endif
 
 " Text handling.
 set spc=				" Don't complain about uncapitalized words starting a sentence.
@@ -52,7 +52,7 @@ set nohls
 " Rendering.
 if exists("$SSH_CONNECTION") || filereadable(expand("$HOME") . '/.slowbox')
 	set notf			" Speed up redrawing on slow SSH connections.
-end
+endif
 
 " GUI settings.
 if has("gui_running")
@@ -235,7 +235,7 @@ function! s:ForRange(start, end, command, ...)
 	" Optional prefix.  Can be used for :silent
 	if a:0
 		let text .= a:1 . " "
-	end
+	endif
 	let text .= a:start . "," . a:end . a:command
 	execute text
 	call winrestview(winview)
@@ -288,7 +288,7 @@ function! s:SetWhitespacePattern(mode)
 			let pattern = s:SetWhitespacePatternGeneral() . '%#@<!$'
 		elseif a:mode == 0
 			let pattern = s:SetWhitespacePatternGeneral() . '$'
-		end
+		endif
 		let stpat = s:SetWhitespacePatternSpaceTab()
 		let tnpat = '\v\n%$'
 		let patterns = {}
@@ -312,7 +312,7 @@ function! s:SetWhitespacePatternGeneral()
 	else
 		let indent = '\t'
 		let nonindent = '( +)'
-	end
+	endif
 	let pod_indent = exists('g:bmcPodIndentOk') && g:bmcPodIndentOk
 	if &ft == "mail"
 		" ExtEdit puts trailing whitespace in header fields.  Don't warn about this,
@@ -358,7 +358,7 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
 		let pattern = a:pattern
 	else
 		let pattern = s:SetWhitespacePatternGeneral() . '$'
-	end
+	endif
 	echo 's/' . pattern . '//g'
 	call s:ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
 endfunction
