@@ -51,9 +51,9 @@ prompt_bmc_setup_base ()
 		eval $(prompt_bmc_setup_colors $j $(echo $i))
 	done
 
+	zstyle ':vcs_info:*' enable git
 	zstyle ':vcs_info:*' actionformats "($pcc[10]%b|%a%$c_reset%)" "%R"
 	zstyle ':vcs_info:*' formats       "($pcc[10]%b%$c_reset%)" "%R"
-	zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat "%b:%r"
 
 	p_privuser="$pcc[4]%n$c_reset"
 	p_unprivuser="$pcc[8]%n$c_reset"
