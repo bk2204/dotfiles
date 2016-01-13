@@ -78,6 +78,7 @@ if has("user_commands")
 	command! -range=% Trailing		call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
 	command! -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
 	command! Edir	execute ':e ' . expand('%:p:h')
+	command! AppendSignature	call <SID>AppendSignature()
 endif
 
 "" Maps.
@@ -361,6 +362,18 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
 	endif
 	echo 's/' . pattern . '//g'
 	call s:ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
+endfunction
+
+function! s:AppendSignature()
+	try
+		silent /^-- $/,$delete
+	catch /E486/
+	endtry
+	let lines = readfile(expand("$HOME") . '/.signature')
+	call insert(lines, '-- ', 0)
+	for i in lines
+		$put =i
+	endfor
 endfunction
 
 function! s:SetUpLanguageHooks()
