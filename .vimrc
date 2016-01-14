@@ -204,11 +204,17 @@ execute Fn()
 "" Language-specific functions.
 " perlcritic is *extremely* slow on large files.
 function! s:SelectPerlSyntasticCheckers()
+	let pcrc = expand("$HOME") . '/.perlcriticrc'
 	" If the file has at least 500 lines or there's not a ~/.perlcriticrc...
-	if len(getline(500, 500)) == 1 || !filereadable(expand("$HOME") . '/.perlcriticrc')
+	if len(getline(500, 500)) == 1 || !filereadable(pcrc)
 		let b:syntastic_checkers = []
 	else
 		let b:syntastic_checkers = ['perlcritic']
+		let theme = ''
+		let themetext = matchstr(readfile(expand(pcrc, '')), theme)
+		if strlen(theme) && strlen(themetext)
+			let g:syntastic_perl_perlcritic_args = '--theme ' . theme
+		endif
 	endif
 	if exists('g:syntastic_enable_perl_checker')
 		if g:syntastic_enable_perl_checker
