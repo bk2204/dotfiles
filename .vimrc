@@ -372,7 +372,8 @@ endfunction
 
 function! s:AppendSignature()
 	try
-		silent /^-- $/,$delete
+		" Space or non-breaking space (U+00A0)
+		silent /^--[  ]$/,$delete
 	catch /E486/
 	endtry
 	let lines = readfile(expand("$HOME") . '/.signature')
