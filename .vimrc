@@ -424,6 +424,9 @@ let g:ctrlp_match_window = 'results:75'
 let g:ctrlp_extensions = ['buffertag']
 let g:ctrlp_clear_cache_on_exit = 0
 
+" EditorConfig settings.
+let g:EditorConfig_max_line_indicator = 'none'
+
 "" Print settings.
 if filereadable('/etc/papersize')
 	let s:papersize = matchstr(readfile('/etc/papersize', '', 1), '\p*')
