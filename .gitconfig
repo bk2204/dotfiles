@@ -16,6 +16,8 @@
 	pnff = pull --no-ff
 	mff = merge --ff-only
 	mnff = merge --no-ff
+	amend = commit --amend --reset-author
+	update = commit --amend --reset-author --no-edit
 	los = log --simplify-merges --topo-order
 	lops = log -p -C --simplify-merges --topo-order
 	gr = log --graph --decorate
