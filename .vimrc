@@ -78,6 +78,7 @@ if has("user_commands")
 	command! -range=% Trailing		call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
 	command! -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
 	command! Edir	execute ':e ' . expand('%:p:h')
+	command! -nargs=1	Emod	execute ':e ' . <SID>ModulePath("<args>")
 	command! AppendSignature	call <SID>AppendSignature()
 endif
 
@@ -386,6 +387,32 @@ endfunction
 function! s:SetUpLanguageHooks()
 	if has("perl") && isdirectory(expand("$HOME") . '/lib/perl5')
 		perl splice @INC, -1, 0, "$ENV{'HOME'}/lib/perl5"
+	endif
+endfunction
+
+function! s:ModulePathPerl(module)
+	perl <<EOM
+	sub f {
+		my $m = shift;
+		$m =~ s{::}{/}g;
+		for (@INC) {
+			my $p = "$_/$m.pm";
+			return $p if -e $p;
+		}
+		return '';
+	}
+	my $x = VIM::Eval('a:module');
+	my $p = f($x);
+	# Sanitize because of VIM::DoCommand.
+	$p = '' if $p =~ tr{A-Za-z0-9./_-}{}c;
+	VIM::DoCommand("let path = '$p'")
+EOM
+	return path
+endfunction
+
+function! s:ModulePath(module)
+	if has("perl")
+		return s:ModulePathPerl(a:module)
 	endif
 endfunction
 
