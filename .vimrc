@@ -414,6 +414,7 @@ function! s:ModulePath(module)
 	if has("perl")
 		return s:ModulePathPerl(a:module)
 	endif
+	return ''
 endfunction
 
 "" Miscellaneous variables.
