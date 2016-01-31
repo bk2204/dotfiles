@@ -1,8 +1,10 @@
 # SMTP.
 set smtp_url=smtps://brian.carlson%40cpanel.net@mail.cpanel.net/
+set smtp_pass=`secret-tool lookup user brian.carlson@cpanel.net uri smtps://mail.cpanel.net/`
 set smtp_authenticators="plain"
 # IMAP.
 set imap_user=brian.carlson@cpanel.net
+set imap_pass=`secret-tool lookup user brian.carlson@cpanel.net uri imaps://mail.cpanel.net/`
 set imap_passive=no
 set imap_check_subscribed=yes
 set imap_peek=no
