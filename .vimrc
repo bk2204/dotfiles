@@ -59,7 +59,7 @@ if has("gui_running")
 	set lines=24
 	set co=80
 	set gcr+=a:blinkon0
-	set gfn=Monospace\ 9
+	set gfn=Monospace\ 8
 	set go-=tT			" Disable tearoffs and toolbar.
 endif
 
