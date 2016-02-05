@@ -6,7 +6,8 @@ redirect () {
 	# Deal with inaccessible /dev/fd.
 	if [ -d '/dev/fd' ]
 	then
-		exec "$@" 2> >(grep -vE 'gpg: (WARNING: unsafe ownership|using.*as default secret key)' 1>&2)
+		exec "$@" 2> \
+			>(grep -vE '(gpg: (WARNING: unsafe ownership|using.*as default secret key)|le propriétaire du fichier|n.est pas sûr)' 1>&2)
 	else
 		exec "$@"
 	fi
