@@ -1,0 +1,26 @@
+# SMTP.
+set smtp_url=smtps://brian%40auricblue.com@smtp.gmail.com:587/
+set smtp_pass="`secret-tool lookup user brian@auricblue.com uri smtp://smtp.gmail.com:587/`"
+# IMAP.
+set imap_user=brian@auricblue.com
+set imap_pass="`secret-tool lookup user brian@auricblue.com uri imaps://imap.gmail.com/`"
+set imap_passive=no
+set imap_check_subscribed=yes
+set imap_peek=no
+set imap_idle=yes
+set imap_check_subscribed=yes
+set imap_list_subscribed=yes
+set imap_headers="X-CRM114-STATUS"
+# Folders.
+set folder=imaps://imap.gmail.com:993/
+set spoolfile=+INBOX
+set move=no
+set delete_untag=yes
+set postponed="=Drafts"
+set pipe_split=yes
+# Headers.
+set hostname=vauxhall.crustytoothpaste.net
+my_hdr From: brian m. carlson <brian@auricblue.com>
+# Crypto.
+set signature=~/.signature-auricblue
+# vim: set syntax=muttrc:
