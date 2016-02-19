@@ -18,9 +18,9 @@ syn region  gitcommitSelected	start=/^# Modifications qui seront validées :/ en
 syn region  gitcommitUnmerged	start=/^# Chemins non fusionnés :/ end=/^#$\|^#\@!/ contains=gitcommitHeader,gitcommitHead,gitcommitUnmergedType fold
 
 " These use a non-breaking space (U+00A0) before the question mark.
-syn match   gitcommitDiscardedType	"\t\@<=[a-z][a-z ]*[a-z] \?: "he=e-2	contained containedin=gitcommitComment nextgroup=gitcommitDiscardedFile skipwhite
-syn match   gitcommitSelectedType	"\t\@<=[a-z][a-z ]*[a-z] \?: "he=e-2	contained containedin=gitcommitComment nextgroup=gitcommitSelectedFile skipwhite
-syn match   gitcommitUnmergedType	"\t\@<=[a-z][a-z ]*[a-z] \?: "he=e-2	contained containedin=gitcommitComment nextgroup=gitcommitUnmergedFile skipwhite
+syn match   gitcommitDiscardedType	"\t\@<=[a-z][a-z ]*[a-z[=e=]] \?: "he=e-2	contained containedin=gitcommitComment nextgroup=gitcommitDiscardedFile skipwhite
+syn match   gitcommitSelectedType	"\t\@<=[a-z][a-z ]*[a-z[=e=]] \?: "he=e-2	contained containedin=gitcommitComment nextgroup=gitcommitSelectedFile skipwhite
+syn match   gitcommitUnmergedType	"\t\@<=[a-z][a-z ]*[a-z[=e=]] \?: "he=e-2	contained containedin=gitcommitComment nextgroup=gitcommitUnmergedFile skipwhite
 
 syn match   gitcommitWarning		"\%^[^#].*: needs merge$" nextgroup=gitcommitWarning skipnl
 syn match   gitcommitWarning		"^[^#].*: needs merge$" nextgroup=gitcommitWarning skipnl contained
