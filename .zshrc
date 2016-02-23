@@ -83,6 +83,7 @@ set_if_has_term ()
 }
 set_sane_term ()
 {
+	local i
 	# Make sure our terminal definition works right.
 	if ! silent echotc xo
 	then
@@ -247,6 +248,39 @@ dumpenv () {
 	) > $HOME/.environment
 	true
 }
+setup_colors () {
+	has_colors || return
+	[[ -f $HOME/.dircolors ]] && eval "$(dircolors $HOME/.dircolors 2>/dev/null)"
+
+	# Set up termcap colors for less (from grml).
+	local blue="blue"
+	[[ $(echotc Co 2>/dev/null) = 256 ]] && blue=33
+
+	export LESS_TERMCAP_mb=$(print -P $(color_fg red yes))
+	export LESS_TERMCAP_md=$(print -P $(color_fg red yes))
+	export LESS_TERMCAP_me=$(print -P $(color_reset))
+	export LESS_TERMCAP_se=$(print -P $(color_reset))
+	export LESS_TERMCAP_so=$(print -P $(color_fg $blue yes))
+	export LESS_TERMCAP_ue=$(print -P $(color_reset))
+	export LESS_TERMCAP_us=$(print -P $(color_fg green yes))
+	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
+	export CLICOLOR=1
+}
+setup_autoload () {
+	local func i
+	for func in $^fpath/*(.:t);
+	do
+		if [[ -n $func ]]; then
+			autoload -U $func
+		fi
+	done
+
+	for i in promptinit compctl complete complist computil insert-unicode-char;
+	do
+		autoload -U $i
+	done
+	compinit -u 2>/dev/null
+}
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
@@ -262,18 +296,7 @@ is_ssh_session && dumpenv
 VISUAL="$EDITOR"
 
 # Autoload some stuff.
-for func in $^fpath/*(.:t);
-do
-	if [[ -n $func ]]; then
-		autoload -U $func
-	fi
-done
-
-for i in promptinit compctl complete complist computil insert-unicode-char;
-do
-	autoload -U $i
-done
-compinit -u 2>/dev/null
+setup_autoload
 
 choose_prompt () {
 	local km=$1
@@ -473,29 +496,10 @@ setup_completion ()
 	}
 }
 
-if has_colors; then
-	[[ -f $HOME/.dircolors ]] && eval "$(dircolors $HOME/.dircolors 2>/dev/null)"
-
-	# Set up termcap colors for less (from grml).
-	blue="blue"
-	[[ $(echotc Co 2>/dev/null) = 256 ]] && blue=33
-
-	export LESS_TERMCAP_mb=$(print -P $(color_fg red yes))
-	export LESS_TERMCAP_md=$(print -P $(color_fg red yes))
-	export LESS_TERMCAP_me=$(print -P $(color_reset))
-	export LESS_TERMCAP_se=$(print -P $(color_reset))
-	export LESS_TERMCAP_so=$(print -P $(color_fg $blue yes))
-	export LESS_TERMCAP_ue=$(print -P $(color_reset))
-	export LESS_TERMCAP_us=$(print -P $(color_fg green yes))
-	export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
-	export CLICOLOR=1
-fi
-
 silent whence lesspipe && eval $(lesspipe)
 
 setup_completion
-
-unset i blue
+setup_colors
 
 # Succeed.
 true

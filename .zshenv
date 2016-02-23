@@ -23,6 +23,18 @@ function preferred_locale () {
 	printf "en_US.UTF-8"
 }
 
+setup_browser () {
+	local i=""
+	for i in chromium-browser chromium google-chrome iceweasel firefox
+	do
+		if command -v "$i" >/dev/null 2>&1
+		then
+			export BROWSER="$i"
+			break
+		fi
+	done
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -97,22 +109,16 @@ fi
 if has_locale en_DK.UTF-8; then
 	LC_TIME=en_DK.UTF-8
 fi
-local i=""
-for i in chromium-browser chromium google-chrome iceweasel firefox
-do
-	if command -v "$i" >/dev/null 2>&1
-	then
-		BROWSER="$i"
-		break
-	fi
-done
 
 VISUAL="$EDITOR"
 
 unsetopt allexport
 # End exporting variables.
 
+setup_browser
+
 unfunction has_locale
 unfunction preferred_locale
+unfunction setup_browser
 
 true
