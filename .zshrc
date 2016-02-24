@@ -174,7 +174,7 @@ set_keybindings () {
 		PageDown   "${terminfo[knp]}"
 	)
 
-	function bind2maps () {
+	bind2maps () {
 		local i sequence widget
 		local -a maps
 
@@ -307,19 +307,19 @@ choose_prompt () {
 	esac
 }
 
-function zle-keymap-select {
+zle-keymap-select () {
 	choose_prompt
 	zle reset-prompt
 }
 
-function zle-line-init () {
+zle-line-init () {
 	if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
 		emulate -L zsh
 		printf '%s' ${terminfo[smkx]}
 	fi
 	choose_prompt "main"
 }
-function zle-line-finish () {
+zle-line-finish () {
 	if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
 		emulate -L zsh
 		printf '%s' ${terminfo[rmkx]}

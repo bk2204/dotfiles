@@ -1,7 +1,7 @@
 # brian m. carlson's zshenv.
 
 # Useful functions used in this file.  General definitions go in .zshrc.
-function has_locale () {
+has_locale () {
 	local locale="$1"
 
 	[ -x "$(which perl)" ] || return 0
@@ -9,7 +9,7 @@ function has_locale () {
 		2>/dev/null
 }
 
-function preferred_locale () {
+preferred_locale () {
 	local locale=$(printf "$LANG\n" | sed -e 's/.utf8$/.UTF-8/')
 	# If we're using English, prefer US English; otherwise, accept English,
 	# Spanish, or French locales.  Otherwise, fall back to US English.
