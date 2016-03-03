@@ -33,15 +33,16 @@ prompt_bmc_setup_colors ()
 prompt_bmc_setup_base ()
 {
 	local -a pcc
-	local p_user p_pwd p_date p_time p_failed p_retcode p_signame p_priv p_unpriv
-	local p_userpwd p_datetime p_tty p_ret p_pchar p_status p_branch
+	local p_user p_pwd p_date p_time p_failed p_retcode p_signame
+	local p_priv p_unpriv p_privuser p_unprivuser
+	local p_userpwd p_datetime p_tty p_ret p_ret2 p_pchar p_status p_branch
 	local p_shlvl
 	local p_power
 	local p_mode
 
 	local i j
 
-	c_reset="%b%{$reset_color%}"
+	local c_reset="%b%{$reset_color%}"
 
 	j=0
 	for i in "$@"
