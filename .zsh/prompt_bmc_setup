@@ -33,15 +33,7 @@ prompt_bmc_setup_colors ()
 prompt_bmc_setup_base ()
 {
 	local -a pcc
-	local p_user p_pwd p_date p_time p_failed p_retcode p_signame
-	local p_priv p_unpriv p_privuser p_unprivuser
-	local p_userpwd p_datetime p_tty p_ret p_ret2 p_pchar p_status p_branch
-	local p_shlvl
-	local p_power
-	local p_mode
-
 	local i j
-
 	local c_reset="%b%{$reset_color%}"
 
 	j=0
@@ -56,39 +48,39 @@ prompt_bmc_setup_base ()
 	zstyle ':vcs_info:*' actionformats "($pcc[10]%b|%a%$c_reset%)" "%R"
 	zstyle ':vcs_info:*' formats       "($pcc[10]%b%$c_reset%)" "%R"
 
-	p_privuser="$pcc[4]%n$c_reset"
-	p_unprivuser="$pcc[8]%n$c_reset"
-	p_user="%(!.$p_privuser.$p_unprivuser)$pcc[1]@%m$c_reset"
-	p_pwd="$pcc[2]%~$c_reset"
+	local p_privuser="$pcc[4]%n$c_reset"
+	local p_unprivuser="$pcc[8]%n$c_reset"
+	local p_user="%(!.$p_privuser.$p_unprivuser)$pcc[1]@%m$c_reset"
+	local p_pwd="$pcc[2]%~$c_reset"
 
-	p_userpwd="$p_user:$p_pwd"
+	local p_userpwd="$p_user:$p_pwd"
 
-	p_priv="$pcc[4]#$c_reset"
-	p_unpriv="$pcc[3]%%$c_reset"
+	local p_priv="$pcc[4]#$c_reset"
+	local p_unpriv="$pcc[3]%%$c_reset"
 
-	p_pchar="%(!.$p_priv.$p_unpriv)"
+	local p_pchar="%(!.$p_priv.$p_unpriv)"
 
 	# Don't use the %D by itself, because it uses two-digit years.
-	p_date="$pcc[5]%D{%Y-%m-%d}$c_reset"
+	local p_date="$pcc[5]%D{%Y-%m-%d}$c_reset"
 	# Similarly, don't use %* by itself, because it is not zero-padded.
-	p_time="$pcc[5]%D{%H:%M:%S}$c_reset"
+	local p_time="$pcc[5]%D{%H:%M:%S}$c_reset"
 
-	p_datetime="$p_date/$p_time"
+	local p_datetime="$p_date/$p_time"
 
-	p_tty="$pcc[7]%l$c_reset"
+	local p_tty="$pcc[7]%l$c_reset"
 
-	p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
-	p_power="%(2V.($pcc[7]%2v$c_reset).)"
+	local p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
+	local p_power="%(2V.($pcc[7]%2v$c_reset).)"
 
-	p_failed="$pcc[6]failed$c_reset"
-	p_retcode="$pcc[6]%?$c_reset"
-	p_signame="$pcc[6]%1v$c_reset"
-	p_mode='${psvar[3]:-%(?.ok.no)}'
+	local p_failed="$pcc[6]failed$c_reset"
+	local p_retcode="$pcc[6]%?$c_reset"
+	local p_signame="$pcc[6]%1v$c_reset"
+	local p_mode='${psvar[3]:-%(?.ok.no)}'
 
-	p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
-	p_ret2="$pcc[9]%m $p_mode$c_reset"
+	local p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
+	local p_ret2="$pcc[9]%m $p_mode$c_reset"
 
-	p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
+	local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
 
 	#[[ -f /proc/apm ]] && p_apm="%(2v.-%2v-.)"
 
