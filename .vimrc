@@ -151,6 +151,7 @@ augroup end
 if v:version >= 700
 	augroup call
 		au FileType perl				call s:SelectPerlSyntasticCheckers()
+		au FileType python			call s:SelectPythonSyntasticCheckers()
 	augroup end
 endif
 
@@ -222,6 +223,10 @@ function! s:SelectPerlSyntasticCheckers()
 			call add(b:syntastic_checkers, "perl")
 		endif
 	endif
+endfunction
+
+function! s:SelectPythonSyntasticCheckers()
+	let b:syntastic_checkers = ['python', 'pep8']
 endfunction
 
 " Tidy code.
