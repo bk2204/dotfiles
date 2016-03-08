@@ -35,6 +35,19 @@ setup_browser () {
 	done
 }
 
+is_ssh_session ()
+{
+	[[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
+}
+
+setup_ssh_agent () {
+	is_ssh_session && return
+	grep enable-ssh-support ~/.gnupg/gpg-agent.conf 2>/dev/null | \
+		grep -qsv '^#' || return
+	gpg-connect-agent /bye >/dev/null 2>&1
+	export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -116,9 +129,11 @@ unsetopt allexport
 # End exporting variables.
 
 setup_browser
+setup_ssh_agent
 
 unfunction has_locale
 unfunction preferred_locale
 unfunction setup_browser
+unfunction setup_ssh_agent
 
 true

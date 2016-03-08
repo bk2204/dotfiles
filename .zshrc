@@ -59,10 +59,6 @@ source_if_present ()
 	fn="$1"
 	[[ -f $fn ]] && source "$fn"
 }
-is_ssh_session ()
-{
-	[[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
-}
 set_tty ()
 {
 	[[ -n $TTY ]] && return 0
@@ -224,13 +220,6 @@ remove_perl_overrides () {
 	[ -n "$PERL_LOCAL_LIB_ROOT" ] && path=("${(@)path:#$PERL_LOCAL_LIB_ROOT/bin}")
 	unset PERL_MB_OPT PERL_MM_OPT PERL_LOCAL_LIB_ROOT PERL5LIB
 }
-setup_ssh_agent () {
-	is_ssh_session && return
-	grep enable-ssh-support ~/.gnupg/gpg-agent.conf 2>/dev/null | \
-		grep -qsv '^#' || return
-	silent gpg-connect-agent /bye
-	export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
-}
 sless () {
 	(
 		# Help less handle compressed files better.
@@ -288,7 +277,6 @@ set_tty
 set_sane_term
 adjust_term_settings
 set_keybindings
-setup_ssh_agent
 remove_perl_overrides
 
 is_ssh_session && dumpenv
