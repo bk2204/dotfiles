@@ -25,7 +25,7 @@ preferred_locale () {
 
 setup_browser () {
 	local i=""
-	for i in chromium-browser chromium google-chrome iceweasel firefox
+	for i in firefox iceweasel chromium-browser chromium google-chrome
 	do
 		if command -v "$i" >/dev/null 2>&1
 		then
