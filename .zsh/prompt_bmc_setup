@@ -8,8 +8,7 @@ prompt_bmc_help () {
 EOF
 }
 
-prompt_bmc_want_bold ()
-{
+prompt_bmc_want_bold () {
 	text=$1
 
 	[ -z "text" ] && return 1;
@@ -20,8 +19,7 @@ prompt_bmc_want_bold ()
 	return 0;
 }
 
-prompt_bmc_setup_colors ()
-{
+prompt_bmc_setup_colors () {
 	local number=$1
 	local ffont=$2
 	local fcolor=$3
@@ -30,8 +28,7 @@ prompt_bmc_setup_colors ()
 	printf 'pcc[%s]="%s"' $number $(color_fg $fcolor $fbold)
 }
 
-prompt_bmc_setup_base ()
-{
+prompt_bmc_setup_base () {
 	local -a pcc
 	local i j
 	local c_reset="%b%{$reset_color%}"
@@ -82,8 +79,6 @@ prompt_bmc_setup_base ()
 
 	local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
 
-	#[[ -f /proc/apm ]] && p_apm="%(2v.-%2v-.)"
-
 	POSTEDIT="$reset_color"
 
 	prompt="$p_userpwd$p_branch
@@ -92,15 +87,17 @@ $p_ret2 $p_pchar "
 	RPROMPT=""
 	PS2='%(4_.\.)%3_> %E'
 
-	[[ -d /sys/class/power_supply ]] &&
-		precmd () { prompt_bmc_precmd ; prompt_bmc_apm_precmd } ||
+	if [[ -d /sys/class/power_supply ]]
+	then
+		precmd () { prompt_bmc_precmd; prompt_bmc_apm_precmd }
+	else
 		precmd () { prompt_bmc_precmd }
+	fi
 	preexec () { }
 }
 
-prompt_bmc_setup ()
-{
-	if echotc Co >/dev/null 2>/dev/null && [[ $(echotc Co) = 256 ]]
+prompt_bmc_setup () {
+	if echotc Co >/dev/null 2>&1 && [[ $(echotc Co) = 256 ]]
 	then
 		prompt_bmc_setup_base \
 			"yes 33" \
@@ -137,7 +134,12 @@ prompt_bmc_precmd () {
 	local exitstatus=$?
 	setopt noxtrace localoptions
 
-	[[ $exitstatus -ge 128 ]] && psvar[1]="$signals[$exitstatus-127]" || psvar[1]="none"
+	if [[ $exitstatus -ge 128 ]]
+	then
+		psvar[1]="$signals[$exitstatus-127]"
+	else
+		psvar[1]="none"
+	fi
 
 	local statusline='%n@%m: %~'
 	case $TERM in
@@ -147,7 +149,7 @@ prompt_bmc_precmd () {
 			print -Pn "\ek$statusline\e\\";;
 	esac
 
-	prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>/dev/null && vcs_info
+	prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info
 }
 
 prompt_bmc_need_refresh () {
@@ -194,7 +196,12 @@ prompt_bmc_apm_precmd () {
 	[ $has_ac = 1 ] && ac="ac"
 	[ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
 
-	[[ $has_ac = 0 ]] && [[ $has_bat = 0 ]] && psvar[2]=() || psvar[2]="$ac$bat"
+	if [[ $has_ac = 0 ]] && [[ $has_bat = 0 ]]
+	then
+		psvar[2]=()
+	else
+		psvar[2]="$ac$bat"
+	fi
 }
 
 prompt_bmc_setup "$@"
