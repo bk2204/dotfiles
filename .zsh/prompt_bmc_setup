@@ -87,7 +87,7 @@ $p_ret2 $p_pchar "
 	RPROMPT=""
 	PS2='%(4_.\.)%3_> %E'
 
-	if [[ -d /sys/class/power_supply ]]
+	if [[ -d /sys/class/power_supply ]] && [[ ! -f "$HOME/.slowbox" ]]
 	then
 		precmd () { prompt_bmc_precmd; prompt_bmc_apm_precmd }
 	else
