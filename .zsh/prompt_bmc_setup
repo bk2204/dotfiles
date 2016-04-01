@@ -9,9 +9,9 @@ EOF
 }
 
 prompt_bmc_want_bold () {
-	text=$1
+	local text=$1
 
-	[ -z "text" ] && return 1;
+	[ -z "$text" ] && return 1;
 	for i in no off false regular normal non-bold;
 	do
 		[ "$text" = "$i" ] && return 1
