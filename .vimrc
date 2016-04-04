@@ -441,12 +441,17 @@ let g:syntastic_enable_perl_checker = 1
 " Populate the location list to make finding errors easier.
 let g:syntastic_always_populate_loc_list = 1
 
-" Powerline settings.
-let g:Powerline_symbols = 'unicode'
+" Airline settings.
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '◀'
+let g:airline_symbols = {}
+let g:airline_symbols.branch = '⚡'
+let g:airline_symbols.readonly = '☓'
+let g:airline_symbols.linenr = '⁋'
 if has("gui_running") || &t_Co > 16
-	let g:Powerline_colorscheme = 'solarized256'
+	let g:airline_theme = 'powerlineish'
 else
-	let g:Powerline_colorscheme = 'solarized'
+	let g:airline_theme = 'base16_solarized'
 endif
 
 " Ctrl-P settings.
