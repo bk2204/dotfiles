@@ -93,6 +93,8 @@ noremap <Leader>w :Trailing<CR>
 noremap <Leader>zw :TrailingAll<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
+" Toggle executable bit.
+noremap <Leader>x :call <SID>ToggleExecutable()<CR>
 " Beautify files.
 noremap <Leader>b :DoTidy<CR>
 nnoremap <Leader>pp :set paste!<CR>
@@ -427,6 +429,20 @@ function! s:ModulePath(module)
 		return s:ModulePathPerl(a:module)
 	endif
 	return ''
+endfunction
+
+function! s:ToggleExecutable()
+	if has("perl")
+		setl ar
+		perl <<EOM
+		my $file = VIM::Eval('expand("%")');
+		my $mode = (stat($file))[2] & 07777;
+		$mode ^= (00111 & ~umask);
+		chmod($mode, $file);
+EOM
+		checktime
+		set ar<
+	endif
 endfunction
 
 "" Miscellaneous variables.
