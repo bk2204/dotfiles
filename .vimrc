@@ -179,6 +179,13 @@ if v:version >= 702 || (v:version == 701 && has("patch40"))
 	augroup end
 endif
 
+" Event-related tasks.
+if v:version >= 702
+	augroup events
+		au FileChangedShellPost	*	AirlineRefresh
+	augroup end
+endif
+
 "" Color scheme.
 " This needs to go after the whitespace handling, since it can cause warnings if
 " placed before it.
