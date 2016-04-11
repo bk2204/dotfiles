@@ -452,6 +452,9 @@ let g:is_posix=1
 " Better just to leave POD as a big comment block.
 let g:perl_include_pod = 0
 
+" Allow subroutine signatures.
+let g:perl_sub_signatures = 1
+
 " Show us the real contents of the file.
 let g:vim_json_syntax_conceal = 0
 
