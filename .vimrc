@@ -157,6 +157,13 @@ if v:version >= 700
 	augroup end
 endif
 
+" Language-specific variables.
+if v:version >= 700
+	augroup let
+		au FileType mail			let b:airline_whitespace_check = ''
+	augroup end
+endif
+
 " Syntax commands.
 augroup syntax
 	au FileType asciidoc		syn sync clear | syn sync minlines=25
