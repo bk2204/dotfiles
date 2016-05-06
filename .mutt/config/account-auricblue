@@ -1,5 +1,5 @@
 # SMTP.
-set smtp_url=smtps://brian%40auricblue.com@smtp.gmail.com:587/
+set smtp_url=smtp://brian%40auricblue.com@smtp.gmail.com:587/
 set smtp_pass="`secret-tool lookup user brian@auricblue.com uri smtp://smtp.gmail.com:587/`"
 # IMAP.
 set imap_user=brian@auricblue.com
