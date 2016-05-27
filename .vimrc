@@ -160,7 +160,7 @@ endif
 " Language-specific variables.
 if v:version >= 700
 	augroup let
-		au FileType mail			let b:airline_whitespace_check = ''
+		au FileType mail			let b:airline_whitespace_disabled = 1
 	augroup end
 endif
 
