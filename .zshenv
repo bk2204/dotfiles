@@ -51,7 +51,7 @@ setup_ssh_agent () {
 bmc_editor () {
 	if [[ -n $DISPLAY ]] && [[ $1 != console ]]
 	then
-		printf 'gvim-f'
+		printf 'gvim -f'
 	elif which vimx >/dev/null 2>&1
 	then
 		printf 'vimx'
