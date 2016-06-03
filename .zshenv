@@ -48,6 +48,22 @@ setup_ssh_agent () {
 	export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 }
 
+bmc_editor () {
+	if [[ -n $DISPLAY ]] && [[ $1 != console ]]
+	then
+		printf 'gvim-f'
+	elif which vimx >/dev/null 2>&1
+	then
+		printf 'vimx'
+	elif which vim >/dev/null 2>&1
+	then
+		printf 'vim'
+	else
+		# Really?
+		print 'vi'
+	fi
+}
+
 # Set up some limits.
 unlimit
 limit core 0
@@ -103,7 +119,8 @@ GIT_PAGER="less -FRSX"
 PAGER="less -R"
 PERLDOC_PAGER="$PAGER"
 LESS="-fR"
-EDITOR=$(which vimx >/dev/null 2>&1 && echo "vimx" || echo "vim")
+EDITOR=$(bmc_editor)
+VISUAL="$EDITOR"
 GIT_MERGE_AUTOEDIT=no
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 # Don't prompt for credentials, just fail.
@@ -113,17 +130,12 @@ MODULE_SIGNATURE_CIPHER=SHA512
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
 	unset XML_CATALOG_FILES
 fi
-if [[ -n $DISPLAY ]]; then
-	EDITOR="gvim-f"
-fi
 if [[ -z $HOSTNAME ]]; then
 	HOSTNAME=$(hostname)
 fi
 if has_locale en_DK.UTF-8; then
 	LC_TIME=en_DK.UTF-8
 fi
-
-VISUAL="$EDITOR"
 
 unsetopt allexport
 # End exporting variables.
