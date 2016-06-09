@@ -1,10 +1,3 @@
-[giggle]
-	compact-mode = false
-	main-window-geometry = 0x0+0+0
-	main-window-maximized = true
-	history-view-vpane-position = 369
-	main-window-view = HistoryView
-	file-view-vpane-position = 161
 [user]
 	name = brian m. carlson
 	email =
