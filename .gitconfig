@@ -43,6 +43,9 @@
 	rebase = false
 [color]
 	ui = auto
+[color.diff]
+	new = 34
+	old = 203
 [sendemail]
 	smtpuser = bmc
 	smtppass =
