@@ -141,6 +141,9 @@ set_sane_term ()
 	then
 		xmodmap $HOME/.Xmodmap
 	fi
+
+	# Don't print weird escape characters on dumb terminals (e.g. gvim).
+	[[ $TERM = dumb ]] && unset zle_bracketed_paste
 }
 adjust_term_settings () {
 	# Turn off flow control.
