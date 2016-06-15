@@ -62,6 +62,7 @@
 [diff]
 	renames = copies
 	algorithm = histogram
+	compactionheuristic = true
 [merge]
 	conflictstyle = diff3
 [core]
