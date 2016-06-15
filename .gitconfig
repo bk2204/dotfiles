@@ -65,6 +65,8 @@
 	compactionheuristic = true
 [merge]
 	conflictstyle = diff3
+[submodule]
+	fetchjobs = 4
 [core]
 	precomposeunicode = true
 	logAllRefUpdates = true
