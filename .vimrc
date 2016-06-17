@@ -8,7 +8,7 @@ set nocp
 set ts=4
 set sw=4
 set sts=4
-set noet
+set et
 set ai
 
 " Backups, saving, and statefulness.
@@ -135,13 +135,13 @@ augroup end
 augroup setl
 	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
 	au FileType clojure			setl ts=2 sw=2 sts=2 et
-	au FileType cpp					setl cin cino=t0
-	au FileType c						setl cin cino=t0
-	au FileType cs					setl cin cino=t0
+	au FileType cpp					setl cin cino=t0 noet
+	au FileType c						setl cin cino=t0 noet
+	au FileType cs					setl cin cino=t0 noet
 	au FileType docbkxml		setl cms=<!--%s-->
 	au FileType gitcommit		setl tw=72 spell com=b:#
 	au FileType javascript	setl cin cino=t0,j1,J1
-	au FileType java				setl cin cino=t0,j1
+	au FileType java				setl cin cino=t0,j1 noet
 	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
 	au FileType python			setl et si tw=79
 	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
