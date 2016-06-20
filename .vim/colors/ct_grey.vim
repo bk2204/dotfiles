@@ -208,6 +208,8 @@ hi link csXmlTag							Keyword
 hi link perlStringStartEnd		rubyStringDelimiter
 hi link perlVStringV					String
 
+hi link p6Quote								rubyStringDelimiter
+
 hi link pythonStringDelimiter	rubyStringDelimiter
 
 hi link zshStringDelimiter		rubyStringDelimiter
