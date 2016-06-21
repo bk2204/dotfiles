@@ -45,7 +45,12 @@ setup_ssh_agent () {
 	grep enable-ssh-support ~/.gnupg/gpg-agent.conf 2>/dev/null | \
 		grep -qsv '^#' || return
 	gpg-connect-agent /bye >/dev/null 2>&1
-	export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
+	for i in "$(gpgconf --list-dirs | grep '^agent-socket:' | cut -d: -f2)" \
+		"$HOME/.gnupg/S.gpg-agent" \
+		"/run/user/$(id -u)/gnupg/S.gpg-agent"
+	do
+		[[ -S "$i.ssh" ]] && export SSH_AUTH_SOCK="$i.ssh"
+	done
 }
 
 bmc_editor () {
