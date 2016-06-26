@@ -74,7 +74,7 @@ if &term == "xterm" || &term == "xterm-debian" || &term == "xterm-xfree86"
 	set t_Sf=[3%dm
 	set t_Sb=[4%dm
 endif
-if &tgc && &t_8f == ''
+if has("termguicolors") && &tgc && &t_8f == ''
 	set t_8f=[38;2;%lu;%lu;%lum
 	set t_8b=[48;2;%lu;%lu;%lum
 endif
