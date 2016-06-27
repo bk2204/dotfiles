@@ -455,7 +455,7 @@ function! s:ToggleExecutable()
 		$mode ^= (00111 & ~umask);
 		chmod($mode, $file);
 EOM
-		checktime
+		exe "checktime " . bufnr("%")
 		set ar<
 	endif
 endfunction
