@@ -121,6 +121,9 @@ set_sane_term ()
 			set_if_has_term xterm-256color;;
 		xterm:*konsole)
 			set_if_has_term konsole-256color;;
+		screen*:*tmux)
+			is_ssh_session && EDITOR=$(bmc_editor console)
+			set_if_has_term screen-256color;;
 		screen*:*)
 			EDITOR=$(bmc_editor console)
 			set_if_has_term screen-256color;;
