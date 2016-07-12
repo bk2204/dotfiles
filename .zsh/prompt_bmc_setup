@@ -65,7 +65,10 @@ prompt_bmc_setup_base () {
 
 	local p_datetime="$p_date/$p_time"
 
-	local p_hostname="$pcc[11]%m$c_reset"
+	if is-at-least 5.1
+	then
+		local p_hostname="$pcc[11]%m$c_reset:"
+	fi
 	local p_tty="$pcc[7]%l$c_reset"
 
 	local p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
@@ -84,7 +87,7 @@ prompt_bmc_setup_base () {
 	POSTEDIT="$reset_color"
 
 	prompt="$p_userpwd$p_branch
-($p_datetime)($p_hostname:$p_tty)$p_shlvl$p_power($p_ret)
+($p_datetime)($p_hostname$p_tty)$p_shlvl$p_power($p_ret)
 $p_ret2 $p_pchar "
 	RPROMPT=""
 	PS2='%(4_.\.)%3_> %E'
