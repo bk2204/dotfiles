@@ -70,10 +70,6 @@ prompt_bmc_setup_base () {
 
 	local p_datetime="$p_date/$p_time"
 
-	if is-at-least 5.1
-	then
-		local p_hostname="$pcc[11]%m$c_reset:"
-	fi
 	local p_tty="$pcc[7]%l$c_reset"
 
 	local p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
