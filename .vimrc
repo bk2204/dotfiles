@@ -421,6 +421,7 @@ endfunction
 
 function! s:ModulePathPerl(module)
 	perl <<EOM
+	package vimrc::bmc;
 	sub f {
 		my $m = shift;
 		$m =~ s{::}{/}g;
