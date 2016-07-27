@@ -53,6 +53,22 @@ setup_ssh_agent () {
 	done
 }
 
+setup_temp () {
+	for i in "$TMPDIR" "$TEMPDIR" "$TMP" "$TEMP" "/tmp"
+	do
+		if [[ -n $i ]]
+		then
+			# This is the POSIX variable.
+			export TMPDIR="$i"
+			export TEMPDIR="$i"
+			# This is the short, easy-to-type variable.
+			export TMP="$i"
+			export TEMP="$i"
+			return
+		fi
+	done
+}
+
 bmc_editor () {
 	if [[ -n $DISPLAY ]] && [[ $1 != console ]]
 	then
@@ -147,10 +163,12 @@ unsetopt allexport
 
 setup_browser
 setup_ssh_agent
+setup_temp
 
 unfunction has_locale
 unfunction preferred_locale
 unfunction setup_browser
 unfunction setup_ssh_agent
+unfunction setup_temp
 
 true
