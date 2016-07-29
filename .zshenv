@@ -54,6 +54,7 @@ setup_ssh_agent () {
 }
 
 setup_temp () {
+	local i
 	for i in "$TMPDIR" "$TEMPDIR" "$TMP" "$TEMP" "/tmp"
 	do
 		if [[ -n $i ]]
