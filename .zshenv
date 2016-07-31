@@ -41,6 +41,7 @@ is_ssh_session ()
 }
 
 setup_ssh_agent () {
+	local i
 	is_ssh_session && return
 	grep enable-ssh-support ~/.gnupg/gpg-agent.conf 2>/dev/null | \
 		grep -qsv '^#' || return
