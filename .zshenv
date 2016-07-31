@@ -17,7 +17,7 @@ preferred_locale () {
 		printf "en_US.UTF-8"
 		return 0
 	elif [[ -z ${locale##(en|es|fr)*.UTF-8} ]]; then
-		printf "$locale"
+		printf '%s' "$locale"
 		return 0
 	fi
 	printf "en_US.UTF-8"
@@ -83,7 +83,7 @@ bmc_editor () {
 		printf 'vim'
 	else
 		# Really?
-		print 'vi'
+		printf 'vi'
 	fi
 }
 
