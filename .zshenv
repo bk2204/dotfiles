@@ -75,6 +75,9 @@ bmc_editor () {
 	if [[ -n $DISPLAY ]] && [[ $1 != console ]]
 	then
 		printf 'gvim -f'
+	elif [[ $TERM = dumb ]]
+	then
+		printf 'ex'
 	elif which vimx >/dev/null 2>&1
 	then
 		printf 'vimx'
