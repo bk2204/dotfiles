@@ -15,6 +15,10 @@ if has("eval")
 	let colors_name = "ct_grey"
 endif
 
+if $TERM == 'dumb'
+	finish
+endif
+
 " General colors
 hi Normal						guifg=#f6f3e8	guibg=#1c1c1c		gui=NONE			ctermfg=NONE			ctermbg=black			cterm=NONE
 hi NonText					guifg=#2c43db	guibg=#1c1c1c		gui=NONE			ctermfg=blue			ctermbg=NONE			cterm=NONE
