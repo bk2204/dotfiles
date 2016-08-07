@@ -87,7 +87,7 @@ if has("user_commands")
 	command! Edir	execute ':e ' . expand('%:p:h')
 	command! -nargs=1	Emod	execute ':e ' . <SID>ModulePath("<args>")
 	command! AppendSignature	call <SID>AppendSignature()
-	command! Notes						call <SID>EditNotes()
+	command! -nargs=? Notes						call <SID>EditNotes(<f-args>)
 endif
 
 "" Maps.
@@ -468,17 +468,22 @@ EOM
 	endif
 endfunction
 
-function! s:EditNotes()
+function! s:EditNotes(...)
 	let docpath = system('xdg-user-dir DOCUMENTS 2>/dev/null')
 	if !docpath
 		let docpath = expand('$HOME') . '/Documents'
 	endif
 	let notespath = docpath . '/notes'
-	let toplevel = system('git rev-parse --show-toplevel 2>/dev/null | tr -d "\n"')
-	if toplevel == expand('$HOME')
-		let file = 'homedir'
+	echo len(a:000)
+	if len(a:000) == 1
+		let file = a:1
 	else
-		let file = fnamemodify(toplevel, ':t')
+		let toplevel = system('git rev-parse --show-toplevel 2>/dev/null | tr -d "\n"')
+		if toplevel == expand('$HOME')
+			let file = 'homedir'
+		else
+			let file = fnamemodify(toplevel, ':t')
+		endif
 	endif
 	let path = notespath . '/' . file . '.adoc'
 	exe "e " . path
