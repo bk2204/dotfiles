@@ -147,13 +147,20 @@ prompt_bmc_precmd () {
 		psvar[1]="none"
 	fi
 
-	local statusline='%n@%m: %~'
-	case $TERM in
-		xterm*|gnome*)
-			print -Pn "\e]0;$statusline\a";;
-		screen*)
-			print -Pn "\ek$statusline\e\\";;
-	esac
+	local curstatus
+	[[ -n $TMUX ]] && curstatus="$(tmux display-message -p '#W')"
+
+	# Update prompt unless the title starts with a ZWSP (U+200B) or colon.
+	if printf "%s\n" "$curstatus" | grep -Eqvs "^($(printf '\342\200\213')|:)"
+	then
+		local statusline='%n@%m: %~'
+		case $TERM in
+			xterm*|gnome*)
+				print -Pn "\e]0;$statusline\a";;
+			screen*)
+				print -Pn "\ek$statusline\e\\";;
+		esac
+	fi
 
 	prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info
 }
