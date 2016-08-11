@@ -33,6 +33,9 @@ set fo+=n				" Indent lists properly.
 if v:version >= 704 || (v:version == 703 && has("patch541"))
 	set fo+=j				" Remove comment characters when joining lines.
 endif
+if v:version > 704 || (v:version == 704 && has("patch785"))
+	set nofixeol
+endif
 set tw=80
 set bs=indent,eol,start
 set wrap
