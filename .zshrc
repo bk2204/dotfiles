@@ -14,8 +14,11 @@ silent ls --color=auto && has_colors && alias ls='ls --color=auto'
 silent which prename && alias rename='prename'
 
 local vi=$(bmc_editor console)
-[[ $vi != vi ]] && alias vi=$vi
-[[ $vi != vim ]] && alias vim=$vi
+if [[ $vi != vi ]]
+then
+    alias vi=$vi
+    [[ $vi != vim ]] && alias vim=$vi
+fi
 unset vi
 
 has_colors && alias grep='grep --color=auto'
