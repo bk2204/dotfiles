@@ -24,6 +24,7 @@ unset vi
 has_colors && alias grep='grep --color=auto'
 alias rless='env -u LESSOPEN -u LESSCLOSE less'
 alias loadenv='eval $(cat $HOME/.environment)'
+alias tloadenv='eval $(tmux show-environment -s)'
 alias sudo='sudo -E '
 alias en='LC_ALL=en_US.UTF-8 '
 
