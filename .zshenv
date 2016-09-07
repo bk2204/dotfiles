@@ -103,6 +103,9 @@ else
 	umask 022
 fi
 
+# Prevent tampering with our config.
+unsetopt globalrcs
+
 ANDROID_HOME="$HOME/apps/android-sdk"
 export ANDROID_HOME
 
