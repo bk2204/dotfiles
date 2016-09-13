@@ -151,7 +151,8 @@ prompt_bmc_precmd () {
 	[[ -n $TMUX ]] && curstatus="$(tmux display-message -p '#W')"
 
 	# Update prompt unless the title starts with a ZWSP (U+200B) or colon.
-	if printf "%s\n" "$curstatus" | grep -Eqvs "^($(printf '\342\200\213')|:)"
+	local zwsp="$(printf '\342\200\213')"
+	if printf "%s\n" "$curstatus" | grep -Eqvs "^($zwsp|:)"
 	then
 		local statusline='%n@%m: %~'
 		case $TERM in
