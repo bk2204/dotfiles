@@ -1,0 +1,2 @@
+text/html; elinks -localhost -dump %s; nametemplate=%s.html; copiousoutput
+text/html; elinks -localhost %s; nametemplate=%s.html

@@ -20,7 +20,7 @@ set use_envelope_from=yes
 alternative_order application/pgp text/plain
 unalternative_order text/html
 mime_lookup application/octet-stream
-unauto_view text/html
+auto_view text/html
 set allow_8bit=no
 set allow_ansi=no
 set assumed_charset="us-ascii"
