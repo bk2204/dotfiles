@@ -1,0 +1,25 @@
+# SMTP.
+set smtp_url=smtp://bk2204%40gmail.com@smtp.gmail.com:587/
+# IMAP.
+set imap_user=bk2204@gmail.com
+set imap_passive=no
+set imap_check_subscribed=yes
+set imap_peek=no
+set imap_idle=yes
+set imap_check_subscribed=yes
+set imap_list_subscribed=yes
+set imap_headers="X-CRM114-STATUS"
+# Folders.
+set folder=imaps://imap.gmail.com:993/
+set spoolfile=imaps://imap.gmail.com:993/INBOX
+set move=no
+set delete_untag=yes
+set postponed="=Drafts"
+set record="=Sent"
+set pipe_split=yes
+# Headers.
+set hostname=vauxhall.crustytoothpaste.net
+my_hdr From: brian m. carlson <bk2204@gmail.com>
+# Hooks.
+save-hook ~p =Handled
+# vim: set syntax=muttrc:
