@@ -1,0 +1,1 @@
+../bundle/vim-ct-colors/colors/ct-grey.vim

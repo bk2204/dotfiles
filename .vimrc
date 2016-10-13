@@ -216,7 +216,7 @@ endif
 "" Color scheme.
 " This needs to go after the whitespace handling, since it can cause warnings if
 " placed before it.
-colorscheme ct_grey
+colorscheme ct-grey
 
 "" Graceful exit.
 " Vim 6.3 gets very upset if it sees lists or dictionaries, or, for that matter,
