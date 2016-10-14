@@ -88,7 +88,6 @@ if has("user_commands")
 	command! -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
 	command! Edir	execute ':e ' . expand('%:p:h')
 	command! -nargs=1	Emod	execute ':e ' . <SID>ModulePath("<args>")
-	command! AppendSignature	call <SID>AppendSignature()
 	command! -nargs=? Notes						call <SID>EditNotes(<f-args>)
 endif
 
@@ -380,19 +379,6 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
 	endif
 	echo 's/' . pattern . '//g'
 	call cttidy#for_range(a:start, a:end, 's/' . pattern . '//g', 'silent!')
-endfunction
-
-function! s:AppendSignature()
-	try
-		" Space or non-breaking space (U+00A0)
-		silent /^--[  ]$/,$delete
-	catch /E486/
-	endtry
-	let lines = readfile(expand("$HOME") . '/.signature')
-	call insert(lines, '-- ', 0)
-	for i in lines
-		$put =i
-	endfor
 endfunction
 
 function! s:SetUpLanguageHooks()
