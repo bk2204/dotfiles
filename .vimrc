@@ -84,7 +84,6 @@ endif
 
 "" Comamnds.
 if has("user_commands")
-	command! -range=% DoTidy			call <SID>DoTidy(<line1>, <line2>)
 	command! -range=% Trailing		call <SID>ClearTrailingWhitespace(<line1>, <line2>, "")
 	command! -range=% TrailingAll	call <SID>ClearTrailingWhitespace(<line1>, <line2>, "\v(^--)@<!\s+$")
 	command! Edir	execute ':e ' . expand('%:p:h')
@@ -106,8 +105,6 @@ noremap <Leader>zw :TrailingAll<CR>
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Toggle executable bit.
 noremap <Leader>x :call <SID>ToggleExecutable()<CR>
-" Beautify files.
-noremap <Leader>b :DoTidy<CR>
 nnoremap <Leader>pp :set paste!<CR>
 nnoremap <Leader>ll :set list!<CR>
 
@@ -263,31 +260,6 @@ function! s:SelectPythonSyntasticCheckers()
 	let b:syntastic_checkers = ['python', 'pep8']
 endfunction
 
-" Tidy code.
-function! s:DoTidy(start, end)
-	let cmd = "cat"
-	if &ft == "perl"
-		let cmd = "perltidy -q"
-	elseif &ft == "python"
-		let cmd = "pythontidy"
-	endif
-	call s:ForRange(a:start, a:end, "!" . cmd)
-endfunction
-
-"" General functions.
-" Do an ex command for a range.
-function! s:ForRange(start, end, command, ...)
-	let winview = winsaveview()
-	let text = ":"
-	" Optional prefix.  Can be used for :silent
-	if a:0
-		let text .= a:1 . " "
-	endif
-	let text .= a:start . "," . a:end . a:command
-	execute text
-	call winrestview(winview)
-endfunction
-
 "" Whitespace handling functions.
 " Turn it on.
 function! s:EnableWhitespaceChecking()
@@ -407,7 +379,7 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
 		let pattern = s:SetWhitespacePatternGeneral() . '$'
 	endif
 	echo 's/' . pattern . '//g'
-	call s:ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
+	call cttidy#for_range(a:start, a:end, 's/' . pattern . '//g', 'silent!')
 endfunction
 
 function! s:AppendSignature()
@@ -540,6 +512,8 @@ let g:ctrlp_clear_cache_on_exit = 0
 
 " EditorConfig settings.
 let g:EditorConfig_max_line_indicator = 'none'
+
+let g:cttidy_theme = 'bmc'
 
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
