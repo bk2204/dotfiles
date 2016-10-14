@@ -37,3 +37,6 @@
 [submodule ".vim/bundle/vim-ct-colors"]
 	path = .vim/bundle/vim-ct-colors
 	url = https://github.com/bk2204/vim-ct-colors.git
+[submodule ".vim/bundle/vim-ct-tidy"]
+	path = .vim/bundle/vim-ct-tidy
+	url = https://github.com/bk2204/vim-ct-tidy.git
