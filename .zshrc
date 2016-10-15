@@ -26,6 +26,7 @@ alias rless='env -u LESSOPEN -u LESSCLOSE less'
 alias loadenv='eval $(cat $HOME/.environment)'
 alias tloadenv='eval $(tmux show-environment -s)'
 alias sudo='sudo -E '
+alias be='bundle exec'
 alias en='LC_ALL=en_US.UTF-8 '
 
 # Set prompts.
