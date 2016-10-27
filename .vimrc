@@ -12,10 +12,10 @@ set et
 set ai
 
 " Backups, saving, and statefulness.
-set uc=0				" No swap file.
-set nobk				" No backups.
-set vi='20,\"50	" 20 marks and 50 lines.
-set hi=50				" 50 items in command line history.
+set uc=0					" No swap file.
+set nobk					" No backups.
+set vi='100,\"50	" 100 marks and 50 lines.
+set hi=50					" 50 items in command line history.
 
 " Status line.
 set ru					" Turn on ruler.
