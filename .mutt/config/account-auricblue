@@ -19,7 +19,6 @@ set delete_untag=yes
 set postponed="=Drafts"
 set pipe_split=yes
 # Headers.
-set hostname=vauxhall.crustytoothpaste.net
 my_hdr From: brian m. carlson <brian@auricblue.com>
 # Crypto.
 set signature=~/.signature-auricblue

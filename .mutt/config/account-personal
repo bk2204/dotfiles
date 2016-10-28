@@ -20,7 +20,6 @@ set postponed="=Drafts"
 set record="=Sent"
 set pipe_split=yes
 # Headers.
-set hostname=vauxhall.crustytoothpaste.net
 my_hdr From: brian m. carlson <sandals@crustytoothpaste.net>
 # Hooks.
 save-hook ~p =Handled
