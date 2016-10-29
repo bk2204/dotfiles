@@ -150,6 +150,7 @@ augroup setl
 	au FileType c						setl cin cino=t0 noet
 	au FileType cs					setl cin cino=t0 noet
 	au FileType docbkxml		setl cms=<!--%s-->
+	au FileType eruby				setl ts=2 sw=2 sts=2 et si
 	au FileType gitcommit		setl tw=72 spell com=b:#
 	au FileType javascript	setl cin cino=t0,j1,J1
 	au FileType java				setl cin cino=t0,j1 noet
