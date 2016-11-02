@@ -40,9 +40,17 @@ is_ssh_session ()
 	[[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
 }
 
+# Return true if our home directory is owned by someone other than us.
+is_privileged ()
+{
+	# FIXME: FreeBSD and Darwin want stat -f, not stat -c.
+	[ "$(stat -c %u "$HOME")" -ne "$(id -u)" ]
+}
+
 setup_ssh_agent () {
 	local i
 	is_ssh_session && return
+	is_privileged && return
 	grep enable-ssh-support ~/.gnupg/gpg-agent.conf 2>/dev/null | \
 		grep -qsv '^#' || return
 	gpg-connect-agent /bye >/dev/null 2>&1
@@ -173,6 +181,7 @@ setup_browser
 setup_ssh_agent
 setup_temp
 
+unfunction is_privileged
 unfunction has_locale
 unfunction preferred_locale
 unfunction setup_browser
