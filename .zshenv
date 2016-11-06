@@ -43,8 +43,8 @@ is_ssh_session ()
 # Return true if our home directory is owned by someone other than us.
 is_privileged ()
 {
-	# FIXME: FreeBSD and Darwin want stat -f, not stat -c.
-	[ "$(stat -c %u "$HOME")" -ne "$(id -u)" ]
+	zmodload -F zsh/stat b:zstat
+	[ "$(zstat -L +uid "$HOME")" -ne "$(id -u)" ]
 }
 
 setup_ssh_agent () {
