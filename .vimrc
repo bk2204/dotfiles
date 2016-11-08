@@ -17,6 +17,10 @@ set nobk					" No backups.
 set vi='100,\"50	" 100 marks and 50 lines.
 set hi=50					" 50 items in command line history.
 
+" Numbering.
+set nu
+set nuw=5
+
 " Status line.
 set ru					" Turn on ruler.
 set ls=2				" Always show a status bar for powerline.
@@ -63,7 +67,7 @@ end
 " GUI settings.
 if has("gui_running")
 	set lines=24
-	set co=128
+	set co=133
 	set gcr+=a:blinkon0
 	set gfn=Noto\ Mono\ Regular\ 8,Monospace\ 8
 	set go-=tT			" Disable tearoffs and toolbar.
