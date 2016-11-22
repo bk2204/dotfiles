@@ -43,7 +43,7 @@ endif
 set tw=80
 set bs=indent,eol,start
 set wrap
-set nf=alpha,hex,octal	" Make Ctrl-A and Ctrl-X work on text.
+set nf=alpha,hex,octal	" Make Ctrl-S and Ctrl-X work on text.
 
 " Loading files.
 set ml					" Modelines are nice.
@@ -110,6 +110,9 @@ noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 noremap <Leader>x :call <SID>ToggleExecutable()<CR>
 nnoremap <Leader>pp :set paste!<CR>
 nnoremap <Leader>ll :set list!<CR>
+" Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
+noremap <C-S> <C-A>
+noremap <C-A> <Nop>
 
 "" Graceful exit.
 " Versions of Vim without +eval will exit here.
