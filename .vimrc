@@ -480,6 +480,9 @@ let g:syntastic_enable_perl_checker = 1
 " Populate the location list to make finding errors easier.
 let g:syntastic_always_populate_loc_list = 1
 
+" Don't syntax check if we're about to quit.
+let g:syntastic_check_on_wq = 0
+
 " Airline settings.
 let g:airline_left_sep = '▶'
 let g:airline_right_sep = '◀'
