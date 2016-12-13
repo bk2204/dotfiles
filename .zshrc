@@ -330,6 +330,7 @@ zle -N zle-keymap-select
 zle -N insert-unicode-char
 
 # Set up the prompt.
+colors
 promptinit
 prompt bmc
 
