@@ -65,7 +65,7 @@
 [diff]
 	renames = copies
 	algorithm = histogram
-	compactionheuristic = true
+	indentheuristic = true
 [merge]
 	conflictstyle = diff3
 [submodule]
