@@ -70,7 +70,7 @@ prompt_bmc_setup_base () {
 
 	local p_datetime="$p_date/$p_time"
 
-    is-at-least 5.3 && local p_hostname="$pcc[11]%m$c_reset:"
+	is-at-least 5.3 && local p_hostname="$pcc[12]%m$c_reset:"
 
 	local p_tty="$pcc[7]%l$c_reset"
 
@@ -86,12 +86,13 @@ prompt_bmc_setup_base () {
 	local p_ret2="$pcc[9]%m $p_mode$c_reset"
 
 	local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
+	local p_space="$pcc[11] $c_reset"
 
 	POSTEDIT="$reset_color"
 
 	prompt="$p_userpwd$p_branch
 ($p_datetime)($p_hostname$p_tty)$p_shlvl$p_power($p_ret)
-$p_ret2 $p_pchar "
+$p_ret2 $p_pchar$p_space"
 	RPROMPT=""
 	PS2='%(4_.\.)%3_> %E'
 
@@ -117,7 +118,8 @@ prompt_bmc_setup () {
 			"yes 15" \
 			"yes 33" \
 			"no  33" \
-			"no  33"
+			"no  33" \
+			"no  15"
 	else
 		prompt_bmc_setup_base \
 			"yes blue" \
@@ -129,7 +131,8 @@ prompt_bmc_setup () {
 			"yes white" \
 			"yes blue" \
 			"no  cyan" \
-			"no  cyan"
+			"no  cyan" \
+			"no  white"
 	fi
 
 	choose_prompt "main"
