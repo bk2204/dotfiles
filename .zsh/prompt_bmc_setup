@@ -20,12 +20,16 @@ prompt_bmc_want_bold () {
 }
 
 prompt_bmc_setup_colors () {
-	local number=$1
+	local name=$1
 	local ffont=$2
 	local fcolor=$3
+	local fcolor16=$4
 	local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
+	local color=$fcolor16
 
-	printf 'pcc[%s]="%s"' $number $(color_fg $fcolor $fbold)
+	echotc Co >/dev/null 2>&1 && [[ $(echotc Co) = 256 ]] && color=$fcolor
+
+	printf 'pcc[%s]="%s"' $name $(color_fg $fcolor $fbold)
 }
 
 # hostname, FQDN if possible, without the trailing newline.
@@ -34,65 +38,65 @@ prompt_bmc_hostname () {
 }
 
 prompt_bmc_setup_base () {
-	local -a pcc
+	local -A args=("$@")
+	local -A pcc
 	local i j
 	local c_reset="%b%{$reset_color%}"
 	local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | cut -b1-2)") ))
 
-	j=0
-	for i in "$@" "yes $c_hostcolor"
+	args[hostcolor]="yes $c_hostcolor $c_hostcolor"
+	for k in "${(@k)args}"
 	do
-		j=$((j + 1))
 		# It breaks if you don't use the subshell echo.  I promise.
-		eval $(prompt_bmc_setup_colors $j $(echo $i))
+		eval $(prompt_bmc_setup_colors $k $(echo $args[$k]))
 	done
 
 	zstyle ':vcs_info:*' enable git
-	zstyle ':vcs_info:*' actionformats "($pcc[10]%b|%a%$c_reset%)" "%R"
-	zstyle ':vcs_info:*' formats       "($pcc[10]%b%$c_reset%)" "%R"
+	zstyle ':vcs_info:*' actionformats "($pcc[vcs]%b|%a%$c_reset%)" "%R"
+	zstyle ':vcs_info:*' formats       "($pcc[vcs]%b%$c_reset%)" "%R"
 
-	local p_privuser="$pcc[4]%n$c_reset"
-	local p_unprivuser="$pcc[8]%n$c_reset"
-	local p_user="%(!.$p_privuser.$p_unprivuser)$pcc[1]@%m$c_reset"
-	local p_pwd="$pcc[2]%~$c_reset"
+	local p_privuser="$pcc[privuser]%n$c_reset"
+	local p_unprivuser="$pcc[unprivuser]%n$c_reset"
+	local p_user="%(!.$p_privuser.$p_unprivuser)$pcc[user]@%m$c_reset"
+	local p_pwd="$pcc[pwd]%~$c_reset"
 
 	local p_userpwd="$p_user:$p_pwd"
 
-	local p_priv="$pcc[4]#$c_reset"
-	local p_unpriv="$pcc[3]%%$c_reset"
+	local p_priv="$pcc[priv]#$c_reset"
+	local p_unpriv="$pcc[unpriv]%%$c_reset"
 
 	local p_pchar="%(!.$p_priv.$p_unpriv)"
 
 	# Don't use the %D by itself, because it uses two-digit years.
-	local p_date="$pcc[5]%D{%Y-%m-%d}$c_reset"
+	local p_date="$pcc[date]%D{%Y-%m-%d}$c_reset"
 	# Similarly, don't use %* by itself, because it is not zero-padded.
-	local p_time="$pcc[5]%D{%H:%M:%S}$c_reset"
+	local p_time="$pcc[time]%D{%H:%M:%S}$c_reset"
 
 	local p_datetime="$p_date/$p_time"
 
-	is-at-least 5.3 && local p_hostname="$pcc[12]%m$c_reset:"
+	is-at-least 5.3 && local p_hostname="$pcc[hostcolor]%m$c_reset:"
 
-	local p_tty="$pcc[7]%l$c_reset"
+	local p_tty="$pcc[tty]%l$c_reset"
 
-	local p_shlvl="%(2L.($pcc[7]%L$c_reset).)"
-	local p_power="%(2V.($pcc[7]%2v$c_reset).)"
+	local p_shlvl="%(2L.($pcc[tty]%L$c_reset).)"
+	local p_power="%(2V.($pcc[tty]%2v$c_reset).)"
 
-	local p_failed="$pcc[6]failed$c_reset"
-	local p_retcode="$pcc[6]%?$c_reset"
-	local p_signame="$pcc[6]%1v$c_reset"
+	local p_failed="$pcc[retcode]failed$c_reset"
+	local p_retcode="$pcc[retcode]%?$c_reset"
+	local p_signame="$pcc[retcode]%1v$c_reset"
 	local p_mode='${psvar[3]:-%(?.ok.no)}'
 
 	local p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
-	local p_ret2="$pcc[9]%m $p_mode$c_reset"
+	local p_host="$pcc[host]%m $p_mode$c_reset"
 
 	local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
-	local p_space="$pcc[11] $c_reset"
+	local p_space="$pcc[space] $c_reset"
 
 	POSTEDIT="$reset_color"
 
 	prompt="$p_userpwd$p_branch
 ($p_datetime)($p_hostname$p_tty)$p_shlvl$p_power($p_ret)
-$p_ret2 $p_pchar$p_space"
+$p_host $p_pchar$p_space"
 	RPROMPT=""
 	PS2='%(4_.\.)%3_> %E'
 
@@ -106,34 +110,22 @@ $p_ret2 $p_pchar$p_space"
 }
 
 prompt_bmc_setup () {
-	if echotc Co >/dev/null 2>&1 && [[ $(echotc Co) = 256 ]]
-	then
-		prompt_bmc_setup_base \
-			"yes 33" \
-			"yes 40" \
-			"yes 15" \
-			"yes 9" \
-			"yes 104" \
-			"yes 9" \
-			"yes 15" \
-			"yes 33" \
-			"no  33" \
-			"no  33" \
-			"no  15"
-	else
-		prompt_bmc_setup_base \
-			"yes blue" \
-			"yes green" \
-			"yes white" \
-			"yes red" \
-			"yes magenta" \
-			"yes red" \
-			"yes white" \
-			"yes blue" \
-			"no  cyan" \
-			"no  cyan" \
-			"no  white"
-	fi
+	local -A colors
+	colors[user]='yes 33 blue'
+	colors[pwd]='yes 40 green'
+	colors[unpriv]='yes 15 white'
+	colors[priv]='yes 9 red'
+	colors[date]='yes 104 magenta'
+	colors[time]='yes 104 magenta'
+	colors[retcode]='yes 9 red'
+	colors[signame]='yes 9 red'
+	colors[tty]='yes 15 white'
+	colors[privuser]='yes 9 red'
+	colors[unprivuser]='yes 33 cyan'
+	colors[host]='no 33 cyan'
+	colors[vcs]='no 33 cyan'
+	colors[space]='no 15 white'
+	prompt_bmc_setup_base "${(@kv)colors}"
 
 	choose_prompt "main"
 }
