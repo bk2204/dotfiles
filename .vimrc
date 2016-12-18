@@ -153,23 +153,23 @@ augroup end
 " File type-specific parameters.
 augroup setl
 	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
-	au FileType clojure			setl ts=2 sw=2 sts=2 et
-	au FileType cpp					setl cin cino=t0 noet
+	au FileType clojure			setl ts=2 sw=2 sts=2
+	au FileType cpp					setl cin cino=t0
 	au FileType c						setl cin cino=t0 noet
-	au FileType cs					setl cin cino=t0 noet
+	au FileType cs					setl cin cino=t0
 	au FileType docbkxml		setl cms=<!--%s-->
 	au FileType eruby				setl ts=2 sw=2 sts=2 et si
 	au FileType gitcommit		setl tw=72 spell com=b:#
 	au FileType javascript	setl cin cino=t0,j1,J1
-	au FileType java				setl cin cino=t0,j1 noet
+	au FileType java				setl cin cino=t0,j1
 	au FileType mail				setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
 	au FileType python			setl et si tw=79
 	au FileType rst					setl et si ts=2 sw=2 sts=2 spell
 	au FileType ruby				setl ts=2 sw=2 sts=2 et si
-	au FileType sass				setl tw=0 noet
-	au FileType scss				setl tw=0 noet
-	au FileType vim					setl ts=2 sw=2 sts=2 noet
-	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2 noet
+	au FileType sass				setl tw=0
+	au FileType scss				setl tw=0
+	au FileType vim					setl ts=2 sw=2 sts=2
+	au FileType xslt				setl tw=0 ts=2 sw=2 sts=2
 augroup end
 
 " Language-specific setup.
