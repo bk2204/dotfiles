@@ -66,6 +66,7 @@
 	renames = copies
 	algorithm = histogram
 	indentheuristic = true
+	wserrorhighlight = old,new
 [merge]
 	conflictstyle = diff3
 [submodule]
