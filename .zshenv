@@ -153,7 +153,6 @@ CVS_RSH=ssh
 DEBFULLNAME="brian m. carlson"
 EMAIL="sandals@crustytoothpaste.net"
 DEBEMAIL="$EMAIL"
-GIT_COMMITTER_EMAIL="$EMAIL"
 GROFF_TMAC_PATH="$HOME/checkouts/tenorsax-resources/tmac"
 GIT_PAGER="less -FRSX"
 PAGER="less -R"
