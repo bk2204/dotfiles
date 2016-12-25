@@ -103,7 +103,6 @@ bmc_editor () {
 unlimit
 limit core 0
 limit stack 8192
-limit memoryuse 1048576k
 
 # Set up umask.  If we have private groups, use 002; otherwise, use 022.
 if [[ $(id -u -n) = $(id -g -n) ]]; then
