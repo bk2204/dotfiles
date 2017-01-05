@@ -155,7 +155,7 @@ augroup setl
 	au FileType asciidoc		setl tw=80 ts=2 sw=2 sts=2 spell com=b://
 	au FileType clojure			setl ts=2 sw=2 sts=2
 	au FileType cpp					setl cin cino=t0
-	au FileType c						setl cin cino=t0 noet
+	au FileType c						setl cin cino=t0
 	au FileType cs					setl cin cino=t0
 	au FileType docbkxml		setl cms=<!--%s-->
 	au FileType eruby				setl ts=2 sw=2 sts=2 et si
