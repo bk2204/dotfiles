@@ -4,7 +4,7 @@ unignore From: To: Cc: Date: X-No-CC: X-Mailer: User-Agent:
 unignore Subject: Resent-Date: Organization: Organisation:
 unignore Message-ID:
 unignore Newsgroups: NNTP-Posting-Host:
-unignore X-CRM114-Status X-Spam-Score
+unignore X-CRM114-Status X-Spam-Score X-DCT-Spam-Score
 color header black yellow ^X-CRM114-Status:.*UNSURE.*
 spam "X-CRM114-Status:.*SPAM" CRM114
 nospam "X-CRM114-Status:.*Good"
