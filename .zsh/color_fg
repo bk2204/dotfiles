@@ -5,24 +5,24 @@
 # appropriate for the terminal.
 color_fg ()
 {
-	local color="$1"
-	local bold="$2"
+    local color="$1"
+    local bold="$2"
 
-	[[ $TERM = dumb ]] && return 0
+    [[ $TERM = dumb ]] && return 0
 
-	printf "%%{"
-	[[ -n $bold ]] && printf "%%B"
-	if is-at-least 4.3.9
-	then
-		printf "%%F{%s}" $color
-	elif ! grep -qsE '^[0-9]+$' "$color"
-	then
-		# color name
-		printf '$fg[%s]' $color
-	else
-		# Do some hacky parsing of setaf.  Remove all the conditionals but the
-		# final one, and substitute the color in the proper place.
-		tput setaf | sed -e 's/%?.*%e//' -e "s/%p1%d/$color/"
-	fi
-	printf "%%}"
+    printf "%%{"
+    [[ -n $bold ]] && printf "%%B"
+    if is-at-least 4.3.9
+    then
+        printf "%%F{%s}" $color
+    elif ! grep -qsE '^[0-9]+$' "$color"
+    then
+        # color name
+        printf '$fg[%s]' $color
+    else
+        # Do some hacky parsing of setaf.  Remove all the conditionals but the
+        # final one, and substitute the color in the proper place.
+        tput setaf | sed -e 's/%?.*%e//' -e "s/%p1%d/$color/"
+    fi
+    printf "%%}"
 }

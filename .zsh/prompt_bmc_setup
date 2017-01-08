@@ -2,217 +2,217 @@
 # Yes, this does look like angry fruit salad, but I like it that way.
 
 prompt_bmc_help () {
-	cat <<'EOF'
+    cat <<'EOF'
 
-	prompt bmc
+    prompt bmc
 EOF
 }
 
 prompt_bmc_want_bold () {
-	local text=$1
+    local text=$1
 
-	[ -z "$text" ] && return 1;
-	for i in no off false regular normal non-bold;
-	do
-		[ "$text" = "$i" ] && return 1
-	done
-	return 0;
+    [ -z "$text" ] && return 1;
+    for i in no off false regular normal non-bold;
+    do
+        [ "$text" = "$i" ] && return 1
+    done
+    return 0;
 }
 
 prompt_bmc_setup_colors () {
-	local name=$1
-	local ffont=$2
-	local fcolor=$3
-	local fcolor16=$4
-	local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
-	local color=$fcolor16
+    local name=$1
+    local ffont=$2
+    local fcolor=$3
+    local fcolor16=$4
+    local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
+    local color=$fcolor16
 
-	echotc Co >/dev/null 2>&1 && [[ $(echotc Co) = 256 ]] && color=$fcolor
+    echotc Co >/dev/null 2>&1 && [[ $(echotc Co) = 256 ]] && color=$fcolor
 
-	printf 'pcc[%s]="%s"' $name $(color_fg $color $fbold)
+    printf 'pcc[%s]="%s"' $name $(color_fg $color $fbold)
 }
 
 # hostname, FQDN if possible, without the trailing newline.
 prompt_bmc_hostname () {
-	(hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n'
+    (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n'
 }
 
 prompt_bmc_setup_base () {
-	local -A args=("$@")
-	local -A pcc
-	local i j
-	local c_reset="%b%{$reset_color%}"
-	local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | cut -b1-2)") ))
+    local -A args=("$@")
+    local -A pcc
+    local i j
+    local c_reset="%b%{$reset_color%}"
+    local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | cut -b1-2)") ))
 
-	args[hostcolor]="yes $c_hostcolor $c_hostcolor"
-	for k in "${(@k)args}"
-	do
-		# It breaks if you don't use the subshell echo.  I promise.
-		eval $(prompt_bmc_setup_colors $k $(echo $args[$k]))
-	done
+    args[hostcolor]="yes $c_hostcolor $c_hostcolor"
+    for k in "${(@k)args}"
+    do
+        # It breaks if you don't use the subshell echo.  I promise.
+        eval $(prompt_bmc_setup_colors $k $(echo $args[$k]))
+    done
 
-	zstyle ':vcs_info:*' enable git
-	zstyle ':vcs_info:*' actionformats "($pcc[vcs]%b|%a%$c_reset%)" "%R"
-	zstyle ':vcs_info:*' formats       "($pcc[vcs]%b%$c_reset%)" "%R"
+    zstyle ':vcs_info:*' enable git
+    zstyle ':vcs_info:*' actionformats "($pcc[vcs]%b|%a%$c_reset%)" "%R"
+    zstyle ':vcs_info:*' formats       "($pcc[vcs]%b%$c_reset%)" "%R"
 
-	local p_privuser="$pcc[privuser]%n$c_reset"
-	local p_unprivuser="$pcc[unprivuser]%n$c_reset"
-	local p_user="%(!.$p_privuser.$p_unprivuser)$pcc[user]@%m$c_reset"
-	local p_pwd="$pcc[pwd]%~$c_reset"
+    local p_privuser="$pcc[privuser]%n$c_reset"
+    local p_unprivuser="$pcc[unprivuser]%n$c_reset"
+    local p_user="%(!.$p_privuser.$p_unprivuser)$pcc[user]@%m$c_reset"
+    local p_pwd="$pcc[pwd]%~$c_reset"
 
-	local p_userpwd="$p_user:$p_pwd"
+    local p_userpwd="$p_user:$p_pwd"
 
-	local p_priv="$pcc[priv]#$c_reset"
-	local p_unpriv="$pcc[unpriv]%%$c_reset"
+    local p_priv="$pcc[priv]#$c_reset"
+    local p_unpriv="$pcc[unpriv]%%$c_reset"
 
-	local p_pchar="%(!.$p_priv.$p_unpriv)"
+    local p_pchar="%(!.$p_priv.$p_unpriv)"
 
-	# Don't use the %D by itself, because it uses two-digit years.
-	local p_date="$pcc[date]%D{%Y-%m-%d}$c_reset"
-	# Similarly, don't use %* by itself, because it is not zero-padded.
-	local p_time="$pcc[time]%D{%H:%M:%S}$c_reset"
+    # Don't use the %D by itself, because it uses two-digit years.
+    local p_date="$pcc[date]%D{%Y-%m-%d}$c_reset"
+    # Similarly, don't use %* by itself, because it is not zero-padded.
+    local p_time="$pcc[time]%D{%H:%M:%S}$c_reset"
 
-	local p_datetime="$p_date/$p_time"
+    local p_datetime="$p_date/$p_time"
 
-	is-at-least 5.3 && local p_hostname="$pcc[hostcolor]%m$c_reset:"
+    is-at-least 5.3 && local p_hostname="$pcc[hostcolor]%m$c_reset:"
 
-	local p_tty="$pcc[tty]%l$c_reset"
+    local p_tty="$pcc[tty]%l$c_reset"
 
-	local p_shlvl="%(2L.($pcc[tty]%L$c_reset).)"
-	local p_power="%(2V.($pcc[tty]%2v$c_reset).)"
+    local p_shlvl="%(2L.($pcc[tty]%L$c_reset).)"
+    local p_power="%(2V.($pcc[tty]%2v$c_reset).)"
 
-	local p_failed="$pcc[retcode]failed$c_reset"
-	local p_retcode="$pcc[retcode]%?$c_reset"
-	local p_signame="$pcc[retcode]%1v$c_reset"
-	local p_mode='${psvar[3]:-%(?.ok.no)}'
+    local p_failed="$pcc[retcode]failed$c_reset"
+    local p_retcode="$pcc[retcode]%?$c_reset"
+    local p_signame="$pcc[retcode]%1v$c_reset"
+    local p_mode='${psvar[3]:-%(?.ok.no)}'
 
-	local p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
-	local p_host="$pcc[host]%m $p_mode$c_reset"
+    local p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
+    local p_host="$pcc[host]%m $p_mode$c_reset"
 
-	local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
-	local p_space="$pcc[space] $c_reset"
+    local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
+    local p_space="$pcc[space] $c_reset"
 
-	POSTEDIT="$reset_color"
+    POSTEDIT="$reset_color"
 
-	prompt="$p_userpwd$p_branch
+    prompt="$p_userpwd$p_branch
 ($p_datetime)($p_hostname$p_tty)$p_shlvl$p_power($p_ret)
 $p_host $p_pchar$p_space"
-	RPROMPT=""
-	PS2='%(4_.\.)%3_> %E'
+    RPROMPT=""
+    PS2='%(4_.\.)%3_> %E'
 
-	if [[ -d /sys/class/power_supply ]] && [[ ! -f "$HOME/.slowbox" ]]
-	then
-		precmd () { prompt_bmc_precmd; prompt_bmc_apm_precmd }
-	else
-		precmd () { prompt_bmc_precmd }
-	fi
-	preexec () { }
+    if [[ -d /sys/class/power_supply ]] && [[ ! -f "$HOME/.slowbox" ]]
+    then
+        precmd () { prompt_bmc_precmd; prompt_bmc_apm_precmd }
+    else
+        precmd () { prompt_bmc_precmd }
+    fi
+    preexec () { }
 }
 
 prompt_bmc_setup () {
-	local -A colors
-	colors[user]='yes 33 blue'
-	colors[pwd]='yes 40 green'
-	colors[unpriv]='yes 15 white'
-	colors[priv]='yes 9 red'
-	colors[date]='yes 104 magenta'
-	colors[time]='yes 104 magenta'
-	colors[retcode]='yes 9 red'
-	colors[signame]='yes 9 red'
-	colors[tty]='yes 15 white'
-	colors[privuser]='yes 9 red'
-	colors[unprivuser]='yes 33 blue'
-	colors[host]='no 33 cyan'
-	colors[vcs]='no 33 cyan'
-	colors[space]='no 15 white'
-	prompt_bmc_setup_base "${(@kv)colors}"
+    local -A colors
+    colors[user]='yes 33 blue'
+    colors[pwd]='yes 40 green'
+    colors[unpriv]='yes 15 white'
+    colors[priv]='yes 9 red'
+    colors[date]='yes 104 magenta'
+    colors[time]='yes 104 magenta'
+    colors[retcode]='yes 9 red'
+    colors[signame]='yes 9 red'
+    colors[tty]='yes 15 white'
+    colors[privuser]='yes 9 red'
+    colors[unprivuser]='yes 33 blue'
+    colors[host]='no 33 cyan'
+    colors[vcs]='no 33 cyan'
+    colors[space]='no 15 white'
+    prompt_bmc_setup_base "${(@kv)colors}"
 
-	choose_prompt "main"
+    choose_prompt "main"
 }
 
 # In this function, we have to put the setopt after the exitstatus assignment,
 # otherwise we get the result of the setopt (AFAIK, always 0) which is obviously
 # not very useful.
 prompt_bmc_precmd () {
-	local exitstatus=$?
-	setopt noxtrace localoptions
+    local exitstatus=$?
+    setopt noxtrace localoptions
 
-	if [[ $exitstatus -ge 128 ]]
-	then
-		psvar[1]="$signals[$exitstatus-127]"
-	else
-		psvar[1]="none"
-	fi
+    if [[ $exitstatus -ge 128 ]]
+    then
+        psvar[1]="$signals[$exitstatus-127]"
+    else
+        psvar[1]="none"
+    fi
 
-	local curstatus
-	[[ -n $TMUX ]] && curstatus="$(tmux display-message -p '#W')"
+    local curstatus
+    [[ -n $TMUX ]] && curstatus="$(tmux display-message -p '#W')"
 
-	# Update prompt unless the title starts with a ZWSP (U+200B) or colon.
-	local zwsp="$(printf '\342\200\213')"
-	if printf "%s\n" "$curstatus" | grep -Eqvs "^($zwsp|:)"
-	then
-		local statusline='%n@%m: %~'
-		case $TERM in
-			xterm*|gnome*)
-				print -Pn "\e]0;$statusline\a";;
-			screen*)
-				print -Pn "\ek$statusline\e\\";;
-		esac
-	fi
+    # Update prompt unless the title starts with a ZWSP (U+200B) or colon.
+    local zwsp="$(printf '\342\200\213')"
+    if printf "%s\n" "$curstatus" | grep -Eqvs "^($zwsp|:)"
+    then
+        local statusline='%n@%m: %~'
+        case $TERM in
+            xterm*|gnome*)
+                print -Pn "\e]0;$statusline\a";;
+            screen*)
+                print -Pn "\ek$statusline\e\\";;
+        esac
+    fi
 
-	prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info
+    prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info
 }
 
 prompt_bmc_need_refresh () {
-	local last="$(fc -ln -1)"
-	[[ -f "$HOME/.slowbox" ]] || return 0
-	# If we're on a slow box, we want to refresh on cd, pushd, popd, git, and
-	# empty text.
-	[[ -z ${last/cd*} ]] && return 0
-	[[ -z ${last/pushd*} ]] && return 0
-	[[ -z ${last/popd*} ]] && return 0
-	[[ -z ${last/git*} ]] && return 0
-	[[ -z $last ]] && return 0
-	return 1
+    local last="$(fc -ln -1)"
+    [[ -f "$HOME/.slowbox" ]] || return 0
+    # If we're on a slow box, we want to refresh on cd, pushd, popd, git, and
+    # empty text.
+    [[ -z ${last/cd*} ]] && return 0
+    [[ -z ${last/pushd*} ]] && return 0
+    [[ -z ${last/popd*} ]] && return 0
+    [[ -z ${last/git*} ]] && return 0
+    [[ -z $last ]] && return 0
+    return 1
 }
 
 prompt_bmc_apm_precmd () {
-	setopt noxtrace localoptions
-	local bat ac
-	local bat_now bat_full
-	local has_ac has_bat
+    setopt noxtrace localoptions
+    local bat ac
+    local bat_now bat_full
+    local has_ac has_bat
 
-	has_ac=0
-	has_bat=0
+    has_ac=0
+    has_bat=0
 
-	if [ -d /sys/class/power_supply/AC ];
-	then
-		[ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
-	fi
-	if [ -d /sys/class/power_supply/BAT0 ];
-	then
-		has_bat=1
+    if [ -d /sys/class/power_supply/AC ];
+    then
+        [ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
+    fi
+    if [ -d /sys/class/power_supply/BAT0 ];
+    then
+        has_bat=1
 
-		if [ -r /sys/class/power_supply/BAT0/charge_now ];
-		then
-			bat_now=$(</sys/class/power_supply/BAT0/charge_now)
-			bat_full=$(</sys/class/power_supply/BAT0/charge_full)
-		else
-			bat_now=$(</sys/class/power_supply/BAT0/energy_now)
-			bat_full=$(</sys/class/power_supply/BAT0/energy_full)
-		fi
+        if [ -r /sys/class/power_supply/BAT0/charge_now ];
+        then
+            bat_now=$(</sys/class/power_supply/BAT0/charge_now)
+            bat_full=$(</sys/class/power_supply/BAT0/charge_full)
+        else
+            bat_now=$(</sys/class/power_supply/BAT0/energy_now)
+            bat_full=$(</sys/class/power_supply/BAT0/energy_full)
+        fi
 
-		bat=$((100 * bat_now / bat_full))"%"
-	fi
-	[ $has_ac = 1 ] && ac="ac"
-	[ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
+        bat=$((100 * bat_now / bat_full))"%"
+    fi
+    [ $has_ac = 1 ] && ac="ac"
+    [ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
 
-	if [[ $has_ac = 0 ]] && [[ $has_bat = 0 ]]
-	then
-		psvar[2]=()
-	else
-		psvar[2]="$ac$bat"
-	fi
+    if [[ $has_ac = 0 ]] && [[ $has_bat = 0 ]]
+    then
+        psvar[2]=()
+    else
+        psvar[2]="$ac$bat"
+    fi
 }
 
 prompt_bmc_setup "$@"

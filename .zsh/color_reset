@@ -3,10 +3,10 @@
 # Print a prompt code (valid for print -P) that clears the terminal colors.
 color_reset ()
 {
-	if is-at-least 4.3.9
-	then
-		printf "%%b"
-	else
-		printf "%s" $reset_color
-	fi
+    if is-at-least 4.3.9
+    then
+        printf "%%b"
+    else
+        printf "%s" $reset_color
+    fi
 }
