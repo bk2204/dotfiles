@@ -499,5 +499,7 @@ silent whence lesspipe && eval $(lesspipe)
 setup_completion
 setup_colors
 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
 # Succeed.
 true
