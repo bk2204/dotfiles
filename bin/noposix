@@ -1,7 +1,0 @@
-#!/bin/sh
-
-unset POSIXLY_CORRECT
-unset POSIXLY_PEDANTIC
-unset _POSIX2_VERSION
-
-exec "$@"
