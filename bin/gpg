@@ -2,6 +2,8 @@
 
 PATH="$(echo $PATH | sed -e "s,$HOME/bin:,,")"
 
+[ -f "$HOME/.gnupg/redirect" ] || exec gpg "$@"
+
 redirect () {
 	# Deal with inaccessible /dev/fd.
 	if [ -d '/dev/fd' ]
