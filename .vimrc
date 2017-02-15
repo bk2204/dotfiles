@@ -254,7 +254,7 @@ function! s:SelectPerlSyntasticCheckers()
     let theme = ''
     let themetext = matchstr(readfile(expand(pcrc, '')), theme)
     if strlen(theme) && strlen(themetext)
-      let g:syntastic_perl_perlcritic_args = '--theme ' . theme
+      let g:syntastic_perl_perlcritic_args = '-1 --theme ' . theme
     endif
   endif
   if exists('g:syntastic_enable_perl_checker')
