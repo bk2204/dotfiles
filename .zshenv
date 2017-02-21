@@ -28,7 +28,7 @@ setup_browser () {
     local chrome="google-chrome-beta chromium-browser chromium google-chrome"
     local firefox="firefox iceweasel"
     emulate -L sh
-    for i in $firefox $chrome
+    for i in $chrome $firefox
     do
         if command -v "$i" >/dev/null 2>&1
         then
