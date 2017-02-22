@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/vim-ct-tidy"]
 	path = .vim/bundle/vim-ct-tidy
 	url = https://github.com/bk2204/vim-ct-tidy.git
+[submodule ".vim/bundle/ale"]
+	path = .vim/bundle/ale
+	url = https://github.com/w0rp/ale.git
