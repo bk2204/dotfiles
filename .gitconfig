@@ -68,6 +68,7 @@
 	algorithm = histogram
 	indentheuristic = true
 	wserrorhighlight = old,new
+	tool = gvimdiff
 [merge]
 	conflictstyle = diff3
 [submodule]
