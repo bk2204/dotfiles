@@ -78,4 +78,6 @@
 	logAllRefUpdates = true
 [rerere]
 	enabled = true
+[status]
+	submoduleSummary = true
 # vim: set noet:
