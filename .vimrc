@@ -230,41 +230,12 @@ if v:version < 700
   finish
 endif
 
-" Temporarily disable Syntastic in favor of ALE.
-let g:loaded_syntastic_plugin = 1
-
 "" Bundles.
 " Some versions of Vim have a broken autoload, or at least it doesn't work in
 " this case, so help it out.
 runtime autoload/pathogen.vim
 let Fn = function("pathogen#infect")
 execute Fn()
-
-"" Language-specific functions.
-" perlcritic is *extremely* slow on large files.
-function! s:SelectPerlSyntasticCheckers()
-  let pcrc = expand("$HOME") . '/.perlcriticrc'
-  " If the file has at least 500 lines or there's not a ~/.perlcriticrc...
-  if len(getline(500, 500)) == 1 || !filereadable(pcrc)
-    let b:syntastic_checkers = []
-  else
-    let b:syntastic_checkers = ['perlcritic']
-    let theme = ''
-    let themetext = matchstr(readfile(expand(pcrc, '')), theme)
-    if strlen(theme) && strlen(themetext)
-      let g:syntastic_perl_perlcritic_args = '-1 --theme ' . theme
-    endif
-  endif
-  if exists('g:syntastic_enable_perl_checker')
-    if g:syntastic_enable_perl_checker
-      call add(b:syntastic_checkers, "perl")
-    endif
-  endif
-endfunction
-
-function! s:SelectPythonSyntasticCheckers()
-  let b:syntastic_checkers = ['python', 'pep8']
-endfunction
 
 "" Whitespace handling functions.
 " Turn it on.
@@ -469,18 +440,6 @@ let g:perl_sub_signatures = 1
 
 " Show us the real contents of the file.
 let g:vim_json_syntax_conceal = 0
-
-" Make editing git repositories of Perl modules easier.
-let g:syntastic_perl_lib_path = ['./lib', './t/lib', './build-tools']
-
-" Allow running perl -wc on Perl files.
-let g:syntastic_enable_perl_checker = 1
-
-" Populate the location list to make finding errors easier.
-let g:syntastic_always_populate_loc_list = 1
-
-" Don't syntax check if we're about to quit.
-let g:syntastic_check_on_wq = 0
 
 " Airline settings.
 let g:airline_left_sep = '▶'
