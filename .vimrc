@@ -172,14 +172,6 @@ augroup setl
   au FileType xslt        setl tw=0 ts=2 sw=2 sts=2
 augroup end
 
-" Language-specific setup.
-if v:version >= 700
-  augroup call
-    au FileType perl        call s:SelectPerlSyntasticCheckers()
-    au FileType python      call s:SelectPythonSyntasticCheckers()
-  augroup end
-endif
-
 " Language-specific variables.
 if v:version >= 700
   augroup let
