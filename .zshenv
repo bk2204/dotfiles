@@ -24,10 +24,10 @@ preferred_locale () {
 }
 
 setup_browser () {
+    setopt localoptions shwordsplit
     local i=""
     local chrome="google-chrome-beta chromium-browser chromium google-chrome"
     local firefox="firefox iceweasel"
-    emulate -L sh
     for i in $chrome $firefox
     do
         if command -v "$i" >/dev/null 2>&1
