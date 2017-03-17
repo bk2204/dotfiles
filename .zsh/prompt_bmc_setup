@@ -38,11 +38,13 @@ prompt_bmc_hostname () {
 }
 
 prompt_bmc_setup_base () {
-    local -A args=("$@")
+    local -A args
     local -A pcc
     local i j
     local c_reset="%b%{$reset_color%}"
     local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | cut -b1-2)") ))
+
+    args=("$@")
 
     args[hostcolor]="yes $c_hostcolor $c_hostcolor"
     for k in "${(@k)args}"
