@@ -27,6 +27,7 @@
 	import-patches = "!f() { GIT_COMMITTER_DATE=451521442 GIT_AUTHOR_DATE=451521442 git am -3 \"$@\"; };f"
 	lsf = ls-files
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
+	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
 [i18n]
 	commitencoding = UTF-8
 [repack]
