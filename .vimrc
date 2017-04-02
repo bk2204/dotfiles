@@ -69,7 +69,7 @@ if has("gui_running")
   set lines=24
   set co=133
   set gcr+=a:blinkon0
-  set gfn=Noto\ Mono\ Regular\ 8,Monospace\ 8
+  set gfn=Source\ Code\ Pro\ 8,Noto\ Mono\ Regular\ 8,Monospace\ 8
   set go-=tT      " Disable tearoffs and toolbar.
 endif
 
