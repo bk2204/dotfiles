@@ -1,6 +1,5 @@
 [user]
 	name = brian m. carlson
-	email =
 	signingkey = 1F52F68B!
 [alias]
 	co = checkout
