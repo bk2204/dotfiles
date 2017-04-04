@@ -279,6 +279,15 @@ setup_autoload () {
     done
     compinit -u 2>/dev/null
 }
+tmux-title () {
+    # Set the title to begin with a ZWSP.  The prompt precmd will not overwrite
+    # it in this case.
+    printf '\033k\342\200\213%s\033\\' "$@"
+}
+tmux-clear-title () {
+    # Set the title to an empty string so the prompt will override it again.
+    printf '\033k%s\033\\' ""
+}
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
