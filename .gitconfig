@@ -16,6 +16,7 @@
 	grs = log --graph --decorate --simplify-merges
 	sui = submodule update --init
 	diffc = diff --cached
+	stake = stash save --keep-index
 	frebase = rebase -m -i --autosquash
 	srebase = "!f() { GIT_SEQUENCE_EDITOR=/bin/true git rebase -m -i --autosquash \"$@\"; };f"
 	mrebase = rebase -m
