@@ -15,11 +15,17 @@
 	gr = log --graph --decorate
 	grs = log --graph --decorate --simplify-merges
 	sui = submodule update --init
+	# Diff staged changes.
 	diffc = diff --cached
+	# Stash changes, keeping the index unmodified.
 	stake = stash save --keep-index
+	# Full rebase, using merge strategies and autosquashing.
 	frebase = rebase -m -i --autosquash
+	# Noninteractive rebase with merge strategies and autosquashing.
 	srebase = "!f() { GIT_SEQUENCE_EDITOR=/bin/true git rebase -m -i --autosquash \"$@\"; };f"
+	# Rebase using merge strategies.
 	mrebase = rebase -m
+	# Checkout, recursing into submodules, however that's supported.
 	cor = "!f() { if git checkout -h | grep -qs recurse-submodules; \
 		then git checkout --recurse-submodules \"$@\"; \
 		else git checkout \"$@\" && git sui; \
@@ -29,7 +35,9 @@
 	# Import patches in such a way as to produce predictable SHA-1 values.
 	import-patches = "!f() { GIT_COMMITTER_DATE=451521442 GIT_AUTHOR_DATE=451521442 git am -3 \"$@\"; };f"
 	lsf = ls-files
+	# List files matching a grep pattern.
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
+	# Exits zero if the two treeishes are the same, nonzero otherwise.
 	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
 [i18n]
 	commitencoding = UTF-8
