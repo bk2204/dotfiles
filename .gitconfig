@@ -47,7 +47,7 @@
 	unpackLimit = 5
 [url "https://bmc@git.crustytoothpaste.net/git/bmc/"]
 	insteadOf = dct:
-[url "bmc@git.crustytoothpaste.net:/srv/scm/git/bmc/"]
+[url "git@git.crustytoothpaste.net:/bmc/"]
 	insteadOf = dcts:
 [url "git@github.com:bk2204/"]
 	insteadOf = gh:
