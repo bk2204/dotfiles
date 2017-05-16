@@ -92,4 +92,6 @@
 	enabled = true
 [status]
 	submoduleSummary = true
+[log]
+	decorate = false
 # vim: set noet:
