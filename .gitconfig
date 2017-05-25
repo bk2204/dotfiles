@@ -17,9 +17,14 @@
 	update = commit --amend --reset-author --no-edit
 	los = log --simplify-merges --topo-order
 	lops = log -p -C --simplify-merges --topo-order
+	lowps = log -p -C --simplify-merges --topo-order --word-diff
 	gr = log --graph --decorate
 	grs = log --graph --decorate --simplify-merges
 	sui = submodule update --init
+	# Word diff.
+	wdiff = diff --word-diff
+	# Word diff staged changes
+	wdiffc = diff --word-diff --cached
 	# Diff staged changes.
 	diffc = diff --cached
 	# Stash changes, keeping the index unmodified.
