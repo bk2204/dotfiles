@@ -101,6 +101,12 @@ bmc_editor () {
     fi
 }
 
+source_if_present ()
+{
+    fn="$1"
+    [[ -f $fn ]] && source "$fn"
+}
+
 # Set up some limits.
 unlimit
 limit core 0

@@ -57,11 +57,6 @@ bindkey '\eOF' vi-end-of-line
 bindkey '\eOH' vi-beginning-of-line
 
 # Some useful features.
-source_if_present ()
-{
-    fn="$1"
-    [[ -f $fn ]] && source "$fn"
-}
 set_tty ()
 {
     [[ -n $TTY ]] && return 0
