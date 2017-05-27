@@ -189,6 +189,7 @@ unsetopt allexport
 setup_browser
 setup_ssh_agent
 setup_temp
+source_if_present "$HOME/.rvm/scripts/rvm"
 
 unfunction is_privileged
 unfunction has_locale
