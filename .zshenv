@@ -103,7 +103,7 @@ bmc_editor () {
 
 source_if_present ()
 {
-    fn="$1"
+    local fn="$1"
     [[ -f $fn ]] && source "$fn"
 }
 
