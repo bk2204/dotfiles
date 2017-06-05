@@ -156,11 +156,9 @@ LC_TIME=POSIX
 LC_TELEPHONE=en_US.UTF-8
 TZ=UTC
 
-CVS_RSH=ssh
 DEBFULLNAME="brian m. carlson"
 EMAIL="sandals@crustytoothpaste.net"
 DEBEMAIL="$EMAIL"
-GROFF_TMAC_PATH="$HOME/checkouts/tenorsax-resources/tmac"
 GIT_PAGER="less -FRSX"
 PAGER="less -R"
 PERLDOC_PAGER="$PAGER"
