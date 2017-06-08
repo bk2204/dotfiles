@@ -38,14 +38,12 @@ setup_browser () {
     done
 }
 
-is_ssh_session ()
-{
+is_ssh_session () {
     [[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
 }
 
 # Return true if our home directory is owned by someone other than us.
-is_privileged ()
-{
+is_privileged () {
     zmodload -F zsh/stat b:zstat
     [ "$(zstat -L +uid "$HOME")" -ne "$(id -u)" ]
 }
@@ -101,8 +99,7 @@ bmc_editor () {
     fi
 }
 
-source_if_present ()
-{
+source_if_present () {
     local fn="$1"
     [[ -f $fn ]] && source "$fn"
 }

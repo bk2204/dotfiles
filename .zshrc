@@ -57,26 +57,22 @@ bindkey '\eOF' vi-end-of-line
 bindkey '\eOH' vi-beginning-of-line
 
 # Some useful features.
-set_tty ()
-{
+set_tty () {
     [[ -n $TTY ]] && return 0
     [[ -n $GPG_TTY ]] && TTY=$GPG_TTY && return 0
     [[ -n $SSH_TTY ]] && TTY=$SSH_TTY && return 0
     TTY=$(tty) || TTY=""
 }
-has_term ()
-{
+has_term () {
     local termname="$1"
     # Redirection is required because zsh complains about bad TERM.
     TERM=$termname silent echotc xo 2>/dev/null
 }
-set_if_has_term ()
-{
+set_if_has_term () {
     local termname="$1"
     has_term "$termname" && export TERM="$termname";
 }
-set_sane_term ()
-{
+set_sane_term () {
     local i
     # Make sure our terminal definition works right.
     if ! silent echotc xo
@@ -339,8 +335,7 @@ promptinit
 prompt bmc
 
 # This is from grml.  GPLv2.
-setup_completion ()
-{
+setup_completion () {
     # don't complete backup files as executables
     zstyle ':completion:*:complete:-command-::commands' ignored-patterns '(aptitude-*|*\~)'
 

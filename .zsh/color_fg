@@ -3,8 +3,7 @@
 # Print a prompt code (valid for print -P) that sets the appropriate foreground
 # color.  The color can be a name that zsh understands or a numerical value
 # appropriate for the terminal.
-color_fg ()
-{
+color_fg () {
     local color="$1"
     local bold="$2"
 

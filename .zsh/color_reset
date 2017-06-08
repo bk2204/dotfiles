@@ -1,7 +1,6 @@
 #!/bin/zsh
 
 # Print a prompt code (valid for print -P) that clears the terminal colors.
-color_reset ()
-{
+color_reset () {
     printf "%%b"
 }
