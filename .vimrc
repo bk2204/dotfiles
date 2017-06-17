@@ -208,6 +208,7 @@ endif
 if v:version >= 702
   augroup events
     au FileChangedShellPost * AirlineRefresh
+    au FileType             * call s:AdjustLinters()
   augroup end
 endif
 
@@ -229,6 +230,20 @@ endif
 runtime autoload/pathogen.vim
 let Fn = function("pathogen#infect")
 execute Fn()
+
+"" Language-related functions.
+" Ale.
+function! s:AdjustLinters()
+  if &ft == 'eruby'
+    call ale#linter#Define('eruby', {
+    \   'name': 'erubylint',
+    \   'executable': 'erb',
+    \    'output_stream': 'stderr',
+    \   'command': 'erb -P -T- -x %t | ruby -c',
+    \   'callback': 'ale#handlers#ruby#HandleSyntaxErrors',
+    \})
+  endif
+endfunction
 
 "" Whitespace handling functions.
 " Turn it on.
