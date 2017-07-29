@@ -1,7 +1,8 @@
 # Crypto. (Yay!)
 # SSL.
-set ssl_use_sslv3=yes
-set ssl_use_tlsv1=yes
+set ssl_use_sslv3=no
+set ssl_use_tlsv1=no
+set ssl_use_tlsv1_1=no
 set ssl_starttls=yes
 set certificate_file=~/.certs/public
 # OpenPGP.
