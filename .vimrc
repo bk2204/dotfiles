@@ -85,6 +85,9 @@ if has("termguicolors") && &tgc && &t_8f == ''
   set t_8f=[38;2;%lu;%lu;%lum
   set t_8b=[48;2;%lu;%lu;%lum
 endif
+if has("terminal")
+  set termkey=<C-W>
+end
 
 "" Comamnds.
 if has("user_commands")
@@ -211,6 +214,7 @@ if v:version >= 702
     au FileType             * call s:AdjustLinters()
   augroup end
 endif
+
 
 "" Color scheme.
 " This needs to go after the whitespace handling, since it can cause warnings if
