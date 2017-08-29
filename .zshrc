@@ -109,7 +109,17 @@ set_sane_term () {
             done
         fi
     fi
-    is_ssh_session && [[ $SSH_TTY == $TTY ]] && return 0
+    if is_ssh_session && [[ $SSH_TTY == $TTY ]]
+    then
+        case $TERM in
+            screen-256color)
+                # This means we're using tmux on the other side.
+                export COLORTERM=truecolor;;
+            *)
+                ;;
+        esac
+        return 0
+    fi
     local parent_exe="$(readlink /proc/$PPID/exe |
         sed -e 's/(deleted)//; s/ //')"
     case "$TERM:$parent_exe" in
