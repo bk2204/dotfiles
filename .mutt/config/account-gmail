@@ -1,11 +1,15 @@
 # SMTP.
 set smtp_url=smtp://bk2204%40gmail.com@smtp.gmail.com:587/
+set smtp_pass=`secret-tool lookup user bk2204@gmail.com uri smtp://smtp.gmail.com:587/`
+set smtp_authenticators="plain"
 # IMAP.
 set imap_user=bk2204@gmail.com
+set imap_pass=`secret-tool lookup user bk2204@gmail.com uri imaps://imap.gmail.com/`
 set imap_passive=no
 set imap_check_subscribed=yes
 set imap_peek=no
 set imap_idle=yes
+set imap_authenticators="plain"
 set imap_check_subscribed=yes
 set imap_list_subscribed=yes
 set imap_headers="X-CRM114-STATUS"
