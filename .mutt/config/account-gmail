@@ -19,7 +19,6 @@ set spoolfile=imaps://imap.gmail.com:993/INBOX
 set move=no
 set delete_untag=yes
 set postponed="=Drafts"
-set record="=Sent"
 set pipe_split=yes
 # Headers.
 my_hdr From: brian m. carlson <bk2204@gmail.com>
