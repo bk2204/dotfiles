@@ -11,7 +11,13 @@ has_colors () {
 
 # Set up some aliases.
 silent ls --color=auto && has_colors && alias ls='ls --color=auto'
-silent which prename && alias rename='prename'
+if silent which file-rename
+then
+    alias rename='file-rename'
+elif silent which prename
+then
+    alias rename='prename'
+fi
 
 local vi=$(bmc_editor console)
 if [[ $vi != vi ]]
