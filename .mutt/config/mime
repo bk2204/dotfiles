@@ -7,6 +7,7 @@ unignore Newsgroups: NNTP-Posting-Host:
 unignore X-CRM114-Status X-Spam-Score X-DCT-Spam-Score
 color header black yellow ^X-CRM114-Status:.*UNSURE.*
 spam "X-CRM114-Status:.*SPAM" CRM114
+spam "X-Spam-Score: (([1-9][0-9]+|[5-9]).([0-9]+))" SA/%1
 nospam "X-CRM114-Status:.*Good"
 my_hdr X-Machine: Running on `uname -n` using `uname -o` on `uname -m` (`uname -s` kernel `uname -r`)
 set header=no
