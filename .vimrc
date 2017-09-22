@@ -134,6 +134,9 @@ else
   syntax enable
 endif
 
+"" Mode-specific settings.
+let s:mode = (mode(1) == 'cv' || mode(1) == 'ce') ? 'ex' : 'vi'
+
 "" Autocommands.
 " Setting file type.
 augroup setf
@@ -189,7 +192,7 @@ augroup syntax
 augroup end
 
 " Whitespace-related autocommands.
-if v:version >= 702 || (v:version == 701 && has("patch40"))
+if (v:version >= 702 || (v:version == 701 && has("patch40"))) && s:mode != 'ex'
   " matchadd and friends showed up in Vim 7.1.40.
   augroup whitespace
     au FileType     *       call s:SetWhitespacePattern(0)
@@ -219,7 +222,9 @@ endif
 "" Color scheme.
 " This needs to go after the whitespace handling, since it can cause warnings if
 " placed before it.
-colorscheme ct-grey
+if s:mode != 'ex'
+  colorscheme ct-grey
+endif
 
 "" Graceful exit.
 " Vim 6.3 gets very upset if it sees lists or dictionaries, or, for that matter,
