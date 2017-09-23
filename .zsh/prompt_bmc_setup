@@ -204,7 +204,9 @@ prompt_bmc_apm_precmd () {
             bat_full=$(</sys/class/power_supply/BAT0/energy_full)
         fi
 
-        bat=$((100 * bat_now / bat_full))"%"
+        bat=$((100 * bat_now / bat_full))
+        [[ $bat -gt 100 ]] && bat=100
+        bat="$bat%"
     fi
     [ $has_ac = 1 ] && ac="ac"
     [ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
