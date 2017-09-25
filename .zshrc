@@ -308,7 +308,7 @@ remove_perl_overrides
 
 is_ssh_session && dumpenv
 
-VISUAL="$EDITOR"
+[[ $TERM != dumb ]] && VISUAL="$EDITOR"
 
 # Autoload some stuff.
 setup_autoload
