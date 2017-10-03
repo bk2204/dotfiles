@@ -11,12 +11,12 @@ EOF
 prompt_bmc_want_bold () {
     local text=$1
 
-    [ -z "$text" ] && return 1;
-    for i in no off false regular normal non-bold;
+    [ -z "$text" ] && return 1
+    for i in no off false regular normal non-bold
     do
         [ "$text" = "$i" ] && return 1
     done
-    return 0;
+    return 0
 }
 
 prompt_bmc_setup_colors () {
@@ -187,15 +187,15 @@ prompt_bmc_apm_precmd () {
     has_ac=0
     has_bat=0
 
-    if [ -d /sys/class/power_supply/AC ];
+    if [ -d /sys/class/power_supply/AC ]
     then
         [ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
     fi
-    if [ -d /sys/class/power_supply/BAT0 ];
+    if [ -d /sys/class/power_supply/BAT0 ]
     then
         has_bat=1
 
-        if [ -r /sys/class/power_supply/BAT0/charge_now ];
+        if [ -r /sys/class/power_supply/BAT0/charge_now ]
         then
             bat_now=$(</sys/class/power_supply/BAT0/charge_now)
             bat_full=$(</sys/class/power_supply/BAT0/charge_full)
