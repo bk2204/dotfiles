@@ -167,6 +167,8 @@ XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.
 # Don't prompt for credentials, just fail.
 GIT_ASKPASS="/bin/echo"
 MODULE_SIGNATURE_CIPHER=SHA512
+# Don't use weird escapes in ls.
+QUOTING_STYLE=literal
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
     unset XML_CATALOG_FILES
