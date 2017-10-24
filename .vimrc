@@ -105,6 +105,7 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 noremap <Leader><Leader> "*
 noremap <Leader>c "+
 noremap <Leader>s "_
+noremap <Leader>d "_d
 " Trim trailing whitespace.
 noremap <Leader>w :Trailing<CR>
 noremap <Leader>zw :TrailingAll<CR>
