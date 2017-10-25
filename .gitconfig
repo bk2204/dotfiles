@@ -101,4 +101,6 @@
 	enabled = true
 [log]
 	decorate = false
+[advice]
+	ignoredHook = false
 # vim: set noet:
