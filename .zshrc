@@ -245,6 +245,26 @@ sless () {
         less "$@"
     )
 }
+gvim () {
+    if [[ $1 = "-t" ]]
+    then
+        local name="$2"
+        shift 2
+        command gvim --servername "$name" --remote "$@"
+    else
+        command gvim "$@"
+    fi
+}
+gview () {
+    if [[ $1 = "-t" ]]
+    then
+        local name="$2"
+        shift 2
+        command gview --servername "$name" --remote "$@"
+    else
+        command gview "$@"
+    fi
+}
 ggrep () {
     grep -r "$@" *
 }
