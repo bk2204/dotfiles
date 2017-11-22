@@ -245,12 +245,25 @@ sless () {
         less "$@"
     )
 }
+# -z SERVER: specify server
+# -t SERVER: connect to SERVER and edit files
 gvim () {
     if [[ $1 = "-t" ]]
     then
         local name="$2"
         shift 2
         command gvim --servername "$name" --remote "$@"
+    elif [[ $1 = "-z" ]]
+    then
+        local name="$2"
+        shift 2
+        command gvim --servername "$name" "$@"
+    # When using ssh forwarding, the server name is usually not set.  Set a
+    # default value, either GVIM, or if that's taken, GVIM suffixed with a
+    # number, which is what Vim would have set for us anyway.
+    elif [[ -z ${DISPLAY:#localhost:*} ]]
+    then
+        command gvim --servername GVIM "$@"
     else
         command gvim "$@"
     fi
@@ -261,6 +274,14 @@ gview () {
         local name="$2"
         shift 2
         command gview --servername "$name" --remote "$@"
+    elif [[ $1 = "-z" ]]
+    then
+        local name="$2"
+        shift 2
+        command gview --servername "$name" "$@"
+    elif [[ -z ${DISPLAY:#localhost:*} ]]
+    then
+        command gview --servername GVIEW "$@"
     else
         command gview "$@"
     fi
