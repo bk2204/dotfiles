@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/ale"]
 	path = .vim/bundle/ale
 	url = https://github.com/w0rp/ale.git
+[submodule ".vim/bundle/bufexplorer"]
+	path = .vim/bundle/bufexplorer
+	url = https://github.com/jlanzarotta/bufexplorer.git
