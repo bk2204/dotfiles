@@ -118,6 +118,8 @@ nnoremap <Leader>ll :set list!<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
 noremap <C-A> <Nop>
+" Plugins.
+noremap <Leader>v :ToggleBufExplorer<CR>
 
 "" Graceful exit.
 " Versions of Vim without +eval will exit here.
@@ -488,6 +490,9 @@ let g:ctrlp_clear_cache_on_exit = 0
 let g:EditorConfig_max_line_indicator = 'none'
 
 let g:cttidy_theme = 'bmc'
+
+let g:bufExplorerDisableDefaultKeyMapping = 1
+let g:bufExplorerSortBy = 'name'
 
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
