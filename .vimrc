@@ -96,6 +96,7 @@ if has("user_commands")
   command! Edir execute ':e ' . expand('%:p:h')
   command! -nargs=1 Emod  execute ':e ' . <SID>ModulePath("<args>")
   command! -nargs=? Notes           call <SID>EditNotes(<f-args>)
+  command! Scratch              call <SID>ScratchBuffer()
 endif
 
 "" Maps.
@@ -447,6 +448,13 @@ function! s:EditNotes(...)
   endif
   let path = notespath . '/' . file . '.adoc'
   exe "e " . path
+endfunction
+
+function! s:ScratchBuffer()
+  enew
+  setl bt=nofile
+  setl bh=hide
+  setl noswf
 endfunction
 
 "" Miscellaneous variables.
