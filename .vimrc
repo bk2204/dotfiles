@@ -500,6 +500,8 @@ let g:EditorConfig_max_line_indicator = 'none'
 let g:cttidy_theme = 'bmc'
 
 let g:bufExplorerDisableDefaultKeyMapping = 1
+let g:bufExplorerShowNoName = 1
+let g:bufExplorerShowUnlisted = 1
 let g:bufExplorerSortBy = 'name'
 
 "" Other language-specific setup.
