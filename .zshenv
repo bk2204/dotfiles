@@ -160,6 +160,11 @@ export MANPATH PATH COREPATH
 # Set other variables.
 setopt allexport
 
+if [[ -z $TERM ]] && ! tty >/dev/null 2>&1
+then
+    TERM=dumb
+fi
+
 LANG=$(preferred_locale)
 LC_ADDRESS=en_US.UTF-8
 LC_COLLATE=$(preferred_locale)
