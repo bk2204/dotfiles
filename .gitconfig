@@ -103,4 +103,5 @@
 	decorate = false
 [advice]
 	ignoredHook = false
+	waitingForEditor = false
 # vim: set noet:
