@@ -32,6 +32,11 @@ prompt_bmc_setup_colors () {
     printf 'pcc[%s]="%s"' $name $(color_fg $color $fbold)
 }
 
+prompt_bmc_reset_color () {
+    [[ $TERM = dumb ]] && return
+    printf '%s' "$reset_color"
+}
+
 # hostname, FQDN if possible, without the trailing newline.
 prompt_bmc_hostname () {
     (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n'
@@ -41,12 +46,10 @@ prompt_bmc_setup_base () {
     local -A args
     local -A pcc
     local i j
-    local c_reset="%b%{$reset_color%}"
+    local c_reset="%b%{$(prompt_bmc_reset_color)%}"
     local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | cut -b1-2)") ))
 
     args=("$@")
-
-    [[ $TERM = dumb ]] && c_reset=''
 
     args[hostcolor]="yes $c_hostcolor $c_hostcolor"
     for k in "${(@k)args}"
@@ -96,7 +99,7 @@ prompt_bmc_setup_base () {
     local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
     local p_space="$pcc[space] $c_reset"
 
-    [[ $TERM = dumb ]] || POSTEDIT="$reset_color"
+    POSTEDIT="$(prompt_bmc_reset_color)"
 
     prompt="$p_userpwd$p_branch
 ($p_datetime)($p_hostname$p_tty)$p_shlvl$p_power($p_ret)
