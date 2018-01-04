@@ -7,8 +7,8 @@ bind index,pager <Esc><Tab> previous-unread
 bind pager i exit
 bind index i noop
 # Macros.
-macro index S <tag-prefix><save-message>+Spam.Reprocess\n
-macro pager S <save-message>+Spam.Reprocess\n
+macro index S <tag-prefix><save-message>+Spam.Actual\n
+macro pager S <save-message>+Spam.Actual\n
 macro index H <tag-prefix><pipe-entry>learnnonspam\n
 macro pager H <pipe-entry>learnnonspam\n
 macro index <F10> "!muttprofile\n:source ~/.mutt/profile.active\n"
