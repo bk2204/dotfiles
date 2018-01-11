@@ -130,7 +130,7 @@ if 0 | finish | endif
 if has("autocmd")
   filetype plugin indent on
 endif
-if $TERM == 'dumb'
+if !has("gui_running") && $TERM == 'dumb'
   hi clear
   set t_Co=0
   syntax off
