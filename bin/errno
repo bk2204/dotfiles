@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+def parse_args(args) # rubocop:disable Metrics/MethodLength
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('--all', 'List all error values') do
+      options[:all] = true
+    end
+
+    opts.on('--help', 'Print this usage information') do
+      puts opts
+
+      puts <<-EOM.gsub(/^\s+/, '')
+      For each argument, which may be an integer or a named constant, list the
+      integral value, constant name, and error text for that error value,
+      separated by tabs.
+      EOM
+    end
+  end.parse!(args)
+  [options, args]
+end
+
+def selections(args)
+  items = args.map do |x|
+    begin
+      Integer(x)
+    rescue ArgumentError # name
+      x.upcase.to_sym
+    end
+  end
+  items.partition { |x| x.is_a? Integer }
+end
+
+def values(opts, ints, names)
+  data = Errno.constants.uniq.map do |sym|
+    obj = Errno.const_get(sym).new
+    [obj.errno, sym, obj.to_s]
+  end
+  data.sort.select do |x|
+    opts[:all] || ints.include?(x[0]) || names.include?(x[1])
+  end
+end
+
+def main(args)
+  opts, args = parse_args(args)
+  ints, names = selections(args)
+  print values(opts, ints, names).map { |arr| arr.join("\t") + "\n" }.join
+  0
+end
+
+exit main(ARGV) if $PROGRAM_NAME == __FILE__
