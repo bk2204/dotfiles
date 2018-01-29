@@ -107,7 +107,6 @@ source_if_present () {
 # Set up some limits.
 unlimit
 limit core 0
-limit stack 8192
 
 # Set up umask.  If we have private groups, use 002; otherwise, use 022.
 if [[ $(id -u -n) = $(id -g -n) ]]; then
