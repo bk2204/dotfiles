@@ -27,7 +27,7 @@ def selections(args)
     begin
       Integer(x)
     rescue ArgumentError # name
-      x.upcase.to_sym
+      x.upcase.to_s
     end
   end
   items.partition { |x| x.is_a? Integer }
@@ -36,7 +36,7 @@ end
 def values(opts, ints, names)
   data = Errno.constants.uniq.map do |sym|
     obj = Errno.const_get(sym).new
-    [obj.errno, sym, obj.to_s]
+    [obj.errno, sym.to_s, obj.to_s]
   end
   data.sort.select do |x|
     opts[:all] || ints.include?(x[0]) || names.include?(x[1])
