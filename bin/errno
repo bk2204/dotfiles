@@ -27,7 +27,7 @@ def selections(args)
     begin
       Integer(x)
     rescue ArgumentError # name
-      x.upcase.to_s
+      x.upcase
     end
   end
   items.partition { |x| x.is_a? Integer }
