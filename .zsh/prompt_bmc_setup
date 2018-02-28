@@ -27,7 +27,7 @@ prompt_bmc_setup_colors () {
     local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
     local color=$fcolor16
 
-    echotc Co >/dev/null 2>&1 && [[ $(echotc Co) = 256 ]] && color=$fcolor
+    echotc Co >/dev/null 2>&1 && [[ $(echotc Co) -ge 256 ]] && color=$fcolor
 
     printf 'pcc[%s]="%s"' $name $(color_fg $color $fbold)
 }
