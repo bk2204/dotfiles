@@ -118,7 +118,7 @@ set_sane_term () {
     if is_ssh_session && [[ $SSH_TTY == $TTY ]]
     then
         case $TERM in
-            screen-256color)
+            screen-256color|tmux*)
                 # This means we're using tmux on the other side.
                 export COLORTERM=truecolor;;
             *)
