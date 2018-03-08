@@ -164,6 +164,17 @@ then
     TERM=dumb
 fi
 
+if [[ ! -d "$HOME/.rvm" ]] && command -v ruby >/dev/null 2>&1
+then
+    ver="$(ruby -e 'puts RUBY_VERSION')"
+    if [[ -z $GEM_HOME ]]
+    then
+        GEM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/gems/$ver"
+    fi
+    unset ver
+    GEM_PATH="$GEM_HOME${GEM_PATH:+:$GEM_PATH}"
+fi
+
 LANG=$(preferred_locale)
 LC_ADDRESS=en_US.UTF-8
 LC_COLLATE=$(preferred_locale)
