@@ -30,5 +30,5 @@ set encode_from=yes
 set digest_collapse=yes
 set mailcap_sanitize=yes
 set mime_forward=ask-yes
-set send_charset="us-ascii:utf-8"
+set send_charset="utf-8"
 # vim: set syntax=muttrc:
