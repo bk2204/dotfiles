@@ -19,33 +19,9 @@ prompt_bmc_want_bold () {
     return 0
 }
 
-prompt_bmc_setup_colors () {
-    local name=$1
-    local ffont=$2
-    local fcolor=$3
-    local fcolor256=$4
-    local fcolor16=$5
-    local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
-    local color
-
-    color_count_for 'color=$fcolor' 'color=$fcolor256' 'color=$fcolor16'
-
-    printf 'pcc[%s]="%s"' $name "$(color_fg $color $fbold)"
-}
-
 prompt_bmc_reset_color () {
     [[ $TERM = dumb ]] && return
     printf '%s' "$reset_color"
-}
-
-# hostname, FQDN if possible, without the trailing newline.
-prompt_bmc_hostname () {
-    (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n'
-}
-
-# Slice a color out of a sequence of hex digits.
-prompt_bmc_slice () {
-    color_count_for 'cut -b1-6' 'cut -b1-2' 'cut -b1'
 }
 
 prompt_bmc_setup_base () {
@@ -53,57 +29,50 @@ prompt_bmc_setup_base () {
     local -A pcc
     local i j
     local c_reset="%b%{$(prompt_bmc_reset_color)%}"
-    local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | prompt_bmc_slice)") ))
 
-    args=("$@")
-
-    args[hostcolor]="yes $c_hostcolor $c_hostcolor $c_hostcolor"
-    for k in "${(@k)args}"
-    do
-        # It breaks if you don't use the subshell echo.  I promise.
-        eval $(prompt_bmc_setup_colors $k $(echo $args[$k]))
-    done
+    # Force autoload.
+    bmc_palette user >/dev/null 2>&1
 
     zstyle ':vcs_info:*' enable git
-    zstyle ':vcs_info:*' actionformats "($pcc[vcs]%b|%a%$c_reset%)" "%R"
-    zstyle ':vcs_info:*' formats       "($pcc[vcs]%b%$c_reset%)" "%R"
+    zstyle ':vcs_info:*' actionformats "($(bmc_palette vcs)%b|%a%$c_reset%)" "%R"
+    zstyle ':vcs_info:*' formats       "($(bmc_palette vcs)%b%$c_reset%)" "%R"
 
-    local p_privuser="$pcc[privuser]%n$c_reset"
-    local p_unprivuser="$pcc[unprivuser]%n$c_reset"
-    local p_user="%(!.$p_privuser.$p_unprivuser)$pcc[user]@%m$c_reset"
-    local p_pwd="$pcc[pwd]%~$c_reset"
+    local p_privuser="$(bmc_palette privuser)%n$c_reset"
+    local p_unprivuser="$(bmc_palette unprivuser)%n$c_reset"
+    local p_user="%(!.$p_privuser.$p_unprivuser)$(bmc_palette user)@%m$c_reset"
+    local p_pwd="$(bmc_palette pwd)%~$c_reset"
 
     local p_userpwd="$p_user:$p_pwd"
 
-    local p_priv="$pcc[priv]#$c_reset"
-    local p_unpriv="$pcc[unpriv]%%$c_reset"
+    local p_priv="$(bmc_palette priv)#$c_reset"
+    local p_unpriv="$(bmc_palette unpriv)%%$c_reset"
 
     local p_pchar="%(!.$p_priv.$p_unpriv)"
 
     # Don't use the %D by itself, because it uses two-digit years.
-    local p_date="$pcc[date]%D{%Y-%m-%d}$c_reset"
+    local p_date="$(bmc_palette date)%D{%Y-%m-%d}$c_reset"
     # Similarly, don't use %* by itself, because it is not zero-padded.
-    local p_time="$pcc[time]%D{%H:%M:%S}$c_reset"
+    local p_time="$(bmc_palette time)%D{%H:%M:%S}$c_reset"
 
     local p_datetime="$p_date/$p_time"
 
-    is-at-least 5.3 && local p_hostname="$pcc[hostcolor]%m$c_reset:"
+    is-at-least 5.3 && local p_hostname="$(bmc_palette hostcolor)%m$c_reset:"
 
-    local p_tty="$pcc[tty]%l$c_reset"
+    local p_tty="$(bmc_palette tty)%l$c_reset"
 
-    local p_shlvl="%(2L.($pcc[tty]%L$c_reset).)"
-    local p_power="%(2V.($pcc[tty]%2v$c_reset).)"
+    local p_shlvl="%(2L.($(bmc_palette tty)%L$c_reset).)"
+    local p_power="%(2V.($(bmc_palette tty)%2v$c_reset).)"
 
-    local p_failed="$pcc[retcode]failed$c_reset"
-    local p_retcode="$pcc[retcode]%?$c_reset"
-    local p_signame="$pcc[retcode]%1v$c_reset"
+    local p_failed="$(bmc_palette retcode)failed$c_reset"
+    local p_retcode="$(bmc_palette retcode)%?$c_reset"
+    local p_signame="$(bmc_palette retcode)%1v$c_reset"
     local p_mode='${psvar[3]:-%(?.ok.no)}'
 
     local p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
-    local p_host="$pcc[host]%m $p_mode$c_reset"
+    local p_host="$(bmc_palette host)%m $p_mode$c_reset"
 
     local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
-    local p_space="$pcc[space] $c_reset"
+    local p_space="$(bmc_palette space) $c_reset"
 
     POSTEDIT="$(prompt_bmc_reset_color)"
 
@@ -123,22 +92,7 @@ $p_host $p_pchar$p_space"
 }
 
 prompt_bmc_setup () {
-    local -A colors
-    colors[user]='yes 0x0086ff 33 blue'
-    colors[pwd]='yes 0x00d700 40 green'
-    colors[unpriv]='yes 0xffffff 15 white'
-    colors[priv]='yes 0xff0101 9 red'
-    colors[date]='yes 0x7186d8 104 magenta'
-    colors[time]='yes 0x7186d8 104 magenta'
-    colors[retcode]='yes 0xff0101 9 red'
-    colors[signame]='yes 0xff0101 9 red'
-    colors[tty]='yes 0xffffff 15 white'
-    colors[privuser]='yes 0xff0101 9 red'
-    colors[unprivuser]='yes 0x0086ff 33 blue'
-    colors[host]='no 0x0086ff 33 cyan'
-    colors[vcs]='no 0x0086ff 33 cyan'
-    colors[space]='no 0xffffff 15 white'
-    prompt_bmc_setup_base "${(@kv)colors}"
+    prompt_bmc_setup_base
 
     choose_prompt "main"
 }

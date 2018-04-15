@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# Extract the portion of an ANSI code that can be used in LS_COLORS or
+# GREP_COLORS.
+
+bmc_palette_ansi () {
+    # Coalesce the bold attribute and the color into one statement if possible.
+    print -Pn $(bmc_palette "$@") | \
+        perl -pe 's/\033\[(.*)m\033\[(.*)m/$1;$2/; s/\033\[(.*)m/$1/'
+}

@@ -301,18 +301,15 @@ setup_colors () {
     [[ -f $HOME/.dircolors ]] && eval "$(dircolors $HOME/.dircolors 2>/dev/null)"
 
     # Set up termcap colors for less (from grml).
-    local red="  $(color_count_for "echo $((0xff0000))" "echo red"   "echo red")"
-    local green="$(color_count_for "echo $((0x00ff00))" "echo green" "echo green")"
-    local blue=" $(color_count_for "echo $((0x0087ff))" "echo 33"    "echo blue")"
 
-    export LESS_TERMCAP_mb=$(print -P $(color_fg $red yes))
-    export LESS_TERMCAP_md=$(print -P $(color_fg $red yes))
+    export LESS_TERMCAP_mb=$(print -P $(bmc_palette bold))
+    export LESS_TERMCAP_md=$(print -P $(bmc_palette bold))
     export LESS_TERMCAP_me=$(print -P $(color_reset))
     export LESS_TERMCAP_se=$(print -P $(color_reset))
-    export LESS_TERMCAP_so=$(print -P $(color_fg $blue yes))
+    export LESS_TERMCAP_so=$(print -P $(bmc_palette standout))
     export LESS_TERMCAP_ue=$(print -P $(color_reset))
-    export LESS_TERMCAP_us=$(print -P $(color_fg $green yes))
-    export GREP_COLORS=fn=$(color_fg_ansi $blue yes)
+    export LESS_TERMCAP_us=$(print -P $(bmc_palette underline))
+    export GREP_COLORS=fn=$(bmc_palette_ansi grep)
     export CLICOLOR=1
 }
 setup_autoload () {

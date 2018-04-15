@@ -1,0 +1,55 @@
+#!/bin/zsh
+
+bmc_palette_ () {
+    local bold="$1"
+    local ctrue="$2"
+    local c256="$3"
+    local c16="$4"
+
+    color_count_for "echo '$ctrue'" "echo '$c256'" "echo '$c16'"
+    echo $bold
+}
+
+bmc_palette () {
+    local color="$1"
+    local bold
+    local pattern
+    local -A colors
+
+    setopt localoptions shwordsplit
+
+    colors[user]='      yes 0x0086ff 33  blue'
+    colors[pwd]='       yes 0x00d700 40  green'
+    colors[unpriv]='    yes 0xffffff 15  white'
+    colors[priv]='      yes 0xff0101 9   red'
+    colors[date]='      yes 0x7186d8 104 magenta'
+    colors[time]='      yes 0x7186d8 104 magenta'
+    colors[retcode]='   yes 0xff0000 9   red'
+    colors[signame]='   yes 0xff0000 9   red'
+    colors[tty]='       yes 0xffffff 15  white'
+    colors[privuser]='  yes 0xff0101 9   red'
+    colors[unprivuser]='yes 0x0086ff 33  blue'
+    colors[host]='      no  0x0086ff 33  cyan'
+    colors[vcs]='       no  0x0086ff 33  cyan'
+    colors[space]='     no  0xffffff 15  white'
+    colors[bold]="      yes 0xff0000 9   red"
+    colors[underline]=" yes 0x00d700 40  green"
+    colors[standout]="  yes 0x0086ff 33  blue"
+    colors[grep]="      yes 0x0086ff 33  blue"
+
+    # Don't invoke hostname unless we are looking for this value; otherwise, if
+    # the hostname is broken, it will take forever to render our prompt.
+    if [[ $color = hostcolor ]]
+    then
+        local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
+        local hostcolor="$(printf '%s' "$hostname" | sha256sum)"
+        colors[hostcolor]="no
+                           0x$(echo $hostcolor | cut -b1-6)
+                           0x$(echo $hostcolor | cut -b1-2)
+                           white"
+    fi
+
+    local expanded="$colors[$color]"
+
+    color_fg $(bmc_palette_ $expanded)
+}
