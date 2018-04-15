@@ -5,8 +5,27 @@
 # appropriate for the terminal.
 color_bg () {
     local color="$1"
+    local name="$(expr "$1" : "\([a-z][a-z]*\)")"
 
     [[ $TERM = dumb ]] && return 0
 
-    printf "%%{%%K{%s}%%}" $color
+    printf "%%{"
+
+    if [[ -n "$name" ]]
+    then
+        # This is a named color.
+        printf "%%F{%s}" $color
+    elif [[ $(echoti colors 2>/dev/null || echo 0) -gt 256 ]]
+    then
+        # True color support in the terminal definition.
+        printf '%s' "$(echoti setab "$((color))")"
+    elif [[ $COLORTERM = truecolor ]]
+    then
+        # We have true color, but our terminal definition doesn't know about it.
+        printf '\033[48;2;%d;%d;%dm' $((color / 65536)) $((color / 256 % 256)) $((color % 256))
+    else
+        # We legitimately have 256 colors or fewer.
+        printf "%%K{%s}" $color
+    fi
+    printf '%%}'
 }

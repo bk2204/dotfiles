@@ -1,0 +1,28 @@
+#!/bin/zsh
+
+# Perform an action based on the number of supported colors.  The first argument
+# is for true color, second for 256 colors, third for 8 or 16 colors, and the
+# fourth is for terminals without color.
+color_count_for () {
+    local ctrue="$1"
+    local c256="$2"
+    local c16="$3"
+    local cnone="$4"
+    local ncolors=$(echoti colors 2>/dev/null || echo 0)
+
+    if [[ $TERM = dumb ]]
+    then
+        eval "$cnone"
+    elif [[ $ncolors -gt 256 ]] || [[ $COLORTERM = truecolor ]]
+    then
+        eval "$ctrue"
+    elif [[ $ncolors -eq 256 ]]
+    then
+        eval "$c256"
+    elif [[ $ncolors -gt 0 ]]
+        eval "$c16"
+    then
+    else
+        eval "$cnone"
+    fi
+}

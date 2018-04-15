@@ -23,13 +23,14 @@ prompt_bmc_setup_colors () {
     local name=$1
     local ffont=$2
     local fcolor=$3
-    local fcolor16=$4
+    local fcolor256=$4
+    local fcolor16=$5
     local fbold=$(prompt_bmc_want_bold $ffont && echo "yes")
-    local color=$fcolor16
+    local color
 
-    echotc Co >/dev/null 2>&1 && [[ $(echotc Co) -ge 256 ]] && color=$fcolor
+    color_count_for 'color=$fcolor' 'color=$fcolor256' 'color=$fcolor16'
 
-    printf 'pcc[%s]="%s"' $name $(color_fg $color $fbold)
+    printf 'pcc[%s]="%s"' $name "$(color_fg $color $fbold)"
 }
 
 prompt_bmc_reset_color () {
@@ -42,16 +43,21 @@ prompt_bmc_hostname () {
     (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n'
 }
 
+# Slice a color out of a sequence of hex digits.
+prompt_bmc_slice () {
+    color_count_for 'cut -b1-6' 'cut -b1-2' 'cut -b1'
+}
+
 prompt_bmc_setup_base () {
     local -A args
     local -A pcc
     local i j
     local c_reset="%b%{$(prompt_bmc_reset_color)%}"
-    local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | cut -b1-2)") ))
+    local c_hostcolor=$(( $(echo "0x$(prompt_bmc_hostname | sha256sum | prompt_bmc_slice)") ))
 
     args=("$@")
 
-    args[hostcolor]="yes $c_hostcolor $c_hostcolor"
+    args[hostcolor]="yes $c_hostcolor $c_hostcolor $c_hostcolor"
     for k in "${(@k)args}"
     do
         # It breaks if you don't use the subshell echo.  I promise.
@@ -118,20 +124,20 @@ $p_host $p_pchar$p_space"
 
 prompt_bmc_setup () {
     local -A colors
-    colors[user]='yes 33 blue'
-    colors[pwd]='yes 40 green'
-    colors[unpriv]='yes 15 white'
-    colors[priv]='yes 9 red'
-    colors[date]='yes 104 magenta'
-    colors[time]='yes 104 magenta'
-    colors[retcode]='yes 9 red'
-    colors[signame]='yes 9 red'
-    colors[tty]='yes 15 white'
-    colors[privuser]='yes 9 red'
-    colors[unprivuser]='yes 33 blue'
-    colors[host]='no 33 cyan'
-    colors[vcs]='no 33 cyan'
-    colors[space]='no 15 white'
+    colors[user]='yes 0x0086ff 33 blue'
+    colors[pwd]='yes 0x00d700 40 green'
+    colors[unpriv]='yes 0xffffff 15 white'
+    colors[priv]='yes 0xff0101 9 red'
+    colors[date]='yes 0x7186d8 104 magenta'
+    colors[time]='yes 0x7186d8 104 magenta'
+    colors[retcode]='yes 0xff0101 9 red'
+    colors[signame]='yes 0xff0101 9 red'
+    colors[tty]='yes 0xffffff 15 white'
+    colors[privuser]='yes 0xff0101 9 red'
+    colors[unprivuser]='yes 0x0086ff 33 blue'
+    colors[host]='no 0x0086ff 33 cyan'
+    colors[vcs]='no 0x0086ff 33 cyan'
+    colors[space]='no 0xffffff 15 white'
     prompt_bmc_setup_base "${(@kv)colors}"
 
     choose_prompt "main"
