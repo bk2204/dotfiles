@@ -60,7 +60,7 @@ prompt_bmc_setup_base () {
 
     local p_tty="$(bmc_palette tty)%l$c_reset"
 
-    local p_shlvl="%(2L.($(bmc_palette tty)%L$c_reset).)"
+    local p_shlvl='${psvar[4]}'
     local p_power="%(2V.($(bmc_palette tty)%2v$c_reset).)"
 
     local p_failed="$(bmc_palette retcode)failed$c_reset"
@@ -126,6 +126,19 @@ prompt_bmc_precmd () {
                 print -Pn "\ek$statusline\e\\";;
         esac
     fi
+
+    local c_reset="%b%{$(prompt_bmc_reset_color)%}"
+    local parent_exe="$(readlink /proc/$PPID/exe |
+        sed -e 's/(deleted)//; s/ //')"
+
+    case $SHLVL:$parent_exe in
+        1:*)
+            psvar[4]="";;
+        *:*tmux|*:*terminal|*:*rxvt|*:*term)
+            psvar[4]="";;
+        *:*)
+            psvar[4]="($(bmc_palette tty)$SHLVL$c_reset)";;
+    esac
 
     prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info
 }
