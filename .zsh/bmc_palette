@@ -32,8 +32,8 @@ bmc_palette () {
     colors[host]='      no  0x0086ff 33  cyan'
     colors[vcs]='       no  0x0086ff 33  cyan'
     colors[space]='     no  0xffffff 15  white'
-    colors[bold]="      yes 0xff0000 9   red"
-    colors[underline]=" yes 0x00d700 40  green"
+    colors[bold]="      yes 0xff6274 9   red"
+    colors[underline]=" yes 0x4bde97 40  green"
     colors[standout]="  yes 0x0086ff 33  blue"
     colors[grep]="      yes 0x0086ff 33  blue"
 
