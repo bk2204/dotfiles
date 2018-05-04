@@ -191,7 +191,7 @@ prompt_bmc_apm_precmd () {
 
     if [[ $has_ac = 0 ]] && [[ $has_bat = 0 ]]
     then
-        psvar[2]=()
+        psvar[2]=""
     else
         psvar[2]="$ac$bat"
     fi

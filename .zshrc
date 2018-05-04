@@ -357,7 +357,7 @@ choose_prompt () {
     [[ -n $km ]] || km=$KEYMAP
     case $km in
         vicmd)      psvar[3]="◈◈";;
-        viins|main) psvar[3]=();;
+        viins|main) psvar[3]="";;
     esac
 }
 
