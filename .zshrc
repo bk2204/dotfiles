@@ -231,6 +231,8 @@ set_keybindings () {
     bind2maps emacs             -- Right       forward-char
     bind2maps       viins vicmd -- Right       vi-forward-char
     bind2maps emacs viins       -- -s '^xi'    insert-unicode-char
+    bind2maps emacs viins       -- -s '^xe'    edit-command-line
+    bind2maps emacs viins       -- -s '^x^e'   edit-command-line
 
     unfunction bind2maps
 }
@@ -385,6 +387,7 @@ zle -N zle-line-init
 zle -N zle-line-finish
 zle -N zle-keymap-select
 zle -N insert-unicode-char
+zle -N edit-command-line
 
 # Set up the prompt.
 colors
