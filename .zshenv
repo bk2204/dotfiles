@@ -121,8 +121,11 @@ unsetopt globalrcs
 ANDROID_HOME="$HOME/apps/android-sdk"
 export ANDROID_HOME
 
+prevpath=$PATH
+
 # Nuke dupes.
 typeset -U path cdpath manpath fpath
+typeset -U PATH CDPATH MANPATH FPATH
 typeset -UT COREPATH corepath
 
 # Set up miscellaneous paths.
@@ -152,6 +155,9 @@ corepath=(
     /usr/games
 )
 fpath=($fpath[2,-1] ~/.zsh)
+
+PATH="$PATH:$prevpath"
+unset prevpath
 
 # Export miscellaneous paths.
 export MANPATH PATH COREPATH
