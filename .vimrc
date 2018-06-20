@@ -85,8 +85,10 @@ if has("termguicolors") && &tgc && &t_8f == ''
   set t_8f=[38;2;%lu;%lu;%lum
   set t_8b=[48;2;%lu;%lu;%lum
 endif
-if has("terminal")
+if exists("&termkey")
   set termkey=<C-W>
+elseif exists("&termwinkey")
+  set termwinkey=<C-W>
 end
 
 "" Comamnds.
