@@ -19,7 +19,7 @@ bmc_palette () {
     setopt localoptions shwordsplit
 
     colors[user]='      yes 0x0086ff 33  blue'
-    colors[pwd]='       yes 0x00d700 40  green'
+    colors[pwd]='       yes 0x4bdb4b 40  green'
     colors[unpriv]='    yes 0xffffff 15  white'
     colors[priv]='      yes 0xff0101 9   red'
     colors[date]='      yes 0x7186d8 104 magenta'
