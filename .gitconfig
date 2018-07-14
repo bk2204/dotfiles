@@ -53,6 +53,8 @@
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
 	# Exits zero if the two treeishes are the same, nonzero otherwise.
 	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
+	# Describe a revision in a form suitable for a commit message.
+	describe-rev = show -s --date=short --pretty='format:%h (\"%s\", %ad)'
 [i18n]
 	commitencoding = UTF-8
 [repack]
