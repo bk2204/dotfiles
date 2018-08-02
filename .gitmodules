@@ -1,45 +1,45 @@
 [submodule ".vim/pathogen"]
-	path = .vim/pathogen
+	path = vim/pathogen
 	url = https://github.com/tpope/vim-pathogen.git
 [submodule ".vim/bundle/vim-fugitive"]
-	path = .vim/bundle/vim-fugitive
+	path = vim/bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
 [submodule ".vim/bundle/ctrlp"]
-	path = .vim/bundle/ctrlp
+	path = vim/bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim.git
 [submodule ".vim/bundle/nerdtree"]
-	path = .vim/bundle/nerdtree
+	path = vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
 [submodule ".vim/bundle/vim-perl"]
-	path = .vim/bundle/vim-perl
+	path = vim/bundle/vim-perl
 	url = https://github.com/vim-perl/vim-perl.git
 [submodule ".vim/bundle/vim-ruby"]
-	path = .vim/bundle/vim-ruby
+	path = vim/bundle/vim-ruby
 	url = https://github.com/vim-ruby/vim-ruby.git
 [submodule ".vim/bundle/vim-python-pep8-indent"]
-	path = .vim/bundle/vim-python-pep8-indent
+	path = vim/bundle/vim-python-pep8-indent
 	url = https://github.com/hynek/vim-python-pep8-indent.git
 [submodule ".vim/bundle/vim-json"]
-	path = .vim/bundle/vim-json
+	path = vim/bundle/vim-json
 	url = https://github.com/elzr/vim-json.git
 [submodule ".vim/bundle/editorconfig-vim"]
-	path = .vim/bundle/editorconfig-vim
+	path = vim/bundle/editorconfig-vim
 	url = https://github.com/editorconfig/editorconfig-vim.git
 [submodule ".vim/bundle/vim-airline"]
-	path = .vim/bundle/vim-airline
+	path = vim/bundle/vim-airline
 	url = https://github.com/vim-airline/vim-airline.git
 [submodule ".vim/bundle/vim-airline-themes"]
-	path = .vim/bundle/vim-airline-themes
+	path = vim/bundle/vim-airline-themes
 	url = https://github.com/vim-airline/vim-airline-themes.git
 [submodule ".vim/bundle/vim-ct-colors"]
-	path = .vim/bundle/vim-ct-colors
+	path = vim/bundle/vim-ct-colors
 	url = https://github.com/bk2204/vim-ct-colors.git
 [submodule ".vim/bundle/vim-ct-tidy"]
-	path = .vim/bundle/vim-ct-tidy
+	path = vim/bundle/vim-ct-tidy
 	url = https://github.com/bk2204/vim-ct-tidy.git
 [submodule ".vim/bundle/ale"]
-	path = .vim/bundle/ale
+	path = vim/bundle/ale
 	url = https://github.com/w0rp/ale.git
 [submodule ".vim/bundle/bufexplorer"]
-	path = .vim/bundle/bufexplorer
+	path = vim/bundle/bufexplorer
 	url = https://github.com/jlanzarotta/bufexplorer.git
