@@ -51,6 +51,8 @@
 	lsf = ls-files
 	# List files matching a grep pattern.
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
+	# List conflicted files, one per line.
+	conflicted = "!f() { git status -s | grep -E '^(DD|AA|.U|U.)' | cut -b4-; };f"
 	# Exits zero if the two treeishes are the same, nonzero otherwise.
 	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
 	# Describe a revision in a form suitable for a commit message.
