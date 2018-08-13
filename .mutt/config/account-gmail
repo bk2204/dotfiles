@@ -18,8 +18,9 @@ set folder=imaps://imap.gmail.com:993/
 set spoolfile=imaps://imap.gmail.com:993/INBOX
 set move=no
 set delete_untag=yes
-set postponed="=Drafts"
+set postponed="=[Gmail]/Drafts"
 set pipe_split=yes
+unset record
 # Headers.
 my_hdr From: brian m. carlson <bk2204@gmail.com>
 # Hooks.
