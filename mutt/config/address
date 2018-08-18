@@ -4,7 +4,6 @@ alternates sandals@crustytoothpaste.ath.cx
 alternates bmc@crustytoothpaste.ath.cx
 alternates bmc@crustytoothpaste.net
 alternates bk2204@gmail.com
-alternates brian.carlson@cpanel.net
 alias control control@bugs.debian.org
 # Mailing Lists.
 subscribe debian-devel@lists.debian.org
