@@ -1,5 +1,14 @@
 #!/bin/zsh
 
+bmc_palette_sha256 () {
+    if command -v sha256sum >/dev/null 2>&1
+    then
+        sha256sum "$@"
+    else
+        shasum -a 256 "$@"
+    fi
+}
+
 bmc_palette_ () {
     local bold="$1"
     local ctrue="$2"
@@ -42,7 +51,7 @@ bmc_palette () {
     if [[ $color = hostcolor ]]
     then
         local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
-        local hostcolor="$(printf '%s' "$hostname" | sha256sum)"
+        local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
         colors[hostcolor]="no
                            0x$(echo $hostcolor | cut -b1-6)
                            0x$(echo $hostcolor | cut -b1-2)
