@@ -84,6 +84,9 @@ bmc_editor () {
     if [[ -n $DISPLAY ]] && [[ $1 != console ]]
     then
         printf 'gvim -f'
+    elif [[ -z "${OSTYPE##darwin*}" ]] && [[ $1 != console ]]
+    then
+        printf 'mvim -f'
     elif [[ $TERM = dumb ]]
     then
         printf 'ex'
