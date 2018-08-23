@@ -1,2 +1,2 @@
 SIGNATURES		= auricblue personal
-INSTALL_PAIRS	= $(foreach s,$(SIGNATURES),signature/$s .signature-$s)
+INSTALL_PAIRS	+= $(foreach s,$(SIGNATURES),signature/$s .signature-$s)
