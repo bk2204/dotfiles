@@ -1,6 +1,6 @@
 install: install-mutt
 
-MUTT_DIRS=.mutt .mutt/header_cache
+MUTT_DIRS=.mutt .mutt/header_cache .mutt/message_cache
 MUTT_DIRS_FQ=$(patsubst %,$(DESTDIR)/%,$(MUTT_DIRS))
 
 $(MUTT_DIRS_FQ):
