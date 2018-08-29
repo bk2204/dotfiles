@@ -32,7 +32,7 @@
 	# Full rebase, using merge strategies and autosquashing.
 	frebase = rebase -m -i --autosquash
 	# Noninteractive rebase with merge strategies and autosquashing.
-	srebase = "!f() { GIT_SEQUENCE_EDITOR=/bin/true git rebase -m -i --autosquash \"$@\"; };f"
+	srebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --autosquash \"$@\"; };f"
 	# Rebase using merge strategies.
 	mrebase = rebase -m
 	# List the original commit currently being rebased.
