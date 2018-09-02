@@ -210,8 +210,6 @@ EDITOR=$(bmc_editor)
 VISUAL="$EDITOR"
 GIT_MERGE_AUTOEDIT=no
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
-# Don't prompt for credentials, just fail.
-GIT_ASKPASS="/bin/echo"
 MODULE_SIGNATURE_CIPHER=SHA512
 # Don't use weird escapes in ls.
 QUOTING_STYLE=literal
