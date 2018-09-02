@@ -128,13 +128,12 @@ prompt_bmc_precmd () {
     fi
 
     local c_reset="%b%{$(prompt_bmc_reset_color)%}"
-    local parent_exe="$(readlink /proc/$PPID/exe |
-        sed -e 's/(deleted)//; s/ //')"
+    local parent_exe="$(ps -p $PPID -o comm=)"
 
     case $SHLVL:$parent_exe in
         1:*)
             psvar[4]="";;
-        *:*tmux|*:*terminal|*:*rxvt|*:*term)
+        *:*tmux*|*:*terminal|*:*rxvt|*:*term)
             psvar[4]="";;
         *:*)
             psvar[4]="($(bmc_palette tty)$SHLVL$c_reset)";;
