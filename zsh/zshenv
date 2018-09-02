@@ -213,6 +213,7 @@ XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.
 MODULE_SIGNATURE_CIPHER=SHA512
 # Don't use weird escapes in ls.
 QUOTING_STYLE=literal
+GOPATH="$HOME/checkouts/go"
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
     unset XML_CATALOG_FILES
