@@ -116,6 +116,8 @@ noremap <Leader>zw :TrailingAll<CR>
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Toggle executable bit.
 noremap <Leader>x :call <SID>ToggleExecutable()<CR>
+" Toggle large and small screen.
+nnoremap <Leader>zz :call <SID>ToggleScreenSize()<CR>
 nnoremap <Leader>pp :set paste!<CR>
 nnoremap <Leader>ll :set list!<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
@@ -142,6 +144,9 @@ endif
 
 "" Mode-specific settings.
 let s:mode = (mode(1) == 'cv' || mode(1) == 'ce') ? 'ex' : 'vi'
+
+"" Global constants.
+let s:max_lines = 102
 
 "" Autocommands.
 " Setting file type.
@@ -458,6 +463,15 @@ function! s:ScratchBuffer()
   setl bt=nofile
   setl bh=hide
   setl noswf
+endfunction
+
+function! s:ToggleScreenSize()
+  let default=24
+  if &lines == default
+    let &lines = s:max_lines
+  else
+    let &lines = default
+  endif
 endfunction
 
 "" Miscellaneous variables.
