@@ -15,6 +15,8 @@
 	mnff = merge --no-ff
 	amend = commit --amend --reset-author
 	update = commit --amend --reset-author --no-edit
+	namend = commit --amend
+	nupdate = commit --amend --no-edit
 	los = log --simplify-merges --topo-order
 	lops = log -p -C --simplify-merges --topo-order
 	lowps = log -p -C --simplify-merges --topo-order --word-diff
