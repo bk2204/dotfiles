@@ -33,10 +33,17 @@
 	stake = stash save --keep-index
 	# Full rebase, using merge strategies and autosquashing.
 	frebase = rebase -m -i --autosquash
+	# Full rebase, using merge strategies and autosquashing while keeping marks.
+	fkrebase = rebase -m -i --keep-empty --autosquash
 	# Noninteractive rebase with merge strategies and autosquashing.
 	srebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --autosquash \"$@\"; };f"
+	# Noninteractive rebase with merge strategies and autosquashing while
+	# keeping marks.
+	skrebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --keep-empty --autosquash \"$@\"; };f"
 	# Rebase using merge strategies.
 	mrebase = rebase -m
+	# Rebase using merge strategies, keeping empty commits (marks).
+	mkrebase = rebase -m --keep-empty
 	# List the original commit currently being rebased.
 	mrcommit = "!f() { local gd=\"$(git rev-parse --git-dir)\"; cat \"$gd/rebase-merge/cmt.$(cat \"$gd/rebase-merge/msgnum\")\"; };f"
 	# List the commit message for the commit currently being rebased.
