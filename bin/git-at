@@ -1,0 +1,49 @@
+#!/bin/sh
+
+summary=
+quiet=
+
+while true
+do
+    case "$1" in
+        --help|-h)
+            cat <<-EOM
+git at [--summary] [--quiet] [REVISION] REGEX
+
+Print the object ID of the first commit matching the regex.
+
+If REVISION is not specified, it defaults to HEAD.
+
+If --summary is specified, look only in the commit summary.
+
+If --quiet is specified, exit non-zero silently if no revision is found.
+EOM
+            exit 0;;
+        --summary)
+            summary=t
+            shift;;
+        --quiet)
+            quiet=--quiet
+            shift;;
+        *)
+            break;;
+    esac
+done
+
+if [ $# -eq 1 ]
+then
+    revision=HEAD
+    regex="$1"
+else
+    revision="$1"
+    regex="$2"
+fi
+
+# This behavior is tricky.  We cannot write "\n" inside an ERE, since POSIX EREs
+# do not allow escapes of this type; we must instead insert a literal newline.
+# We cannot do so with a simple printf of a newline, since command substitution
+# strips trailing newlines.  Instead, insert the entire character class in with
+# printf, which sidesteps these problems.
+[ -n "$summary" ] && regex="^$(printf "[^\n]")*$regex"
+
+exec git rev-parse $quiet --verify "${revision}^{/$regex}"
