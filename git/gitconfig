@@ -83,6 +83,9 @@
 	renames = copies
 	tool = gvimdiff
 	wsErrorHighlight = old,new
+[gc]
+	reflogExpire = 365d
+	reflogExpireUnreachable = 365d
 [hub]
 	protocol = https
 [i18n]
