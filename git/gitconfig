@@ -83,6 +83,10 @@
 	renames = copies
 	tool = gvimdiff
 	wsErrorHighlight = old,new
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	process = git-lfs filter-process
+	smudge = git-lfs smudge -- %f
 [gc]
 	reflogExpire = 365d
 	reflogExpireUnreachable = 365d
