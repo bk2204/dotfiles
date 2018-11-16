@@ -69,6 +69,9 @@ setup_temp () {
     do
         if [[ -n $i ]]
         then
+            # Remove trailing slash.
+            i=$(echo "$i" | sed -e 's,/*$,,')
+
             # This is the POSIX variable.
             export TMPDIR="$i"
             export TEMPDIR="$i"
