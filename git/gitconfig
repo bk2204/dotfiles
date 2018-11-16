@@ -66,29 +66,37 @@
 	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
 	# Describe a revision in a form suitable for a commit message.
 	describe-rev = show -s --date=short --pretty='format:%h (\"%s\", %ad)'
-[i18n]
-	commitencoding = UTF-8
-[repack]
-	UseDeltaBaseOffset = true
-[transfer]
-	unpackLimit = 5
-[url "https://bmc@git.crustytoothpaste.net/git/bmc/"]
-	insteadOf = dct:
-[url "git@git.crustytoothpaste.net:/bmc/"]
-	insteadOf = dcts:
-[url "git@github.com:bk2204/"]
-	insteadOf = gh:
-[url "https://github.com/"]
-	insteadOf = ghp:
-[push]
-	default = matching
-[pull]
-	rebase = false
+[advice]
+	ignoredHook = false
+	waitingForEditor = false
 [color]
 	ui = auto
 [color.diff]
 	new = 34
 	old = 203
+[core]
+	precomposeUnicode = true
+	logAllRefUpdates = true
+[diff]
+	algorithm = histogram
+	indentHeuristic = true
+	renames = copies
+	tool = gvimdiff
+	wsErrorHighlight = old,new
+[i18n]
+	commitEncoding = UTF-8
+[log]
+	decorate = false
+[merge]
+	conflictStyle = diff3
+[pull]
+	rebase = false
+[push]
+	default = matching
+[repack]
+	useDeltaBaseOffset = true
+[rerere]
+	enabled = true
 [sendemail]
 	smtpuser = bmc
 	smtppass =
@@ -102,24 +110,16 @@
 	confirm = always
 	composeencoding = UTF-8
 	chainreplyto = false
-[diff]
-	renames = copies
-	algorithm = histogram
-	indentheuristic = true
-	wserrorhighlight = old,new
-	tool = gvimdiff
-[merge]
-	conflictstyle = diff3
 [submodule]
-	fetchjobs = 4
-[core]
-	precomposeunicode = true
-	logAllRefUpdates = true
-[rerere]
-	enabled = true
-[log]
-	decorate = false
-[advice]
-	ignoredHook = false
-	waitingForEditor = false
+	fetchJobs = 4
+[transfer]
+	unpackLimit = 5
+[url "https://bmc@git.crustytoothpaste.net/git/bmc/"]
+	insteadOf = dct:
+[url "git@git.crustytoothpaste.net:/bmc/"]
+	insteadOf = dcts:
+[url "git@github.com:bk2204/"]
+	insteadOf = gh:
+[url "https://github.com/"]
+	insteadOf = ghp:
 # vim: set noet:
