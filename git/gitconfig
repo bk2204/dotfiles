@@ -76,7 +76,7 @@
 	old = 203
 [core]
 	precomposeUnicode = true
-	logAllRefUpdates = always
+	logAllRefUpdates = true
 [diff]
 	algorithm = histogram
 	indentHeuristic = true
