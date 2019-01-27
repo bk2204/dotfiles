@@ -234,6 +234,7 @@ if v:version >= 702
   augroup events
     au FileChangedShellPost * AirlineRefresh
     au FileType             * call s:AdjustLinters()
+    au BufWinEnter          * call s:SetLSPRoot()
   augroup end
 endif
 
@@ -477,6 +478,31 @@ function! s:ToggleScreenSize()
     let &lines = s:max_lines
   else
     let &lines = default
+  endif
+endfunction
+
+function! s:FindLSPRoot()
+  let buffer = bufnr("%")
+
+  " If we're in a submodule, .git will often, but not always, be a file, not a
+  " directory. Check both and pick the more deeply nested one.
+  let git_file = fnamemodify(ale#path#FindNearestFile(buffer, '.git'), ':h')
+  let git_dir = fnamemodify(ale#path#FindNearestDirectory(buffer, '.git'), ':h:h')
+
+  if empty(git_file)
+      return git_dir
+  elseif empty(git_dir)
+      return git_file
+  endif
+
+  return len(git_file) > len(git_dir) ? git_file : git_dir
+endfunction
+
+function! s:SetLSPRoot()
+  let root = s:FindLSPRoot()
+
+  if !empty(root)
+    let b:ale_lsp_root = root
   endif
 endfunction
 
