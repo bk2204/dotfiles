@@ -179,6 +179,7 @@ augroup setf
   au BufEnter,BufRead,BufNewFile *.pir                    setf pir
   au BufEnter,BufRead,BufNewFile *.iced                   setf coffee
   au BufEnter,BufRead,BufNewFile lib6/*.pm                setf perl6
+  au BufEnter,BufRead,BufNewFile *.ronn                   setf markdown
 augroup end
 
 " File type-specific parameters.
