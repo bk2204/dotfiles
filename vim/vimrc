@@ -126,6 +126,13 @@ noremap <Leader>x :call <SID>ToggleExecutable()<CR>
 nnoremap <Leader>zz :call <SID>ToggleScreenSize()<CR>
 nnoremap <Leader>pp :set paste!<CR>
 nnoremap <Leader>ll :set list!<CR>
+" Navigate to errors, warnings, and definitions.
+nnoremap <Leader>gg :ALEFirst<CR>
+nnoremap <Leader>gG :ALELast<CR>
+nnoremap <Leader>gn :ALENextWrap<CR>
+nnoremap <Leader>gN :ALEPreviousWrap<CR>
+nnoremap <Leader>gs :ALEDetail<CR>
+nnoremap <Leader>gj :ALEGoToDefinition<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
 noremap <C-A> <Nop>
