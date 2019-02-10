@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 summary=
 quiet=
@@ -44,6 +44,6 @@ fi
 # We cannot do so with a simple printf of a newline, since command substitution
 # strips trailing newlines.  Instead, insert the entire character class in with
 # printf, which sidesteps these problems.
-[ -n "$summary" ] && regex="^$(printf "[^\n]")*$regex"
+[ -z "$summary" ] || regex="^$(printf "[^\n]")*$regex"
 
 exec git rev-parse $quiet --verify "${revision}^{/$regex}"
