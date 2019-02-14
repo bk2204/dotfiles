@@ -561,6 +561,10 @@ let g:bufExplorerShowNoName = 1
 let g:bufExplorerShowUnlisted = 1
 let g:bufExplorerSortBy = 'name'
 
+let g:ale_linters = {
+  \ 'go': ['bingo', 'gofmt', 'golint', 'go vet'],
+  \ }
+
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
 
