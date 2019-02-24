@@ -10,7 +10,7 @@ has_locale () {
 }
 
 preferred_locale () {
-    local locale=$(printf "$LANG\n" | sed -e 's/.utf8$/.UTF-8/')
+    local locale=$(sed -e 's/.utf8$/.UTF-8/' <<<"$LANG")
     # If we're using English, prefer US English; otherwise, accept English,
     # Spanish, or French locales.  Otherwise, fall back to US English.
     if [[ -z ${locale##en*.UTF-8} ]] && has_locale 'en_US.UTF-8'; then
@@ -70,7 +70,7 @@ setup_temp () {
         if [[ -n $i ]]
         then
             # Remove trailing slash.
-            i=$(echo "$i" | sed -e 's,/*$,,')
+            i=$(sed -e 's,/*$,,' <<<"$i")
 
             # This is the POSIX variable.
             export TMPDIR="$i"
