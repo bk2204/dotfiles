@@ -310,8 +310,12 @@ setup_colors () {
     export LESS_TERMCAP_so=$(print -P $(bmc_palette standout))
     export LESS_TERMCAP_ue=$(print -P $(color_reset))
     export LESS_TERMCAP_us=$(print -P $(bmc_palette underline))
-    export GREP_COLORS=fn=$(bmc_palette_ansi grep)
     export CLICOLOR=1
+
+    if !grep -qs Microsoft /proc/version 2>/dev/null
+    then
+        export GREP_COLORS=fn=$(bmc_palette_ansi grep)
+    fi
 }
 setup_autoload () {
     local func i
