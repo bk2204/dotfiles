@@ -50,12 +50,17 @@ bmc_palette () {
     # the hostname is broken, it will take forever to render our prompt.
     if [[ $color = hostcolor ]]
     then
-        local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
-        local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
-        colors[hostcolor]="no
-                           0x$(echo $hostcolor | cut -b1-6)
-                           0x$(echo $hostcolor | cut -b1-2)
-                           white"
+        if grep -qs Microsoft /proc/version 2>/dev/null
+        then
+            colors[hostcolor]="no 0xffffff 15 white"
+        else
+            local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
+            local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
+            colors[hostcolor]="no
+                               0x$(cut -b1-6 <<<"$hostcolor")
+                               0x$(cut -b1-2 <<<"$hostcolor")
+                               white"
+        fi
     fi
 
     local expanded="$colors[$color]"
