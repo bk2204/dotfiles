@@ -181,7 +181,7 @@ endif
 let s:mode = (mode(1) == 'cv' || mode(1) == 'ce') ? 'ex' : 'vi'
 
 "" Global constants.
-let s:max_lines = 97
+let s:max_lines = 106
 
 "" Autocommands.
 " Setting file type.
