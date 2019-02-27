@@ -7,6 +7,7 @@ $(MUTT_DIRS_FQ):
 	mkdir -p "$@"
 
 install-mutt: $(MUTT_DIRS_FQ)
+	touch "$(DESTDIR)/.mutt/aliases"
 
 INSTALL_PAIRS	+= mutt/muttrc .muttrc
 INSTALL_PAIRS	+= mutt/config .mutt/config
