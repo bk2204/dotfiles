@@ -404,6 +404,13 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
   call cttidy#for_range(a:start, a:end, 's/' . pattern . '//g', 'silent!')
 endfunction
 
+function! s:FixSpellingHighlighting()
+  " Don't flag words with capitalized letters. These are often class or method
+  " names, and camel case words are not usually in the dictionary.
+  syn match bmcCapitalizedWords +\<\w*[A-Z]\K*\>+ contains=@NoSpell transparent
+  syn cluster Spell add=bmcCapitalizedWords
+endfunction
+
 function! s:SetUpLanguageHooks()
   if has("perl") && isdirectory(expand("$HOME") . '/lib/perl5')
     perl splice @INC, -1, 0, "$ENV{'HOME'}/lib/perl5"
