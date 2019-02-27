@@ -118,6 +118,8 @@
 	suppresscc = self
 	suppresscc = sob
 	assume8bitEncoding = UTF-8
+	aliasesFile = ~/.mutt/aliases
+	aliasFileType = mutt
 	confirm = always
 	composeencoding = UTF-8
 	chainreplyto = false
