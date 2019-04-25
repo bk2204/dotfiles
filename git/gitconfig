@@ -68,6 +68,10 @@
 	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
 	# Describe a revision in a form suitable for a commit message.
 	describe-rev = show -s --date=short --pretty='format:%h (\"%s\", %ad)'
+	# Squashes a commit matching the given commit message.
+	squash = "!f() { if [ \"$1\" = -s ]; then s=-s; shift; fi; d=\"$1\"; shift; git commit --squash $(git at --no-fixup $s \"$d\") \"$@\"; };f"
+	# Like above, but a fixup commit instead of a squash.
+	fixup = "!f() { if [ \"$1\" = -s ]; then s=-s; shift; fi; d=\"$1\"; shift; git commit --fixup $(git at --no-fixup $s \"$d\") \"$@\"; }; f"
 [advice]
 	ignoredHook = false
 	waitingForEditor = false
