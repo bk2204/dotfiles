@@ -1,0 +1,4 @@
+= brian m. carlson's dotfiles
+
+These are brian m. carlson's dotfiles. Things that may interest you include the
+configuration files for Vim, zsh, and tmux.
