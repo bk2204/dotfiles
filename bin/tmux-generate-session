@@ -1,0 +1,109 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'tempfile'
+
+class Session
+  attr_accessor :name
+
+  def initialize(file)
+    @file = file
+    @rules = [:session]
+  end
+
+  def add_rule(r)
+    @rules << case r[0]
+              when 'q'
+                %i[new quad]
+              when 'v'
+                %i[new vertical]
+              when 'h'
+                %i[new horizontal]
+              end
+  end
+
+  def write
+    seen = false
+
+    # Since the new session creates a new window, remove the first :new from the
+    # list.
+    rules = @rules.flatten.reject do |r|
+      c = r == :new && !seen
+      seen = true if c
+      c
+    end
+    commands = rules.map { |rule| serialize(rule) }
+    @file.puts commands
+  end
+
+  private
+
+  def serialize(rule)
+    case rule
+    when :session
+      ['new-session' + (name ? " -s #{name}" : '')]
+    when :new
+      ['new-window']
+    when :quad
+      [
+        'split-window -h',
+        'split-window -v',
+        'select-pane -L',
+        'split-window -v',
+      ]
+    when :vertical
+      ['split-window -h']
+    when :horizontal
+      ['split-window -v']
+    else
+      raise "Unknown rule type #{rule}"
+    end
+  end
+end
+
+def parse_options(args)
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-n NAME', '--name NAME', 'Specify session name') do |name|
+      options[:name] = name
+    end
+
+    opts.on('--help', 'Print this usage information') do
+      puts opts
+
+      puts <<-HELP.gsub(/^\s+/, '')
+      Create a new tmux session with windows configured according to the
+      argument.
+
+      For each letter in the argument, create a new window with that pane configuration:
+      v: two side-by-side windows
+      h: two windows, one on top of the other
+      q: four-way split window (vertically, then horizontally)
+
+      Example: #{$PROGRAM_NAME} qvh
+      HELP
+
+      options[:help] = true
+    end
+  end.parse!(args)
+  raise "Argument required" unless options[:help] || args.length > 0
+  [options, args]
+end
+
+def main(args)
+  f = Tempfile.new
+  opts, args = parse_options(args)
+  return 0 if opts[:help]
+  s = Session.new(f)
+  s.name = opts[:name]
+  args[0].each_char { |c| s.add_rule(c) }
+  s.write
+  f.close
+  system 'tmux', 'source-file', f.path
+  0
+rescue StandardError => e
+  $stderr.puts "E: #{e}"
+  2
+end
+
+exit main(ARGV) if $PROGRAM_NAME == __FILE__
