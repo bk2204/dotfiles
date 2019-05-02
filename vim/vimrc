@@ -44,6 +44,7 @@ set nojs
 set tw=80
 set bs=indent,eol,start
 set wrap
+set mps+=<:>
 set nf=alpha,hex,octal  " Make Ctrl-S and Ctrl-X work on text.
 
 " Loading files.
