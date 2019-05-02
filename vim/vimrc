@@ -181,6 +181,7 @@ augroup setf
   au BufEnter,BufRead,BufNewFile *.iced                   setf coffee
   au BufEnter,BufRead,BufNewFile lib6/*.pm                setf perl6
   au BufEnter,BufRead,BufNewFile *.ronn                   setf markdown
+  au BufEnter,BufRead,BufNewFile PULLREQ_EDITMSG          setf markdown
 augroup end
 
 " File type-specific parameters.
@@ -207,6 +208,11 @@ augroup setl
   au FileType scss          setl tw=0
   au FileType vim           setl ts=2 sw=2 sts=2
   au FileType xslt          setl tw=0 ts=2 sw=2 sts=2
+augroup end
+
+" File-specific parameters.
+augroup setl-file
+  au BufEnter,BufRead,BufNewFile PULLREQ_EDITMSG  setl tw=0
 augroup end
 
 " Language-specific variables.
