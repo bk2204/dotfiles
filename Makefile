@@ -22,7 +22,7 @@ install-dirs:
 	mkdir -p $(DESTDIR)/.local/share
 
 install-standard:
-	printf "%s %s\n" $(INSTALL_PAIRS) | (while read src dest; \
+	printf "%s %s\n" $(INSTALL_PAIRS) | (set -e; while read src dest; \
 		do \
 			if [ -d "$$src" ]; \
 			then \
