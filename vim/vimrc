@@ -134,6 +134,7 @@ nnoremap <Leader>gn :ALENextWrap<CR>
 nnoremap <Leader>gN :ALEPreviousWrap<CR>
 nnoremap <Leader>gs :ALEDetail<CR>
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
+inoremap <C-X><C-U> <C-\><C-O>:ALEComplete<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
 noremap <C-A> <Nop>
