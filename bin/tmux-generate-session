@@ -68,6 +68,10 @@ def parse_options(args)
       options[:name] = name
     end
 
+    opts.on('--print', 'Print the commands instead of executing them') do
+      options[:command] = :print
+    end
+
     opts.on('--help', 'Print this usage information') do
       puts opts
 
@@ -99,7 +103,11 @@ def main(args)
   args[0].each_char { |c| s.add_rule(c) }
   s.write
   f.close
-  system 'tmux', 'source-file', f.path
+  if opts[:command] == :print
+    puts File.read(f.path)
+  else
+    system 'tmux', 'source-file', f.path
+  end
   0
 rescue StandardError => e
   $stderr.puts "E: #{e}"
