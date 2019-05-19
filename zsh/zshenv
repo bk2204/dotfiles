@@ -42,6 +42,10 @@ is_ssh_session () {
     [[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
 }
 
+is_docker_session () {
+    [[ -e /proc/1/cgroup ]] && grep -qs docker /proc/1/cgroup
+}
+
 # Return true if our home directory is owned by someone other than us.
 is_privileged () {
     zmodload -F zsh/stat b:zstat

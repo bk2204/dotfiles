@@ -126,6 +126,17 @@ set_sane_term () {
         esac
         return 0
     fi
+    if is_docker_session
+    then
+        case $TERM in
+            xterm*)
+                # We're logging in from a tmux session.
+                export COLORTERM=truecolor;;
+            *)
+                ;;
+        esac
+        return 0
+    fi
     local parent_exe="$(ps -p $PPID -o comm=)"
     case "$TERM:$parent_exe" in
         xterm:*vim*)
