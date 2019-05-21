@@ -9,5 +9,6 @@ install: install-vim
 
 install-vim: install-dirs
 	mkdir -p $(DESTDIR)/.vim
-	ln -sf $(DESTDIR)/.config/nvim ../.vim
-	ln -sf $(DESTDIR)/.vim/init.vim ../.vimrc
+	mkdir -p $(DESTDIR)/.config
+	ln -sf ../.vim $(DESTDIR)/.config/nvim
+	ln -sf ../.vimrc $(DESTDIR)/.vim/init.vim
