@@ -585,7 +585,9 @@ let g:bufExplorerSortBy = 'name'
 
 let g:ale_linters = {
   \ 'go': ['bingo', 'gofmt', 'golint', 'go vet'],
+  \ 'rust': ['cargo', 'rls'],
   \ }
+let g:ale_rust_rls_toolchain = ''
 
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
