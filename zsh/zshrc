@@ -255,6 +255,7 @@ setup_colors () {
     export LESS_TERMCAP_ue=$(print -P $(color_reset))
     export LESS_TERMCAP_us=$(print -P $(bmc_palette underline))
     export CLICOLOR=1
+    export LSCOLORS=ExGxfxdxCxDxDxhBhBaCeC
 
     if !grep -qs Microsoft /proc/version 2>/dev/null
     then
