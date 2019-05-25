@@ -132,7 +132,8 @@ nnoremap <Leader>gg :ALEFirst<CR>
 nnoremap <Leader>gG :ALELast<CR>
 nnoremap <Leader>gn :ALENextWrap<CR>
 nnoremap <Leader>gN :ALEPreviousWrap<CR>
-nnoremap <Leader>gs :ALEDetail<CR>
+nnoremap <Leader>gd :ALEDetail<CR>
+nnoremap <Leader>gs :ALEHover<CR>
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
 nnoremap <Leader>b :ALEFix<CR>
 inoremap <C-X><C-U> <C-\><C-O>:ALEComplete<CR>
