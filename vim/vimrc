@@ -74,7 +74,7 @@ if has("gui_running")
   set go-=tT      " Disable tearoffs and toolbar.
 endif
 if has("gui_gtk")
-  set gfn=Fira\ Code\ 8,Hack\ 8,Source\ Code\ Pro\ 8,Noto\ Mono\ Regular\ 8,Monospace\ 8
+  set gfn=Source\ Code\ Pro\ 8,Noto\ Mono\ Regular\ 8,Monospace\ 8
 endif
 if has("gui_macvim")
   set gfn=FiraCode-Regular:h8
@@ -162,7 +162,7 @@ endif
 let s:mode = (mode(1) == 'cv' || mode(1) == 'ce') ? 'ex' : 'vi'
 
 "" Global constants.
-let s:max_lines = 102
+let s:max_lines = 94
 
 "" Autocommands.
 " Setting file type.
