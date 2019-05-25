@@ -576,8 +576,6 @@ let g:ctrlp_clear_cache_on_exit = 0
 " EditorConfig settings.
 let g:EditorConfig_max_line_indicator = 'none'
 
-let g:cttidy_theme = 'bmc'
-
 let g:bufExplorerDisableDefaultKeyMapping = 1
 let g:bufExplorerShowNoName = 1
 let g:bufExplorerShowUnlisted = 1
