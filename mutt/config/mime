@@ -17,6 +17,9 @@ set forward_edit=yes
 set honor_followup_to=yes
 set metoo=no
 set use_envelope_from=yes
+# Replies.
+set date_format="!%F at %T"
+set attribution="On %D, %n wrote:"
 # MIME.
 alternative_order application/pgp text/plain
 unalternative_order text/html
