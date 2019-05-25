@@ -134,6 +134,7 @@ nnoremap <Leader>gn :ALENextWrap<CR>
 nnoremap <Leader>gN :ALEPreviousWrap<CR>
 nnoremap <Leader>gs :ALEDetail<CR>
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
+nnoremap <Leader>b :ALEFix<CR>
 inoremap <C-X><C-U> <C-\><C-O>:ALEComplete<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
@@ -584,6 +585,11 @@ let g:bufExplorerSortBy = 'name'
 let g:ale_linters = {
   \ 'go': ['bingo', 'gofmt', 'golint', 'go vet'],
   \ 'rust': ['cargo', 'rls'],
+  \ }
+let g:ale_fixers = {
+  \ 'go': ['goimports'],
+  \ 'perl': ['perltidy'],
+  \ 'rust': ['rustfmt'],
   \ }
 let g:ale_rust_rls_toolchain = ''
 
