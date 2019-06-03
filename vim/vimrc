@@ -136,7 +136,6 @@ nnoremap <Leader>gd :ALEDetail<CR>
 nnoremap <Leader>gs :ALEHover<CR>
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
 nnoremap <Leader>b :ALEFix<CR>
-inoremap <C-X><C-U> <C-\><C-O>:ALEComplete<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
 noremap <C-A> <Nop>
@@ -255,7 +254,7 @@ if v:version >= 702
   augroup events
     au FileChangedShellPost * AirlineRefresh
     au FileType             * call s:AdjustLinters()
-    au BufWinEnter          * call s:SetLSPRoot()
+    au BufWinEnter          * call s:LoadLSP()
   augroup end
 endif
 
@@ -537,6 +536,19 @@ function! s:SetLSPRoot()
   if !empty(root)
     let b:ale_lsp_root = root
   endif
+endfunction
+
+function! s:LoadLSP()
+  call <SID>SetLSPRoot()
+
+  let linters = ale#linter#Get(&ft)
+
+  for i in linters
+    if !empty(i['lsp'])
+      setl omnifunc=ale#completion#OmniFunc
+      break
+    endif
+  endfor
 endfunction
 
 "" Miscellaneous variables.
