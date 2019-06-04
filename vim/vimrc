@@ -418,7 +418,19 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
     let pattern = s:SetWhitespacePatternGeneral() . '$'
   endif
   echo 's/' . pattern . '//g'
-  call cttidy#for_range(a:start, a:end, 's/' . pattern . '//g', 'silent!')
+  call <SID>ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
+endfunction
+
+function! s:ForRange(start, end, command, ...)
+	let winview = winsaveview()
+	let text = ":"
+	" Optional prefix.  Can be used for :silent
+	if a:0
+		let text .= a:1 . " "
+	endif
+	let text .= a:start . "," . a:end . a:command
+	execute text
+	call winrestview(winview)
 endfunction
 
 function! s:FixSpellingHighlighting()
