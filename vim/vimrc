@@ -48,7 +48,7 @@ set mps+=<:>
 set nf=alpha,hex,octal  " Make Ctrl-S and Ctrl-X work on text.
 
 " Loading files.
-set ml          " Modelines are nice.
+set noml        " We use securemodelines instead.
 set enc=utf-8   " Always use UTF-8.
 set tenc=utf-8
 set wim=longest,full
