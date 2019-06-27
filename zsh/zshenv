@@ -147,6 +147,7 @@ manpath=(
 path=(
     ~/bin
     ~/.rvm/bin
+    ~/.cargo/bin
     /usr/local/bin
     /usr/local/sbin
     /usr/bin
