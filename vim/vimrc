@@ -417,7 +417,6 @@ function! s:ClearTrailingWhitespace(start, end, pattern)
   else
     let pattern = s:SetWhitespacePatternGeneral() . '$'
   endif
-  echo 's/' . pattern . '//g'
   call <SID>ForRange(a:start, a:end, 's/' . pattern . '//g', 'silent!')
 endfunction
 
@@ -494,7 +493,6 @@ function! s:EditNotes(...)
     let docpath = expand('$HOME') . '/Documents'
   endif
   let notespath = docpath . '/notes'
-  echo len(a:000)
   if len(a:000) == 1
     let file = a:1
   else
