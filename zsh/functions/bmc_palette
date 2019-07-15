@@ -56,6 +56,10 @@ bmc_palette () {
         else
             local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
             local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
+
+            # In Docker, use the hostname as the color instead of a hash of it.
+            grep -qs docker /proc/1/cgroup && grep -qsE '^[a-f0-9]{6}' <<<"$hostname" && hostcolor="$hostname"
+
             colors[hostcolor]="no
                                0x$(cut -b1-6 <<<"$hostcolor")
                                0x$(cut -b1-2 <<<"$hostcolor")
