@@ -102,6 +102,7 @@
 	commitEncoding = UTF-8
 [log]
 	decorate = false
+	mailmap = true
 [merge]
 	conflictStyle = diff3
 [pull]
