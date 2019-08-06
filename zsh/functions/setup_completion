@@ -154,4 +154,9 @@ setup_completion () {
     function __git_files () {
         _wanted files expl 'local files' _files
     }
+
+    # Map "git co" to use the same options as "git checkout".
+    function _git-co() {
+        _git-checkout "$@"
+    }
 }
