@@ -75,8 +75,15 @@ has_term () {
     TERM=$termname silent echotc xo 2>/dev/null
 }
 set_if_has_term () {
-    local termname="$1"
-    has_term "$termname" && export TERM="$termname";
+    local termname
+    for termname in "$@"
+    do
+        if has_term "$termname"
+        then
+            export TERM="$termname";
+            break
+        fi
+    done
 }
 set_sane_term () {
     local i
@@ -102,6 +109,9 @@ set_sane_term () {
             if [[ -z ${TERM##screen*} ]]
             then
                 preferred=(screen-256color screen vt220)
+            elif [[ -z ${TERM:#tmux*} ]]
+            then
+                preferred=(tmux-256color screen-256color tmux screen vt220)
             elif [[ -z ${TERM:#*256color} ]]
             then
                 preferred=(xterm-256color xterm vt220)
@@ -147,7 +157,7 @@ set_sane_term () {
             set_if_has_term konsole-256color;;
         screen*:*tmux*)
             is_ssh_session && EDITOR=$(bmc_editor console)
-            set_if_has_term screen-256color;;
+            set_if_has_term tmux-256color screen-256color;;
         screen*:*)
             EDITOR=$(bmc_editor console)
             set_if_has_term screen-256color;;
