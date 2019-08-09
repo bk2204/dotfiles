@@ -141,6 +141,7 @@ set_sane_term () {
         case $TERM in
             xterm*)
                 # We're logging in from a tmux session.
+                set_if_has_term xterm-256color
                 export COLORTERM=truecolor;;
             *)
                 ;;
