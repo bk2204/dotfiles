@@ -122,7 +122,7 @@ prompt_bmc_precmd () {
         case $TERM in
             xterm*|gnome*)
                 print -Pn "\e]0;$statusline\a";;
-            screen*)
+            screen*|tmux*)
                 print -Pn "\ek$statusline\e\\";;
         esac
     fi
