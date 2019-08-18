@@ -474,14 +474,23 @@ function! s:ModulePath(module)
 endfunction
 
 function! s:ToggleExecutable()
-  if has("perl")
+  if has("ruby") || has("perl")
     setl ar
-    perl <<EOM
-    my $file = VIM::Eval('expand("%")');
-    my $mode = (stat($file))[2] & 07777;
-    $mode ^= (00111 & ~umask);
-    chmod($mode, $file);
+    if has("ruby")
+      ruby <<EOM
+      file = Vim::evaluate('expand("%")')
+      mode = File.stat(file).mode & 0777
+      mode ^= (00111 & ~File.umask)
+      File.chmod(mode, file)
 EOM
+    else
+      perl <<EOM
+      my $file = VIM::Eval('expand("%")');
+      my $mode = (stat($file))[2] & 07777;
+      $mode ^= (00111 & ~umask);
+      chmod($mode, $file);
+EOM
+    endif
     exe "checktime " . bufnr("%")
     set ar<
   endif
