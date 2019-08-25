@@ -40,7 +40,6 @@ endif
 if v:version > 704 || (v:version == 704 && has("patch785"))
   set nofixeol
 endif
-set nojs
 set tw=80
 set bs=indent,eol,start
 set wrap
