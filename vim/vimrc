@@ -77,7 +77,7 @@ if has("gui_gtk")
   set gfn=Source\ Code\ Pro\ 8,Noto\ Mono\ Regular\ 8,Monospace\ 8
 endif
 if has("gui_macvim")
-  set gfn=FiraCode-Regular:h8
+  set gfn=SourceCodePro-Regular:h8
 endif
 
 "" Terminal issues.
