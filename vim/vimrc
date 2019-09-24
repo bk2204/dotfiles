@@ -618,7 +618,7 @@ let g:bufExplorerShowUnlisted = 1
 let g:bufExplorerSortBy = 'name'
 
 let g:ale_linters = {
-  \ 'go': ['bingo', 'gofmt', 'golint', 'go vet'],
+  \ 'go': ['gopls', 'gofmt', 'golint', 'go vet'],
   \ 'rust': ['cargo', 'rls'],
   \ }
 let g:ale_fixers = {
