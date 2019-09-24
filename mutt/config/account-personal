@@ -1,6 +1,6 @@
 # SMTP.
 set smtp_url=smtp://bmc@smtp.crustytoothpaste.net:587/
-set smtp_authenticators="gssapi:digest-md5:cram-md5"
+set smtp_authenticators="gssapi"
 set connect_timeout=15
 # IMAP.
 set imap_user=bmc
@@ -8,7 +8,7 @@ set imap_passive=no
 set imap_check_subscribed=yes
 set imap_peek=no
 set imap_idle=yes
-set imap_authenticators="gssapi:digest-md5:cram-md5"
+set imap_authenticators="gssapi"
 set imap_check_subscribed=yes
 set imap_list_subscribed=yes
 set imap_headers="X-CRM114-STATUS"
