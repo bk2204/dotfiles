@@ -1,0 +1,8 @@
+name: misc
+root: ~/
+windows:
+  - 0:
+      layout: even-horizontal
+      panes:
+        - ""
+        - ""

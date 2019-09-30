@@ -1,0 +1,34 @@
+name: home
+root: ~/
+windows:
+  - 0:
+      layout: even-horizontal
+      panes:
+        - neomutt
+        - ""
+  - 1:
+      layout: even-horizontal
+      panes:
+        - ""
+        - sudo aptitude
+  - 2:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 3:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 4:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
