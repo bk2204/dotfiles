@@ -22,6 +22,7 @@
 	los = log --simplify-merges --topo-order
 	lops = log -p -C --simplify-merges --topo-order
 	lowps = log -p -C --simplify-merges --topo-order --word-diff
+	oneline = log --format=oneline
 	gr = log --graph --decorate
 	grs = log --graph --decorate --simplify-merges
 	sui = submodule update --init
