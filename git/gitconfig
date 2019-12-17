@@ -95,8 +95,8 @@
 	process = git-lfs filter-process
 	smudge = git-lfs smudge -- %f
 [gc]
-	reflogExpire = 365d
-	reflogExpireUnreachable = 365d
+	reflogExpire = "365 days"
+	reflogExpireUnreachable = "365 days"
 [hub]
 	protocol = https
 [i18n]
