@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+#
+#/ format-text [FILE...]
+#/
+#/ Formats text in the specified files or from stding, removing newlines within
+#/ a paragraph.
+
+if ARGV[0] == "--help"
+  puts File.read($0).each_line.select { |l| l.start_with?("#/") }.
+    map { |l| l.gsub(/^#\/ ?/, '') }
+  exit 0
+end
+
+puts ARGF.read.split("\n\n").map { |c| c.gsub("\n", ' ') }.join("\n\n")
