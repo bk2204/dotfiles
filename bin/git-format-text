@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+#/ git-format-text COMMIT
+#/
+#/ Formats the body of the Git commit log message for the given commit, removing
+#/ newlines within a paragraph.
+
+if [ "$1" = "--help" ]
+then
+    grep "^#/" "$0" | cut -b4-
+    exit 0
+fi
+
+exec git log -1 --format="%b" | format-text
