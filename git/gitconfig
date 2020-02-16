@@ -56,6 +56,8 @@
 	# Find the branch mark commit at the base of the given branch (or the
 	# current one).
 	mark="!f() { local m=\"${1:-$(git rev-parse --abbrev-ref HEAD)}\"; git rev-parse --verify \":/^:$m\n\"; };f"
+	# Print a range for this branch at the given time, starting at the mark.
+	range="!f() { local b=\"$(git rev-parse --abbrev-ref HEAD)\"; local head=\"$(git rev-parse \"$b@{${1:-now}}\")\"; echo \"$(git at -s \"$head\" \"^:$b\")..$head\"; };f"
 	# Import a tarball in such a way as to produce predictable SHA-1 values.
 	setup = "!f() { git init && git add -f . && GIT_COMMITTER_DATE=1000684800 GIT_AUTHOR_DATE=1000684800 git commit -m 'initial import' && git tag start; };f"
 	# Import patches in such a way as to produce predictable SHA-1 values.
