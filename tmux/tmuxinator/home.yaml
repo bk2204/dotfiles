@@ -4,7 +4,7 @@ windows:
   - 0:
       layout: even-horizontal
       panes:
-        - neomutt
+        - mutt
         - ""
   - 1:
       layout: even-horizontal
