@@ -627,6 +627,7 @@ let g:ale_fixers = {
   \ 'rust': ['rustfmt'],
   \ }
 let g:ale_rust_rls_toolchain = ''
+let g:ale_rust_cargo_use_clippy = isdirectory(expand("$HOME") . '/.cargo')
 
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
