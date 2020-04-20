@@ -288,9 +288,6 @@ else
     umask 022
 fi
 
-# Prevent tampering with our config.
-unsetopt globalrcs
-
 if [[ -z $BMC_TEST ]]
 then
     # Nuke dupes.
