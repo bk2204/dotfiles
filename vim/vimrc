@@ -110,9 +110,9 @@ endif
 "" Maps.
 " Show highlighting groups under cursor.
 noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-" "* is hard to type.  Map it to something easier.
-noremap <Leader><Leader> "*
-noremap <Leader>c "+
+" "+ is hard to type.  Map it to something easier.
+noremap <Leader><Leader> "+
+noremap <Leader>c "*
 noremap <Leader>s "_
 noremap <Leader>d "_d
 " Trim trailing whitespace.
