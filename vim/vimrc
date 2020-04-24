@@ -583,7 +583,7 @@ function! s:SetGUIOptions()
 
     " If we're in a GTK+ (Linux) Vim GUI…
     if has("gui_gtk")
-      set gfn=Source\ Code\ Pro\ 12,Noto\ Mono\ Regular\ 12,Monospace\ 12
+      set gfn=Source\ Code\ Pro\ 8,Noto\ Mono\ Regular\ 8,Monospace\ 8
     endif
     " If we're using MacVim…
     if has("gui_macvim")
@@ -591,7 +591,7 @@ function! s:SetGUIOptions()
     endif
     " If we're in a Neovim GUI, such as Neovim-GTK…
     if has("nvim")
-      Guifont SourceCodePro:h12
+      Guifont SourceCodePro:h8
     endif
   endif
 endfunction
