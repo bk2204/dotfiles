@@ -139,7 +139,7 @@ prompt_bmc_precmd () {
             psvar[4]="($(bmc_palette tty)$SHLVL$c_reset)";;
     esac
 
-    prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info
+    prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info 2>/dev/null
 }
 
 prompt_bmc_need_refresh () {
