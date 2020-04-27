@@ -103,6 +103,8 @@
 	protocol = https
 [i18n]
 	commitEncoding = UTF-8
+[lfs]
+	largeFileWarning = false
 [log]
 	decorate = false
 	mailmap = true
