@@ -112,7 +112,7 @@ prompt_bmc_precmd () {
     fi
 
     local curstatus
-    [[ -n $TMUX ]] && curstatus="$(tmux display-message -p '#W')"
+    [[ -n $TMUX ]] && curstatus="$(tmux display-message -p '#W' 2>/dev/null)"
 
     # Update prompt unless the title starts with a ZWSP (U+200B) or colon.
     local zwsp="$(printf '\342\200\213')"
