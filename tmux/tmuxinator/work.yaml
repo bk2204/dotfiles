@@ -1,0 +1,51 @@
+
+name: work
+root: ~/
+windows:
+  - 0:
+      layout: even-horizontal
+      panes:
+        - ""
+        - ""
+  - 1:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 2:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 3:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 4:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 5:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 6:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
