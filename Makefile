@@ -1,9 +1,11 @@
 DESTDIR	?=	$(HOME)
 
+LINK_PAIRS += .local/share/gems .gem
+
 all:
 	@echo To install, set DESTDIR and run make install.
 
-install: install-dirs install-standard
+install: install-links install-dirs install-standard
 
 include bin/rules.mk
 include git/rules.mk
@@ -20,6 +22,13 @@ install-dirs:
 	mkdir -p $(DESTDIR)/.config
 	mkdir -p $(DESTDIR)/.cache
 	mkdir -p $(DESTDIR)/.local/share
+
+install-links: install-dirs
+	printf "%s %s\n" $(LINK_PAIRS) | (set -e; while read target link; \
+		do \
+			rm -f "$(DESTDIR)/$$link"; \
+			ln -sf "$(DESTDIR)/$$target" "$(DESTDIR)/$$link"; \
+		done)
 
 install-standard:
 	printf "%s %s\n" $(INSTALL_PAIRS) | (set -e; while read src dest; \

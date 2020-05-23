@@ -189,7 +189,6 @@ then
         GEM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/gems/$ver"
     fi
     unset ver
-    GEM_PATH="$GEM_HOME${GEM_PATH:+:$GEM_PATH}"
 fi
 
 LANG=$(preferred_locale)
