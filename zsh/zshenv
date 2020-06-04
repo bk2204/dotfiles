@@ -88,13 +88,27 @@ setup_temp () {
 }
 
 bmc_editor () {
-    if [[ -n $DISPLAY ]] && [[ $1 != console ]]
+    local console="" dumb=""
+
+    while [[ -n $1 ]]
+    do
+        case "$1" in
+            console)
+                console=t;;
+            dumb)
+                dumb=t;;
+        esac
+        shift
+    done
+
+
+    if [[ -n $DISPLAY ]] && [[ -z $console ]]
     then
         printf 'gvim -f'
-    elif [[ -z "${OSTYPE##darwin*}" ]] && [[ $1 != console ]]
+    elif [[ -z "${OSTYPE##darwin*}" ]] && [[ -z $console ]]
     then
         printf 'mvim -f'
-    elif [[ $TERM = dumb ]]
+    elif [[ $TERM = dumb ]] || [[ -n $dumb ]]
     then
         printf 'ex'
     elif which vimx >/dev/null 2>&1
@@ -213,8 +227,8 @@ GIT_PAGER="less -FRSX"
 PAGER="less -R"
 PERLDOC_PAGER="$PAGER"
 LESS="-fR"
-EDITOR=$(bmc_editor)
-VISUAL="$EDITOR"
+EDITOR=$(bmc_editor dumb)
+VISUAL=$(bmc_editor)
 GIT_MERGE_AUTOEDIT=no
 XML_CATALOG_FILES="$HOME/.crustytoothpaste/groups/metadata/xml-catalogs/catalog.xml"
 MODULE_SIGNATURE_CIPHER=SHA512

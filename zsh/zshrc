@@ -156,11 +156,8 @@ set_sane_term () {
             set_if_has_term xterm-256color;;
         xterm:*konsole)
             set_if_has_term konsole-256color;;
-        screen*:*tmux*|tmux*:*tmux*)
-            is_ssh_session && EDITOR=$(bmc_editor console)
-            set_if_has_term screen-256color;;
-        screen*:*)
-            EDITOR=$(bmc_editor console)
+        screen*:*|tmux*:*)
+            is_ssh_session && EDITOR=$(bmc_editor dumb console) && VISUAL=$(bmc_editor console)
             set_if_has_term screen-256color;;
         rxvt:*mrxvt-full)
             set_if_has_term rxvt-256color;;
@@ -270,8 +267,6 @@ set_keybindings
 remove_perl_overrides
 
 is_ssh_session && dumpenv
-
-[[ $TERM != dumb ]] && VISUAL="$EDITOR"
 
 choose_prompt () {
     local km=$1
