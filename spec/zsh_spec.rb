@@ -52,4 +52,11 @@ describe :zsh do
       expect(@dir.cmd(['zsh', '-c', 'echo $VISUAL'])).to eq "ex\n"
     end
   end
+
+  context 'prompt' do
+    it 'should not print escape characters with a dumb terminal' do
+      expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $PS1'])).not_to match(/\x1b/)
+      expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $PS1'], 'TERM' => 'dumb')).not_to match(/\x1b/)
+    end
+  end
 end
