@@ -101,6 +101,8 @@
 	reflogExpireUnreachable = "365 days"
 [hub]
 	protocol = https
+[init]
+	defaultBranch = dev
 [i18n]
 	commitEncoding = UTF-8
 [lfs]
