@@ -22,7 +22,7 @@ set postponed="=[Gmail]/Drafts"
 set pipe_split=yes
 unset record
 # Headers.
-my_hdr From: brian m. carlson <bk2204@gmail.com>
+my_hdr From: "brian m. carlson" <bk2204@gmail.com>
 # Hooks.
 save-hook ~p =Handled
 # vim: set syntax=muttrc:
