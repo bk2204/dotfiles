@@ -9,7 +9,6 @@ color header black yellow ^X-CRM114-Status:.*UNSURE.*
 spam "X-CRM114-Status:.*SPAM" CRM114
 spam "X-Spam-Score: (([1-9][0-9]+|[5-9]).([0-9]+))" SA/%1
 nospam "X-CRM114-Status:.*Good"
-my_hdr X-Machine: Running on `uname -n` using `uname -o` on `uname -m` (`uname -s` kernel `uname -r`)
 set header=no
 set edit_headers=yes
 set followup_to=yes
