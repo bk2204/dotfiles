@@ -16,6 +16,7 @@ set forward_edit=yes
 set honor_followup_to=yes
 set metoo=no
 set use_envelope_from=yes
+set user_agent=yes
 # Replies.
 set date_format="!%F at %T"
 set attribution="On %D, %n wrote:"
