@@ -3,7 +3,8 @@
 #/ format-text [FILE...]
 #/
 #/ Formats text in the specified files or from stding, removing newlines within
-#/ a paragraph.
+#/ a paragraph.  Indented blocks that are not part of a Markdown or AsciiDoc
+#/ numbered or bulleted list are preserved.
 
 if ARGV[0] == "--help"
   puts File.read($0).each_line.select { |l| l.start_with?("#/") }.
@@ -11,4 +12,38 @@ if ARGV[0] == "--help"
   exit 0
 end
 
-puts ARGF.read.split("\n\n").map { |c| c.gsub("\n", ' ') }.join("\n\n")
+puts (ARGF.set_encoding("UTF-8").read.split("\n\n").map do |c|
+  c.gsub(/\n\z/, '').split("\n").map do |l|
+    x = case l
+    when /^(\d+)?\. /
+      [:numbered, l]
+    when /^[-*•] /
+      [:bulleted, l]
+    when /^\s+/
+      [:indented, l]
+    else
+      [:normal, l]
+    end
+    x
+  end.inject([:start, []]) do |(now, accum), (state, l)|
+    new = if now == :start
+            state
+          elsif state == :indented
+            now
+          else
+            state
+          end
+    accum += if state == :indented && new != :indented
+               [l.gsub(/^\s+/, ' ')]
+             elsif now == :start
+               [l]
+             elsif new == :indented
+               ["\n", l]
+             elsif new == :normal
+               [' ', l]
+             else
+               ["\n", l]
+             end
+    [new, accum]
+  end[1].to_a.join
+end.to_a.join("\n\n"))
