@@ -531,21 +531,25 @@ function! s:ToggleScreenSize()
   endif
 endfunction
 
+function! s:SortLSPRoots(a, b)
+  " Sort the longest items first, since these will be more specific.
+  let x = len(a:b) - len(a:a)
+  return x / abs(x)
+endfunction
+
 function! s:FindLSPRoot()
   let buffer = bufnr("%")
 
   " If we're in a submodule, .git will often, but not always, be a file, not a
   " directory. Check both and pick the more deeply nested one.
+  let lsp_root_file = fnamemodify(ale#path#FindNearestFile(buffer, '.lsproot'), ':h')
   let git_file = fnamemodify(ale#path#FindNearestFile(buffer, '.git'), ':h')
   let git_dir = fnamemodify(ale#path#FindNearestDirectory(buffer, '.git'), ':h:h')
 
-  if empty(git_file)
-      return git_dir
-  elseif empty(git_dir)
-      return git_file
-  endif
-
-  return len(git_file) > len(git_dir) ? git_file : git_dir
+  let items = [lsp_root_file, git_file, git_dir]
+  let items = filter(items, 'len(v:val) > 0')
+  let items = sort(items, "s:SortLSPRoots")
+  return items[0]
 endfunction
 
 function! s:SetLSPRoot()
