@@ -210,7 +210,7 @@ fi
 LANG=$(preferred_locale)
 LC_ADDRESS=en_US.UTF-8
 LC_COLLATE=$(preferred_locale)
-LC_CTYPE=$(preferred_locale)
+LC_CTYPE=en_US.UTF-8
 LC_IDENTIFICATION=$(preferred_locale)
 LC_MONETARY=en_US.UTF-8
 LC_MEASUREMENT=POSIX
