@@ -1,5 +1,7 @@
 DESTDIR	?=	$(HOME)
 
+INSTALL_DIRS = .config .cache .local/share
+
 LINK_PAIRS += .local/share/gems .gem
 
 all:
@@ -19,9 +21,10 @@ include vim/rules.mk
 include zsh/rules.mk
 
 install-dirs:
-	mkdir -p $(DESTDIR)/.config
-	mkdir -p $(DESTDIR)/.cache
-	mkdir -p $(DESTDIR)/.local/share
+	for i in $(INSTALL_DIRS); \
+	do \
+		mkdir -p $(DESTDIR)/$$i; \
+	done
 
 install-links: install-dirs
 	printf "%s %s\n" $(LINK_PAIRS) | (set -e; while read target link; \
