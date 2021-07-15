@@ -65,20 +65,6 @@ if has("termguicolors") && exists("$COLORTERM") && $COLORTERM == "truecolor"
   set tgc
 end
 
-" GUI settings.
-if has("gui_running")
-  set lines=24
-  set co=133
-  set gcr+=a:blinkon0
-  set go-=tT      " Disable tearoffs and toolbar.
-endif
-if has("gui_gtk")
-  set gfn=Source\ Code\ Pro\ 12,Noto\ Mono\ Regular\ 12,Monospace\ 12
-endif
-if has("gui_macvim")
-  set gfn=SourceCodePro-Regular:h8
-endif
-
 "" Terminal issues.
 " These terminals are capable of supporting 16 colors, but they lie and only
 " claim support for 8.  Fix it so things don't look ugly.
@@ -531,6 +517,25 @@ function! s:ToggleScreenSize()
   endif
 endfunction
 
+function! s:SetGUIOptions()
+  if has("gui_running") || (has("nvim") && !has("ttyout") && s:mode == 'vi')
+    set lines=24
+    set co=133
+    set gcr+=a:blinkon0
+    set go-=tT      " Disable tearoffs and toolbar.
+
+    if has("gui_gtk")
+      set gfn=Source\ Code\ Pro\ 12,Noto\ Mono\ Regular\ 12,Monospace\ 12
+    endif
+    if has("gui_macvim")
+      set gfn=SourceCodePro-Regular:h8
+    endif
+    if has("nvim")
+      Guifont SourceCodePro:h12
+    endif
+  endif
+endfunction
+
 function! s:SortLSPRoots(a, b)
   " Sort the longest items first, since these will be more specific.
   let x = len(a:b) - len(a:a)
@@ -635,5 +640,15 @@ let g:ale_rust_cargo_use_clippy = isdirectory(expand("$HOME") . '/.cargo')
 
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
+
+" GUI settings.
+if has("gui_running")
+  call <SID>SetGUIOptions()
+endif
+if has("nvim")
+  augroup gui
+    au UIEnter * call <SID>SetGUIOptions()
+  augroup end
+endif
 
 " vim: set ts=2 sw=2 sts=2:
