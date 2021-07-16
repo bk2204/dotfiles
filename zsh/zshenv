@@ -102,7 +102,10 @@ bmc_editor () {
     done
 
 
-    if [[ -n $DISPLAY ]] && [[ -z $console ]]
+    if [[ -n $DISPLAY ]] && [[ -z $console ]] && which nvim-gtk >/dev/null 2>&1
+    then
+        printf 'nvim-gtk --no-fork'
+    elif [[ -n $DISPLAY ]] && [[ -z $console ]]
     then
         printf 'gvim -f'
     elif [[ -z "${OSTYPE##darwin*}" ]] && [[ -z $console ]]
@@ -111,6 +114,9 @@ bmc_editor () {
     elif [[ $TERM = dumb ]] || [[ -n $dumb ]]
     then
         printf 'ex'
+    elif which nvim >/dev/null 2>&1
+    then
+        printf 'nvim'
     elif which vimx >/dev/null 2>&1
     then
         printf 'vimx'
