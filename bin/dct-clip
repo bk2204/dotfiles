@@ -1,0 +1,129 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'shellwords'
+
+COMMANDS = {
+  copy: [
+    ->(options) { ["pbcopy"] },
+    ->(options) { ["xclip","-i",  "-selection", options[:location].to_s] },
+    ->(options) { ["xsel", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
+  ],
+  paste: [
+    ->(options) { ["pbpaste"] },
+    ->(options) { ["xclip", "-o", "-selection", options[:location].to_s] },
+    ->(options) { ["xsel", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
+  ]
+}
+
+def parse_args(args)
+  options = {location: :clipboard}
+  OptionParser.new do |opts|
+    opts.on('-i', '--copy', 'Copy') do
+      options[:command] = :copy
+    end
+
+    opts.on('-o', '--paste', 'Paste') do
+      options[:command] = :paste
+    end
+
+    opts.on('-p', '--primary', 'Use PRIMARY on X') do
+      options[:location] = :primary
+    end
+
+    opts.on('-b', '--clipboard', 'Use CLIPBOARD on X') do
+      options[:location] = :clipboard
+    end
+
+    opts.on('--filter COMMAND', 'Filter the clipboard through this comamnd') do |cmd|
+      options[:command] = :filter
+      options[:filter] = cmd
+    end
+
+    opts.on('--help', 'Print this usage information') do
+      puts opts
+
+      puts <<-EOM.gsub(/^\s+/, '')
+      Copy from the clipboard, paste to the clipboard, or filter the clipboard
+      through the given command, which is passed to the shell.
+      EOM
+    end
+  end.parse!(args)
+  [options, args]
+end
+
+def which(cmd)
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exe = File.join(path, cmd)
+    return exe if File.executable?(exe) && !File.directory?(exe)
+  end
+  nil
+end
+
+def find_command(commands, options)
+  commands.each do |cmd|
+    cmd = cmd.call(options)
+    return cmd if which(cmd[0])
+  end
+  nil
+end
+
+def do_exec(commands, options)
+  cmd = find_command(commands, options)
+  if cmd.nil?
+    $stderr.puts 'Unable to find utility'
+    return 2
+  end
+  exec(*cmd)
+end
+
+def do_filter(copy, paste, filter, options)
+  copy = find_command(copy, options)
+  paste = find_command(paste, options)
+  if copy.nil? || paste.nil?
+    $stderr.puts 'Unable to find utility'
+    return 2
+  end
+
+  rdr, wrtr = IO.pipe
+  prdr, pwrtr = IO.pipe
+  pid = Process.spawn(*paste, in: :close, out: pwrtr)
+  fpid = Process.spawn(filter, in: prdr, out: wrtr)
+  prdr.close
+  pwrtr.close
+  wrtr.close
+  data = rdr.read
+  rdr.close
+  Process.wait pid
+  Process.wait fpid
+
+  rdr, wrtr = IO.pipe
+  pid = Process.spawn(*copy, in: rdr, out: :close)
+  rdr.close
+  wrtr.write(data)
+  wrtr.close
+  Process.wait pid
+  0
+end
+
+def dispatch(options)
+  case options[:command]
+  when :copy
+    do_exec(COMMANDS[:copy], options)
+  when :paste
+    do_exec(COMMANDS[:paste], options)
+  when :filter
+    do_filter(COMMANDS[:copy], COMMANDS[:paste], options[:filter], options)
+  else
+    $stderr.puts "Unknown command"
+    2
+  end
+end
+
+def main(args)
+  opts, _args = parse_args(args)
+  dispatch(opts)
+  0
+end
+
+exit main(ARGV) if $PROGRAM_NAME == __FILE__
