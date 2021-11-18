@@ -23,7 +23,7 @@ include zsh/rules.mk
 install-dirs:
 	for i in $(INSTALL_DIRS); \
 	do \
-		mkdir -p $(DESTDIR)/$$i; \
+		mkdir -m o-rwx -p $(DESTDIR)/$$i; \
 	done
 
 install-links: install-dirs
@@ -38,9 +38,10 @@ install-standard:
 		do \
 			if [ -d "$$src" ]; \
 			then \
-				mkdir -p "$(DESTDIR)/$$dest"; \
-				rsync -a --exclude '*.mk' "$$src/" "$(DESTDIR)/$$dest/"; \
+				mkdir -m o-rwx -p "$(DESTDIR)/$$dest"; \
+				rsync -a --chmod=o-rwx --exclude '*.mk' "$$src/" "$(DESTDIR)/$$dest/"; \
 			else \
 				cp -pr "$$src" "$(DESTDIR)/$$dest"; \
+				chmod o-rwx "$(DESTDIR)/$$dest"; \
 			fi; \
 		done)
