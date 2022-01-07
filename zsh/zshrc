@@ -116,7 +116,7 @@ set_sane_term () {
                 preferred=(screen-256color screen vt220)
             elif [[ -z ${TERM:#tmux*} ]]
             then
-                preferred=(tmux-256color screen-256color tmux screen vt220)
+                preferred=(tmux-direct tmux-256color screen-256color tmux screen vt220)
             elif [[ -z ${TERM:#*256color} ]]
             then
                 preferred=(xterm-256color xterm vt220)
@@ -156,14 +156,14 @@ set_sane_term () {
     local parent_exe="$(ps -p $PPID -o comm=)"
     case "$TERM:$parent_exe" in
         xterm:*vim*)
-            [[ $COLORTERM = truecolor ]] && set_if_has_term xterm-256color;;
+            [[ $COLORTERM = truecolor ]] && set_if_has_term xterm-direct xterm-256color;;
         xterm:*xfce4-terminal|xterm:*gnome-terminal|xterm:*mate-terminal)
-            set_if_has_term xterm-256color;;
+            set_if_has_term vte-direct xterm-direct vte-256color xterm-256color;;
         xterm:*konsole)
             set_if_has_term konsole-256color;;
         screen*:*|tmux*:*)
             is_ssh_session && EDITOR=$(bmc_editor dumb console) && VISUAL=$(bmc_editor console)
-            set_if_has_term screen-256color;;
+            set_if_has_term tmux-direct tmux-256color screen-256color;;
         rxvt:*mrxvt-full)
             set_if_has_term rxvt-256color;;
         linux:*)
