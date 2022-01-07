@@ -120,6 +120,7 @@ nnoremap <Leader>gN :ALEPreviousWrap<CR>
 nnoremap <Leader>gd :ALEDetail<CR>
 nnoremap <Leader>gs :ALEHover<CR>
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
+nnoremap <Leader>gJ :ALEGoToDefinition -split<CR>
 nnoremap <Leader>b :ALEFix<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
