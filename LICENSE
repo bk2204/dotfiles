@@ -1,28 +1,28 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
-Copyright: 2007-2019 brian m. carlson
+Copyright: 2007-2022 brian m. carlson
 License: Expat
 
 Files: vim/syntax/*.vim
 Copyright: 2007-2019 brian m. carlson
 License: GPL-2
 
-Files: vim/after/rust.vim
+Files: vim/after/syntax/rust.vim
 Copyright: 2016 Patrick Walton <pcwalton@mozilla.com>
            2016 Ben Blum <bblum@cs.cmu.edu>
            2016 Chris Morgan <me@chrismorgan.info>
            2019 brian m. carlson
 License: GPL-2
 
-Files: vim/after/go.vim
+Files: vim/after/syntax/go.vim
 Copyright: 2016 David Barnett
            2019 brian m. carlson
 License: GPL-2
 
 Files: misc/dircolors
 Copyright: 1996-2013 Free Software Foundation, Inc.
-           2014 brian m. carlson
+           2014, 2022 brian m. carlson
 License: FSF-Permissive
 
 Files: zsh/functions/set_keybindings
