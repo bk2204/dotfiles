@@ -34,6 +34,14 @@ describe :zsh do
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'xterm-256color')).to eq "nvim\n"
     end
 
+    it 'should set VISUAL to nvim with DISPLAY, non-empty TERM, and no graphical editors' do
+      @dir = TestDir.new
+      exes = %w[ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'],
+                                'DISPLAY' => 'something',
+                                'TERM' => 'xterm-256color')).to eq "nvim\n"
+    end
+
     it 'should set VISUAL to vim with non-empty TERM and no nvim or vimx' do
       @dir = TestDir.new
       exes = %w[gvim mvim ex vim vi]

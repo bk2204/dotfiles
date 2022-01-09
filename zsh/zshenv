@@ -88,7 +88,7 @@ setup_temp () {
 }
 
 bmc_editor () {
-    local console="" dumb=""
+    local console="" dumb="" display=""
 
     while [[ -n $1 ]]
     do
@@ -101,32 +101,33 @@ bmc_editor () {
         shift
     done
 
+    [[ -n $DISPLAY ]] && display=t
+    [[ $TERM = dumb ]] && dumb=t
 
-    if [[ -n $DISPLAY ]] && [[ -z $console ]] && command -v nvim-gtk >/dev/null 2>&1
-    then
-        printf 'nvim-gtk --no-fork'
-    elif [[ -n $DISPLAY ]] && [[ -z $console ]]
-    then
-        printf 'gvim -f'
-    elif [[ -z "${OSTYPE##darwin*}" ]] && [[ -z $console ]]
-    then
-        printf 'mvim -f'
-    elif [[ $TERM = dumb ]] || [[ -n $dumb ]]
-    then
-        printf 'ex'
-    elif command -v nvim >/dev/null 2>&1
-    then
-        printf 'nvim'
-    elif command -v vimx >/dev/null 2>&1
-    then
-        printf 'vimx'
-    elif command -v vim >/dev/null 2>&1
-    then
-        printf 'vim'
-    else
-        # Really?
-        printf 'vi'
-    fi
+    local i
+    for i in 'nvim-gtk --no-fork' 'gvim -f' 'mvim -f' nvim vimx vim vi ex
+    do
+        local root="${i%% *}"
+        local ok=""
+        case "$root:$console:$dumb:$display:$OSTYPE" in
+            nvim-gtk::*:t:*) ok=t;;
+            gvim::*:t:*) ok=t;;
+            mvim::*:*:darwin) ok=t;;
+            ex:*:t:*:*) ok=t;;
+            nvim:*::*:*) ok=t;;
+            vimx:*::*:*) ok=t;;
+            vim:*::*:*) ok=t;;
+            vi:*::*:*) ok=t;;
+        esac
+
+        if [[ -n "$ok" ]] && command -v "$root" >/dev/null 2>&1
+        then
+            printf '%s' "$i"
+            return
+        fi
+    done
+
+    printf 'vi'
 }
 
 source_if_present () {
