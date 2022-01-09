@@ -134,11 +134,9 @@ source_if_present () {
     [[ -f $fn ]] && source "$fn"
 }
 
-# Set up some limits.  The stack size affects ARG_MAX, so set a generous stack
-# size that still results in a sane ARG_MAX value.
+# Set up some limits.
 unlimit
 limit core 0
-limit stack 65536
 
 # Set up umask.  If we have private groups, use 002; otherwise, use 022.
 if [[ $(id -u -n) = $(id -g -n) ]]; then
