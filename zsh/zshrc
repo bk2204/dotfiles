@@ -11,10 +11,10 @@ has_colors () {
 
 # Set up some aliases.
 silent ls --color=auto && has_colors && alias ls='ls --color=auto'
-if silent which file-rename
+if silent command -v file-rename
 then
     alias rename='file-rename'
-elif silent which prename
+elif silent command -v prename
 then
     alias rename='prename'
 fi
@@ -27,7 +27,7 @@ then
 fi
 unset vi
 
-if silent which nvim-gtk
+if silent command -v nvim-gtk
 then
     alias gvim=nvim-gtk
 fi
@@ -177,7 +177,7 @@ set_sane_term () {
     esac
 
     # Ensure key bindings are set up appropriately.
-    if [[ -n $DISPLAY ]] && silent which xmodmap && [[ -e $HOME/.Xmodmap ]]
+    if [[ -n $DISPLAY ]] && silent command -v xmodmap && [[ -e $HOME/.Xmodmap ]]
     then
         xmodmap $HOME/.Xmodmap
     fi
