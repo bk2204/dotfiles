@@ -2,7 +2,7 @@ setxkbmap -option capslock:escape -option compose:lwin \
 	-option terminate:ctrl_alt_bksp
 xmodmap ~/.Xmodmap
 zsh -c '
-if which mate-session >/dev/null 2>&1
+if command -v mate-session >/dev/null 2>&1
 then
 	mate-session
 else
