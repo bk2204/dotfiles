@@ -151,47 +151,50 @@ unsetopt globalrcs
 ANDROID_HOME="$HOME/apps/android-sdk"
 export ANDROID_HOME
 
-prevpath=$PATH
+if [[ -z $BMC_TEST ]]
+then
+    prevpath=$PATH
 
-# Nuke dupes.
-typeset -U path cdpath manpath fpath
-typeset -U PATH CDPATH MANPATH FPATH
-typeset -UT COREPATH corepath
+    # Nuke dupes.
+    typeset -U path cdpath manpath fpath
+    typeset -U PATH CDPATH MANPATH FPATH
+    typeset -UT COREPATH corepath
 
-# Set up miscellaneous paths.
-manpath=(
-    ~/man
-    /usr/share/man
-    /usr/local/share/man
-)
-path=(
-    ~/bin
-    ~/.rvm/bin
-    ~/.cargo/bin
-    /usr/local/bin
-    /usr/local/sbin
-    /usr/bin
-    /usr/sbin
-    /bin
-    /sbin
-    /usr/games
-    $ANDROID_HOME/tools
-    $ANDROID_HOME/platform-tools
-)
-corepath=(
-    /usr/bin
-    /usr/sbin
-    /bin
-    /sbin
-    /usr/games
-)
-fpath=($fpath[2,-1] ~/.zsh)
+    # Set up miscellaneous paths.
+    manpath=(
+        ~/man
+        /usr/share/man
+        /usr/local/share/man
+    )
+    path=(
+        ~/bin
+        ~/.rvm/bin
+        ~/.cargo/bin
+        /usr/local/bin
+        /usr/local/sbin
+        /usr/bin
+        /usr/sbin
+        /bin
+        /sbin
+        /usr/games
+        $ANDROID_HOME/tools
+        $ANDROID_HOME/platform-tools
+    )
+    corepath=(
+        /usr/bin
+        /usr/sbin
+        /bin
+        /sbin
+        /usr/games
+    )
+    fpath=($fpath[2,-1] ~/.zsh)
 
-PATH="$PATH:$prevpath"
-unset prevpath
+    PATH="$PATH:$prevpath"
+    unset prevpath
 
-# Export miscellaneous paths.
-export MANPATH PATH COREPATH
+    # Export miscellaneous paths.
+    export MANPATH PATH COREPATH
+fi
 
 # Set other variables.
 setopt allexport

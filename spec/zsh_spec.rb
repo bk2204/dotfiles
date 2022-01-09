@@ -7,11 +7,21 @@ describe :zsh do
 
   context 'editor' do
     it 'should set EDITOR to nvim-gtk with DISPLAY' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $EDITOR'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
+      @dir = TestDir.new
+      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
     end
 
-    it 'should set VISUAL to gvim with DISPLAY' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $VISUAL'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
+    it 'should set VISUAL to nvim-gtk with DISPLAY' do
+      @dir = TestDir.new
+      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
+    end
+
+    it 'should set VISUAL to gvim with DISPLAY and no nvim-gtk' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'DISPLAY' => 'something')).to eq "gvim -f\n"
     end
 
     it 'should set EDITOR to ex with non-empty TERM' do
@@ -19,7 +29,15 @@ describe :zsh do
     end
 
     it 'should set VISUAL to nvim with non-empty TERM' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'xterm-256color')).to eq "nvim\n"
+      @dir = TestDir.new
+      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'xterm-256color')).to eq "nvim\n"
+    end
+
+    it 'should set VISUAL to vim with non-empty TERM and no nvim or vimx' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'xterm-256color')).to eq "vim\n"
     end
 
     it 'should set EDITOR to ex with SSH session and terminal multiplexor' do
