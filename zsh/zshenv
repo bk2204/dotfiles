@@ -4,7 +4,7 @@
 has_locale () {
     local locale="$1"
 
-    [ -x "$(which perl)" ] || return 0
+    [ -x "$(command -v perl)" ] || return 0
     perl -MPOSIX=locale_h -E 'exit !setlocale(LC_ALL, $ARGV[0]);' "$locale" \
         2>/dev/null
 }
@@ -102,7 +102,7 @@ bmc_editor () {
     done
 
 
-    if [[ -n $DISPLAY ]] && [[ -z $console ]] && which nvim-gtk >/dev/null 2>&1
+    if [[ -n $DISPLAY ]] && [[ -z $console ]] && command -v nvim-gtk >/dev/null 2>&1
     then
         printf 'nvim-gtk --no-fork'
     elif [[ -n $DISPLAY ]] && [[ -z $console ]]
@@ -114,13 +114,13 @@ bmc_editor () {
     elif [[ $TERM = dumb ]] || [[ -n $dumb ]]
     then
         printf 'ex'
-    elif which nvim >/dev/null 2>&1
+    elif command -v nvim >/dev/null 2>&1
     then
         printf 'nvim'
-    elif which vimx >/dev/null 2>&1
+    elif command -v vimx >/dev/null 2>&1
     then
         printf 'vimx'
-    elif which vim >/dev/null 2>&1
+    elif command -v vim >/dev/null 2>&1
     then
         printf 'vim'
     else
