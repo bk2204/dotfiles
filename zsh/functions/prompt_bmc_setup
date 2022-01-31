@@ -164,27 +164,39 @@ prompt_bmc_apm_precmd () {
     has_ac=0
     has_bat=0
 
-    if [ -d /sys/class/power_supply/AC ]
-    then
-        [ $(</sys/class/power_supply/AC/online) = 1 ] && has_ac=1
-    fi
-    if [ -d /sys/class/power_supply/BAT0 ]
-    then
-        has_bat=1
-
-        if [ -r /sys/class/power_supply/BAT0/charge_now ]
+    local i
+    for i in $(find /sys/class/power_supply -type d -o -type l)
+    do
+        if [[ -f "$i/type" ]]
         then
-            bat_now=$(</sys/class/power_supply/BAT0/charge_now)
-            bat_full=$(</sys/class/power_supply/BAT0/charge_full)
-        else
-            bat_now=$(</sys/class/power_supply/BAT0/energy_now)
-            bat_full=$(</sys/class/power_supply/BAT0/energy_full)
-        fi
+            local class="$(<"$i/type")"
+            if [[ -f "$i/online" ]] && [[ $(<"$i/online") = 1 ]] && [[ $class = Mains ]]
+            then
+                has_ac=1
+            elif [[ $class = Battery ]]
+            then
+                if [ -r "$i/charge_now" ]
+                then
+                    has_bat=1
+                    bat_now=$(<"$i/charge_now")
+                    bat_full=$(<"$i/charge_full")
+                elif [ -r "$i/energy_now" ]
+                then
+                    has_bat=1
+                    bat_now=$(<"$i/energy_now")
+                    bat_full=$(<"$i/energy_full")
+                else
+                    # This might be the battery of another device, such as a
+                    # Bluetooth device connected to us.
+                    continue
+                fi
 
-        bat=$((100 * bat_now / bat_full))
-        [[ $bat -gt 100 ]] && bat=100
-        bat="$bat%"
-    fi
+                bat=$((100 * bat_now / bat_full))
+                [[ $bat -gt 100 ]] && bat=100
+                bat="$bat%"
+            fi
+        fi
+    done
     [ $has_ac = 1 ] && ac="ac"
     [ $has_bat = 1 ] && [ $has_ac = 1 ] && ac="ac+"
 
