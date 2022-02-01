@@ -27,6 +27,13 @@ then
 fi
 unset vi
 
+local gvi=$(bmc_editor --detach --no-fallback)
+if [[ -n $gvi ]]
+then
+    alias gvi=$gvi
+fi
+unset gvi
+
 if silent command -v nvim-gtk
 then
     alias gvim=nvim-gtk

@@ -88,7 +88,7 @@ setup_temp () {
 }
 
 bmc_editor () {
-    local console="" dumb="" display="" detach=""
+    local console="" dumb="" display="" detach="" fallback=t
 
     while [[ -n $1 ]]
     do
@@ -99,6 +99,10 @@ bmc_editor () {
                 dumb=t;;
             --detach)
                 detach=t;;
+            --fallback)
+                fallback=t;;
+            --no-fallback)
+                fallback="";;
         esac
         shift
     done
@@ -134,7 +138,7 @@ bmc_editor () {
         fi
     done
 
-    printf 'vi'
+    [[ -n $fallback ]] && printf 'vi'
 }
 
 source_if_present () {
