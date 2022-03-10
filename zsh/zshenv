@@ -180,6 +180,7 @@ then
     )
     path=(
         ~/bin
+        ~/.local/bin
         ~/.rvm/bin
         ~/.cargo/bin
         /usr/local/bin
