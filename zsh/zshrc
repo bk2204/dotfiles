@@ -137,29 +137,6 @@ set_sane_term () {
             done
         fi
     fi
-    if is_ssh_session && [[ $SSH_TTY == $TTY ]]
-    then
-        case $TERM in
-            screen-256color|tmux*)
-                # This means we're using tmux on the other side.
-                export COLORTERM=truecolor;;
-            *)
-                ;;
-        esac
-        return 0
-    fi
-    if is_docker_session
-    then
-        case $TERM in
-            xterm*)
-                # We're logging in from a tmux session.
-                set_if_has_term xterm-256color
-                export COLORTERM=truecolor;;
-            *)
-                ;;
-        esac
-        return 0
-    fi
     local parent_exe="$(ps -p $PPID -o comm=)"
     case "$TERM:$parent_exe" in
         xterm:*vim*)
@@ -187,6 +164,29 @@ set_sane_term () {
     if [[ -n $DISPLAY ]] && silent command -v xmodmap && [[ -e $HOME/.Xmodmap ]]
     then
         xmodmap $HOME/.Xmodmap
+    fi
+
+    if is_ssh_session && [[ $SSH_TTY == $TTY ]]
+    then
+        case $TERM in
+            screen-256color|tmux*)
+                # This means we're using tmux on the other side.
+                export COLORTERM=truecolor;;
+            *)
+                ;;
+        esac
+    fi
+
+    if is_docker_session
+    then
+        case $TERM in
+            xterm*)
+                # We're logging in from a tmux session.
+                set_if_has_term xterm-256color
+                export COLORTERM=truecolor;;
+            *)
+                ;;
+        esac
     fi
 
     # Don't print weird escape characters on dumb terminals (e.g. gvim).
