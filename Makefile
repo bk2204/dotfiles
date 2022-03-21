@@ -4,6 +4,8 @@ INSTALL_DIRS = .config .cache .local/share .vim/plugin
 
 LINK_PAIRS += .local/share/gems .gem
 
+PERMISSIONS = o-rwx
+
 all:
 	@echo To install, set DESTDIR and run make install.
 
@@ -23,7 +25,7 @@ include zsh/rules.mk
 install-dirs:
 	for i in $(INSTALL_DIRS); \
 	do \
-		mkdir -m o-rwx -p $(DESTDIR)/$$i; \
+		mkdir -m $(PERMISSIONS) -p $(DESTDIR)/$$i; \
 	done
 
 install-links: install-dirs
@@ -38,10 +40,10 @@ install-standard:
 		do \
 			if [ -d "$$src" ]; \
 			then \
-				mkdir -m o-rwx -p "$(DESTDIR)/$$dest"; \
-				rsync -a --chmod=o-rwx --exclude '*.mk' "$$src/" "$(DESTDIR)/$$dest/"; \
+				mkdir -m $(PERMISSIONS) -p "$(DESTDIR)/$$dest"; \
+				rsync -a --chmod=$(PERMISSIONS) --exclude '*.mk' "$$src/" "$(DESTDIR)/$$dest/"; \
 			else \
 				cp -pr "$$src" "$(DESTDIR)/$$dest"; \
-				chmod o-rwx "$(DESTDIR)/$$dest"; \
+				chmod $(PERMISSIONS) "$(DESTDIR)/$$dest"; \
 			fi; \
 		done)
