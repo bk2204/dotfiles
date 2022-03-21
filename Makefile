@@ -4,7 +4,7 @@ INSTALL_DIRS = .config .cache .local/share .vim/plugin
 
 LINK_PAIRS += .local/share/gems .gem
 
-PERMISSIONS = o-rwx
+PERMISSIONS = u=rwX,go-rwx
 
 all:
 	@echo To install, set DESTDIR and run make install.
