@@ -32,3 +32,17 @@ windows:
         - ""
         - ""
         - ""
+  - 5:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
+  - 6:
+      layout: tiled
+      panes:
+        - ""
+        - ""
+        - ""
+        - ""
