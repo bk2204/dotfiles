@@ -639,6 +639,19 @@ let g:ale_fixers = {
 let g:ale_rust_rls_toolchain = ''
 let g:ale_rust_cargo_use_clippy = isdirectory(expand("$HOME") . '/.cargo')
 
+let g:clipboard = {
+  \ 'name': 'dct-clip',
+  \ 'copy': {
+  \   '*': ['dct-clip', '-i', '-p'],
+  \   '+': ['dct-clip', '-i', '-b'],
+  \ },
+  \ 'paste': {
+  \   '*': ['dct-clip', '-o', '-p'],
+  \   '+': ['dct-clip', '-o', '-b'],
+  \ },
+  \ 'cache_enabled': 1
+  \ }
+
 "" Other language-specific setup.
 call s:SetUpLanguageHooks()
 
