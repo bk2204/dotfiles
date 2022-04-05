@@ -11,7 +11,7 @@ v0:
       command: '!f() { printf "$@"; };f'
     clip:
       if: true
-      command: 'dct-clip'
+      command: '!dct-clip'
     gvi:
       if: true
       command: '!f() { REMOTE_HOST=%(sq:cenv:HOSTNAME) CODESPACE_NAME=%(sq:cenv:CODESPACE_NAME) CWD=%(sq:cenv:PWD) nvim-gtk --nvim-bin-path "$HOME/bin/ssh-nvim" "$@" </dev/null; };f'
