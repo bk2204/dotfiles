@@ -1,0 +1,75 @@
+---
+- name: Codespace Setup
+  hosts: all
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tasks:
+    - name: Install dependencies
+      apt:
+        pkg:
+          - acl
+          - cargo
+          - dc
+          - git
+          - gopls
+          - gnupg
+          - less
+          - libpam-tmpdir
+          - locales-all
+          - make
+          - man-db
+          - ncurses-term
+          - neovim
+          - perl
+          - ruby
+          - rustc
+          - tmux
+          - xxd
+          - zsh
+        update_cache: true
+      become: yes
+      become_user: root
+    # This is required because otherwise installing the zsh configuration causes
+    # zsh to fail because compinit operates on an insecure directory (~/.zsh).
+    - name: Remove broken ACL
+      shell: 'if [ -n "$(getfacl -s /workspaces)" ]; then setfacl -Rb /workspaces; fi'
+    # We would like sane ownership and permissions here.
+    - name: Undo unexpected ACL ownership
+      command: 'chown -R {{ ansible_user_id }}:{{ ansible_user_id }} /workspaces'
+      become: yes
+      become_user: root
+    - name: Undo unexpected ACL permissions
+      command: 'chmod -R o-rwx /workspaces'
+    - name: Clone dotfiles
+      git:
+        repo: https://github.com/bk2204/dotfiles.git
+        remote: def
+        dest: /workspaces/dotfiles
+    - name: Checkout GitHub for dotfiles
+      shell: 'git checkout GitHub'
+      args:
+        chdir: /workspaces/dotfiles
+    - name: Checkout submodules for dotfiles
+      shell: 'git submodule update --init'
+      args:
+        chdir: /workspaces/dotfiles
+    - name: Deploy dotfiles
+      shell: 'make install'
+      args:
+        chdir: /workspaces/dotfiles
+    - name: Change shell
+      command: 'chsh -s /bin/zsh {{ ansible_user_id }}'
+      become: yes
+      become_user: root
+    - name: Deploy muter
+      command: 'cargo install muter'
+    - name: Deploy scutiger
+      command: 'cargo install scutiger-bin'
+    - name: Change remote name to def
+      shell: 'for i in /workspaces/*; do (cd "$i"; if git remote | grep -qs origin; then git remote rename origin def; fi); done'
+    - name: Set HEAD for remote
+      shell: 'for i in /workspaces/*; do (cd "$i"; git remote set-head def -a); done'
+    - name: Set default branch to dev
+      shell: 'for i in /workspaces/*; do (cd "$i"; b=$(git rev-parse --abbrev-ref refs/remotes/def/HEAD | sed -e "s!.*/!!g"); if git rev-parse --verify "$b" && [ "$b" != dev ]; then git branch -m "$b" dev; fi); done'
+    - name: Install neovim-gtk helper
+      shell: 'cd ~/.vim/plugin && curl -LO https://raw.githubusercontent.com/Lyude/neovim-gtk/main/runtime/plugin/nvim_gui_shim.vim'
