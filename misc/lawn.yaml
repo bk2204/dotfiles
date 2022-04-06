@@ -12,6 +12,9 @@ v0:
     clip:
       if: true
       command: '!dct-clip'
+    browser:
+      if: true
+      command: '!$BROWSER'
     gvi:
       if: true
       command: '!f() { REMOTE_HOST=%(sq:cenv:HOSTNAME) CODESPACE_NAME=%(sq:cenv:CODESPACE_NAME) CWD=%(sq:cenv:PWD) nvim-gtk --nvim-bin-path "$HOME/bin/ssh-nvim" "$@" </dev/null; };f'
