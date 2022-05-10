@@ -61,7 +61,7 @@ set nohls
 if has("tf") && (exists("$SSH_CONNECTION") || filereadable(expand("$HOME") . '/.slowbox'))
   set notf      " Speed up redrawing on slow SSH connections.
 endif
-if has("termguicolors") && exists("$COLORTERM") && $COLORTERM == "truecolor"
+if has("termguicolors") && (&t_Co == 16777216 || (exists("$COLORTERM") && $COLORTERM == "truecolor"))
   set tgc
 end
 
