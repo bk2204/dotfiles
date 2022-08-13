@@ -189,6 +189,14 @@ set_sane_term () {
         esac
     fi
 
+    case $TERM in
+        *-direct)
+            # This terminal type clearly has true color.
+            export COLORTERM=truecolor;;
+        *)
+            ;;
+    esac
+
     # Don't print weird escape characters on dumb terminals (e.g. gvim).
     [[ $TERM = dumb ]] && unset zle_bracketed_paste
 }

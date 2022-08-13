@@ -97,4 +97,11 @@ describe :zsh do
       expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $PS1'], 'TERM' => 'dumb')).not_to match(/\x1b/)
     end
   end
+
+  context 'term' do
+    it 'should set COLORTERM when using a -direct terminal type' do
+      expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $COLORTERM'], 'TERM' => 'xterm-direct')).to eq "truecolor\n"
+      expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $COLORTERM'], 'TERM' => 'tmux-direct')).to eq "truecolor\n"
+    end
+  end
 end
