@@ -5,14 +5,22 @@ require 'shellwords'
 
 COMMANDS = {
   copy: [
-    ->(options) { ["pbcopy"] },
-    ->(options) { ["xclip","-i",  "-selection", options[:location].to_s] },
-    ->(options) { ["xsel", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
+    {
+      func: ->(options) { ["lawn", "run", "--", "clip", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
+      if: ->() { ENV["REMOTE_ENV"] }
+    },
+    {func: ->(options) { ["pbcopy"] }},
+    {func: ->(options) { ["xclip","-i",  "-selection", options[:location].to_s] }},
+    {func: ->(options) { ["xsel", "-i", options[:location] == :clipboard ? "-b" : "-p"] }},
   ],
   paste: [
-    ->(options) { ["pbpaste"] },
-    ->(options) { ["xclip", "-o", "-selection", options[:location].to_s] },
-    ->(options) { ["xsel", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
+    {
+      func: ->(options) { ["lawn", "run", "--", "clip", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
+      if: ->() { ENV["REMOTE_ENV"] }
+    },
+    {func: ->(options) { ["pbpaste"] }},
+    {func: ->(options) { ["xclip", "-o", "-selection", options[:location].to_s] }},
+    {func: ->(options) { ["xsel", "-o", options[:location] == :clipboard ? "-b" : "-p"] }},
   ]
 }
 
@@ -62,7 +70,10 @@ end
 
 def find_command(commands, options)
   commands.each do |cmd|
-    cmd = cmd.call(options)
+    if cmd[:if] && !cmd[:if].call
+      next
+    end
+    cmd = cmd[:func].call(options)
     return cmd if which(cmd[0])
   end
   nil
