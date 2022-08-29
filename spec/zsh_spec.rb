@@ -8,20 +8,44 @@ describe :zsh do
   context 'editor' do
     it 'should set EDITOR to nvim-gtk with DISPLAY' do
       @dir = TestDir.new
-      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
     end
 
     it 'should set VISUAL to nvim-gtk with DISPLAY' do
       @dir = TestDir.new
-      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
     end
 
     it 'should set set detachable editor to nvim-gtk with DISPLAY' do
       @dir = TestDir.new
-      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'bmc_editor --detach --no-fallback'], 'DISPLAY' => 'something')).to eq "nvim-gtk"
+    end
+
+    it 'should set EDITOR to lawn with REMOTE_ENV' do
+      @dir = TestDir.new
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'REMOTE_ENV' => 'something')).to eq "lawn run -- gvi --no-fork\n"
+    end
+
+    it 'should set VISUAL to lawn with REMOTE_ENV' do
+      @dir = TestDir.new
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'REMOTE_ENV' => 'something')).to eq "lawn run -- gvi --no-fork\n"
+    end
+
+    it 'should set set detachable editor to lawn with REMOTE_ENV' do
+      @dir = TestDir.new
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'bmc_editor --detach --no-fallback'], 'REMOTE_ENV' => 'something')).to eq "lawn run -- gvi"
+    end
+
+    it 'should set BROWSER to lawn with REMOTE_ENV' do
+      @dir = TestDir.new
+      exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $BROWSER'], 'REMOTE_ENV' => 'something')).to eq "lawn run -- browser\n"
     end
 
     it 'should prefer gvim with DISPLAY and no nvim-gtk' do

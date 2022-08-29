@@ -95,7 +95,7 @@ setup_temp () {
 }
 
 bmc_editor () {
-    local console="" dumb="" display="" detach="" fallback=t
+    local console="" dumb="" display="" detach="" fallback=t remote=""
 
     while [[ -n $1 ]]
     do
@@ -116,26 +116,29 @@ bmc_editor () {
 
     [[ -n $DISPLAY ]] && display=t
     [[ $TERM = dumb ]] && dumb=t
+    [[ -n $REMOTE_ENV ]] && remote=t
 
     local i
-    for i in 'nvim-gtk --no-fork' 'gvim -f' 'mvim -f' nvim-gtk gvim mvim nvim vimx vim vi ex
+    for i in 'lawn run -- gvi --no-fork' 'lawn run -- gvi' 'nvim-gtk --no-fork' 'gvim -f' 'mvim -f' nvim-gtk gvim mvim nvim vimx vim vi ex
     do
         local root="${i%% *}"
         local ok=""
-        # True if there are no arguments to the command.
-        local root_only="$([ "$i" = "$root" ] && echo t)"
-        case "$root:$root_only:$detach:$console:$dumb:$display:$OSTYPE" in
-            nvim-gtk::::*:t:*) ok=t;;
-            nvim-gtk:t:t::*:t:*) ok=t;;
-            gvim::::*:t:*) ok=t;;
-            gvim:t:t::*:t:*) ok=t;;
-            mvim::::*:*:darwin) ok=t;;
-            mvim:t:t::*:*:darwin) ok=t;;
-            ex:*::*:t:*:*) ok=t;;
-            nvim:*::*::*:*) ok=t;;
-            vimx:*::*::*:*) ok=t;;
-            vim:*::*::*:*) ok=t;;
-            vi:*::*::*:*) ok=t;;
+        # True if the command doesn't contain an argument to detach from the terminal.
+        local simple="$([ -n "${i##*--no-fork}" -a -n "${i##*-f}" ] && echo t)"
+        case "$root:$simple:$detach:$console:$dumb:$display:$remote:$OSTYPE" in
+            lawn::::*::t*) ok=t;;
+            lawn:t:t::*::t:*) ok=t;;
+            nvim-gtk::::*:t:*:*) ok=t;;
+            nvim-gtk:t:t::*:t:*:*) ok=t;;
+            gvim::::*:t:*:*) ok=t;;
+            gvim:t:t::*:t:*:*) ok=t;;
+            mvim::::*:*:*:darwin) ok=t;;
+            mvim:t:t::*:*:*:darwin) ok=t;;
+            ex:*::*:t:*:*:*) ok=t;;
+            nvim:*::*::*:*:*) ok=t;;
+            vimx:*::*::*:*:*) ok=t;;
+            vim:*::*::*:*:*) ok=t;;
+            vi:*::*::*:*:*) ok=t;;
         esac
 
         if [[ -n "$ok" ]] && command -v "$root" >/dev/null 2>&1
