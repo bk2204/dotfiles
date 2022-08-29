@@ -227,6 +227,10 @@ then
     unset ver
 fi
 
+if [[ -n "$CODESPACES" ]]; then
+    REMOTE_ENV=codespaces
+fi
+
 LANG=$(preferred_locale)
 LC_ADDRESS=en_CA.UTF-8
 LC_COLLATE=$(preferred_locale)
