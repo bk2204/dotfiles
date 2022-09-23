@@ -66,6 +66,10 @@ HISTSIZE=1000000
 SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 
+# Set timeouts.
+typeset +r TMOUT
+unset TMOUT
+
 # Set key bindings.
 bindkey -v
 bindkey '^I' complete-word
