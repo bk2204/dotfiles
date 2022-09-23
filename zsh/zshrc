@@ -60,6 +60,10 @@ HISTSIZE=1000000
 SAVEHIST=$HISTSIZE
 HISTFILE="${XDG_STATE_DIR:-$HOME/.local/state}/zsh/history"
 
+# Set timeouts.
+typeset +r TMOUT
+unset TMOUT
+
 # Some useful features.
 dct-set-tty () {
     [[ -n $TTY ]] && return 0
