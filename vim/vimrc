@@ -631,7 +631,7 @@ let g:bufExplorerSortBy = 'name'
 
 let g:ale_linters = {
   \ 'go': ['gopls', 'gofmt', 'golint', 'go vet'],
-  \ 'rust': ['cargo', 'rls'],
+  \ 'rust': ['cargo', 'analyzer'],
   \ }
 let g:ale_fixers = {
   \ 'go': ['goimports'],
