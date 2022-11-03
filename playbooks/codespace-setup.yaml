@@ -33,6 +33,8 @@
     # zsh to fail because compinit operates on an insecure directory (~/.zsh).
     - name: Remove broken ACL
       shell: 'if [ -n "$(getfacl -s /workspaces)" ]; then setfacl -Rb /workspaces; fi'
+      become: yes
+      become_user: root
     # We would like sane ownership and permissions here.
     - name: Undo unexpected ACL ownership
       command: 'chown -R {{ ansible_user_id }}:{{ ansible_user_id }} /workspaces'
