@@ -1,0 +1,187 @@
+#!/bin/bash
+#/ Usage: dct-cs COMMAND [OPTIONS]
+#/
+#/ This script provides several subcommands and works mainly around the concept
+#/ of a bound port specific to a codespace (and generated deterministically with
+#/ SHA-256).  The codespaces is set up (in the parlance of this script, deployed)
+#/ using Ansible.  This allows greater flexibility for setup, including the use
+#/ of a non-default (e.g., work-specific) dotfiles branch.
+#/
+#/ This bound port is required because Ansible can't use an external SSH command,
+#/ unlike most other tools.  It can, however, connect to an arbitrary port for
+#/ SSH, so we bind (mount) a dummy SSH connection on that specific port which we
+#/ can then send our Ansible connection and all other traffic over.
+
+set -em
+
+# Generate a high port specific to the codespace specified.
+cs_port () {
+  local id="$1"
+  local first_hash=$(printf '%s' "$id"| shasum -a 256 | cut -b1-3)
+  echo $(( 0x$first_hash + 50000 ))
+}
+
+# Create a codespace and set it up with Ansible, printing the codespace ID to
+# standard output.  The port is left mounted.
+cs_create () {
+  if [ "$1" = "--help" ]
+  then
+    gh cs create "$1"
+    return
+  fi
+  local id=$(gh cs create "$@")
+  printf 'Created Codespace with ID %s\n' "$id" >&2
+  local port="$(cs_port "$id")"
+  local pid=$(cs_mount_port "$id")
+  local username="$(cs_find_username "$id")"
+  (
+    cd "$HOME/checkouts/dotfiles" &&
+    ansible-playbook -u "$username" -i localhost:$port, playbooks/codespace-setup.yaml
+  )
+  echo "$id"
+}
+
+cs_delete () {
+  gh cs delete -c "$@"
+}
+
+wait_for_port () {
+  local port="$1"
+  local username="$2"
+
+  for i in $(seq 20)
+  do
+    if ssh -p "$port" "$username@localhost" true >/dev/null 2>&1 </dev/null
+    then
+      return
+    fi
+    sleep 1
+  done
+}
+
+# Find the username we're using on the codespace and print it to standard
+# output.
+cs_find_username () {
+  local id="$1"
+  gh cs ssh -c "$id" -- id -un 2>/dev/null </dev/null
+}
+
+# Set up the given codespace with Ansible.  The port must be mounted first.
+cs_deploy () {
+  local id="$1"
+  local port=$(cs_port "$id")
+  local username="$(cs_find_username "$id")"
+  (
+    cd "$HOME/checkouts/dotfiles" &&
+    ansible-playbook -u "$username" -i localhost:$port, playbooks/codespace-setup.yaml
+  )
+}
+
+cs_port_mounted () {
+  local id="$1"
+  local port="$(cs_port "$id")"
+  [ -n "$(lsof "-iTCP:$port" -sTCP:LISTEN -t)" ]
+}
+
+cs_mount_port () {
+  local id="$1"
+  local port="$(cs_port "$id")"
+  local username="$(cs_find_username "$id")"
+
+  ruby -e '
+    puts spawn("gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--", "-N",
+      :in => :close,
+      :out => :close,
+      :err => :close,
+    )
+  ' "$id" "$port"
+  wait_for_port "$port" "$username"
+}
+
+cs_umount_port () {
+  local pid="$1"
+  kill -s TERM "$pid"
+}
+
+cs_umount_port_for_id () {
+  local id="$1"
+  local pid=$(cs_port "$id")
+  kill -s TERM $(lsof "-iTCP:$port" -sTCP:LISTEN -t)
+}
+
+cs_mount () {
+  local id="$1"
+  local port="$(cs_port "$id")"
+  local username="$(cs_find_username "$id")"
+  nohup gh cs ssh -c "$id" --server-port "$port" -- -N 2> /dev/null &
+  mkdir -p "$XDG_RUNTIME_DIR/mnt/cs"
+  [ -L "$HOME/mnt/cs" ] || ln -sf "$XDG_RUNTIME_DIR/mnt/cs" "$HOME/mnt/cs"
+  mkdir -p "$HOME/mnt/cs/$id"
+  wait_for_port "$port" "$username"
+  sshfs -p "$port" "$username@localhost:/workspaces" "$HOME/mnt/cs/$id"
+}
+
+cs_umount () {
+  local id="$1"
+  local port="$(cs_port "$id")"
+  fusermount -uz "$HOME/mnt/cs/$id"
+  rmdir "$HOME/mnt/cs/$id"
+  kill -s TERM $(lsof "-iTCP:$port" -sTCP:LISTEN -t)
+  :
+}
+
+cs_ssh () {
+  local id="$1"
+  local username="$(cs_find_username "$id")"
+  shift
+  ssh -p "$(cs_port "$id")" -A "$username@localhost" "$@"
+}
+
+case "$1" in
+  create)
+    shift
+    cs_create "$@"
+    ;;
+  delete)
+    shift
+    cs_delete "$@"
+    ;;
+  mount)
+    shift
+    cs_mount "$@"
+    ;;
+  umount)
+    shift
+    cs_umount "$@"
+    ;;
+  deploy)
+    shift
+    cs_deploy "$@"
+    ;;
+  port)
+    shift
+    case "$1" in
+      mount)
+        shift
+        cs_port_mounted "$1" || cs_mount_port "$@" >/dev/null
+        cs_port "$1"
+        ;;
+      mounted)
+        shift
+        cs_port_mounted "$1"
+        ;;
+      umount)
+        shift
+        cs_umount_port_for_id "$@"
+        ;;
+    esac
+    ;;
+  ssh)
+    shift
+    cs_ssh "$@"
+    ;;
+  --help)
+    usage
+    exit 0
+    ;;
+esac
