@@ -70,7 +70,7 @@
     - name: Change remote name to def
       shell: 'for i in /workspaces/*; do (cd "$i"; [ -e .git ] || exit 0; if git remote | grep -qs origin; then git remote rename origin def; fi); done'
     - name: Set HEAD for remote
-      shell: 'for i in /workspaces/*; do (cd "$i"; [ -e .git ] || exit 0; git remote set-head def -a); done'
+      shell: 'for i in /workspaces/*; do (cd "$i"; [ -e .git ] || exit 0; [ -f /etc/profile.d/codespaces.sh ] && . /etc/profile.d/codespaces.sh; git remote set-head def -a); done'
     - name: Set default branch to dev
       shell: 'for i in /workspaces/*; do (cd "$i"; [ -e .git ] || exit 0; b=$(git rev-parse --abbrev-ref refs/remotes/def/HEAD | sed -e "s!.*/!!g"); if git rev-parse --verify "$b" && [ "$b" != dev ]; then git branch -m "$b" dev; fi); done'
     - name: Install neovim-gtk helper
