@@ -2,6 +2,9 @@
 v0:
   socket:
     autoprune: true
+  clipboard:
+    if: true
+    backend: default
   commands:
     noop:
       if: true
