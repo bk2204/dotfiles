@@ -21,3 +21,10 @@ v0:
     gvi:
       if: true
       command: '!f() { REMOTE_HOST=%(sq:cenv:HOSTNAME) CODESPACE_NAME=%(sq:cenv:CODESPACE_NAME) CWD=%(sq:cenv:PWD) nvim-gtk --nvim-bin-path "$HOME/bin/ssh-nvim" "$@" </dev/null; };f'
+  9p:
+    test:
+      if: true
+      location: /tmp/user/1000
+    default:
+      if: true
+      location: '!printf "%%s/data/remote" "$HOME"'
