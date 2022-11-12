@@ -64,7 +64,12 @@ unsetopt bgnice notify nomatch banghist
 # Set history.
 HISTSIZE=1000000
 SAVEHIST=$HISTSIZE
-HISTFILE=~/.zsh_history
+if [ -d "$HOME/mnt/remote/zsh" ]
+then
+    HISTFILE="$HOME/mnt/remote/zsh/history"
+else
+    HISTFILE=~/.zsh_history
+fi
 
 # Set key bindings.
 bindkey -v
