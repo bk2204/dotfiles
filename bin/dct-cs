@@ -32,8 +32,9 @@ cs_create () {
   local id=$(gh cs create "$@")
   printf 'Created Codespace with ID %s\n' "$id" >&2
   local port="$(cs_port "$id")"
-  local pid=$(cs_mount_port "$id")
-  local username="$(cs_find_username "$id")"
+  local parameters="$(cs_find_parameters "$id")"
+  local username="$(cs_find_username "$parameters")"
+  local pid=$(cs_mount_port "$id" "$parameters")
   (
     cd "$HOME/checkouts/dotfiles" &&
     ansible-playbook -u "$username" -i localhost:$port, playbooks/codespace-setup.yaml
@@ -59,18 +60,38 @@ wait_for_port () {
   done
 }
 
+# Find the parameters we're using on the codespace and print it to standard
+# output.
+cs_find_parameters () {
+  local id="$1"
+  gh cs ssh -c "$id" -- \
+    $(git rev-parse --sq-quote \
+      sh -c 'printf "%s=%s\n"
+        username "$(id -un)"
+        user-id "$(id -u)"
+        lawn-bin "$(command -v lawn)"
+    ')  2>/dev/null </dev/null
+}
+
 # Find the username we're using on the codespace and print it to standard
 # output.
 cs_find_username () {
-  local id="$1"
-  gh cs ssh -c "$id" -- id -un 2>/dev/null </dev/null
+  local parameters="$1"
+  cs_find_parameter "$parameters" "username"
+}
+
+cs_find_parameter () {
+  local parameters="$1"
+  local name="$2"
+  echo "$parameters" | sed -ne "/^$name=/s/^.*=//p"
 }
 
 # Set up the given codespace with Ansible.  The port must be mounted first.
 cs_deploy () {
   local id="$1"
   local port=$(cs_port "$id")
-  local username="$(cs_find_username "$id")"
+  local parameters="$(cs_find_parameters "$id")"
+  local username="$(cs_find_username "$parameters")"
   (
     cd "$HOME/checkouts/dotfiles" &&
     ansible-playbook -u "$username" -i localhost:$port, playbooks/codespace-setup.yaml
@@ -85,8 +106,10 @@ cs_port_mounted () {
 
 cs_mount_port () {
   local id="$1"
+  local parameters="$2"
   local port="$(cs_port "$id")"
-  local username="$(cs_find_username "$id")"
+  [ -z "$parameters" ] && parameters="$(cs_find_parameters "$id")"
+  local username="$(cs_find_username "$parameters")"
 
   ruby -e '
     puts spawn("gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--", "-N",
@@ -112,7 +135,8 @@ cs_umount_port_for_id () {
 cs_mount () {
   local id="$1"
   local port="$(cs_port "$id")"
-  local username="$(cs_find_username "$id")"
+  local parameters="$(cs_find_parameters "$id")"
+  local username="$(cs_find_username "$parameters")"
   nohup gh cs ssh -c "$id" --server-port "$port" -- -N 2> /dev/null &
   mkdir -p "$XDG_RUNTIME_DIR/mnt/cs"
   [ -L "$HOME/mnt/cs" ] || ln -sf "$XDG_RUNTIME_DIR/mnt/cs" "$HOME/mnt/cs"
@@ -132,7 +156,8 @@ cs_umount () {
 
 cs_ssh () {
   local id="$1"
-  local username="$(cs_find_username "$id")"
+  local parameters="$(cs_find_parameters "$id")"
+  local username="$(cs_find_username "$parameters")"
   shift
   ssh -p "$(cs_port "$id")" -A "$username@localhost" "$@"
 }
@@ -157,6 +182,16 @@ case "$1" in
   deploy)
     shift
     cs_deploy "$@"
+    ;;
+  parameters)
+    shift
+    if [ -n "$2" ]
+    then
+      parameters="$(cs_find_parameters "$1")"
+      cs_find_parameter "$parameters" "$2"
+    else
+      cs_find_parameters "$@"
+    fi
     ;;
   port)
     shift
