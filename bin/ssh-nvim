@@ -2,7 +2,7 @@
 
 if [ -n "$CODESPACE_NAME" ]
 then
-    exec gh cs ssh -c "$CODESPACE_NAME" -- "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
+    exec lawn proxy -- gh cs ssh -c "$CODESPACE_NAME" -- "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
 fi
 
 if [ "$REMOTE_HOST" = "$(hostname)" ] || [ "$REMOTE_HOST" = "$(hostname -f)" ]
@@ -11,4 +11,4 @@ then
     exec nvim "$@"
 fi
 
-exec ssh "$REMOTE_HOST" "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
+exec lawn proxy -- ssh "$REMOTE_HOST" "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
