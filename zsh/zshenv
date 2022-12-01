@@ -59,6 +59,22 @@ is_privileged () {
     [ "$(zstat -L +uid "$HOME")" -ne "$(id -u)" ]
 }
 
+setup_xdg_vars () {
+    local i
+    [ -n "$XDG_RUNTIME_DIR" ] && return
+
+    zmodload -F zsh/stat b:zstat
+    for i in "/run/user/$(id -u)" \
+        "/var/run/user/$(id -u)"
+    do
+        if [ -d "$i" ] && [ "$(zstat -L +uid "$HOME")" -eq "$(id -u)" ]
+        then
+            export XDG_RUNTIME_DIR="$i"
+            return
+        fi
+    done
+}
+
 setup_ssh_agent () {
     local i
     is_ssh_session && return
@@ -287,6 +303,7 @@ unsetopt allexport
 # End exporting variables.
 
 setup_browser
+setup_xdg_vars
 setup_ssh_agent
 setup_temp
 source_if_present "$HOME/.rvm/scripts/rvm"
@@ -295,6 +312,7 @@ unfunction is_privileged
 unfunction has_locale
 unfunction preferred_locale
 unfunction setup_browser
+unfunction setup_xdg_vars
 unfunction setup_ssh_agent
 unfunction setup_temp
 
