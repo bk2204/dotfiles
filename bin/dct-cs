@@ -171,6 +171,18 @@ case "$1" in
     shift
     cs_delete "$@"
     ;;
+  session)
+    shift
+    case "$1" in
+      start)
+        # This command is intentionally blocking.
+        lawn mount --fd default -- sudo mount -t 9p -o trans=fd,rfdno=0,wfdno=1 default ~/mnt/remote >/tmp/lawn-mount
+        ;;
+      stop)
+        sudo umount -l ~/mnt/remote || true
+        ;;
+    esac
+    ;;
   mount)
     shift
     cs_mount "$@"
