@@ -107,17 +107,30 @@ cs_port_mounted () {
 cs_mount_port () {
   local id="$1"
   local parameters="$2"
+  local skip_session="$3"
   local port="$(cs_port "$id")"
   [ -z "$parameters" ] && parameters="$(cs_find_parameters "$id")"
   local username="$(cs_find_username "$parameters")"
+  local lawn_bin
+  [ -z "$skip_session" ] && lawn_bin="$(cs_find_parameter "$parameters" "lawn-bin")"
 
-  ruby -e '
-    puts spawn("gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--", "-N",
+  ruby -rsecurerandom -e '
+    sock = "/home/#{ARGV[2]}/.local/run/lawn/server-#{SecureRandom.alphanumeric(10)}.sock"
+    args = if ARGV[3].empty?
+      ["gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--", "-N"]
+    else
+      [
+        "gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--",
+        "-R", "#{sock}:/run/user/1000/lawn/server-0.sock",
+        "dct-cs", "session", "start"
+      ]
+    end
+    puts spawn(*args,
       :in => :close,
       :out => :close,
       :err => :close,
     )
-  ' "$id" "$port"
+  ' "$id" "$port" "$username" "$lawn_bin"
   wait_for_port "$port" "$username"
 }
 
@@ -128,7 +141,10 @@ cs_umount_port () {
 
 cs_umount_port_for_id () {
   local id="$1"
-  local pid=$(cs_port "$id")
+  local parameters="$(cs_find_parameters "$id")"
+  local lawn="$(cs_find_parameter "$parameters" "lawn-bin")"
+  local port=$(cs_port "$id")
+  cs_ssh "dct-cs session stop" >/dev/null 2>/dev/null || true
   kill -s TERM $(lsof "-iTCP:$port" -sTCP:LISTEN -t)
 }
 
@@ -210,8 +226,11 @@ case "$1" in
     case "$1" in
       mount)
         shift
-        cs_port_mounted "$1" || cs_mount_port "$@" >/dev/null
-        cs_port "$1"
+        id="$1"
+        shift
+        [ "$1" = "--skip-session" ] && skip_session=true
+        cs_port_mounted "$id" || cs_mount_port "$id" "" "$skip_session" >/dev/null
+        cs_port "$id"
         ;;
       mounted)
         shift
