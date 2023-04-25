@@ -10,4 +10,5 @@ set recall=no
 set sort=threads
 set sort_aux=date
 set wait_key=no
+color status bold cyan black
 # vim: set syntax=muttrc:
