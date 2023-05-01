@@ -85,4 +85,4 @@ hints:
        mods: None
      binding:
        key: U
-       mods: Control|Shift
+       mods: Super
