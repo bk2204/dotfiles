@@ -160,12 +160,6 @@ set_sane_term () {
         *) ;;
     esac
 
-    # Ensure key bindings are set up appropriately.
-    if [[ -n $DISPLAY ]] && silent command -v xmodmap && [[ -e $HOME/.Xmodmap ]]
-    then
-        xmodmap $HOME/.Xmodmap
-    fi
-
     if is_ssh_session && [[ $SSH_TTY == $TTY ]]
     then
         case $TERM in
