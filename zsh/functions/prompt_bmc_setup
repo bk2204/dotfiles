@@ -128,7 +128,7 @@ prompt_bmc_precmd () {
     fi
 
     local c_reset="%b%{$(prompt_bmc_reset_color)%}"
-    local parent_exe="$(ps -p $PPID -o comm=)"
+    local parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
 
     case $SHLVL:$parent_exe in
         1:*)
