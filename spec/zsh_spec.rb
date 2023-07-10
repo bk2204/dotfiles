@@ -9,19 +9,19 @@ describe :zsh do
     it 'should set EDITOR to nvim-gtk with DISPLAY' do
       @dir = TestDir.new
       exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
-      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork --\n"
     end
 
     it 'should set VISUAL to nvim-gtk with DISPLAY' do
       @dir = TestDir.new
       exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
-      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork\n"
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'DISPLAY' => 'something')).to eq "nvim-gtk --no-fork --\n"
     end
 
     it 'should set set detachable editor to nvim-gtk with DISPLAY' do
       @dir = TestDir.new
       exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
-      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'bmc_editor --detach --no-fallback'], 'DISPLAY' => 'something')).to eq "nvim-gtk"
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'bmc_editor --detach --no-fallback'], 'DISPLAY' => 'something')).to eq "nvim-gtk --"
     end
 
     it 'should set EDITOR to lawn with REMOTE_ENV' do

@@ -36,7 +36,7 @@ unset gvi
 
 if silent command -v nvim-gtk
 then
-    alias gvim=nvim-gtk
+    alias gvim="nvim-gtk --"
 fi
 
 has_colors && alias grep='grep --color=auto'

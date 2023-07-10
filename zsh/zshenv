@@ -135,12 +135,12 @@ bmc_editor () {
     [[ -n $REMOTE_ENV ]] && remote=t
 
     local i
-    for i in 'lawn run -- gvi --no-fork' 'lawn run -- gvi' 'nvim-gtk --no-fork' 'gvim -f' 'mvim -f' nvim-gtk gvim mvim nvim vimx vim vi ex
+    for i in 'lawn run -- gvi --no-fork' 'lawn run -- gvi' 'nvim-gtk --no-fork --' 'gvim -f' 'mvim -f' 'nvim-gtk --' gvim mvim nvim vimx vim vi ex
     do
         local root="${i%% *}"
         local ok=""
         # True if the command doesn't contain an argument to detach from the terminal.
-        local simple="$([ -n "${i##*--no-fork}" -a -n "${i##*-f}" ] && echo t)"
+        local simple="$([ -n "${i##*--no-fork*}" -a -n "${i##*-f}" ] && echo t)"
         case "$root:$simple:$detach:$console:$dumb:$display:$remote:$OSTYPE" in
             lawn::::*::t*) ok=t;;
             lawn:t:t::*::t:*) ok=t;;
