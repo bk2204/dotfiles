@@ -235,6 +235,7 @@ setup_colors () {
     export LESS_TERMCAP_so=$(print -P $(bmc_palette standout))
     export LESS_TERMCAP_ue=$(print -P $(color_reset))
     export LESS_TERMCAP_us=$(print -P $(bmc_palette underline))
+    export MANROFFOPT=-c
     export CLICOLOR=1
     export LSCOLORS=ExGxfxdxCxDxDxhBhBaCeC
 
