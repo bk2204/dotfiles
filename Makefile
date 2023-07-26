@@ -24,6 +24,7 @@ print:
 
 install: install-links install-dirs install-standard
 
+include bash/rules.mk
 include bin/rules.mk
 include git/rules.mk
 include gnupg/rules.mk
