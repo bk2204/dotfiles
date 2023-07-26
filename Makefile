@@ -30,6 +30,7 @@ clean:
 
 install-legacy: install-links install-dirs install-standard
 
+include bash/rules.mk
 include bin/rules.mk
 include firefox/rules.mk
 include git/rules.mk
