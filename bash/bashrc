@@ -1,0 +1,9 @@
+if [ -n "$PS1" ] && command -v zsh >/dev/null 2>&1 && [ -d /data ]
+then
+  if shopt | grep -qsE '^login_shell[[:space:]]+on'
+  then
+    exec zsh -l "$@"
+  else
+    exec zsh -i "$@"
+  fi
+fi

@@ -37,6 +37,7 @@ clean:
 	$(RM) -r $(TEMPLATE_FILES) $(GENERATED_FILES)
 	$(RM) manifest.mtree
 
+include bash/rules.mk
 include bin/rules.mk
 include dconf/rules.mk
 include firefox/rules.mk
