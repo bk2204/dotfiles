@@ -318,6 +318,8 @@ fi
 
 if [[ -n "$CODESPACES" ]]; then
     REMOTE_ENV=codespaces
+elif [[ -d /data ]]; then
+    REMOTE_ENV=work
 elif dct-is-ssh-session; then
     REMOTE_ENV=ssh
 fi
