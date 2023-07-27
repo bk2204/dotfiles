@@ -255,6 +255,8 @@ fi
 
 if [[ -n "$CODESPACES" ]]; then
     REMOTE_ENV=codespaces
+elif is_ssh_session; then
+    REMOTE_ENV=ssh
 fi
 
 LANG=$(preferred_locale)
