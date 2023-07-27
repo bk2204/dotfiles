@@ -6,7 +6,7 @@ require 'shellwords'
 COMMANDS = {
   copy: [
     {
-      func: ->(options) { ["lawn", "run", "--", "clip", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
+      func: ->(options) { ["lawn", "clip", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
       if: ->() { ENV["REMOTE_ENV"] }
     },
     {func: ->(options) { ["pbcopy"] }},
@@ -15,7 +15,7 @@ COMMANDS = {
   ],
   paste: [
     {
-      func: ->(options) { ["lawn", "run", "--", "clip", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
+      func: ->(options) { ["lawn", "clip", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
       if: ->() { ENV["REMOTE_ENV"] }
     },
     {func: ->(options) { ["pbpaste"] }},
