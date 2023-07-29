@@ -7,7 +7,7 @@ window:
   startup_mode: Windowed
 font:
   normal:
-    #family: monospace
+    family: Source Code Pro
     style: Regular
   bold:
     style: Bold
