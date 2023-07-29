@@ -104,6 +104,9 @@ noremap <Leader>d "_d
 " Trim trailing whitespace.
 noremap <Leader>w :Trailing<CR>
 noremap <Leader>zw :TrailingAll<CR>
+" Copy buffer filename to register.
+noremap <Leader>zf :call <SID>CopyBufferToRegister("", v:register)<CR>
+noremap <Leader>zF :call <SID>CopyBufferToRegister(":p", v:register)<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Toggle executable bit.
@@ -509,6 +512,10 @@ function! s:ScratchBuffer()
   setl bt=nofile
   setl bh=hide
   setl noswf
+endfunction
+
+function! s:CopyBufferToRegister(suffix, register)
+  call setreg(a:register, expand("%" . a:suffix))
 endfunction
 
 function! s:ToggleScreenSize()
