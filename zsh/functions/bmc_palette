@@ -15,7 +15,7 @@ bmc_palette_ () {
     local c256="$3"
     local c16="$4"
 
-    color_count_for "echo '$ctrue'" "echo '$c256'" "echo '$c16'"
+    color_count_for "$ctrue" "$c256" "$c16"
     [[ $bold = yes ]] && echo $bold
 }
 

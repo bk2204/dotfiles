@@ -12,17 +12,17 @@ color_count_for () {
 
     if [[ $TERM = dumb ]]
     then
-        eval "$cnone"
-    elif [[ $ncolors -gt 256 ]] || [[ $COLORTERM = truecolor ]]
+        echo "$cnone palette"
+    elif [[ "$ctrue" != skip ]] && { [[ $ncolors -gt 256 ]] || [[ $COLORTERM = truecolor ]]; }
     then
-        eval "$ctrue"
-    elif [[ $ncolors -eq 256 ]]
+        echo "$ctrue true"
+    elif [[ $ncolors -ge 256 ]]
     then
-        eval "$c256"
+        echo "$c256 palette"
     elif [[ $ncolors -gt 0 ]]
-        eval "$c16"
+        echo "$c16 palette"
     then
     else
-        eval "$cnone"
+        echo "$cnone palette"
     fi
 }

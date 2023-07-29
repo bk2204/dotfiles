@@ -5,7 +5,8 @@
 # appropriate for the terminal.
 color_fg () {
     local color="$1"
-    local bold="$2"
+    local kind="$2"
+    local bold="$3"
     local name="$(expr "$1" : "\([a-z][a-z]*\)")"
 
     [[ $TERM = dumb ]] && return 0
@@ -17,11 +18,11 @@ color_fg () {
     then
         # This is a named color.
         printf "%%F{%s}" $color
-    elif [[ $(echoti colors 2>/dev/null || echo 0) -gt 256 ]]
+    elif {[ -n "$kind" ] || [ "$kind" = true ]; } && [[ $(echoti colors 2>/dev/null || echo 0) -gt 256 ]]
     then
         # True color support in the terminal definition.
         printf '%s' "$(echoti setaf "$((color))")"
-    elif [[ $COLORTERM = truecolor ]]
+    elif {[ -n "$kind" ] || [ "$kind" = true ]; } && [[ $COLORTERM = truecolor ]]
     then
         # We have true color, but our terminal definition doesn't know about it.
         printf '\033[38;2;%d;%d;%dm' $((color / 65536)) $((color / 256 % 256)) $((color % 256))
