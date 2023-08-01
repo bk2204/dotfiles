@@ -1,0 +1,158 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+class SnippetStorage
+  def initialize(location)
+    @location = location
+  end
+
+  def xdg_data_home
+    @location.fetch("XDG_DATA_HOME", File.join(@location["HOME"], ".local", "share"))
+  end
+
+  def xdg_data_dirs
+    @location.fetch("XDG_DATA_DIRS", "/usr/local/share:/usr/share").split(':')
+  end
+
+  def data_dirs
+    [xdg_data_home, *xdg_data_dirs]
+  end
+
+  def lib_dirs
+    [File.join(@location["HOME"], ".local", "lib")]
+  end
+
+  def text_dirs
+    data_dirs.map { |dir| File.join(dir, "dct-snip", "snippets") }
+  end
+
+  def exec_dirs
+    lib_dirs.map { |dir| File.join(dir, "dct-snip", "snippets") }
+  end
+
+  def dirs(type)
+    case type
+    when :text
+      text_dirs
+    when :executable
+      exec_dirs
+    end
+  end
+
+  def find_text(snip)
+    if File.absolute_path?(snip)
+      if File.exists?(snip)
+        return snip
+      else
+        return nil
+      end
+    end
+    text_dirs.map { |dir| File.join(dir, snip) }.select do |loc|
+      File.exist? loc
+    end.first
+  end
+
+  def find_executable(snip)
+    if File.absolute_path?(snip)
+      if File.executable?(snip)
+        return snip
+      else
+        return nil
+      end
+    end
+    exec_dirs.map { |dir| File.join(dir, snip) }.select do |loc|
+      File.executable? loc
+    end.first
+  end
+
+  def find(snip, type)
+    case type
+    when :text
+      find_text(snip)
+    when :executable
+      find_executable(snip)
+    end
+  end
+end
+
+class SnippetProgram
+  def initialize(location, stdout, stderr)
+    @storage = SnippetStorage.new(location)
+    @stdout = stdout
+    @stderr = stderr
+  end
+
+  def run(args)
+    options = {kind: :text}
+
+    OptionParser.new do |opts|
+      opts.on("-r", "--run", "Run an executable snippet") do
+        options[:kind] = :executable
+        options[:command] = :run
+      end
+
+      opts.on("-p", "--print", "Print a snippet") do
+        options[:command] = :print
+      end
+
+      opts.on("--list-paths", "List paths for a snippet or all snippets") do
+        options[:command] = :list
+      end
+
+      opts.on("--format=KIND", "Specify a kind of snippet (exec[utable] or text)") do |kind|
+        case kind
+        when "exec", "executable"
+          options[:kind] = :executable
+        when "text"
+          options[:kind] = :text
+        end
+      end
+
+      opts.on("--help", "Print this help") do
+        @stdout.puts opts.help
+        return 0
+      end
+    end.order!(args)
+
+    case options[:command]
+    when :run
+      if args.length < 1
+        $stderr.puts("A single argument of a snippet to run is required")
+        return 2
+      end
+      path = @storage.find(args[0], options[:kind])
+      if path.nil?
+        return 127
+      end
+      system([path, path], *args[1..])
+      $?.exitstatus
+    when :print
+      if args.length != 1
+        $stderr.puts("A single argument of a snippet to print is required")
+        return 3
+      end
+      snip = @storage.find(args[0], options[:kind])
+      if snip.nil?
+        return 126
+      end
+      File.open(snip) do |f|
+        IO.copy_stream(f, @stdout)
+      end
+    when :list
+      case args.length
+      when 0
+        @stdout.puts @storage.dirs(options[:kind])
+        0
+      when 1
+        @stdout.puts @storage.find(args[0], options[:kind])
+        0
+      else
+        $stderr.puts("Either zero or one snippet names are required")
+        4
+      end
+    end
+  end
+end
+
+exit SnippetProgram.new(ENV, $stdout, $stderr).run(ARGV) if $0 == __FILE__
