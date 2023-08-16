@@ -1,0 +1,25 @@
+---
+- name: Deploy dotfiles and configuration
+  hosts: all
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tasks:
+    - name: Create the directory
+      file:
+        path: /home/{{ ansible_user_id }}/checkouts
+        state: directory
+    - name: Clone dotfiles
+      git:
+        repo: https://github.com/bk2204/dotfiles.git
+        remote: def
+        dest: /home/{{ ansible_user_id }}/checkouts/dotfiles
+    - name: Checkout submodules for dotfiles
+      shell: 'git submodule update --init'
+      args:
+        chdir: /home/{{ ansible_user_id }}/checkouts/dotfiles
+    - name: Deploy dotfiles
+      shell: 'make install'
+      args:
+        chdir: /home/{{ ansible_user_id }}/checkouts/dotfiles
+    - name: Create Lawn configuration directory
+      shell: 'mkdir -p ~/.local/run/lawn'
