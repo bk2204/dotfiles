@@ -130,6 +130,9 @@ nnoremap <Leader>b :ALEFix<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
 noremap <C-A> <Nop>
+" u/U is too easily mistyped.  Use gu/gU instead.
+vnoremap u <Nop>
+vnoremap U <Nop>
 " Plugins.
 noremap <Leader>v :ToggleBufExplorer<CR>
 
