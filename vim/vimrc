@@ -654,6 +654,7 @@ let g:ale_fixers = {
   \ }
 let g:ale_rust_rls_toolchain = ''
 let g:ale_rust_cargo_use_clippy = isdirectory(expand("$HOME") . '/.cargo')
+let g:ale_floating_preview = 1
 
 let g:clipboard = {
   \ 'name': 'dct-clip',
