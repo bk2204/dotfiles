@@ -124,6 +124,10 @@ nnoremap <Leader>gd :ALEDetail<CR>
 nnoremap <Leader>gs :ALEHover<CR>
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
 nnoremap <Leader>gJ :ALEGoToDefinition -split<CR>
+nnoremap <Leader>gt :ALEGoToTypeDefinition<CR>
+nnoremap <Leader>gT :ALEGoToTypeDefinition -split<CR>
+nnoremap <Leader>gi :ALEGoToImplementation<CR>
+nnoremap <Leader>gI :ALEGoToImplementation -split<CR>
 nnoremap <Leader>gf :ALEFindReferences<CR>
 nnoremap <Leader>gF :ALEFindReferences -split<CR>
 nnoremap <Leader>b :ALEFix<CR>
