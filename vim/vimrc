@@ -186,7 +186,7 @@ augroup end
 
 " File type-specific parameters.
 augroup setl
-  au FileType asciidoc      setl tw=80 ts=2 sw=2 sts=2 spell com=b://
+  au FileType asciidoc      setl tw=0 ts=2 sw=2 sts=2 spell com=b://
   au FileType clojure       setl ts=2 sw=2 sts=2
   au FileType cpp           setl cin cino=t0
   au FileType c             setl cin cino=t0
@@ -200,7 +200,7 @@ augroup setl
   au FileType java          setl cin cino=t0,j1
   au FileType make          setl noet
   au FileType mail          setl tw=72 ts=2 sw=2 sts=2 et spell com=n:>
-  au FileType markdown      setl tw=80 ts=2 sw=2 sts=2 spell
+  au FileType markdown      setl tw=0 ts=2 sw=2 sts=2 spell
   au FileType python        setl et si tw=79
   au FileType rst           setl et si ts=2 sw=2 sts=2 spell
   au FileType rust          setl spell
