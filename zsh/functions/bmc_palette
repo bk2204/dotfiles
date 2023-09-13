@@ -14,9 +14,14 @@ bmc_palette_ () {
     local ctrue="$2"
     local c256="$3"
     local c16="$4"
+    local -a args=()
 
-    color_count_for "$ctrue" "$c256" "$c16"
-    [[ $bold = yes ]] && echo $bold
+    [[ $bold = yes ]] && args+=(--bold)
+    [[ -n $ctrue ]] && args+=(--color-true $ctrue)
+    [[ -n $c256 ]] && args+=(--color-256 $c256)
+    [[ -n $c16 ]] && args+=(--color-16 $c16)
+
+    color_fg $args
 }
 
 bmc_palette () {
@@ -68,6 +73,5 @@ bmc_palette () {
     fi
 
     local expanded="$colors[$color]"
-
-    color_fg $(bmc_palette_ $expanded)
+    bmc_palette_ $expanded
 }

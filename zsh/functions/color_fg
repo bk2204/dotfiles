@@ -4,31 +4,32 @@
 # color.  The color can be a name that zsh understands or a numerical value
 # appropriate for the terminal.
 color_fg () {
-    local color="$1"
-    local kind="$2"
-    local bold="$3"
-    local name="$(expr "$1" : "\([a-z][a-z]*\)")"
+    zmodload zsh/zutil
+    local -a c16 c256 ctrue cbold
+
+    zparseopts -D -E -color-16:=c16 -color-256:=c256 -color-true:=ctrue -bold=cbold
+    local ncolors=$(echoti colors 2>/dev/null || echo 0)
 
     [[ $TERM = dumb ]] && return 0
 
     printf "%%{"
-    [[ -n $bold ]] && printf "%%B"
+    [[ -n ${cbold[-1]} ]] && printf "%%B"
 
-    if [[ -n "$name" ]]
+    if [[ $ncolors -gt 256 ]] && [[ -n ${ctrue[-1]} ]]
     then
-        # This is a named color.
-        printf "%%F{%s}" $color
-    elif {[ -n "$kind" ] || [ "$kind" = true ]; } && [[ $(echoti colors 2>/dev/null || echo 0) -gt 256 ]]
-    then
-        # True color support in the terminal definition.
-        printf '%s' "$(echoti setaf "$((color))")"
-    elif {[ -n "$kind" ] || [ "$kind" = true ]; } && [[ $COLORTERM = truecolor ]]
+        # True color support in the terminal definition and a true color request.
+        printf '%s' "$(echoti setaf "$((${ctrue[-1]}))")"
+    elif [[ $COLORTERM = truecolor ]] && [[ -n ${ctrue[-1]} ]]
     then
         # We have true color, but our terminal definition doesn't know about it.
-        printf '\033[38;2;%d;%d;%dm' $((color / 65536)) $((color / 256 % 256)) $((color % 256))
+        printf '\033[38;2;%d;%d;%dm' $((${ctrue[-1]} / 65536)) $((${ctrue[-1]} / 256 % 256)) $((${ctrue[-1]} % 256))
+    elif [[ $ncolors -ge 256 ]] && [[ -n ${c256[-1]} ]]
+    then
+        # We have 256 or more colors and a 256-color entry.
+        printf "%%F{%s}" ${c256[-1]}
     else
-        # We legitimately have 256 colors or fewer.
-        printf "%%F{%s}" $color
+        # All we have left is 8 or 16 colors.
+        printf "%%F{%s}" ${c16[-1]}
     fi
     printf '%%}'
 }
