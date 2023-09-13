@@ -165,7 +165,7 @@ prompt_bmc_apm_precmd () {
     has_bat=0
 
     local i
-    for i in $(find /sys/class/power_supply -type d -o -type l)
+    for i in $(find /sys/class/power_supply -type d -o -type l 2>/dev/null)
     do
         if [[ -f "$i/type" ]]
         then
