@@ -13,7 +13,6 @@
           - cargo
           - dc
           - git
-          - gopls
           - gnupg
           - less
           - libpam-tmpdir
@@ -31,6 +30,13 @@
         update_cache: true
       become: yes
       become_user: root
+    - name: Install gopls
+      apt:
+        pkg:
+          - gopls
+      become: yes
+      become_user: root
+      ignore_errors: true
     # This is required because otherwise installing the zsh configuration causes
     # zsh to fail because compinit operates on an insecure directory (~/.zsh).
     - name: Remove broken ACL
