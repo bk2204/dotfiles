@@ -4,6 +4,8 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
   tasks:
+    - name: Disable Homebrew analytics
+      shell: 'if command -v brew >/dev/null 2>&1; then brew analytics off; fi'
     - name: Install dependencies
       apt:
         pkg:
