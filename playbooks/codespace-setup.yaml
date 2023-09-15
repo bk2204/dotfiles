@@ -75,6 +75,8 @@
       command: 'cargo install muter'
     - name: Deploy scutiger
       command: 'cargo install scutiger-bin'
+    - name: Deploy Lawn
+      command: 'cargo install --git https://github.com/bk2204/lawn.git --rev refs/heads/dev lawn'
     - name: Change remote name to def
       shell: 'for i in /workspaces/*; do (cd "$i"; [ -e .git ] || exit 0; if git remote | grep -qs origin; then git remote rename origin def; fi); done'
     - name: Set HEAD for remote
@@ -83,3 +85,7 @@
       shell: 'for i in /workspaces/*; do (cd "$i"; [ -e .git ] || exit 0; b=$(git rev-parse --abbrev-ref refs/remotes/def/HEAD | sed -e "s!.*/!!g"); if git rev-parse --verify "$b" && [ "$b" != dev ]; then git branch -m "$b" dev; fi); done'
     - name: Install neovim-gtk helper
       shell: 'cd ~/.vim/plugin && curl -LO https://raw.githubusercontent.com/Lyude/neovim-gtk/main/runtime/plugin/nvim_gui_shim.vim'
+    - name: Create Lawn socket dir
+      shell: 'mkdir -p "$HOME/.local/run/lawn"'
+    - name: Create Lawn mount dir
+      shell: 'mkdir -p "$HOME/mnt/remote"'
