@@ -1,0 +1,65 @@
+#!/bin/sh
+#
+#/ Usage: setup-repository DIRECTORY
+#/
+#/ Set up a repository by performing the following steps:
+#/
+#/ * Rename the main remote from `origin` to `def`.
+#/ * Set the remote HEAD for `def`.
+#/ * Set the default branch to be called `dev` locally.
+#/
+#/ If this repository is on a Codespace, the appropriate file is sourced to
+#/ acquire credentials.  This script is intended to be idempotent and will
+#/ ignore directories that are not Git repositories.
+
+usage () {
+  cat $0 | grep '^#/' | cut -b4-
+  exit $1
+}
+
+git_version_is_at_least () {
+  local wanted="$1"
+  local version="$(git version | awk '{print $3}')"
+  local newer="$(printf '%s\n%s\n' "$version" 2.30.0 | sort -Vr | head -n1)"
+
+  [ "$newer" = "$version" ]
+}
+
+[ "$1" = "--help" ] && usage 0
+[ -z "$1" ] && usage 1 >&2
+
+DIR="$1"
+CODESPACES_PROFILE=/etc/profile.d/codespaces.sh
+
+[ -f "$CODESPACES_PROFILE" ] && . "$CODESPACES_PROFILE"
+
+cd "$DIR"
+[ -e .git ] || exit 0
+
+if git remote | grep -qs origin
+then
+  if git_version_is_at_least 2.30.0
+  then
+    git for-each-ref refs/remotes/origin | grep -v HEAD | ruby -e '
+      puts "start"
+      while gets
+        oid, type, name = $_.split(" ")
+        newname = name.sub("/origin/", "/def/")
+        puts "create #{newname} #{oid}"
+        puts "delete #{name}"
+      end
+      puts "prepare"
+      puts "commit"
+      ' | git update-ref --stdin
+  fi
+  git remote rename origin def
+fi
+
+git remote set-head def -a
+
+branch=$(git rev-parse --abbrev-ref refs/remotes/def/HEAD | sed -e "s!.*/!!g")
+if git rev-parse --verify "$branch" >/dev/null 2>&1 && [ "$branch" != dev ]
+then
+  git branch -m "$branch" dev
+fi
+
