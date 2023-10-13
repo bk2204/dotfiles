@@ -628,6 +628,13 @@ function! s:SetLSPRoot()
   endif
 endfunction
 
+function! s:IsSafeLSPRoot()
+  let root = s:FindLSPRoot()
+  let safe_dir = expand("$HOME") . "/checkouts/"
+  let external_dir = safe_dir . "external/"
+  return safe_dir == strpart(root, 0, strlen(safe_dir)) && external_dir != strpart(root, 0, strlen(external_dir))
+endfunction
+
 " Perform LSP functionality.
 function! s:LoadLSP()
   call <SID>SetLSPRoot()
@@ -642,6 +649,10 @@ function! s:LoadLSP()
       break
     endif
   endfor
+
+  if <SID>IsSafeLSPRoot()
+    let b:ale_ruby_sorbet_executable = "bin/srb"
+  endif
 endfunction
 
 "" Miscellaneous variables.
@@ -700,6 +711,7 @@ let g:ale_fixers = {
   \ 'go': ['goimports'],
   \ 'perl': ['perltidy'],
   \ 'rust': ['rustfmt'],
+  \ 'ruby': ['sorbet'],
   \ }
 let g:ale_rust_rls_toolchain = ''
 let g:ale_rust_cargo_use_clippy = isdirectory(expand("$HOME") . '/.cargo')
