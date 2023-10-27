@@ -40,7 +40,7 @@ endif
 if v:version > 704 || (v:version == 704 && has("patch785"))
   set nofixeol
 endif
-set tw=80
+set tw=80               " Default text width of 80 characters.
 set bs=indent,eol,start
 set wrap
 set mps+=<:>
@@ -77,6 +77,7 @@ if has("termguicolors") && &tgc && &t_8f == ''
   set t_8f=[38;2;%lu;%lu;%lum
   set t_8b=[48;2;%lu;%lu;%lum
 endif
+" Use Ctrl-W to switch between terminals.
 if exists("&termkey")
   set termkey=<C-W>
 elseif exists("&termwinkey")
@@ -99,13 +100,17 @@ noremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name")  . '> 
 " "+ is hard to type.  Map it to something easier.
 noremap <Leader><Leader> "+
 noremap <Leader>c "*
+" Map the blackhole register to <Leader>s.
 noremap <Leader>s "_
+" Delete without saving the deleted text with <Leader>d and a motion,
 noremap <Leader>d "_d
-" Trim trailing whitespace.
+" Trim trailing whitespace in a way appropriate for the current file type.
 noremap <Leader>w :Trailing<CR>
+" Trim all trailing whitespace, no matter what.
 noremap <Leader>zw :TrailingAll<CR>
-" Copy buffer filename to register.
+" Copy relative buffer filename to register.
 noremap <Leader>zf :call <SID>CopyBufferToRegister("", v:register)<CR>
+" Copy absolute buffer filename to register.
 noremap <Leader>zF :call <SID>CopyBufferToRegister(":p", v:register)<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
@@ -113,23 +118,32 @@ noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 noremap <Leader>x :call <SID>ToggleExecutable()<CR>
 " Toggle large and small screen.
 nnoremap <Leader>zz :call <SID>ToggleScreenSize()<CR>
+" Toggle paste mode.
 nnoremap <Leader>pp :set paste!<CR>
+" Toggle list mode.
 nnoremap <Leader>ll :set list!<CR>
 " Navigate to errors, warnings, and definitions.
 nnoremap <Leader>gg :ALEFirst<CR>
 nnoremap <Leader>gG :ALELast<CR>
 nnoremap <Leader>gn :ALENextWrap<CR>
 nnoremap <Leader>gN :ALEPreviousWrap<CR>
+" Show details about what's under the cursor via LSP.
 nnoremap <Leader>gd :ALEDetail<CR>
+" Show hover information about what's under the cursor via LSP.
 nnoremap <Leader>gs :ALEHover<CR>
+" Go to the definition, possibly in a new split.
 nnoremap <Leader>gj :ALEGoToDefinition<CR>
 nnoremap <Leader>gJ :ALEGoToDefinition -split<CR>
+" Go to the type definition, possibly in a new split.
 nnoremap <Leader>gt :ALEGoToTypeDefinition<CR>
 nnoremap <Leader>gT :ALEGoToTypeDefinition -split<CR>
+" Go to the implementation, possibly in a new split.
 nnoremap <Leader>gi :ALEGoToImplementation<CR>
 nnoremap <Leader>gI :ALEGoToImplementation -split<CR>
+" Find references to what's under the cursor.
 nnoremap <Leader>gf :ALEFindReferences<CR>
 nnoremap <Leader>gF :ALEFindReferences -split<CR>
+" Fix or format the code in this file.
 nnoremap <Leader>b :ALEFix<CR>
 " Ctrl-A is too easily mistyped.  Use Ctrl-S instead.
 noremap <C-S> <C-A>
@@ -148,6 +162,8 @@ if 0 | finish | endif
 if has("autocmd")
   filetype plugin indent on
 endif
+" If we are in a dumb terminal, disable colors and anything that tries to use
+" them, including syntax highlighting; otherwise, enable syntax highlighting.
 if !has("gui_running") && $TERM == 'dumb'
   hi clear
   set t_Co=0
@@ -157,6 +173,7 @@ else
 endif
 
 "" Mode-specific settings.
+" Set s:mode to "ex" if we're in ex mode and "vi" otherwise.
 let s:mode = (mode(1) == 'cv' || mode(1) == 'ce') ? 'ex' : 'vi'
 
 "" Global constants.
@@ -265,6 +282,9 @@ augroup end
 "" Color scheme.
 " This needs to go after the whitespace handling, since it can cause warnings if
 " placed before it.
+"
+" If we're in some sort of visual mode, enable the color scheme.  Skip if we're
+" in ex mode, since we probably have a dumb terminal and don't want colors.
 if s:mode != 'ex'
   colorscheme ct-grey
 endif
@@ -471,6 +491,8 @@ function! s:ModulePath(module)
   return ''
 endfunction
 
+" Toggle the executable bit on the file underlying the current buffer, using
+" either Ruby or Perl, as available.  The file should be saved and unmodified.
 function! s:ToggleExecutable()
   if has("ruby") || has("perl")
     setl ar
@@ -494,6 +516,9 @@ EOM
   endif
 endfunction
 
+" Look in ~/Documents/notes (or its replacement) for an AsciiDoc file named the
+" same thing as the argument, or as the current Git repository directory (if no
+" argument is given), and edit it.
 function! s:EditNotes(...)
   let docpath = system('xdg-user-dir DOCUMENTS 2>/dev/null')
   if !docpath
@@ -514,6 +539,8 @@ function! s:EditNotes(...)
   exe "e " . path
 endfunction
 
+" Create a scratch buffer which cannot be saved and will be destroyed without
+" notice on exit.
 function! s:ScratchBuffer()
   enew
   setl bt=nofile
@@ -521,6 +548,7 @@ function! s:ScratchBuffer()
   setl noswf
 endfunction
 
+" Expand the current buffer's path with suffix and copy it to register.
 function! s:CopyBufferToRegister(suffix, register)
   call setreg(a:register, expand("%" . a:suffix))
 endfunction
@@ -535,18 +563,22 @@ function! s:ToggleScreenSize()
 endfunction
 
 function! s:SetGUIOptions()
+  " If we're in a GUI…
   if has("gui_running") || (has("nvim") && !has("ttyout") && s:mode == 'vi')
     set lines=24
     set co=133
     set gcr+=a:blinkon0
     set go-=tT      " Disable tearoffs and toolbar.
 
+    " If we're in a GTK+ (Linux) Vim GUI…
     if has("gui_gtk")
       set gfn=Source\ Code\ Pro\ 12,Noto\ Mono\ Regular\ 12,Monospace\ 12
     endif
+    " If we're using MacVim…
     if has("gui_macvim")
       set gfn=SourceCodePro-Regular:h8
     endif
+    " If we're in a Neovim GUI, such as Neovim-GTK…
     if has("nvim")
       Guifont SourceCodePro:h12
     endif
@@ -559,6 +591,8 @@ function! s:SortLSPRoots(a, b)
   return x / abs(x)
 endfunction
 
+" Find the LSP root by looking for the nearest .git file or directory or the
+" nearest .lsproot file and return it.
 function! s:FindLSPRoot()
   let buffer = bufnr("%")
 
@@ -574,6 +608,7 @@ function! s:FindLSPRoot()
   return items[0]
 endfunction
 
+" Set the local buffer's LSP root if one can be determined.
 function! s:SetLSPRoot()
   let root = s:FindLSPRoot()
 
@@ -582,9 +617,12 @@ function! s:SetLSPRoot()
   endif
 endfunction
 
+" Perform LSP functionality.
 function! s:LoadLSP()
   call <SID>SetLSPRoot()
 
+  " If we have at least one LSP, enable ALE's omnicompletion functionality using
+  " the LSP.
   let linters = ale#linter#Get(&ft)
 
   for i in linters
