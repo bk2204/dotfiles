@@ -23,28 +23,6 @@ preferred_locale () {
     printf "en_US.UTF-8"
 }
 
-setup_browser () {
-    setopt localoptions shwordsplit
-    local i=""
-    local chrome="google-chrome-beta chromium-browser chromium google-chrome"
-    local firefox="firefox iceweasel"
-
-    if [[ -n "$REMOTE_ENV" ]] && command -v lawn >/dev/null 2>&1
-    then
-        export BROWSER="lawn run -- browser"
-        return
-    fi
-
-    for i in $firefox $chrome
-    do
-        if command -v "$i" >/dev/null 2>&1
-        then
-            export BROWSER="$i"
-            break
-        fi
-    done
-}
-
 is_ssh_session () {
     [[ -n $SSH_CLIENT ]] || [[ -n $SSH_CONNECTION ]] || [[ -n $SSH_TTY ]]
 }
@@ -291,6 +269,7 @@ QUOTING_STYLE=literal
 GOPATH="$HOME/checkouts/go"
 GOPROXY=direct
 GOTOOLCHAIN=local
+BROWSER=dct-browser
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
     unset XML_CATALOG_FILES
@@ -305,7 +284,6 @@ fi
 unsetopt allexport
 # End exporting variables.
 
-setup_browser
 setup_xdg_vars
 setup_ssh_agent
 setup_temp
@@ -314,7 +292,6 @@ source_if_present "$HOME/.rvm/scripts/rvm"
 unfunction is_privileged
 unfunction has_locale
 unfunction preferred_locale
-unfunction setup_browser
 unfunction setup_xdg_vars
 unfunction setup_ssh_agent
 unfunction setup_temp

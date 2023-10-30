@@ -1,0 +1,125 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'open3'
+require 'set'
+require 'shellwords'
+
+COMMANDS = [
+  {
+    func: ->(options) { ["lawn", "run", "--", "browser"] },
+    if: ->() { ENV["REMOTE_ENV"] }
+  },
+  {
+    func: ->(options) { ["firefox"] },
+    filter_stderr: ->(ln) { ln !~ /Gtk-|GTK\+/ },
+    if: ->() { File.exists?("/snap/firefox/current/usr/lib/firefox/firefox") },
+  },
+  {func: ->(options) { ["firefox"] }},
+  {func: ->(options) { ["iceweasel"] }},
+  {func: ->(options) { ["google-chrome-beta"] }},
+  {func: ->(options) { ["chromium-browser"] }},
+  {func: ->(options) { ["google-chrome"] }},
+]
+
+def parse_args(args)
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('--help', 'Print this usage information') do
+      puts opts
+
+      puts <<-EOM.gsub(/^\s+/, '')
+      Open a URL in the default browser.
+      EOM
+    end
+  end.parse!(args)
+  [options, args]
+end
+
+def which(cmd)
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exe = File.join(path, cmd)
+    return exe if File.executable?(exe) && !File.directory?(exe)
+  end
+  nil
+end
+
+def find_command(commands, options)
+  commands.each do |cmd|
+    if cmd[:if] && !cmd[:if].call
+      next
+    end
+    prog = cmd[:func].call(options)
+    return prog, cmd if which(prog[0])
+  end
+  nil
+end
+
+def do_exec(commands, options, args)
+  prog, cmd = find_command(commands, options)
+  if cmd.nil?
+    $stderr.puts 'Unable to find utility'
+    return 2
+  end
+  prog += args
+  filter = cmd[:filter_stderr]
+  if filter
+    Open3.popen3(*prog) do |stdin, stdout, stderr, wait_thr|
+      stdin.close
+      buffer = nil
+      items = Set.new([stdout, stderr])
+      loop do
+        break if items.empty?
+        r, _, _ = IO.select(items.to_a)
+        r.each do |io|
+          size = 65536
+          loop do
+            data = io.read_nonblock(size)
+            if io == stdout
+              $stdout.write(data)
+            else
+              if buffer.nil?
+                buffer = data
+              else
+                buffer << data
+              end
+              remaining = nil
+              buffer.each_line do |ln|
+                if ln.end_with?("\n")
+                  if filter.call(ln)
+                    $stderr.write(ln)
+                  end
+                else
+                  remaining = ln
+                end
+              end
+              buffer = remaining
+            end
+            break if data.length < size
+          rescue IO::WaitReadable
+            break
+          rescue EOFError
+            if io == stderr && !buffer.nil? && filter.call(buffer)
+              $stderr.write(buffer)
+            end
+            items.delete(io)
+            break
+          end
+        end
+      end
+    end
+  else
+    exec(*prog)
+  end
+end
+
+def dispatch(options)
+end
+
+def main(args)
+  opts, args = parse_args(args)
+  do_exec(COMMANDS, opts, args)
+  0
+end
+
+exit main(ARGV) if $PROGRAM_NAME == __FILE__
