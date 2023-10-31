@@ -280,6 +280,10 @@ fi
 if has_locale en_DK.UTF-8; then
     LC_TIME=en_DK.UTF-8
 fi
+if [ -f /etc/os-release ] && (( ${${(@f)"$(</etc/os-release)"}[(I)ID*=*ubuntu]} ))
+then
+    skip_global_compinit=1
+fi
 
 unsetopt allexport
 # End exporting variables.
