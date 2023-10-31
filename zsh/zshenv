@@ -57,6 +57,14 @@ setup_ssh_agent () {
     local i
     is_ssh_session && return
     is_privileged && return
+    for i in "$HOME/.1password/agent.sock"
+    do
+        if [[ -S "$i" ]]
+        then
+            export SSH_AUTH_SOCK="$i"
+            return
+        fi
+    done
     grep enable-ssh-support ~/.gnupg/gpg-agent.conf 2>/dev/null | \
         grep -qsv '^#' || return
     gpg-connect-agent /bye >/dev/null 2>&1
