@@ -714,13 +714,12 @@ let g:clipboard = {
 call s:SetUpLanguageHooks()
 
 " GUI settings.
-if has("gui_running")
-  call <SID>SetGUIOptions()
-endif
 if has("nvim")
   augroup gui
     au UIEnter * call <SID>SetGUIOptions()
   augroup end
+elseif has("gui_running")
+  call <SID>SetGUIOptions()
 endif
 
 " vim: set ts=2 sw=2 sts=2:
