@@ -23,6 +23,8 @@ include tmux/rules.mk
 include vim/rules.mk
 include zsh/rules.mk
 
+-include rules-overlay.mk
+
 install-dirs:
 	for i in $(INSTALL_DIRS); \
 	do \
