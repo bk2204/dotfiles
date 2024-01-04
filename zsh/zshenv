@@ -272,6 +272,7 @@ GOPROXY=direct
 GOSUMDB=off
 GOTOOLCHAIN=local
 BROWSER=dct-browser
+PERL_BADLANG=0
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
     unset XML_CATALOG_FILES
