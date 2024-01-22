@@ -9,6 +9,10 @@ class TestDir
     system({ "HOME" => @dir, "PATH" => ENV["PATH"] }, "make", "install", :out => "/dev/null")
   end
 
+  def tempdir
+    @dir
+  end
+
   def setup_restricted_path(exes)
     exes.each do |name|
       path = File.join(@test_bin, name)

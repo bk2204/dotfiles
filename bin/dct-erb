@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+require 'erb'
+require 'optparse'
+require 'yaml'
+
+class Template
+  def initialize(data)
+    @data = data
+  end
+
+  def name
+    @name ||= 0
+    @name += 1
+    "name_a#{@name}"
+  end
+
+  def erb(file)
+    if RUBY_VERSION >= '2.6'
+      ERB.new(File.read(file), trim_mode: '-', eoutvar: name).result(binding)
+    else
+      ERB.new(File.read(file), nil, '-', name).result(binding)
+    end
+  end
+end
+
+def main(args, stdin, stdout)
+  file = stdin
+  OptionParser.new do |opts|
+    opts.on("-f FILE", "--file FILE", "Read data from this file") do |filename|
+      file = File.open(filename)
+    end
+  end.order!(args)
+
+  data = YAML.safe_load(file.read)
+
+  stdout.print Template.new(data).erb(args[0])
+  0
+end
+
+exit main(ARGV, $stdin, $stdout) if $0 == __FILE__
