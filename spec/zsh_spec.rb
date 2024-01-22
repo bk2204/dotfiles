@@ -45,7 +45,7 @@ describe :zsh do
     it 'should set BROWSER to lawn with REMOTE_ENV' do
       @dir = TestDir.new
       exes = %w[lawn nvim-gtk gvim mvim ex nvim vimx vim vi]
-      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $BROWSER'], 'REMOTE_ENV' => 'something')).to eq "lawn run -- browser\n"
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $BROWSER'], 'REMOTE_ENV' => 'something')).to eq "dct-browser\n"
     end
 
     it 'should prefer gvim with DISPLAY and no nvim-gtk' do
