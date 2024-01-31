@@ -8,17 +8,6 @@ prompt_bmc_help () {
 EOF
 }
 
-prompt_bmc_want_bold () {
-    local text=$1
-
-    [ -z "$text" ] && return 1
-    for i in no off false regular normal non-bold
-    do
-        [ "$text" = "$i" ] && return 1
-    done
-    return 0
-}
-
 prompt_bmc_reset_color () {
     [[ $TERM = dumb ]] && return
     printf '%s' "$reset_color"
