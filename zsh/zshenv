@@ -221,6 +221,8 @@ then
     export MANPATH PATH COREPATH
 fi
 
+local the_preferred_locale=$(preferred_locale)
+
 # Set other variables.
 setopt allexport
 
@@ -245,15 +247,15 @@ elif is_ssh_session; then
     REMOTE_ENV=ssh
 fi
 
-LANG=$(preferred_locale)
+LANG="$the_preferred_locale"
 LC_ADDRESS=en_CA.UTF-8
-LC_COLLATE=$(preferred_locale)
+LC_COLLATE="$the_preferred_locale"
 LC_CTYPE=en_CA.UTF-8
-LC_IDENTIFICATION=$(preferred_locale)
+LC_IDENTIFICATION="$the_preferred_locale"
 LC_MONETARY=en_CA.UTF-8
 LC_MEASUREMENT=POSIX
-LC_MESSAGES=$(preferred_locale)
-LC_NAME=$(preferred_locale)
+LC_MESSAGES="$the_preferred_locale"
+LC_NAME="$the_preferred_locale"
 LC_NUMERIC=en_CA.UTF-8
 LC_PAPER=en_CA.UTF-8
 LC_TIME=POSIX
@@ -308,4 +310,5 @@ unfunction setup_xdg_vars
 unfunction setup_ssh_agent
 unfunction setup_temp
 
+unset the_preferred_locole
 true
