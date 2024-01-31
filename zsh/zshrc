@@ -84,7 +84,7 @@ set_tty () {
 has_term () {
     local termname="$1"
     # Redirection is required because zsh complains about bad TERM.
-    TERM=$termname silent echotc xo 2>/dev/null
+    TERM=$termname echotc xo >/dev/null 2>/dev/null
 }
 set_if_has_term () {
     local termname
@@ -100,7 +100,7 @@ set_if_has_term () {
 set_sane_term () {
     local i
     # Make sure our terminal definition works right.
-    if ! silent echotc xo 2>/dev/null
+    if ! echotc xo >/dev/null 2>/dev/null
     then
         # No column results?  Do we have any working terminal definitions?
         local echotc_works=""
