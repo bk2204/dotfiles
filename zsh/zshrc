@@ -228,13 +228,13 @@ setup_colors () {
 
     # Set up termcap colors for less (from grml).
 
-    export LESS_TERMCAP_mb=$(print -P $(bmc_palette bold))
-    export LESS_TERMCAP_md=$(print -P $(bmc_palette bold))
+    export LESS_TERMCAP_mb=$(print -P $bmc_palette_colors[bold])
+    export LESS_TERMCAP_md=$(print -P $bmc_palette_colors[bold])
     export LESS_TERMCAP_me=$(print -P $(color_reset))
     export LESS_TERMCAP_se=$(print -P $(color_reset))
-    export LESS_TERMCAP_so=$(print -P $(bmc_palette standout))
+    export LESS_TERMCAP_so=$(print -P $bmc_palette_colors[standout])
     export LESS_TERMCAP_ue=$(print -P $(color_reset))
-    export LESS_TERMCAP_us=$(print -P $(bmc_palette underline))
+    export LESS_TERMCAP_us=$(print -P $bmc_palette_colors[underline])
     export MANROFFOPT=-c
     export CLICOLOR=1
     export LSCOLORS=ExGxfxdxCxDxDxhBhBaCeC
@@ -278,6 +278,9 @@ adjust_term_settings
 # Autoload some stuff.
 setup_autoload
 
+typeset -Ag bmc_palette_colors
+autoload -Uz bmc_palette
+
 set_keybindings
 remove_perl_overrides
 
@@ -320,6 +323,7 @@ zle -N edit-command-line
 
 # Set up the prompt.
 colors
+bmc_palette
 promptinit
 prompt bmc
 

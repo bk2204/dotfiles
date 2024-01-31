@@ -5,6 +5,6 @@
 
 bmc_palette_ansi () {
     # Coalesce the bold attribute and the color into one statement if possible.
-    print -Pn $(bmc_palette "$@") | \
+    print -Pn $bmc_palette_colors[$1] | \
         perl -pe 's/\033\[(.*)m\033\[(.*)m/$1;$2/; s/\033\[(.*)m/$1/'
 }

@@ -25,7 +25,6 @@ bmc_palette_ () {
 }
 
 bmc_palette () {
-    local color="$1"
     local bold
     local pattern
     local -A colors
@@ -51,27 +50,27 @@ bmc_palette () {
     colors[standout]="  yes 0x0086ff 33  blue"
     colors[grep]="      yes 0x0086ff 33  blue"
 
-    # Don't invoke hostname unless we are looking for this value; otherwise, if
-    # the hostname is broken, it will take forever to render our prompt.
-    if [[ $color = hostcolor ]]
+    if grep -qs Microsoft /proc/version 2>/dev/null
     then
-        if grep -qs Microsoft /proc/version 2>/dev/null
-        then
-            colors[hostcolor]="no 0xffffff 15 white"
-        else
-            local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
-            local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
+        colors[hostcolor]="no 0xffffff 15 white"
+    else
+        local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
+        local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
 
-            # In Docker, use the hostname as the color instead of a hash of it.
-            grep -qs docker /proc/1/cgroup && grep -qsE '^[a-f0-9]{8}' <<<"$hostname" && hostcolor="$hostname"
+        # In Docker, use the hostname as the color instead of a hash of it.
+        grep -qs docker /proc/1/cgroup && grep -qsE '^[a-f0-9]{8}' <<<"$hostname" && hostcolor="$hostname"
 
-            colors[hostcolor]="no
-                               0x$(cut -b1-6 <<<"$hostcolor")
-                               0x$(cut -b7-8 <<<"$hostcolor")
-                               white"
-        fi
+        colors[hostcolor]="no
+                           0x$(cut -b1-6 <<<"$hostcolor")
+                           0x$(cut -b7-8 <<<"$hostcolor")
+                           white"
     fi
 
-    local expanded="$colors[$color]"
-    bmc_palette_ $expanded
+    local key val
+    for key val in "${(@kv)colors}"
+    do
+        bmc_palette_colors[$key]=$(bmc_palette_ $colors[$key])
+    done
 }
+
+bmc_palette

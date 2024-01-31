@@ -30,49 +30,46 @@ prompt_bmc_setup_base () {
     local i j
     local c_reset="%b%{$(prompt_bmc_reset_color)%}"
 
-    # Force autoload.
-    bmc_palette user >/dev/null 2>&1
-
     zstyle ':vcs_info:*' enable git
-    zstyle ':vcs_info:*' actionformats "($(bmc_palette vcs)%b|%a%$c_reset%)" "%R"
-    zstyle ':vcs_info:*' formats       "($(bmc_palette vcs)%b%$c_reset%)" "%R"
+    zstyle ':vcs_info:*' actionformats "($bmc_palette_colors[vcs]%b|%a%$c_reset%)" "%R"
+    zstyle ':vcs_info:*' formats       "($bmc_palette_colors[vcs]%b%$c_reset%)" "%R"
 
-    local p_privuser="$(bmc_palette privuser)%n$c_reset"
-    local p_unprivuser="$(bmc_palette unprivuser)%n$c_reset"
-    local p_user="%(!.$p_privuser.$p_unprivuser)$(bmc_palette user)@%m$c_reset"
-    local p_pwd="$(bmc_palette pwd)%~$c_reset"
+    local p_privuser="$bmc_palette_colors[privuser]%n$c_reset"
+    local p_unprivuser="$bmc_palette_colors[unprivuser]%n$c_reset"
+    local p_user="%(!.$p_privuser.$p_unprivuser)$bmc_palette_colors[user]@%m$c_reset"
+    local p_pwd="$bmc_palette_colors[pwd]%~$c_reset"
 
     local p_userpwd="$p_user:$p_pwd"
 
-    local p_priv="$(bmc_palette priv)#$c_reset"
-    local p_unpriv="$(bmc_palette unpriv)%%$c_reset"
+    local p_priv="$bmc_palette_colors[priv]#$c_reset"
+    local p_unpriv="$bmc_palette_colors[unpriv]%%$c_reset"
 
     local p_pchar="%(!.$p_priv.$p_unpriv)"
 
     # Don't use the %D by itself, because it uses two-digit years.
-    local p_date="$(bmc_palette date)%D{%Y-%m-%d}$c_reset"
+    local p_date="$bmc_palette_colors[date]%D{%Y-%m-%d}$c_reset"
     # Similarly, don't use %* by itself, because it is not zero-padded.
-    local p_time="$(bmc_palette time)%D{%H:%M:%S}$c_reset"
+    local p_time="$bmc_palette_colors[time]%D{%H:%M:%S}$c_reset"
 
     local p_datetime="$p_date/$p_time"
 
-    is-at-least 5.3 && local p_hostname="$(bmc_palette hostcolor)%m$c_reset:"
+    is-at-least 5.3 && local p_hostname="$bmc_palette_colors[hostcolor]%m$c_reset:"
 
-    local p_tty="$(bmc_palette tty)%l$c_reset"
+    local p_tty="$bmc_palette_colors[tty]%l$c_reset"
 
     local p_shlvl='${psvar[4]}'
-    local p_power="%(2V.($(bmc_palette tty)%2v$c_reset).)"
+    local p_power="%(2V.($bmc_palette_colors[tty]%2v$c_reset).)"
 
-    local p_failed="$(bmc_palette retcode)failed$c_reset"
-    local p_retcode="$(bmc_palette retcode)%?$c_reset"
-    local p_signame="$(bmc_palette retcode)%1v$c_reset"
+    local p_failed="$bmc_palette_colors[retcode]failed$c_reset"
+    local p_retcode="$bmc_palette_colors[retcode]%?$c_reset"
+    local p_signame="$bmc_palette_colors[retcode]%1v$c_reset"
     local p_mode='${psvar[3]:-%(?.ok.no)}'
 
     local p_ret="%(?.ok.$p_failed:$p_retcode:$p_signame)"
-    local p_host="$(bmc_palette host)%m $p_mode$c_reset"
+    local p_host="$bmc_palette_colors[host]%m $p_mode$c_reset"
 
     local p_branch='${${vcs_info_msg_1_/$HOME}:+${vcs_info_msg_0_}}'
-    local p_space="$(bmc_palette space) $c_reset"
+    local p_space="$bmc_palette_colors[space] $c_reset"
 
     POSTEDIT="$(prompt_bmc_reset_color)"
 
@@ -136,7 +133,7 @@ prompt_bmc_precmd () {
         *:*tmux*|*:*terminal|*:*rxvt|*:*term)
             psvar[4]="";;
         *:*)
-            psvar[4]="($(bmc_palette tty)$SHLVL$c_reset)";;
+            psvar[4]="($bmc_palette[tty]$SHLVL$c_reset)";;
     esac
 
     prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info 2>/dev/null
