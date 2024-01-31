@@ -54,7 +54,7 @@ bmc_palette () {
     then
         colors[hostcolor]="no 0xffffff 15 white"
     else
-        local hostname=$( (hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost) | tr -d '\n')
+        local hostname=$(hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost)
         local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
 
         # In Docker, use the hostname as the color instead of a hash of it.
