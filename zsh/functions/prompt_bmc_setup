@@ -79,6 +79,24 @@ $p_host $p_pchar$p_space"
     RPROMPT=""
     PS2='%(4_.\.)%3_> %E'
 
+    local parent_exe
+    if [ "$OSTYPE" = linux-gnu ]
+    then
+        parent_exe="/proc/$PPID/exe"
+        parent_exe="${parent_exe:A}"
+    else
+        parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
+    fi
+
+    case $SHLVL:$parent_exe in
+        1:*)
+            psvar[4]="";;
+        *:*tmux*|*:*terminal|*:*rxvt|*:*term)
+            psvar[4]="";;
+        *:*)
+            psvar[4]="($bmc_palette[tty]$SHLVL$c_reset)";;
+    esac
+
     if [[ -d /sys/class/power_supply ]] && [[ ! -f "$HOME/.slowbox" ]]
     then
         precmd () { prompt_bmc_precmd; prompt_bmc_apm_precmd }
@@ -123,18 +141,6 @@ prompt_bmc_precmd () {
                 print -Pn "\ek$statusline\e\\";;
         esac
     fi
-
-    local c_reset="%b%{$(prompt_bmc_reset_color)%}"
-    local parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
-
-    case $SHLVL:$parent_exe in
-        1:*)
-            psvar[4]="";;
-        *:*tmux*|*:*terminal|*:*rxvt|*:*term)
-            psvar[4]="";;
-        *:*)
-            psvar[4]="($bmc_palette[tty]$SHLVL$c_reset)";;
-    esac
 
     prompt_bmc_need_refresh && command -v vcs_info >/dev/null 2>&1 && vcs_info 2>/dev/null
 }
