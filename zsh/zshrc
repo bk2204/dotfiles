@@ -137,7 +137,14 @@ set_sane_term () {
             done
         fi
     fi
-    local parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
+    local parent_exe
+    if [ "$OSTYPE" = linux-gnu ]
+    then
+        parent_exe="/proc/$PPID/exe"
+        parent_exe="${parent_exe:A}"
+    else
+        parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
+    fi
     case "$TERM:$parent_exe" in
         xterm:*vim*)
             [[ $COLORTERM = truecolor ]] && set_if_has_term xterm-direct xterm-256color;;
