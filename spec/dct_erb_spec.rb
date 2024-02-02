@@ -6,30 +6,40 @@ describe :dct_erb do
   end
 
   context 'generate' do
+    EXAMPLE_YAML = <<~EOF
+    ---
+    arg1: abc
+    arg2: 123
+    EOF
+
+    EXAMPLE_ERB = <<~EOF
+    This is the first argument:
+    <%= @data["arg1"] -%>
+    More
+    This is the second argument:
+    <%= @data["arg2"] %>
+    More
+    EOF
+
+    EXAMPLE_RESULT = <<~EOF
+    This is the first argument:
+    abcMore
+    This is the second argument:
+    123
+    More
+    EOF
+
     it 'should generate expected output' do
-      yaml = <<~EOF
-      ---
-      arg1: abc
-      arg2: 123
-      EOF
-      erb = <<~EOF
-      This is the first argument:
-      <%= @data["arg1"] -%>
-      More
-      This is the second argument:
-      <%= @data["arg2"] %>
-      More
-      EOF
-      File.write(File.join(@dir.tempdir, "foo.yaml"), yaml)
-      File.write(File.join(@dir.tempdir, "foo.erb"), erb)
-      expected = <<~EOF
-      This is the first argument:
-      abcMore
-      This is the second argument:
-      123
-      More
-      EOF
-      expect(@dir.stream(['bin/dct-erb', '-f', 'foo.yaml', 'foo.erb'], '')).to eq expected
+      File.write(File.join(@dir.tempdir, "foo.yaml"), EXAMPLE_YAML)
+      File.write(File.join(@dir.tempdir, "foo.erb"), EXAMPLE_ERB)
+      expect(@dir.stream(['bin/dct-erb', '-f', 'foo.yaml', 'foo.erb'], '')).to eq EXAMPLE_RESULT
+    end
+
+    it 'should write to a file with -o' do
+      File.write(File.join(@dir.tempdir, "foo.yaml"), EXAMPLE_YAML)
+      File.write(File.join(@dir.tempdir, "foo.erb"), EXAMPLE_ERB)
+      @dir.cmd(['bin/dct-erb', '-f', 'foo.yaml', '-o', 'foo.out', 'foo.erb'])
+      expect(File.read(File.join(@dir.tempdir, 'foo.out'))).to eq EXAMPLE_RESULT
     end
 
     it 'should gracefully handle /dev/null as a YAML file' do

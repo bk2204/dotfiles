@@ -26,15 +26,20 @@ end
 
 def main(args, stdin, stdout)
   file = stdin
+  output = stdout
   OptionParser.new do |opts|
     opts.on("-f FILE", "--file FILE", "Read data from this file") do |filename|
       file = File.open(filename)
+    end
+
+    opts.on("-o FILE", "--output FILE", "Output data to this file") do |filename|
+      output = File.open(filename, "wb")
     end
   end.order!(args)
 
   data = YAML.safe_load(file.read)
 
-  stdout.print Template.new(data).erb(args[0])
+  output.print Template.new(data).erb(args[0])
   0
 end
 
