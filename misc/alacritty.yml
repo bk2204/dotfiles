@@ -86,3 +86,6 @@ hints:
      binding:
        key: U
        mods: Super
+
+key_bindings:
+  - { key: N, mods: Control|Shift, action: CreateNewWindow }
