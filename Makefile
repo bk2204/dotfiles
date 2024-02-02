@@ -6,6 +6,8 @@ LINK_PAIRS += .local/share/gems .gem
 
 PERMISSIONS = u=rwX,go-rwx
 
+TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f config.yaml ] && echo 1)
+
 all:
 	@echo To install, set DESTDIR and run make install.
 
@@ -25,6 +27,11 @@ include zsh/rules.mk
 
 -include rules-overlay.mk
 
+%.gen: %.erb config.yaml
+	bin/dct-erb -f config.yaml -o $@ $^
+
+build-standard: $(TEMPLATE_FILES)
+
 install-dirs:
 	for i in $(INSTALL_DIRS); \
 	do \
@@ -38,7 +45,7 @@ install-links: install-dirs
 			ln -sf "$(DESTDIR)/$$target" "$(DESTDIR)/$$link"; \
 		done)
 
-install-standard:
+install-standard: build-standard install-dirs
 	printf "%s %s\n" $(INSTALL_PAIRS) | (set -e; while read src dest; \
 		do \
 			if [ -d "$$src" ]; \

@@ -1,2 +1,4 @@
 *.html
+*.gen
+config.yaml
 rules-overlay.mk
