@@ -1,0 +1,18 @@
+<% if @data["git"]["sign-commits"] -%>
+[commit]
+    gpgsign = true
+<% end -%>
+<%
+   os_cred_helper = case RUBY_PLATFORM
+   when /darwin/
+       "osxkeychain"
+   else
+       "libsecret"
+   end
+   cred_helper = @data["git"]["credential-helper"]
+   cred_helper = os_cred_helper if cred_helper == "os"
+   unless cred_helper.nil?
+-%>
+[credential]
+    helper = "<%= cred_helper %>"
+<% end -%>
