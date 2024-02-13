@@ -1,2 +1,5 @@
+INSTALL_DIRS	+= .config/tmux
+
 INSTALL_PAIRS	+= tmux/tmux.conf	.tmux.conf
+INSTALL_PAIRS	+= tmux/tmux-overmind.conf	.config/tmux/tmux-overmind.conf
 INSTALL_PAIRS	+= tmux/tmuxinator	.config/tmuxinator
