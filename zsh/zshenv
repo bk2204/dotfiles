@@ -273,6 +273,7 @@ GOSUMDB=off
 GOTOOLCHAIN=local
 BROWSER=dct-browser
 PERL_BADLANG=0
+OVERMIND_TMUX_CONFIG="$HOME/.config/tmux/tmux-overmind.conf"
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
     unset XML_CATALOG_FILES
