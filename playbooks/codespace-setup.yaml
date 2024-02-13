@@ -25,6 +25,12 @@
       become: yes
       become_user: root
       when: ansible_distribution_release == 'focal'
+    - name: Install neovim-stable PPA
+      apt_repository:
+        repo: ppa:neovim-ppa/stable
+      become: yes
+      become_user: root
+      when: ansible_distribution_release == 'focal'
     - name: Install dependencies
       apt:
         pkg:
