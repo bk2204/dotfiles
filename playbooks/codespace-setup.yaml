@@ -6,6 +6,19 @@
   tasks:
     - name: Disable Homebrew analytics
       shell: 'if command -v brew >/dev/null 2>&1; then brew analytics off; fi'
+    - name: Check if this is a minimized Ubuntu image
+      stat:
+        path: /etc/dpkg/dpkg.cfg.d/excludes
+        get_checksum: no
+        get_mime: no
+        get_attributes: no
+      register: minimized_image
+    - name: Install manual pages
+      shell: 'yes | unminimize'
+      become: yes
+      become_user: root
+      ignore_errors: true
+      when: minimized_image.stat.exists
     - name: Install dependencies
       apt:
         pkg:
