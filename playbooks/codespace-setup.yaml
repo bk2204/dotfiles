@@ -19,6 +19,12 @@
       become_user: root
       ignore_errors: true
       when: minimized_image.stat.exists
+    - name: Install git-core PPA
+      apt_repository:
+        repo: ppa:git-core/ppa
+      become: yes
+      become_user: root
+      when: ansible_distribution_release == 'focal'
     - name: Install dependencies
       apt:
         pkg:
