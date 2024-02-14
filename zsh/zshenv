@@ -302,6 +302,7 @@ setup_xdg_vars
 setup_ssh_agent
 setup_temp
 source_if_present "$HOME/.rvm/scripts/rvm"
+source_if_present "$HOME/.config/zsh/zshenvlocal"
 
 unfunction is_privileged
 unfunction has_locale

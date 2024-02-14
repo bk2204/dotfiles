@@ -1,0 +1,10 @@
+<% if @data["user"] && @data["user"]["name"] -%>
+export DEBFULLNAME="<%= @data["user"]["name"] %>"
+<% end -%>
+<%
+   email = @data["email"] && @data["email"]["default-address"]
+   if email
+-%>
+export EMAIL="<%= email %>"
+export DEBEMAIL="<%= email %>"
+<% end -%>
