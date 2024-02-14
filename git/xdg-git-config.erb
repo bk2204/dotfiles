@@ -1,4 +1,15 @@
-<% if @data["git"]["sign-commits"] -%>
+<%
+   # Determine the kind of signing we're using, if any.
+   signing = @data["git"]["sign-commits"]
+   signing = "gpg" if signing == true
+
+   # Adjust the protocol to be in the format Git wants.
+   signing_proto = signing == "gpg" ? "openpgp" : signing
+   key = @data[signing]["signing-key"] || @data[signing]["key"]
+
+   # We need a trailing exclamation point to pick a specific subkey in GnuPG.
+   key = "#{key}!" if signing == "gpg" && key =~ /\A[0-9a-fA-F]+\z/
+   if signing && key -%>
 [commit]
     gpgsign = true
 <% end -%>
@@ -15,4 +26,10 @@
 -%>
 [credential]
     helper = "<%= cred_helper %>"
+<% end -%>
+<% if signing && key -%>
+[gpg]
+    format = <%= signing_proto %>
+[user]
+    signingkey = "<%= key %>"
 <% end -%>
