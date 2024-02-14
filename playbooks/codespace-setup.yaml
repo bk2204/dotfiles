@@ -66,8 +66,12 @@
       ignore_errors: true
     # This is required because otherwise installing the zsh configuration causes
     # zsh to fail because compinit operates on an insecure directory (~/.zsh).
-    - name: Remove broken ACL
+    - name: Remove broken ACL for /workspaces
       shell: 'if [ -n "$(getfacl -s /workspaces)" ]; then setfacl -Rb /workspaces; fi'
+      become: yes
+      become_user: root
+    - name: Remove broken ACL for /tmp
+      shell: 'if [ -n "$(getfacl -s /tmp)" ]; then setfacl -Rb /tmp; fi'
       become: yes
       become_user: root
     # We would like sane ownership and permissions here.
