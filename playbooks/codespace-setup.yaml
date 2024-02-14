@@ -50,6 +50,7 @@
           - ruby
           - ruby-neovim
           - rustc
+          - sshfs
           - tmux
           - xxd
           - zsh
