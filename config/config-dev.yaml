@@ -1,0 +1,12 @@
+gpg:
+    key: 082CE68A9DBC65FB83D1C3917C0C49628887A281
+    user: sandals@crustytoothpaste.net
+ssh:
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBTz2e45Gm8cEyPWIBlVX+M3MsiYb2k7qoanRIZBAn6h"
+user:
+    name: "brian m. carlson"
+email:
+    default-address: sandals@crustytoothpaste.net
+git:
+    credential-helper: os
+    sign-commits: gpg
