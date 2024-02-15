@@ -100,12 +100,12 @@ class SnippetProgram
         options[:command] = :list
       end
 
-      opts.on("--format=KIND", "Specify a kind of snippet (exec[utable] or text)") do |kind|
+      opts.on("--format=KIND", "Specify a kind of snippet (exec[utable] or text)", [:exec, :executable, :text]) do |kind|
         case kind
-        when "exec", "executable"
+        when :exec
           options[:kind] = :executable
-        when "text"
-          options[:kind] = :text
+        else
+          options[:kind] = kind
         end
       end
 
