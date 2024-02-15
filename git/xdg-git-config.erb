@@ -1,11 +1,11 @@
 <%
    # Determine the kind of signing we're using, if any.
-   signing = @data["git"]["sign-commits"]
+   signing = @data.fetch("git", {})["sign-commits"]
    signing = "gpg" if signing == true
 
    # Adjust the protocol to be in the format Git wants.
    signing_proto = signing == "gpg" ? "openpgp" : signing
-   key = @data[signing]["signing-key"] || @data[signing]["key"]
+   key = @data.fetch(signing, {})["signing-key"] || @data.fetch(signing, {})["key"]
 
    # We need a trailing exclamation point to pick a specific subkey in GnuPG,
    # and a "key::" prefix in OpenSSH.
@@ -28,7 +28,7 @@
    else
        "libsecret"
    end
-   cred_helper = @data["git"]["credential-helper"]
+   cred_helper = @data.fetch("git", {})["credential-helper"]
    cred_helper = os_cred_helper if cred_helper == "os"
    unless cred_helper.nil?
 -%>
