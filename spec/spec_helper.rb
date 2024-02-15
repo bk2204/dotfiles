@@ -2,11 +2,19 @@ require 'tempfile'
 require 'tmpdir'
 
 class TestDir
-  def initialize
+  def initialize(config_yaml: nil)
     @dir = Dir.mktmpdir
     @test_bin = File.join(@dir, "test-bin")
     Dir.mkdir(@test_bin)
-    system({ "HOME" => @dir, "PATH" => ENV["PATH"] }, "make", "install", :out => "/dev/null")
+    extra_env = {}
+    if config_yaml
+      @config_path = File.join(@dir, "config.yaml")
+      fp = File.open(@config_path, "wb")
+      fp.write(config_yaml)
+      fp.close
+      extra_env = { "CONFIG_FILE" => @config_path }
+    end
+    system({ "HOME" => @dir, "PATH" => ENV["PATH"], **extra_env }, "make", "install", :out => "/dev/null")
   end
 
   def tempdir
