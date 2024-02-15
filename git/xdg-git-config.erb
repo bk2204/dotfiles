@@ -7,8 +7,16 @@
    signing_proto = signing == "gpg" ? "openpgp" : signing
    key = @data[signing]["signing-key"] || @data[signing]["key"]
 
-   # We need a trailing exclamation point to pick a specific subkey in GnuPG.
-   key = "#{key}!" if signing == "gpg" && key =~ /\A[0-9a-fA-F]+\z/
+   # We need a trailing exclamation point to pick a specific subkey in GnuPG,
+   # and a "key::" prefix in OpenSSH.
+   key = case signing
+         when "gpg"
+           key =~ /\A[0-9a-fA-F]+\z/ ? "#{key}!" : key
+         when "ssh"
+           "key::#{key}"
+         else
+           key
+         end
    if signing && key -%>
 [commit]
     gpgsign = true
