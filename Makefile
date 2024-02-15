@@ -6,10 +6,21 @@ LINK_PAIRS += .local/share/gems .gem
 
 PERMISSIONS = u=rwX,go-rwx
 
-TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f config.yaml ] && echo 1)
+CONFIG_FILE ?= config.yaml
+
+TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 1)
 
 all:
 	@echo To install, set DESTDIR and run make install.
+
+print:
+	@if [ "$(TEMPLATE)" = 1 ]; \
+	then \
+		echo "Templating enabled."; \
+		echo "Using configuration file $(CONFIG_FILE)"; \
+	else \
+		echo "Templating disabled."; \
+	fi
 
 install: install-links install-dirs install-standard
 
@@ -27,8 +38,8 @@ include zsh/rules.mk
 
 -include rules-overlay.mk
 
-%.gen: %.erb config.yaml
-	bin/dct-erb -f config.yaml -o $@ $^
+%.gen: %.erb $(CONFIG_FILE)
+	bin/dct-erb -f $(CONFIG_FILE) -o $@ $^
 
 build-standard: $(TEMPLATE_FILES)
 
