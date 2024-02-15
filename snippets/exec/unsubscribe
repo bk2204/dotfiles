@@ -1,0 +1,4 @@
+#!/bin/sh
+
+formail -c -X List-Unsubscribe | perl -ne 'print if s!^(?i:List-Unsubscribe):.*<(https?://[^>]+)>.*$!$1!' | \
+    xargs curl -X POST -H'Content-Type: application/x-www-form-urlencoded' -dList-Unsubscribe=One-Click
