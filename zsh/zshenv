@@ -262,9 +262,6 @@ LC_TIME=POSIX
 LC_TELEPHONE=en_CA.UTF-8
 TZ=UTC
 
-DEBFULLNAME="brian m. carlson"
-EMAIL="sandals@crustytoothpaste.net"
-DEBEMAIL="$EMAIL"
 GIT_PAGER="less -FRSX"
 PAGER="less -R"
 PERLDOC_PAGER="$PAGER"
