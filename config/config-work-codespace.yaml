@@ -1,0 +1,8 @@
+---
+ssh:
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG4RVeqIvjZet5c5qnHUUV0GrKRPpGY0XLHB8vFK8trD"
+email:
+    default-address: bk2204@github.com
+git:
+    credential-helper: os
+    sign-commits: ssh
