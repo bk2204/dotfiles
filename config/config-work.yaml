@@ -1,0 +1,9 @@
+---
+gpg:
+    key: 4DB92D1D8CEE7E54F06713452D0C9BC12F82B3A1
+    user: bk2204@github.com
+email:
+    default-address: bk2204@github.com
+git:
+    credential-helper: os
+    sign-commits: gpg
