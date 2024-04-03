@@ -651,7 +651,7 @@ function! s:LoadLSP()
   endfor
 
   if <SID>IsSafeLSPRoot()
-    let b:ale_ruby_sorbet_executable = "bin/srb"
+    let b:ale_ruby_sorbet_executable = "bundle-srb"
   endif
 endfunction
 
