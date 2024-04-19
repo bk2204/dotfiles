@@ -172,9 +172,6 @@ fi
 # Prevent tampering with our config.
 unsetopt globalrcs
 
-ANDROID_HOME="$HOME/apps/android-sdk"
-export ANDROID_HOME
-
 if [[ -z $BMC_TEST ]]
 then
     prevpath=$PATH
@@ -202,8 +199,6 @@ then
         /bin
         /sbin
         /usr/games
-        $ANDROID_HOME/tools
-        $ANDROID_HOME/platform-tools
     )
     corepath=(
         /usr/bin
