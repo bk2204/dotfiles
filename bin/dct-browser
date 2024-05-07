@@ -13,7 +13,7 @@ COMMANDS = [
   {
     func: ->(options) { ["firefox"] },
     filter_stderr: ->(ln) { ln !~ /Gtk-|GTK\+/ },
-    if: ->() { File.exists?("/snap/firefox/current/usr/lib/firefox/firefox") },
+    if: ->() { File.exist?("/snap/firefox/current/usr/lib/firefox/firefox") },
   },
   {func: ->(options) { ["firefox"] }},
   {func: ->(options) { ["iceweasel"] }},
