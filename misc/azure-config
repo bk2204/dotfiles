@@ -1,0 +1,6 @@
+[cloud]
+name = AzureCloud
+
+[core]
+collect_telemetry = no
+survey_message = no
