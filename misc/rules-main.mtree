@@ -10,3 +10,4 @@
 .config/containers/containers.conf.d type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=misc/containers
 .local/state/gh/device-id type=link mode=0777 link=/dev/urandom
 .local/state/kitty/sessions/default type=file mode=0600 contents=ignore
+.azure/config type=file mode=0600 src=misc/azure-config
