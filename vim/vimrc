@@ -113,6 +113,8 @@ noremap <Leader>zw :TrailingAll<CR>
 noremap <Leader>zf :call <SID>CopyBufferToRegister("", v:register)<CR>
 " Copy absolute buffer filename to register.
 noremap <Leader>zF :call <SID>CopyBufferToRegister(":p", v:register)<CR>
+" Copy servername to register.
+noremap <Leader>zs :call <SID>CopyServerToRegister(v:register)<CR>
 " Toggle whitespace highlighting.
 noremap <Leader>t :call <SID>ToggleWhitespaceChecking()<CR>
 " Toggle executable bit.
@@ -554,6 +556,11 @@ endfunction
 " Expand the current buffer's path with suffix and copy it to register.
 function! s:CopyBufferToRegister(suffix, register)
   call setreg(a:register, expand("%" . a:suffix))
+endfunction
+
+" Copy the current servername to register.
+function! s:CopyServerToRegister(register)
+  call setreg(a:register, v:servername)
 endfunction
 
 function! s:ToggleScreenSize()
