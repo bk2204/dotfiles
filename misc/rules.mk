@@ -6,9 +6,10 @@ INSTALL_PAIRS	+= misc/Xmodmap		.Xmodmap
 INSTALL_PAIRS	+= misc/lawn.yaml	.config/lawn/config.yaml
 INSTALL_PAIRS	+= misc/alacritty.yml	.config/alacritty/alacritty.yml
 INSTALL_PAIRS	+= misc/alacritty.toml	.config/alacritty/alacritty.toml
+INSTALL_PAIRS	+= misc/azure-config	.azure/config
 
 # If this is missing, Clementine using last.fm won't scrobble.
-INSTALL_DIRS	+= .local/share/Last.fm .config/lawn .config/alacritty
+INSTALL_DIRS	+= .local/share/Last.fm .config/lawn .config/alacritty .azure
 
 MTREE_SOURCES	+= misc/rules-first.mtree misc/rules-main.mtree
 
