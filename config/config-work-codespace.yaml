@@ -4,5 +4,5 @@ ssh:
 email:
     default-address: bk2204@github.com
 git:
-    credential-helper: os
+    credential-helper: ~
     sign-commits: ssh
