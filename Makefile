@@ -53,7 +53,10 @@ install-links: install-dirs
 	printf "%s %s\n" $(LINK_PAIRS) | (set -e; while read target link; \
 		do \
 			rm -f "$(DESTDIR)/$$link"; \
-			ln -sf "$(DESTDIR)/$$target" "$(DESTDIR)/$$link"; \
+			case "$$target" in \
+				/*) ln -sf "$$target" "$(DESTDIR)/$$link";; \
+				*) ln -sf "$(DESTDIR)/$$target" "$(DESTDIR)/$$link";; \
+			esac; \
 		done)
 
 install-standard: build-standard install-dirs
