@@ -100,6 +100,8 @@
 	reflogExpireUnreachable = never
 [hub]
 	protocol = https
+[http "https://git.crustytoothpaste.net"]
+	emptyAuth = true
 [init]
 	defaultBranch = dev
 [i18n]
