@@ -11,5 +11,7 @@ macro index S <tag-prefix><save-message>+Spam.Reprocess\n
 macro pager S <save-message>+Spam.Reprocess\n
 macro index H <tag-prefix><pipe-entry>learnnonspam\n
 macro pager H <pipe-entry>learnnonspam\n
+macro index E "<tag-prefix><pipe-entry>dct-snip -r unsubscribe\n"
+macro pager E "<pipe-entry>dct-snip -r unsubscribe\n"
 macro index <F10> "!muttprofile\n:source ~/.mutt/profile.active\n"
 # vim: set syntax=muttrc:
