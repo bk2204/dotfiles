@@ -1,0 +1,34 @@
+---
+org.mate.peripherals-keyboard-xkb.kbd:
+  options:
+    - "terminate\tterminate:ctrl_alt_bksp"
+    - "caps\tcaps:escape"
+    - "Compose key\tcompose:lwin"
+    - "ctrl\tctrl:swap_rwin_rctl"
+org.mate.peripherals-mouse:
+  left-handed: true
+  middle-button-enabled: true
+org.mate.peripherals-touchpad:
+  disable-while-typing: true
+org.mate.Marco.window-keybindings:
+  maximize: '<Mod4>Up'
+  move-to-monitor-e: '<Alt><Mod4>Right'
+  move-to-monitor-w: '<Alt><Mod4>Left'
+  move-to-workspace-down: '<Control><Shift><Alt>Down'
+  move-to-workspace-left: '<Control><Shift><Alt>Left'
+  move-to-workspace-right: '<Control><Shift><Alt>Right'
+  move-to-workspace-up: '<Control><Shift><Alt>Up'
+  unmaximize: '<Mod4>Down'
+org.mate.Marco.global-keybindings:
+  switch-to-workspace-down: '<Control><Alt>Down'
+  switch-to-workspace-left: '<Control><Alt>Left'
+  switch-to-workspace-prev: 'disabled'
+  switch-to-workspace-right: '<Control><Alt>Right'
+  switch-to-workspace-up: '<Control><Alt>Up'
+org.mate.power-manager:
+  lock-blank-screen: true
+  lock-hibernate: true
+  lock-keyring-hibernate: true
+  lock-keyring-suspend: false
+  lock-suspend: true
+  lock-use-screensaver: true
