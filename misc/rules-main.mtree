@@ -11,3 +11,6 @@
 .local/state/gh/device-id type=link mode=0777 link=/dev/urandom
 .local/state/kitty/sessions/default type=file mode=0600 contents=ignore
 .azure/config type=file mode=0600 src=misc/azure-config
+.azure/az_survey.json type=link mode=0777 link=/dev/null
+.azure/telemetry type=link mode=0777 link=/dev/null
+.azure/telemetry.txt type=link mode=0777 link=/dev/null
