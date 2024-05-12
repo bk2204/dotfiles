@@ -1,0 +1,98 @@
+ipc_socket = true
+live_config_reload = true
+
+[env]
+TERM = "alacritty-direct"
+
+[window]
+decorations = "full"
+opacity = 0.8
+startup_mode = "Windowed"
+
+[font]
+builtin_box_drawing = true
+size = 11.0
+
+[font.normal]
+family = "Source Code Pro"
+style = "Regular"
+
+[font.bold]
+style = "Bold"
+
+[font.bold_italic]
+style = "Bold Italic"
+
+[font.italic]
+style = "Italic"
+
+# Colors (Tomorrow Night)
+[colors]
+draw_bold_text_with_bright_colors = false
+transparent_background_colors = false
+
+[colors.bright]
+black = "#666666"
+blue = "#7aa6da"
+cyan = "#70c0b1"
+green = "#b9ca4a"
+magenta = "#c397d8"
+red = "#d54e53"
+white = "#eaeaea"
+yellow = "#e7c547"
+
+[colors.dim]
+black = "#131415"
+blue = "#556a7d"
+cyan = "#5b7d78"
+green = "#777c44"
+magenta = "#75617b"
+red = "#864343"
+white = "#828482"
+yellow = "#9e824c"
+
+[colors.normal]
+black = "#1d1f21"
+blue = "#81a2be"
+cyan = "#8abeb7"
+green = "#b5bd68"
+magenta = "#b294bb"
+red = "#cc6666"
+white = "#c5c8c6"
+yellow = "#f0c674"
+
+[colors.primary]
+background = "#1d1f21"
+bright_foreground = "#eaeaea"
+dim_foreground = "#828482"
+foreground = "#c5c8c6"
+
+[bell.command]
+args = ["/usr/share/sounds/Yaru/stereo/bell.oga"]
+program = "paplay"
+
+[selection]
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[cursor.style]
+blinking = "Off"
+shape = "Block"
+
+[[hints.enabled]]
+command = "xdg-open"
+hyperlinks = true
+post_processing = true
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^\u0000-\u001F\u007F-\u009F\"\\s{-}\\^⟨⟩`]+"
+
+[hints.enabled.binding]
+key = "U"
+mods = "Super"
+
+[hints.enabled.mouse]
+enabled = true
+mods = "None"
+
+[[keyboard.bindings]]
+action = "CreateNewWindow"
+key = "N"
+mods = "Control|Shift"
