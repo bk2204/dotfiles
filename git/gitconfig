@@ -140,7 +140,7 @@
 	fetchJobs = 4
 [transfer]
 	unpackLimit = 5
-[url "https://bmc@git.crustytoothpaste.net/git/bmc/"]
+[url "https://git.crustytoothpaste.net/git/bmc/"]
 	insteadOf = dct:
 [url "git@git.crustytoothpaste.net:/bmc/"]
 	insteadOf = dcts:
