@@ -1,0 +1,116 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'open3'
+require 'set'
+require 'shellwords'
+
+COMMANDS = [
+  {
+    cmd: ->(options, args) { %w[paplay] + args },
+    if: ->(options) { options[:command] == :beep && (ENV["DISPLAY"] || ENV["WAYLAND_DISPLAY"]) },
+  },
+  {
+    cmd: ->(options, args) { %w[gst123] + args },
+  },
+  {
+    cmd: ->(options, args) { %w[osascript -e beep] },
+    if: ->(options) { options[:command] == :beep && RUBY_PLATFORM =~ /darwin/ },
+  }
+]
+
+BEEP_SOURCE = [
+  {
+    cmd: ->(options, _) { %w[dconf read /org/mate/desktop/sound/theme-name] },
+    process_stdout: ->(data) do
+      if data.chomp =~ /^'(.*)'$/
+        "/usr/share/sounds/#{$1}/stereo/bell.oga"
+      else
+        nil
+      end
+    end
+  },
+  {
+    # osabeep will do the right thing here.
+    cmd: ->(options, args) { nil },
+    if: ->(options) { options[:command] == :beep && RUBY_PLATFORM =~ /darwin/ },
+  }
+]
+
+def parse_args(args)
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('--help', 'Print this usage information') do
+      puts opts
+
+      puts <<-EOM.gsub(/^\s+/, '')
+      Play a sound file to the speakers.
+      EOM
+    end
+
+    opts.on('--beep', 'Play a beep sound') do
+      options[:command] = :beep
+    end
+  end.parse!(args)
+  [options, args]
+end
+
+def which(cmd)
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exe = File.join(path, cmd)
+    return exe if File.executable?(exe) && !File.directory?(exe)
+  end
+  nil
+end
+
+def find_command(commands, options, args)
+  commands.each do |cmd|
+    if cmd[:if] && !cmd[:if].call(options)
+      next
+    end
+    prog = cmd[:cmd].call(options, args)
+    return prog, cmd if which(prog[0])
+  end
+  nil
+end
+
+def do_capture(commands, options, args)
+  prog, cmd = find_command(commands, options, args)
+  if cmd.nil?
+    $stderr.puts 'Unable to find utility'
+    return nil
+  end
+  o, s = Open3.capture2(*prog, stdin_data: '')
+  if s.success?
+    process = cmd[:process_stdout]
+    [process ? process.call(o) : o, true]
+  else
+    nil
+  end
+end
+
+def do_exec(commands, options, args)
+  prog, cmd = find_command(commands, options, args)
+  if cmd.nil?
+    $stderr.puts 'Unable to find utility'
+    return 2
+  end
+  exec(*prog)
+  0
+end
+
+def main(args)
+  opts, args = parse_args(args)
+  if opts[:command] == :beep
+    filename, success = do_capture(BEEP_SOURCE, opts, args)
+    unless success
+      $stderr.puts 'Unable to find beep source'
+      return 3
+    end
+    do_exec(COMMANDS, opts, [filename].compact)
+  else
+    do_exec(COMMANDS, opts, args)
+  end
+end
+
+exit main(ARGV) if $PROGRAM_NAME == __FILE__

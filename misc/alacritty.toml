@@ -68,8 +68,8 @@ dim_foreground = "#828482"
 foreground = "#c5c8c6"
 
 [bell.command]
-args = ["/usr/share/sounds/Yaru/stereo/bell.oga"]
-program = "paplay"
+args = ["--beep"]
+program = "dct-sound"
 
 [selection]
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"

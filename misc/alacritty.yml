@@ -58,8 +58,8 @@ colors:
 
 bell:
   command:
-    program: paplay
-    args: ["/usr/share/sounds/Yaru/stereo/bell.oga"]
+    program: dct-sound
+    args: ["--beep"]
 
 selection:
   semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
