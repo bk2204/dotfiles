@@ -1,0 +1,510 @@
+#!/bin/sh
+
+OPTS_SPEC="\
+dct-mtree [<options>] <args>...
+
+Process mtree-like files from these dotfiles to install files or generate
+files which can be sent to mtree(1) for verification.
+
+This script handles filenames with hash marks and spaces correctly, but not
+other special characters.
+--
+h,help!     show this help
+
+f,file=     source for mtree files
+recurse     recurse into the working tree for mtree files
+dry-run     print what would be installed instead of installing it
+backend=    choose the backend to use (sh or ruby)
+
+ Commands
+mtree-src!  print a full mtree format file for the source directory
+mtree-dest! print a full mtree format file for the destination directory
+validate!   validate the input file
+install!    install the input file
+dump!       dump the internal Ruby script
+"
+
+main () {
+
+    eval "$(echo "$OPTS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
+    local cmd=""
+    local file="-"
+    local recurse="t"
+    local dryrun=""
+    local backend=""
+
+    while test $# -gt 0
+    do
+        local opt="$1"
+        shift
+        case "$opt" in
+            --mtree-src)
+                cmd=mtree-src
+                ;;
+            --mtree-dest)
+                cmd=mtree-dest
+                ;;
+            --validate)
+                cmd=validate
+                ;;
+            --install)
+                cmd=install
+                ;;
+            --dump)
+                cmd=dump
+                ;;
+            --file)
+                file="$1"
+                shift
+                ;;
+            --no-recurse)
+                recurse=""
+                ;;
+            --dry-run)
+                dryrun="t"
+                ;;
+            --)
+                break
+                ;;
+        esac
+    done
+
+    [ -z "$cmd" ] && { echo "Need a command." >&2; exit 2; }
+    if [ -z "$backend" ]
+    then
+        backend="sh"
+        command -v ruby >/dev/null 2>/dev/null && backend="ruby"
+    fi
+    if [ -z "$file" ] || [ "$file" = "-" ]
+    then
+        dispatch "$cmd" "$recurse" "$dryrun" "$backend" "$1"
+    else
+        cat "$file" | dispatch "$cmd" "$recurse" "$dryrun" "$backend" "$1"
+    fi
+}
+
+extract_entry () {
+    local args="$1"
+    local entry="$2"
+    echo "$args" | sed -ne 's/^\(.* \)\{0,\}'"$entry"'=\([^ ]*\).*$/\2/p'
+}
+
+escape () {
+    local name="$1"
+    echo "$name" | if command -v perl >/dev/null 2>&1
+    then
+        perl -pe 'chomp; s/\\/\\\\/g; s/#/\\#/g; s/ /\\s/g; s/([\x01-\x1f\x7f-\xff])/sprintf "\\%03o", ord($1)/ge;'
+    else
+        sed -e 's/\\/\\\\/g' -e 's/#/\\#/g' -e 's/ /\\s/g'
+    fi
+}
+
+unescape () {
+    local name="$1"
+    echo "$name" | if command -v perl >/dev/null 2>&1
+    then
+        perl -pe '
+            $x = { (map { (sprintf("%03o", $_), chr($_)) } 0..255), "\\" => "\\", s => " ", "#" => "#", t => "\t", n => "\n" };
+            chomp;
+            s/\\([\\#stn]|[0-7]{3})/$x->{$1}/ge;
+        '
+    else
+        sed -e 's/\\\\/\\/g' -e 's/\\#/#/g' -e 's/\\s/ /g'
+    fi
+}
+
+prefix () {
+    if [ -n "${1##./*}" ]
+    then
+        echo "./$1"
+    else
+        echo "$1"
+    fi
+}
+
+format_line () {
+    local kind="$1"
+    local destdir="$2"
+    local file="$3"
+    local args="$4"
+
+    local line src dest
+
+    line=$(echo "$args" | tr ' ' '\n' | grep -E '^(type|mode|link|sha[0-9]+(digest)?)=' | tr '\n' ' ' | sed -e 's/ *$//')
+    src="$file"
+    case "$kind" in
+        dest)
+            dest="$(extract_entry "$args" dest)"
+            file="${dest:-$src}"
+            file="$(prefix "$file")"
+            echo "$dest"
+            echo "$file"
+            echo "$file $line"
+            ;;
+        src)
+            file="$(prefix "$file")"
+            echo "$dest"
+            echo "$file"
+            echo "$file $line"
+            ;;
+        both)
+            dest="$(extract_entry "$args" dest)"
+            dest="${dest:-$src}"
+            if [ -n "$destdir" ]
+            then
+                dest="$destdir/$dest"
+            else
+                dest="$(prefix "${dest:-$src}")"
+            fi
+            file="$(prefix "$file")"
+            echo "$dest"
+            echo "$file"
+            echo "$file $dest $line"
+            ;;
+    esac
+}
+
+find_dest () {
+    local kind="$1"
+    local src="$2"
+    local destdir="$3"
+    local root="$4"
+
+    [ "$kind" = both ] || return
+    echo "$root" | sed -e "s!^$src/!$destdir/!" -e 's/$/ /'
+}
+
+print_mtree () {
+    local kind="$1"
+    local do_recurse="$2"
+    local destdir="$3"
+    local src dest file args line recurse
+    local filemode dirmode plainmode execmode
+    local destval
+
+    if [ -z "$destdir" ]
+    then
+        echo ". type=dir"
+    else
+        echo "$destdir type=dir"
+    fi
+    grep -vE '^(#|$)' | while read -r file args
+    do
+        src="$file"
+        data="$(format_line "$kind" "$destdir" "$file" "$args")"
+        dest="$(echo "$data" | head -n1)"
+        file="$(echo "$data" | head -n2 | tail -n+2)"
+        echo "$data" | tail -n +3
+        recurse="$(extract_entry "$args" recurse)"
+        if [ "$recurse" = true ] && [ "$do_recurse" = t ]
+        then
+            local destval
+            dirmode="$(extract_entry "$args" dirmode)"
+            filemode="$(extract_entry "$args" filemode)"
+            if [ -z "${filemode%%*+x}" ]
+            then
+                plainmode="${filemode%%+x}"
+                execmode="$(echo "$plainmode" | sed -e 's/6/7/' -e 's/4/5/')"
+            else
+                plainmode="$filemode"
+                execmode="$filemode"
+            fi
+            src="$(prefix "$src")"
+            find "$src" | sort | while read -r entry
+            do
+                if [ -d "$entry" ]
+                then
+                    [ "$entry" = "$src" ] && [ "$kind" != both ] && continue
+                    entry="$(escape "$entry")"
+                    destval=$(find_dest "$kind" "$src" "$dest" "$entry")
+                    entry=$(echo "$entry" | sed -e "s!^$src/!$file/!")
+                    echo "$entry ${destval}type=dir mode=$dirmode"
+                elif [ -f "$entry" ]
+                then
+                    if [ -x "$entry" ]
+                    then
+                        mode="$execmode"
+                    else
+                        mode="$plainmode"
+                    fi
+                    entry="$(escape "$entry")"
+                    destval=$(find_dest "$kind" "$src" "$dest" "$entry")
+                    entry=$(echo "$entry" | sed -e "s!^$src/!$file/!")
+                    echo "$entry ${destval}type=file mode=$mode"
+                elif [ -h "$entry" ]
+                then
+                    linkdest=$(readlink "$entry")
+                    entry="$(escape "$entry")"
+                    destval=$(find_dest "$kind" "$src" "$dest" "$entry")
+                    entry=$(echo "$entry" | sed -e "s!^$src/!$file/!")
+                    echo "$entry ${destval}type=link mode=0777 link=$(escape "$linkdest")"
+                fi
+            done
+        fi
+    done
+}
+
+do_install () {
+    local recurse="$1"
+    local dryrun="$2"
+    local dest="$3"
+
+    print_mtree both "$recurse" "$dest" | sort | tail -n+2 | (while read -r src dest args
+    do
+        local src="$(unescape "$src")"
+        local dest="$(unescape "$dest")"
+        local kind="$(extract_entry "$args" type)"
+        local mode="$(extract_entry "$args" mode)"
+        local link="$(extract_entry "$args" link)"
+        local contents="$(extract_entry "$args" contents)"
+        case "$kind" in
+            dir)
+                if [ -n "$dryrun" ]
+                then
+                    echo "Would create directory '$dest' with mode $mode"
+                else
+                    mkdir -m "$mode" -p "$dest"
+                    chmod "$mode" "$dest"
+                fi
+                ;;
+            file)
+                if [ -n "$dryrun" ]
+                then
+                    echo "Would create file '$dest' from '$src' with mode $mode"
+                else
+                    if [ "$contents" = ignore ]
+                    then
+                        touch "$dest"
+                    else
+                        cp "$src" "$dest"
+                    fi
+                    chmod "$mode" "$dest"
+                fi
+                ;;
+            link)
+                if [ -n "$dryrun" ]
+                then
+                    echo "Would create link '$dest' pointing to '$link'"
+                else
+                    ln -sf "$link" "$dest"
+                fi
+                ;;
+        esac
+    done)
+}
+
+RUBY_SCRIPT='# encoding: ASCII-8BIT
+
+module MTree
+    def self.unescape(s)
+        escapes = {
+            "\\\\" => "\\",
+            "\\#" => "#",
+            "\\s" => " ",
+            "\\n" => "\n",
+            "\\t" => "\t",
+        }
+        escapes.merge((0x01...0xff).map { |c| ["\\%03o" % c, c.chr] }.to_h)
+        s.gsub(/\\([\\#s\n\t]|[0-7]{3})/, escapes)
+    end
+
+    def self.escape(s)
+        escapes = {
+            "\\" => "\\",
+            "#" => "#",
+            " " => "s",
+            "\n" => "n",
+            "\t" => "t",
+        }
+        escapes.merge((0x01...0x1f).map { |c| [c.chr, "%03o" % c] }.to_h)
+        escapes.merge((0x7f...0xff).map { |c| [c.chr, "%03o" % c] }.to_h)
+        s.gsub(/[\\# \x01-\x1f\x7f-\xff]/) { |m| "\\%s" % escapes[m] }
+    end
+
+    def self.quote(s)
+        "\x27#{s}\x27"
+    end
+
+    def self.mtree_src(config, entry)
+        path = escape(entry[:src])
+        path = "./#{path}" unless entry[:root]
+        config[:stdout].printf("%s %s\n", path, filter_args(entry[:args]).map { |k, v| "#{k}=#{v}" }.join(" "))
+    end
+
+    def self.mtree_dest(config, entry)
+        path = escape(entry[:dest])
+        path = "./#{path}" unless entry[:root]
+        config[:stdout].printf("%s %s\n", path, filter_args(entry[:args]).map { |k, v| "#{k}=#{v}" }.join(" "))
+    end
+
+    def self.install(config, entry)
+        fullpath = entry[:root] ? config[:installdest] : File.join(config[:installdest], entry[:dest])
+        mode = entry[:args]["mode"]&.to_i(8)
+        textmode = mode ? "%04o" % mode : nil
+        case entry[:args]["type"]
+        when "dir"
+            modearr = [mode].compact
+            if config[:dry_run]
+                config[:stdout].puts "Would create directory #{quote(fullpath)} with mode #{textmode}"
+            else
+                task = ->() do
+                    Dir.mkdir(fullpath, *modearr)
+                end
+                begin
+                    task.call()
+                rescue Errno::EEXIST
+                    if !File.symlink?(fullpath) && File.directory?(fullpath)
+                        File.chmod(mode, fullpath) if mode
+                    else
+                        File.unlink(fullpath)
+                        task.call()
+                    end
+                end
+            end
+        when "file"
+            if config[:dry_run]
+                config[:stdout].puts "Would create file #{quote(fullpath)} from #{quote(entry[:src])} with mode #{textmode}"
+            else
+                task = ->() do
+                    if entry[:args]["contents"] == "ignore"
+                        File.open(fullpath, File::CREAT|File::RDWR|File::NOFOLLOW, mode) do |dfp|
+                            # Do nothing, just verify the file exists.
+                        end
+                    else
+                        File.open(entry[:src], "rb") do |sfp|
+                            File.open(fullpath, File::CREAT|File::TRUNC|File::RDWR|File::NOFOLLOW, mode) do |dfp|
+                                IO.copy_stream(sfp, dfp)
+                            end
+                        end
+                    end
+                end
+                begin
+                    task.call()
+                rescue Errno::EEXIST, Errno::ELOOP
+                    !File.symlink?(fullpath) && File.directory?(fullpath) ? Dir.rmdir(fullpath) : File.unlink(fullpath)
+                    task.call()
+                end
+            end
+        when "link"
+            if config[:dry_run]
+                config[:stdout].puts "Would create link #{quote(fullpath)} pointing to #{quote(entry[:args]["link"])}"
+            else
+                task = ->() do
+                    File.symlink(entry[:args]["link"], fullpath)
+                end
+                begin
+                    task.call()
+                rescue Errno::EEXIST
+                    !File.symlink?(fullpath) && File.directory?(fullpath) ? Dir.rmdir(fullpath) : File.unlink(fullpath)
+                    task.call()
+                end
+            end
+        end
+    end
+
+    def self.filter_args(args)
+        args.select { |k, _| /^(type|mode|link|sha[0-9]+(digest)?)$/.match(k) }
+    end
+
+    def self.main(stdin, stdout, stderr, cmdargs)
+        method = cmdargs[0].to_sym.to_proc
+        recurse = !cmdargs[1].nil? && !cmdargs[1].empty?
+        dryrun = cmdargs.length >= 3 && !cmdargs[2].nil? && !cmdargs[2].empty?
+        installdest = cmdargs.length >= 4 && cmdargs[3]
+        config = { installdest: installdest, dry_run: dryrun, stdin: stdin, stdout: stdout }
+
+        entry = { src: ".", dest: ".", args: { "type" => "dir" }, root: true }
+        method.call(MTree, config, entry)
+
+        begin
+            while line = stdin.gets
+                line.chomp!
+                items = line.split(" ")
+                file = items.shift
+                args = items.map { |item| item.split("=", 2) }.to_h
+                src = unescape(file)
+                src = src[2..] if src.start_with?("./")
+                entry = { src: src, args: args }
+                entry[:dest] = args["dest"] || entry[:src]
+                method.call(MTree, config, entry)
+                if args["recurse"] == "true" && recurse
+                    srcdir = entry[:src]
+                    destdir = entry[:dest] || entry[:src]
+                    dirmode = args["dirmode"].to_i(8)
+                    plainmode, execmode = if args["filemode"] =~ /^(0[0-7]+)\+x$/
+                        mode = $1.to_i(8)
+                        [mode, mode | ((mode & 0444) >> 2)]
+                    else
+                        mode = args["filemode"].to_i(8)
+                        [mode, mode]
+                    end
+                    Dir.glob("**/*", base: srcdir, sort: true) do |path|
+                        fullpath = File.join(srcdir, path)
+                        destfullpath = File.join(destdir, path)
+                        st = File.lstat(fullpath)
+                        kind, mode, link = case
+                        when st.file?
+                            ["file", st.mode & 0111 != 0 ? execmode : plainmode, nil]
+                        when st.directory?
+                            ["dir", dirmode, nil]
+                        when st.symlink?
+                            ["link", 0777, File.readlink(fullpath)]
+                        when st.socket? || st.chardev? || st.blockdev? || st.pipe?
+                            next
+                        end
+                        entry = { src: fullpath, dest: destfullpath, args: { "type" => kind, "mode" => "%04o" % mode } }
+                        entry[:args]["link"] = link if link
+                        method.call(MTree, config, entry)
+                    end
+                end
+            end
+            0
+        rescue StandardError => e
+            stderr.puts "Error while processing line \x27#{line}\x27:"
+            stderr.puts e.full_message
+            2
+        end
+    end
+end
+
+exit MTree.main($stdin, $stdout, $stderr, ARGV) if __FILE__ == $0
+'
+
+do_ruby () {
+    local mode="$1"
+    local recurse="$2"
+    local dryrun="$3"
+    local dest="$4"
+
+    ruby -Kn -e "$RUBY_SCRIPT" "$mode" "$recurse" "$dryrun" "$dest"
+}
+
+dispatch () {
+    local cmd="$1"
+    local recurse="$2"
+    local dryrun="$3"
+    local backend="$4"
+    local dest="$5"
+
+    case "$backend:$cmd" in
+        sh:mtree-src)
+            print_mtree src "$recurse";;
+        ruby:mtree-src)
+            do_ruby mtree_src "$recurse";;
+        sh:mtree-dest)
+            print_mtree dest "$recurse";;
+        ruby:mtree-dest)
+            do_ruby mtree_dest "$recurse";;
+        *:validate)
+            validate;;
+        shinstall)
+            do_install "$recurse" "$dryrun" "$dest";;
+        ruby:install)
+            do_ruby install "$recurse" "$dryrun" "$dest";;
+        *:dump)
+            printf '%s' "$RUBY_SCRIPT"
+    esac
+}
+
+main "$@"
