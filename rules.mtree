@@ -1,0 +1,7 @@
+.config type=dir mode=0700
+.cache type=dir mode=0755
+.local type=dir mode=0755
+.local/share type=dir mode=0755
+.local/lib type=dir mode=0755
+.vim type=dir mode=0755
+.vim/plugin type=dir mode=0755

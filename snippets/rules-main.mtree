@@ -1,0 +1,2 @@
+snippets/text type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 dest=.local/share/dct-snip/snippets
+snippets/exec type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 dest=.local/lib/dct-snip/snippets

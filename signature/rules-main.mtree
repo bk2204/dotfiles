@@ -1,0 +1,2 @@
+signature/auricblue type=file mode=0600 dest=.signature-auricblue
+signature/personal type=file mode=0600 dest=.signature-personal

@@ -6,6 +6,8 @@ INSTALL_PAIRS	+= vim/colors   .vim/colors
 INSTALL_PAIRS	+= vim/pathogen .vim/pathogen
 INSTALL_PAIRS	+= vim/syntax   .vim/syntax
 
+MTREE_SOURCES	+= vim/rules-main.mtree
+
 install: install-vim
 
 install-vim: install-dirs

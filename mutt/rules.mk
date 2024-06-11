@@ -11,3 +11,4 @@ install-mutt: $(MUTT_DIRS_FQ)
 
 INSTALL_PAIRS	+= mutt/muttrc .muttrc
 INSTALL_PAIRS	+= mutt/config .mutt/config
+MTREE_SOURCES	+= mutt/rules-first.mtree mutt/rules-main.mtree

@@ -1,0 +1,2 @@
+mutt/muttrc type=file mode=0600 dest=.muttrc
+mutt/config type=dir mode=0700 dest=.mutt/config recurse=true filemode=0600+x dirmode=0700

@@ -2,3 +2,4 @@
 *.gen
 config.yaml
 rules-overlay.mk
+manifest.mtree

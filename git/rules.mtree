@@ -1,0 +1,2 @@
+.config/git type=dir mode=0755
+git/gitconfig type=file mode=0644 dest=.gitconfig

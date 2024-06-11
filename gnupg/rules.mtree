@@ -1,0 +1,2 @@
+.gnupg type=dir mode=0700
+gnupg/gpg.conf type=file mode=0600 dest=.gnupg/gpg.conf

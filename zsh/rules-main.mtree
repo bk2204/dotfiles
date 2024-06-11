@@ -1,0 +1,5 @@
+zsh/zshenv type=file mode=0600 dest=.zshenv
+zsh/zshrc type=file mode=0600 dest=.zshrc
+zsh/zlogout type=file mode=0600 dest=.zlogout
+zsh/zprofile type=file mode=0600 dest=.zprofile
+zsh/functions type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 dest=.zsh

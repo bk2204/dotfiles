@@ -1,0 +1,9 @@
+.config/nvim type=link link=../.vim
+.vim/init.vim type=link link=../.vimrc
+vim/vimrc type=file mode=0640 dest=.vimrc
+vim/after type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 dest=.vim/after
+vim/autoload type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 dest=.vim/autoload
+vim/bundle type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 dest=.vim/bundle
+vim/colors type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 dest=.vim/colors
+vim/pathogen type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 dest=.vim/pathogen
+vim/syntax type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 dest=.vim/syntax

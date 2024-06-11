@@ -1,0 +1,2 @@
+.local/share/dct-snip type=dir mode=0700
+.local/lib/dct-snip type=dir mode=0700

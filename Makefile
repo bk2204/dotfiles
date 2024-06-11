@@ -8,6 +8,8 @@ PERMISSIONS = u=rwX,go-rwx
 
 CONFIG_FILE ?= config.yaml
 
+MTREE_SOURCES += rules.mtree
+
 TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 1)
 
 all:
@@ -41,7 +43,13 @@ include zsh/rules.mk
 %.gen: %.erb $(CONFIG_FILE)
 	bin/dct-erb -f $(CONFIG_FILE) -o $@ $^
 
+manifest.mtree: $(MTREE_SOURCES)
+	cat $^ > $@
+
 build-standard: $(TEMPLATE_FILES)
+
+install-mtree: build-standard manifest.mtree
+	cat manifest.mtree | bin/dct-mtree --recurse --install $(DESTDIR)
 
 install-dirs:
 	for i in $(INSTALL_DIRS); \
@@ -65,7 +73,7 @@ install-standard: build-standard install-dirs
 			if [ -d "$$src" ]; \
 			then \
 				mkdir -m $(PERMISSIONS) -p "$(DESTDIR)/$$dest"; \
-				rsync -a --chmod=$(PERMISSIONS) --exclude '*.mk' "$$src/" "$(DESTDIR)/$$dest/"; \
+				rsync -a --chmod=$(PERMISSIONS) --exclude '*.mk' --exclude '*.mtree' "$$src/" "$(DESTDIR)/$$dest/"; \
 			else \
 				cp -pr "$$src" "$(DESTDIR)/$$dest"; \
 				chmod $(PERMISSIONS) "$(DESTDIR)/$$dest"; \

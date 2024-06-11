@@ -1,0 +1,4 @@
+.mutt type=dir mode=0700
+.mutt/header_cache type=dir mode=0700
+.mutt/message_cache type=dir mode=0700
+.mutt/aliases type=file mode=0600 contents=ignore
