@@ -24,6 +24,10 @@ print:
 		echo "Templating disabled."; \
 	fi
 
+clean:
+	$(RM) $(TEMPLATE_FILES)
+	$(RM) manifest.mtree
+
 install: install-links install-dirs install-standard
 
 include bin/rules.mk
