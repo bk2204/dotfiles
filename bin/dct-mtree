@@ -189,7 +189,7 @@ print_mtree () {
     else
         echo "$destdir type=dir"
     fi
-    grep -vE '^(#|$)' | while read -r file args
+    grep -vE '^(#|[	 ]*$)' | while read -r file args
     do
         src="$file"
         data="$(format_line "$kind" "$destdir" "$file" "$args")"
@@ -420,6 +420,7 @@ module MTree
         begin
             while line = stdin.gets
                 line.chomp!
+                next if line =~ /^(?:#|\s*$)/
                 items = line.split(" ")
                 file = items.shift
                 args = items.map { |item| item.split("=", 2) }.to_h

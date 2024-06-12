@@ -21,6 +21,10 @@ describe :dct_mtree do
   SAMPLE1 = <<~EOF
   bar type=dir mode=0755 dest=barbaz recurse=true filemode=0640 dirmode=0750
   baz type=dir mode=0755 dest=foobar
+
+  # This is a comment.
+  #
+  # More comment.
   file4 type=file mode=0664
   foo type=dir mode=0755
   EOF
