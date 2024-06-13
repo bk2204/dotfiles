@@ -1,2 +1,4 @@
 tmux/tmux.conf type=file mode=0600 dest=.tmux.conf
 tmux/tmuxinator type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 dest=.config/tmuxinator
+
+tmux/tmux-overmind.conf type=file mode=0600 dest=.config/tmux/tmux-overmind.conf

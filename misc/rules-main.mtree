@@ -7,3 +7,8 @@ misc/lawn.yaml type=file mode=0600 dest=.config/lawn/config.yaml
 misc/alacritty.yml type=file mode=0640 dest=.config/alacritty/alacritty.yml
 misc/alacritty.toml type=file mode=0640 dest=.config/alacritty/alacritty.toml
 misc/dct-jump/main type=file mode=0600 dest=.config/dct-jump/config
+
+misc/azure-config type=file mode=0600 dest=.azure/config
+.azure/az_survey.json type=link link=/dev/null
+.azure/telemetry type=link link=/dev/null
+.azure/telemetry.txt type=link link=/dev/null

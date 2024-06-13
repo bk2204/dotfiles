@@ -2,3 +2,4 @@
 .config/lawn type=dir mode=0700
 .local/share/Last.fm type=dir mode=0700
 .config/dct-jump type=dir mode=0700
+.azure type=dir mode=0700
