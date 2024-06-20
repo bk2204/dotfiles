@@ -1,21 +1,28 @@
 require_relative 'spec_helper'
 require 'fileutils'
+require 'securerandom'
 
 describe :dct_mtree do
   before(:all) do
     @dir = TestDir.new
-    Dir.mkdir File.join(@dir.tempdir, "foo")
-    Dir.mkdir File.join(@dir.tempdir, "bar")
-    Dir.mkdir File.join(@dir.tempdir, "bar", "quux")
-    Dir.mkdir File.join(@dir.tempdir, "baz")
-    File.write(File.join(@dir.tempdir, "foo", "file1"), "")
-    File.write(File.join(@dir.tempdir, "foo", "file2"), "")
-    File.write(File.join(@dir.tempdir, "bar", "file3"), "")
-    File.chmod(0750, File.join(@dir.tempdir, "bar", "file3"))
-    File.write(File.join(@dir.tempdir, "bar", "quux", "file#"), "")
-    File.write(File.join(@dir.tempdir, "bar", "file with space"), "")
-    File.symlink("../bar/file1", File.join(@dir.tempdir, "bar", "link1"))
-    File.write(File.join(@dir.tempdir, "file4"), "")
+    @mtree = File.join(@dir.tempdir, "bin", "dct-mtree")
+  end
+
+  before(:each) do
+    @tempdir = File.join(@dir.tempdir, SecureRandom.alphanumeric(20))
+    Dir.mkdir @tempdir
+    Dir.mkdir File.join(@tempdir, "foo")
+    Dir.mkdir File.join(@tempdir, "bar")
+    Dir.mkdir File.join(@tempdir, "bar", "quux")
+    Dir.mkdir File.join(@tempdir, "baz")
+    File.write(File.join(@tempdir, "foo", "file1"), "")
+    File.write(File.join(@tempdir, "foo", "file2"), "")
+    File.write(File.join(@tempdir, "bar", "file3"), "")
+    File.chmod(0750, File.join(@tempdir, "bar", "file3"))
+    File.write(File.join(@tempdir, "bar", "quux", "file#"), "")
+    File.write(File.join(@tempdir, "bar", "file with space"), "")
+    File.symlink("../bar/file1", File.join(@tempdir, "bar", "link1"))
+    File.write(File.join(@tempdir, "file4"), "")
   end
 
   SAMPLE1 = <<~EOF
@@ -50,9 +57,9 @@ describe :dct_mtree do
       ./file4 type=file mode=0664
       ./foo type=dir mode=0755
       EOF
-      expect(@dir.stream(['bin/dct-mtree', '--backend=sh', '--mtree-src'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--backend=ruby', '--mtree-src'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--mtree-src'], SAMPLE1)).to eq output
+      expect(@dir.stream([@mtree, '--backend=sh', '--mtree-src'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--backend=ruby', '--mtree-src'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--mtree-src'], SAMPLE1, chdir: @tempdir)).to eq output
     end
 
     it 'should generate recursive mtree source output with executable handling' do
@@ -68,9 +75,9 @@ describe :dct_mtree do
       ./file4 type=file mode=0664
       ./foo type=dir mode=0755
       EOF
-      expect(@dir.stream(['bin/dct-mtree', '--backend=sh', '--mtree-src'], SAMPLE2)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--backend=ruby', '--mtree-src'], SAMPLE2)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--mtree-src'], SAMPLE2)).to eq output
+      expect(@dir.stream([@mtree, '--backend=sh', '--mtree-src'], SAMPLE2, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--backend=ruby', '--mtree-src'], SAMPLE2, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--mtree-src'], SAMPLE2, chdir: @tempdir)).to eq output
     end
 
 
@@ -82,9 +89,9 @@ describe :dct_mtree do
       ./file4 type=file mode=0664
       ./foo type=dir mode=0755
       EOF
-      expect(@dir.stream(['bin/dct-mtree', '--no-recurse', '--backend=sh', '--mtree-src'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--no-recurse', '--backend=ruby', '--mtree-src'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--no-recurse', '--mtree-src'], SAMPLE1)).to eq output
+      expect(@dir.stream([@mtree, '--no-recurse', '--backend=sh', '--mtree-src'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--no-recurse', '--backend=ruby', '--mtree-src'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--no-recurse', '--mtree-src'], SAMPLE1, chdir: @tempdir)).to eq output
     end
 
     it 'should generate recursive mtree destination output' do
@@ -100,9 +107,9 @@ describe :dct_mtree do
       ./file4 type=file mode=0664
       ./foo type=dir mode=0755
       EOF
-      expect(@dir.stream(['bin/dct-mtree', '--backend=sh', '--mtree-dest'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--backend=ruby', '--mtree-dest'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--mtree-dest'], SAMPLE1)).to eq output
+      expect(@dir.stream([@mtree, '--backend=sh', '--mtree-dest'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--backend=ruby', '--mtree-dest'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--mtree-dest'], SAMPLE1, chdir: @tempdir)).to eq output
     end
 
     it 'should generate non-recursive mtree destination output' do
@@ -113,9 +120,9 @@ describe :dct_mtree do
       ./file4 type=file mode=0664
       ./foo type=dir mode=0755
       EOF
-      expect(@dir.stream(['bin/dct-mtree', '--backend=sh', '--mtree-dest', '--no-recurse'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--backend=ruby', '--mtree-dest', '--no-recurse'], SAMPLE1)).to eq output
-      expect(@dir.stream(['bin/dct-mtree', '--mtree-dest', '--no-recurse'], SAMPLE1)).to eq output
+      expect(@dir.stream([@mtree, '--backend=sh', '--mtree-dest', '--no-recurse'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--backend=ruby', '--mtree-dest', '--no-recurse'], SAMPLE1, chdir: @tempdir)).to eq output
+      expect(@dir.stream([@mtree, '--mtree-dest', '--no-recurse'], SAMPLE1, chdir: @tempdir)).to eq output
     end
   end
 
@@ -137,24 +144,24 @@ describe :dct_mtree do
       dest = File.join(@dir.tempdir, "dest")
       Dir.rmdir(dest) rescue nil
 
-      expect(@dir.stream(['bin/dct-mtree', '--install', 'dest'], SAMPLE1)).to eq ''
-      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1)).to eq ''
+      expect(@dir.stream([@mtree, '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
     end
 
     it 'should install files correctly for sh backend' do
       dest = File.join(@dir.tempdir, "dest")
       Dir.rmdir(dest) rescue nil
 
-      expect(@dir.stream(['bin/dct-mtree', '--backend=sh', '--install', 'dest'], SAMPLE1)).to eq ''
-      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1)).to eq ''
+      expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
     end
 
     it 'should install files correctly for ruby backend' do
       dest = File.join(@dir.tempdir, "dest")
       FileUtils.rm_rf(dest, secure: true) rescue nil
 
-      expect(@dir.stream(['bin/dct-mtree', '--backend=ruby', '--install', 'dest'], SAMPLE1)).to eq ''
-      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1)).to eq ''
+      expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
     end
 
     it 'should install absolute files correctly for sh backend' do
@@ -162,8 +169,8 @@ describe :dct_mtree do
       FileUtils.rm_rf(dest, secure: true) rescue nil
       sample1 = SAMPLE1.gsub(/^\./, @dir.tempdir)
 
-      expect(@dir.stream(['bin/dct-mtree', '--backend=sh', '--install', 'dest'], sample1)).to eq ''
-      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1)).to eq ''
+      expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], sample1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
     end
 
     it 'should install absolute files correctly for ruby backend' do
@@ -171,8 +178,8 @@ describe :dct_mtree do
       FileUtils.rm_rf(dest, secure: true) rescue nil
       sample1 = SAMPLE1.gsub(/^\./, @dir.tempdir)
 
-      expect(@dir.stream(['bin/dct-mtree', '--backend=ruby', '--install', 'dest'], sample1)).to eq ''
-      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1)).to eq ''
+      expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], sample1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
     end
   end
 end
