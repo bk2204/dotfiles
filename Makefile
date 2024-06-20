@@ -45,7 +45,7 @@ include zsh/rules.mk
 -include rules-overlay.mk
 
 %.gen: %.erb $(CONFIG_FILE)
-	bin/dct-erb -f $(CONFIG_FILE) -o $@ $^
+	bin/dct-erb -f $(CONFIG_FILE) -o $@ $<
 
 manifest.mtree: $(MTREE_SOURCES)
 	cat $^ > $@
