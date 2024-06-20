@@ -140,6 +140,19 @@ describe :dct_mtree do
     ./foo type=dir mode=0755
     EOF
 
+    VERIFY1 = <<~EOF
+    . type=dir
+    ./barbaz type=dir mode=0755
+    ./barbaz/quux type=dir mode=0750
+    ./barbaz/file\\swith\\sspace type=file mode=0640
+    ./barbaz/file3 type=file mode=0640
+    ./barbaz/quux/file\\# type=file mode=0640
+    ./barbaz/link1 type=link mode=0777 link=../bar/file1
+    ./foobar type=dir mode=0755
+    ./file4 type=file mode=0664 sha256digest=ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+    ./foo type=dir mode=0755
+    EOF
+
     it 'should install files correctly for default backend' do
       dest = File.join(@dir.tempdir, "dest")
       Dir.rmdir(dest) rescue nil
@@ -162,6 +175,26 @@ describe :dct_mtree do
 
       expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
       expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
+    end
+
+    it 'should install modified files correctly for sh backend' do
+      expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
+
+      File.write(File.join(@tempdir, "file4"), "abc")
+
+      expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], VERIFY1, chdir: @tempdir)).to eq ''
+    end
+
+    it 'should install modified files correctly for ruby backend' do
+      expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
+
+      File.write(File.join(@tempdir, "file4"), "abc")
+
+      expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], SAMPLE1, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], VERIFY1, chdir: @tempdir)).to eq ''
     end
 
     it 'should install absolute files correctly for sh backend' do
