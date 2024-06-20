@@ -53,7 +53,8 @@ class TestDir
     IO.popen(env, command, :unsetenv_others => true, :in => "/dev/null", :chdir => @dir).read
   end
 
-  def stream(command, input, **env)
+  def stream(command, input, **options)
+    env = options[:env] || {}
     env["HOME"] = @dir
     env["PATH"] = ENV["PATH"]
     file = Tempfile.new()
