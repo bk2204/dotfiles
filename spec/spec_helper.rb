@@ -54,6 +54,7 @@ class TestDir
   end
 
   def stream(command, input, **options)
+    dir = options[:chdir] || @dir
     env = options[:env] || {}
     env["HOME"] = @dir
     env["PATH"] = ENV["PATH"]
@@ -61,7 +62,7 @@ class TestDir
     begin
       file.write(input)
       file.flush
-      IO.popen(env, command, :unsetenv_others => true, :in => file.path, :err => "/dev/stderr", :chdir => @dir).read
+      IO.popen(env, command, :unsetenv_others => true, :in => file.path, :err => "/dev/stderr", :chdir => dir).read
     ensure
       file.close
       file.unlink
