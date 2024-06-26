@@ -74,13 +74,20 @@
       shell: 'if [ -n "$(getfacl -s /tmp)" ]; then setfacl -Rb /tmp; fi'
       become: yes
       become_user: root
+    - name: Find /workspaces permissions
+      stat:
+        path: /workspaces
+      register: st
     # We would like sane ownership and permissions here.
     - name: Undo unexpected ACL ownership
       command: 'chown -R {{ ansible_user_id }}:{{ ansible_user_id }} /workspaces'
       become: yes
       become_user: root
+      when: st.stat.pw_name != ansible_user_id
     - name: Undo unexpected ACL permissions
       command: 'chmod -R o-rwx /workspaces'
+      become: yes
+      become_user: root
     - name: Clone dotfiles
       git:
         repo: https://github.com/bk2204/dotfiles.git
