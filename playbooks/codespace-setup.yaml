@@ -89,7 +89,7 @@
       become: yes
       become_user: root
     - name: Undo unexpected ACL permissions
-      command: 'chmod -R o-rwx /workspaces'
+      command: 'chmod -R o-w /workspaces'
       become: yes
       become_user: root
     - name: Clone dotfiles
