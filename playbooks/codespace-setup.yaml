@@ -110,6 +110,10 @@
       shell: 'git submodule update --init'
       args:
         chdir: /workspaces/dotfiles
+    - name: Set up dotfiles configuration file
+      shell: 'ln -sf config/config-work-codespace.yaml config.yaml'
+      args:
+        chdir: /workspaces/dotfiles
     - name: Deploy dotfiles
       shell: 'make install'
       args:
