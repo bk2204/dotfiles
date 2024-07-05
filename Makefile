@@ -28,7 +28,7 @@ clean:
 	$(RM) $(TEMPLATE_FILES)
 	$(RM) manifest.mtree
 
-install: install-links install-dirs install-standard
+install-legacy: install-links install-dirs install-standard
 
 include bin/rules.mk
 include git/rules.mk
@@ -52,7 +52,7 @@ manifest.mtree: $(MTREE_SOURCES)
 
 build-standard: $(TEMPLATE_FILES)
 
-install-mtree: build-standard manifest.mtree
+install: build-standard manifest.mtree
 	cat manifest.mtree | bin/dct-mtree --recurse --install $(DESTDIR)
 
 install-dirs:
