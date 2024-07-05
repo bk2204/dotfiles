@@ -3,5 +3,7 @@
 .local type=dir mode=0755
 .local/share type=dir mode=0755
 .local/lib type=dir mode=0755
+.local/run type=dir mode=0700
+.local/run/lawn type=dir mode=0700
 .vim type=dir mode=0755
 .vim/plugin type=dir mode=0755

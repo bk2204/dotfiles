@@ -1,6 +1,6 @@
 DESTDIR	?=	$(HOME)
 
-INSTALL_DIRS = .config .cache .local/share .vim/plugin
+INSTALL_DIRS = .config .cache .local/share .vim/plugin .local/run/lawn
 
 LINK_PAIRS += .local/share/gems .gem
 
