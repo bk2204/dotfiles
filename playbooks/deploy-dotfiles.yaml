@@ -3,23 +3,35 @@
   hosts: all
   environment:
     DEBIAN_FRONTEND: noninteractive
+  vars:
+    checkouts_dir: /home/{{ ansible_user_id }}/checkouts
+    branch: dev
   tasks:
     - name: Create the directory
       file:
-        path: /home/{{ ansible_user_id }}/checkouts
+        path: '{{ checkouts_dir }}'
         state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
     - name: Clone dotfiles
       git:
         repo: https://github.com/bk2204/dotfiles.git
         remote: def
-        dest: /home/{{ ansible_user_id }}/checkouts/dotfiles
+        dest: '{{ checkouts_dir }}/dotfiles'
+        version: '{{ branch }}'
     - name: Checkout submodules for dotfiles
       shell: 'git submodule update --init'
       args:
-        chdir: /home/{{ ansible_user_id }}/checkouts/dotfiles
-    - name: Deploy dotfiles
+        chdir: '{{ checkouts_dir }}/dotfiles'
+    - name: Deploy dotfiles with make
       shell: 'make install'
       args:
-        chdir: /home/{{ ansible_user_id }}/checkouts/dotfiles
+        chdir: '{{ checkouts_dir }}/dotfiles'
+      when: ansible_distribution != 'FreeBSD'
+    - name: Deploy dotfiles with gmake
+      shell: 'gmake install'
+      args:
+        chdir: '{{ checkouts_dir }}/dotfiles'
+      when: ansible_distribution == 'FreeBSD'
     - name: Create Lawn configuration directory
       shell: 'mkdir -p ~/.local/run/lawn'
