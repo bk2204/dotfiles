@@ -145,7 +145,38 @@
       shell: 'for i in /workspaces/*; do "$HOME/bin/dct-snip" -r setup-repository "$i"; done'
     - name: Install neovim-gtk helper
       shell: 'cd ~/.vim/plugin && curl -LO https://raw.githubusercontent.com/Lyude/neovim-gtk/main/runtime/plugin/nvim_gui_shim.vim'
+    - name: Create $HOME/.local
+      file:
+        path: '/home/{{ ansible_user_id }}/.local'
+        state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        mode: 0755
+    - name: Create $HOME/.local/run
+      file:
+        path: '/home/{{ ansible_user_id }}/.local/run'
+        state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        mode: 0700
     - name: Create Lawn socket dir
-      shell: 'mkdir -p "$HOME/.local/run/lawn"'
+      file:
+        path: '/home/{{ ansible_user_id }}/.local/run/lawn'
+        state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        mode: 0700
+    - name: Create $HOME/mnt
+      file:
+        path: '/home/{{ ansible_user_id }}/mnt'
+        state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        mode: 0755
     - name: Create Lawn mount dir
-      shell: 'mkdir -p "$HOME/mnt/remote"'
+      file:
+        path: '/home/{{ ansible_user_id }}/mnt/remote'
+        state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        mode: 0700
