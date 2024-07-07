@@ -1,0 +1,45 @@
+---
+- name: Create an account with sudo privileges
+  hosts: all
+  gather_facts: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  vars:
+    # Name of the account.
+    account: bmc
+    # Group to grant sudo access.
+    sudo_group: sudo
+    sudo_locations:
+      - /etc/sudoers
+      - /usr/local/etc/sudoers
+    # If true, sudo will require a password; if false, it will not.
+    sudo_with_password: false
+  tasks:
+    - name: Find zsh location
+      shell: command -v zsh
+      register: zsh_command
+    - name: Ensure the sudo group exists
+      group:
+        name: '{{ sudo_group }}'
+        state: present
+        system: true
+      become: true
+      become_user: root
+    - name: Create a user account
+      user:
+        name: '{{ account }}'
+        comment: brian m. carlson
+        groups: '{{ sudo_group }}'
+        append: true
+        shell: '{{ zsh_command.stdout }}'
+        state: present
+      become: true
+      become_user: root
+    - name: Grant access to group in /etc/sudoers
+      shell: "
+        [ ! -f {{ item }} ] ||
+        perl -pi -e 'BEGIN { $entry = qq[{{ sudo_with_password }}] eq qq[true] ? qq[] : qq[NOPASSWD:]; }; s/^(?:#\\s*)?(%sudo.*) (?:NOPASSWD:)?ALL/$1 ${entry}ALL/' {{ item }}
+      "
+      loop: '{{ sudo_locations }}'
+      register: sudoers
+      until: sudoers.rc == 0
