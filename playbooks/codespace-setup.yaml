@@ -102,16 +102,13 @@
         repo: https://github.com/bk2204/dotfiles.git
         remote: def
         dest: /workspaces/dotfiles
+        version: GitHub
     - name: Clone dotfiles-private
       git:
         repo: ssh://git@github.com/bk2204/dotfiles-private.git
         remote: def
         dest: /workspaces/dotfiles-private
         version: GitHub
-    - name: Checkout GitHub for dotfiles
-      shell: 'git checkout GitHub'
-      args:
-        chdir: /workspaces/dotfiles
     - name: Enable dotfiles-private
       file:
         src: ../dotfiles-private/rules-overlay.mk
