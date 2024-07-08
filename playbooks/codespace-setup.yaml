@@ -1,59 +1,17 @@
 ---
-- name: Codespace Setup
+- name: Bootstrap
+  import_playbook: bootstrap.yaml
+- name: Codespace Base Setup
   hosts: all
   environment:
     DEBIAN_FRONTEND: noninteractive
   tasks:
-    - name: Disable Homebrew analytics
-      shell: 'if command -v brew >/dev/null 2>&1; then brew analytics off; fi'
-    - name: Check if this is a minimized Ubuntu image
-      stat:
-        path: /etc/dpkg/dpkg.cfg.d/excludes
-        get_checksum: no
-        get_mime: no
-        get_attributes: no
-      register: minimized_image
-    - name: Install manual pages
-      shell: 'yes | unminimize'
-      become: yes
-      become_user: root
-      ignore_errors: true
-      when: minimized_image.stat.exists
-    - name: Install git-core PPA
-      apt_repository:
-        repo: ppa:git-core/ppa
-      become: yes
-      become_user: root
-      when: ansible_distribution_release == 'focal'
-    - name: Install neovim-stable PPA
-      apt_repository:
-        repo: ppa:neovim-ppa/stable
-      become: yes
-      become_user: root
-      when: ansible_distribution_release == 'focal'
     - name: Install dependencies
       apt:
         pkg:
           - acl
           - cargo
-          - dc
-          - git
-          - gnupg
-          - less
-          - libpam-tmpdir
-          - locales-all
-          - make
-          - man-db
-          - ncurses-term
-          - neovim
-          - perl
-          - ruby
-          - ruby-neovim
           - rustc
-          - sshfs
-          - tmux
-          - xxd
-          - zsh
         update_cache: true
       become: yes
       become_user: root
@@ -97,6 +55,11 @@
         follow: false
       become: yes
       become_user: root
+- name: Account Setup
+  import_playbook: create-account.yaml
+- name: Codespace User Setup
+  hosts: all
+  tasks:
     - name: Clone dotfiles
       git:
         repo: https://github.com/bk2204/dotfiles.git
@@ -128,10 +91,6 @@
       shell: 'make install'
       args:
         chdir: /workspaces/dotfiles
-    - name: Change shell
-      command: 'chsh -s /bin/zsh {{ ansible_user_id }}'
-      become: yes
-      become_user: root
     - name: Deploy muter
       command: 'cargo install --locked muter'
     - name: Deploy Lawn
