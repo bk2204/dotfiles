@@ -100,7 +100,12 @@
     - name: Setup remote repository
       shell: 'for i in /workspaces/*; do "$HOME/bin/dct-snip" -r setup-repository "$i"; done'
     - name: Install neovim-gtk helper
-      shell: 'cd ~/.vim/plugin && curl -LO https://raw.githubusercontent.com/Lyude/neovim-gtk/main/runtime/plugin/nvim_gui_shim.vim'
+      get_url:
+        dest: '/home/{{ ansible_user_id }}/.vim/plugin/nvim_gui_shim.vim'
+        mode: 0640
+        url: https://raw.githubusercontent.com/Lyude/neovim-gtk/988a875ccc43ff3b16fcd2c2456653dbb3a933af/runtime/plugin/nvim_gui_shim.vim
+        use_netrc: false
+        checksum: sha256:afb4ba40176d5ac786fdad67f7a610b7be442b63f4d58bdac73ccfb533eafbd5
     - name: Create $HOME/mnt
       file:
         path: '/home/{{ ansible_user_id }}/mnt'
