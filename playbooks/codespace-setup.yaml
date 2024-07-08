@@ -133,11 +133,11 @@
       become: yes
       become_user: root
     - name: Deploy muter
-      command: 'cargo install muter'
-    - name: Deploy scutiger
-      command: 'cargo install scutiger-bin'
+      command: 'cargo install --locked muter'
     - name: Deploy Lawn
-      command: 'cargo install --git https://github.com/bk2204/lawn.git --rev refs/heads/dev lawn'
+      command: 'cargo install --locked lawn'
+    - name: Deploy scutiger
+      command: 'cargo install --locked scutiger-bin'
     - name: Setup remote repository
       shell: 'for i in /workspaces/*; do "$HOME/bin/dct-snip" -r setup-repository "$i"; done'
     - name: Install neovim-gtk helper
