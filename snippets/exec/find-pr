@@ -1,0 +1,32 @@
+#!/bin/sh
+
+OPTS_SPEC="\
+find-pr [<options>] <revision>
+
+find-pr finds the pull request or merge request that introduced a commit
+and prints the number to standard output.
+--
+h,help!   show the help
+"
+
+eval "$(echo "$OPTS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
+while [ $# -gt 0 ]
+do
+    arg="$1"
+    shift
+    case "$arg" in
+        --help)
+            exit 0
+            ;;
+        --)
+            break
+            ;;
+    esac
+done
+
+REV="$1"
+
+git log --topo-order --format='%H %s' | \
+    ruby -e "rev=%q[$(git rev-parse --verify "$REV^{object}")]" \
+    -e 'while gets; pr = $2.to_i if /^([0-9a-f]+) Merge pull request #(\d+)/; break if /^#{rev}/; end; puts pr'
