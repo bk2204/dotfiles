@@ -27,7 +27,8 @@ set ls=2        " Always show a status bar for powerline.
 
 " Folding.
 if has("folding")
-  set fdm=marker
+  set fdm=syntax
+  set fdls=9999999
 endif
 
 " Text handling.
