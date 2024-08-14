@@ -214,7 +214,7 @@ augroup setl
   au FileType cs            setl cin cino=t0
   au FileType docbkxml      setl cms=<!--%s-->
   au FileType eruby         setl ts=2 sw=2 sts=2 et si
-  au FileType gitcommit     setl tw=72 spell com=b:#
+  au FileType gitcommit     setl tw=72 spell com=b:# ts=4 sw=4 sts=4
   au FileType gitsendemail  setl tw=72 spell
   au FileType go            setl ts=8 sw=8 sts=8 noet spell
   au FileType javascript    setl cin cino=t0,j1,J1
