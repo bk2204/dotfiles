@@ -1,15 +1,15 @@
 # SMTP.
 set smtp_url=smtp://bk2204%40github.com@smtp.gmail.com:587/
-set smtp_pass=`secret-tool lookup user bk2204@github.com uri smtp://smtp.gmail.com:587/`
-set smtp_authenticators="plain"
+set smtp_authenticators="oauthbearer:xoauth2"
+set smtp_oauth_refresh_command="dct-snip -r mutt-oauth2"
 # IMAP.
 set imap_user=bk2204@github.com
-set imap_pass=`secret-tool lookup user bk2204@github.com uri imaps://imap.gmail.com/`
 set imap_passive=no
 set imap_check_subscribed=yes
 set imap_peek=no
 set imap_idle=yes
-set imap_authenticators="plain"
+set imap_authenticators="oauthbearer:xoauth2"
+set imap_oauth_refresh_command="dct-snip -r mutt-oauth2"
 set imap_check_subscribed=yes
 set imap_list_subscribed=yes
 set imap_headers="X-CRM114-STATUS"
