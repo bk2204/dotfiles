@@ -440,7 +440,8 @@ module MTree
                         mode = args["filemode"].to_i(8)
                         [mode, mode]
                     end
-                    Dir.glob("**/*", base: srcdir, sort: true) do |path|
+                    entries = Dir.glob("**/*", base: srcdir).sort
+                    entries.each do |path|
                         fullpath = File.join(srcdir, path)
                         destfullpath = File.join(destdir, path)
                         st = File.lstat(fullpath)
