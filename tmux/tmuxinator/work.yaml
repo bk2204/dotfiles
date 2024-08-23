@@ -3,8 +3,9 @@ name: work
 root: ~/
 windows:
   - 0:
-      layout: even-horizontal
+      layout: main-vertical
       panes:
+        - ""
         - ""
         - ""
   - 1:
