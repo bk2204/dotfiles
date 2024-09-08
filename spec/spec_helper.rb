@@ -1,5 +1,63 @@
+require 'securerandom'
 require 'tempfile'
 require 'tmpdir'
+
+class TestConfig
+  def self.ci?
+    !!ENV["CI"]
+  end
+
+  def self.docker_tests?
+    !!ENV["DOCKER_IMAGE"]
+  end
+
+  def self.docker_image
+    ENV["DOCKER_IMAGE"]
+  end
+end
+
+class TestDockerImage
+  def initialize(image)
+    @image = image
+    @root = repo_root
+  end
+
+  def run
+    name = "dotfiles-spec-#{SecureRandom.alphanumeric(20)}"
+    pid = Process.spawn("docker", "run", "--name", name, "-v", "#{@root}:/usr/src/repo", @image, "sh", "-c", "while true; do sleep 20; done")
+    ObjectSpace.define_finalizer(self, Remover.new(name, pid))
+    @name = name
+    sleep 2
+  end
+
+  def setup
+    exec("mkdir -p /usr/src/dotfiles && tar -C /usr/src/dotfiles --exclude=.git -cf - . | tar -C /usr/src/dotfiles -xf -", workdir: nil)
+  end
+
+  def exec(command, workdir: "/usr/src/repo")
+    args = ["-w", workdir] if workdir
+    system("docker", "exec", *args, @name, "sh", "-c", command)
+  end
+
+  private
+
+  class Remover
+    def initialize(name, pid)
+      @name = name
+      @pid = pid
+    end
+
+    def call(*args)
+      system("docker", "kill", @name)
+    end
+  end
+
+  def repo_root
+    path = File.join(File.dirname(__FILE__), "..")
+    raise "Can't find repository root (tried #{path})" unless File.exists? File.join(path, "Makefile")
+    path
+  end
+end
 
 class TestDir
   def initialize(config_yaml: nil)
