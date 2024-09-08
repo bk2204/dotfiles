@@ -33,5 +33,15 @@
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
       when: ansible_distribution == 'FreeBSD'
-    - name: Create Lawn configuration directory
-      shell: 'mkdir -p ~/.local/run/lawn'
+    - name: Create .local directory
+      file:
+        path: '/home/{{ ansible_user_id }}/.local'
+        state: directory
+    - name: Create .local/run directory
+      file:
+        path: '/home/{{ ansible_user_id }}/.local/run'
+        state: directory
+    - name: Create Lawn directory
+      file:
+        path: '/home/{{ ansible_user_id }}/.local/run/lawn'
+        state: directory
