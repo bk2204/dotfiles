@@ -64,6 +64,8 @@ class TestDir
     @dir = Dir.mktmpdir
     @test_bin = File.join(@dir, "test-bin")
     Dir.mkdir(@test_bin)
+    @src = File.join(@dir, "src")
+    Dir.mkdir(@src)
     extra_env = {}
     if config_yaml
       @config_path = File.join(@dir, "config.yaml")
@@ -72,7 +74,9 @@ class TestDir
       fp.close
       extra_env = { "CONFIG_FILE" => @config_path }
     end
-    system({ "HOME" => @dir, "PATH" => ENV["PATH"], **extra_env }, "make", "install", :out => "/dev/null")
+    FileUtils.cp_r(".", @src)
+    system({ "HOME" => @dir, "PATH" => ENV["PATH"], **extra_env }, "make", "clean", out: "/dev/null", chdir: @src)
+    system({ "HOME" => @dir, "PATH" => ENV["PATH"], **extra_env }, "make", "install", out: "/dev/null", chdir: @src)
   end
 
   def tempdir
