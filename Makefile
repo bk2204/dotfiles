@@ -31,6 +31,7 @@ clean:
 install-legacy: install-links install-dirs install-standard
 
 include bin/rules.mk
+include firefox/rules.mk
 include git/rules.mk
 include gnupg/rules.mk
 include misc/rules.mk
@@ -47,8 +48,8 @@ include zsh/rules.mk
 %.gen: %.erb $(CONFIG_FILE)
 	bin/dct-erb -f $(CONFIG_FILE) -o $@ $<
 
-manifest.mtree: $(MTREE_SOURCES)
-	cat $^ > $@
+manifest.mtree: $(MTREE_SOURCES) $(DESTDIR)
+	cat $(MTREE_SOURCES) > $@
 
 build-standard: $(TEMPLATE_FILES)
 

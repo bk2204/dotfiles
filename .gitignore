@@ -3,3 +3,4 @@
 config.yaml
 rules-overlay.mk
 manifest.mtree
+firefox/rules-main.mtree
