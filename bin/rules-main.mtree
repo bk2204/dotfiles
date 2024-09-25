@@ -3,6 +3,7 @@ bin/buildpkg type=file mode=0755
 bin/dct-browser type=file mode=0755
 bin/dct-clip type=file mode=0755
 bin/dct-erb type=file mode=0755
+bin/dct-jump type=file mode=0755
 bin/dct-mtree type=file mode=0755
 bin/dct-snip type=file mode=0755
 bin/dct-sound type=file mode=0755

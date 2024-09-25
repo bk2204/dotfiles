@@ -1,0 +1,163 @@
+#!/usr/bin/env ruby
+
+class DCTJump
+  class << self
+    def config
+      @config ||= Configuration.new
+    end
+
+    def configure
+      yield config
+    end
+  end
+
+  class Rule
+    def matches?(args)
+      !!match
+    end
+
+    def run_on_match(args)
+      m = match(args)
+      if m.nil?
+        false
+      else
+        @block.call(m, **@options)
+        true
+      end
+    end
+  end
+
+  class SimpleRule < Rule
+    def initialize(pat, block, **options)
+      @pat = pat
+      @block = block
+      @options = options
+    end
+
+    protected
+
+    def match(args)
+      s = args.join(" ")
+      pat = if @pat.is_a? String
+              Regexp.escape(@pat)
+            else
+              @pat
+            end
+      pat.match(s)
+    end
+  end
+
+  class MultiRule < Rule
+    def initialize(pats, block, **options)
+      @pats = pats
+      @block = block
+      @options = options
+    end
+
+    protected
+
+    def match(args)
+      matches = []
+      if args.length > @pats.length
+        args = args[0..@pats.length-2] + [args[@pats.length-1..].join(" ")]
+      end
+      args.zip(@pats).each do |arg, pat|
+        return nil if arg.nil? || pat.nil?
+
+        pat, insert = if pat.is_a? String
+                        [Regexp.escape(pat), false]
+                      else
+                        [pat, true]
+                      end
+        m = pat.match(arg)
+        return nil if m.nil?
+        matches << m if insert
+      end
+      matches
+    end
+  end
+
+  class Configuration
+    attr_reader :rules
+    attr_accessor :env
+
+    def initialize
+      @rules = []
+      @env = ENV
+    end
+
+    def on(*args, simple: true, &block)
+      if simple && args.length == 1
+        @rules << SimpleRule.new(args[0], block)
+      else
+        @rules << MultiRule.new(args, block)
+      end
+      self
+    end
+
+    def edit(*args, foreground: false, editor_cmd: 'bmc_editor')
+      command = ['zsh', '-c', "#{editor_cmd} \"$0\" \"$@\""]
+      command += (foreground ? %w[--detach] : [])
+      data = ''
+      IO.popen(env, command, 'r') do |io|
+        data = io.read
+      end
+      system(env, 'sh', '-c', %Q[#{data} "$0" "$@"], *args)
+    end
+
+    def open(*args)
+      commands = ['xdg-open', 'open']
+      commands.each do |cmd|
+        if which(cmd)
+          system(env, cmd, *args)
+          return
+        end
+      end
+    end
+
+    def include(file, if_present: true)
+      if File.exist?(file) || !if_present
+        # This will raise an exception if the file is missing.
+        load file
+      end
+    end
+
+    private
+
+    def which(cmd)
+      env['PATH'].split(File::PATH_SEPARATOR).each do |path|
+        exe = File.join(path, cmd)
+        return exe if File.executable?(exe) && !File.directory?(exe)
+      end
+      nil
+    end
+  end
+
+  def self.main(args, env)
+    if !args.empty? && args[0] == "--help"
+      $stdout.puts <<~EOM
+      Usage: dct-jump [args]
+
+      Evaluates the specified arguments using the configuration file and
+      performs the action matching the given arguments.  Common actions include
+      opening a URL in the browser or opening a file in an editor.
+      EOM
+      return 0
+    end
+
+    config_path = env["XDG_CONFIG_HOME"] || File.join(env["HOME"], '.config')
+    configure do |c|
+      c.env = env
+      c.include(File.join(config_path, 'dct-jump', 'config'))
+    end
+
+    config.rules.each do |r|
+      if r.run_on_match(args)
+        return 0
+      end
+    end
+    2
+  end
+end
+
+exit DCTJump.main(ARGV, ENV) if $0 == __FILE__
