@@ -1,0 +1,27 @@
+def uri_encode(s)
+  s.b.gsub(/[^A-Za-z0-9._~-]/) { |m| "%%%02x" % m.ord }
+end
+
+DCTJump.configure do |c|
+  c.on('hello') do
+    puts "Hello, world!"
+  end
+
+  c.on('hello', /(.+)/) do |m|
+    puts "Hello, #{m[0][1]}!"
+  end
+
+  c.on(/\A(es|fr|de)\z/, /(.+)/) do |m|
+    c.open("https://www.wordreference.com/#{m[0][1]}en/#{uri_encode(m[1][1])}")
+  end
+
+  c.on(/\A(esfr|fres)\z/, /(.+)/) do |m|
+    c.open("https://www.wordreference.com/fres/#{uri_encode(m[1][1])}")
+  end
+
+  c.on('notes', /(.+)/) do |m|
+    c.edit("+Notes #{m[0][1]}")
+  end
+end
+
+# vim: set ft=ruby:

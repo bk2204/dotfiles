@@ -60,6 +60,8 @@ class TestDockerImage
 end
 
 class TestDir
+  attr_reader :test_bin
+
   def initialize(config_yaml: nil)
     @dir = Dir.mktmpdir
     @test_bin = File.join(@dir, "test-bin")
@@ -86,11 +88,12 @@ class TestDir
   def setup_restricted_path(exes)
     exes.each do |name|
       path = File.join(@test_bin, name)
-      File.open(path, "w")
+      fp = File.open(path, "r+")
       File.chmod(0700, path)
+      fp.close
     end
     real_path = ENV["PATH"].split(":")
-    %w[sed grep id hostname].each do |name|
+    %w[sed grep id hostname ruby zsh sh printf].each do |name|
       real_path.each do |dir|
          loc = File.join(dir, name)
          if File.exist? loc
