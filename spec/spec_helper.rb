@@ -88,7 +88,7 @@ class TestDir
   def setup_restricted_path(exes)
     exes.each do |name|
       path = File.join(@test_bin, name)
-      fp = File.open(path, "r+")
+      fp = File.open(path, File::WRONLY | File::CREAT)
       File.chmod(0700, path)
       fp.close
     end
