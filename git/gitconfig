@@ -64,6 +64,8 @@
 	lsf = ls-files
 	# List files matching a grep pattern.
 	lsg = "!f() { git ls-files | grep \"$@\"; };f"
+	# List branches matching a grep pattern.
+	brg = "!f() { git for-each-ref --format='%(refname)' refs/heads | sed 's!^refs/heads/!!' | grep \"$@\"; };f"
 	# List conflicted files, one per line.
 	conflicted = "!f() { git status -s | grep -E '^(DD|AA|.U|U.)' | cut -b4-; };f"
 	# Exits zero if the two treeishes are the same, nonzero otherwise.
