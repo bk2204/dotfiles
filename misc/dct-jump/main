@@ -46,6 +46,9 @@ DCTJump.configure do |c|
     'git' => 'git/git',
   }
 
+  config_path = ENV["XDG_CONFIG_HOME"] || File.join(ENV["HOME"], '.config')
+  c.include(File.join(config_path, 'dct-jump', 'config-private'))
+
   repos_re = Regexp.new("(#{c.data[:repos].keys.join('|')})")
 
   c.on(/\A#{repos_re}\z/, /\A([ipd])?(\d+)?\z/) do |m|
