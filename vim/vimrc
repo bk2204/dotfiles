@@ -744,7 +744,7 @@ let g:airline_theme = 'base16_ct_grey'
 let g:airline_section_c = '%<%<%{airline#extensions#fugitiveline#bufname()}%m %#__accent_red#%{airline#util#wrap(airline#parts#readonly(),0)}%{GetBufferExecutableMarker()}%#__restore__#%#__accent_bold#%#__restore__#%#__accent_bold#%#__restore__#'
 
 " Ctrl-P settings.
-let g:ctrlp_max_files = 60000
+let g:ctrlp_max_files = 0
 let g:ctrlp_match_window = 'results:75'
 
 " Ctrl-P settings.  Regenerating the cache is expensive on large repos.
