@@ -206,7 +206,7 @@ adjust_term_settings () {
     silent stty -ixon -ixoff
 
     # Make sure that other people can't mess with our terminal.
-    silent mesg n
+    silent mesg n || true
 }
 remove_perl_overrides () {
     [ -n "$PERL_LOCAL_LIB_ROOT" ] && path=("${(@)path:#$PERL_LOCAL_LIB_ROOT/bin}")
