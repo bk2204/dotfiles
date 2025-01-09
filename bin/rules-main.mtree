@@ -1,5 +1,6 @@
 bin type=dir mode=0755
 bin/buildpkg type=file mode=0755
+bin/bundle-srb type=file mode=0755
 bin/dct-browser type=file mode=0755
 bin/dct-clip type=file mode=0755
 bin/dct-erb type=file mode=0755
