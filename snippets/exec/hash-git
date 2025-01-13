@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+#/ hash-git [[TYPE] FILE]
+#/
+#/ Hashes the given file (or stdin if no arguments are provided) as a Git object
+#/ and outputs both the SHA-1 and SHA-256 hashes of it.
+#/
+#/ TYPE is the object type, which defaults to "blob".
+
+require 'digest'
+
+if ARGV[0] == "--help"
+  puts File.read($0).each_line.select { |l| l.start_with?("#/") }.map { |l| l.gsub(/^#\/ ?/, '') }
+  exit 0
+end
+
+args = ARGV.dup
+type = args[1] ? args.shift : "blob"
+
+data = if ARGV[0]
+         File.read(args[0])
+       else
+         $stdin.read
+       end
+
+[Digest::SHA1, Digest::SHA256].each do |klass|
+  d = klass.new
+  d << "#{type} #{data.bytesize}\0"
+  d << data
+  puts d.hexdigest
+end
