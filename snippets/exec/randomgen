@@ -1,0 +1,180 @@
+#!/usr/bin/env ruby
+
+require 'openssl'
+require 'optionparser'
+require 'securerandom'
+
+module RandomGen
+  class AESGenerator
+    include Random::Formatter
+
+    def self.entropy_size
+      48
+    end
+
+    def self.digest
+      OpenSSL::Digest.new('SHA384')
+    end
+
+    def initialize(seed)
+      @cipher = OpenSSL::Cipher.new 'aes-256-ctr'
+      @cipher.encrypt
+      @cipher.key = seed[0...32]
+      @cipher.iv = seed[32..]
+    end
+
+    def bytes(n)
+      zeros = "\x00" * n
+      @cipher.update zeros
+    end
+  end
+
+  def self.parse_set(arg)
+    parts = arg.split(':').map(&:to_i)
+    count = parts.shift
+    if parts.length == 2
+      low, high = parts
+    else
+      low, high = 1, parts[0]
+    end
+    [count, low, high]
+  end
+
+  def self.unescape(s)
+    s.gsub(/\\x([0-9a-f]{2})/) { |m| $1.to_i(16).chr("ASCII-8BIT") }
+  end
+
+  def self.algorithm_class(kind)
+    case kind
+    when :aes256
+      AESGenerator
+    else
+      raise "Invalid algorithm type #{kind.inspect}"
+    end
+  end
+
+  def self.new_algo(klass, seed)
+    sval = case seed[:type]
+    when :string
+      seed[:value]
+    when :csprng
+      SecureRandom.random_bytes(klass.entropy_size)
+    when :stdin
+      seed[:value].read
+    else
+      raise "Need a seed"
+    end
+
+    sval = unescape(sval) if seed[:escaped]
+    sval = klass.digest.digest(sval) if seed[:hashed] && klass.entropy_size
+    raise "Invalid seed length" if sval.length != klass.entropy_size
+    klass.new(sval)
+  end
+
+  def self.generate(rand, sets)
+    results = sets.map do |entry|
+      case entry[:type]
+      when :method
+        rand.send(entry[:method], *entry[:args])
+      when :shuffle
+        entry[:range].to_a.shuffle(random: rand).each_slice(entry[:count]).first
+      end
+    end
+    results
+  end
+
+  def self.main(args, stdin, stdout)
+    file = stdin
+    output = stdout
+    sets = []
+    seed_source = { escaped: false, hashed: true }
+    algo = :aes256
+
+    OptionParser.new do |opts|
+      opts.on("--algorithm ALG", [:aes256], "Use ALG as the algorithm") do |arg|
+        algo = arg
+      end
+
+      opts.on("--seed STRING", "Use STRING as the seed") do |arg|
+        seed_source.update({ type: :string, value: arg })
+      end
+
+      opts.on("--escaped", "Use STRING as the seed (hex escapes, such as \\x00, allowed)") do |arg|
+        seed_source[:escaped] = true
+      end
+
+      opts.on("--random-seed", "Use a CSPRNG to generate a random seed") do
+        seed_source.update({ type: :csprng, hashed: false })
+      end
+
+      opts.on("--seed-from-stdin", "Use STRING as the seed (hex escapes, such as \\x00, allowed)") do |arg|
+        seed_source.update({ type: :stdin, value: file })
+      end
+
+      opts.on("--literal-seed", "Do not hash the seed") do
+        seed_source[:hashed] = false
+      end
+
+      opts.on("--distinct N:[LOW:]HIGH", "Choose N random distinct numbers from LOW (default 1) to HIGH") do |arg|
+        count, low, high = parse_set(arg)
+        sets << { type: :shuffle, range: low..high, count: count }
+      end
+
+      opts.on("--choose N:[LOW:]HIGH", "Choose N random non-distinct numbers from LOW (default 1) to HIGH") do |arg|
+        count, low, high = parse_set(arg)
+        count.times do
+          sets << { type: :method, method: :rand, args: [low..high] }
+        end
+      end
+
+      opts.on("--named-set N:NAME", "Choose N nondistinct items from the named set NAME (alphanumeric, base64, hex, url64, url64-padded, uuid)") do |arg|
+        count, name = arg.split(':')
+        count = count.to_i
+        method = name.sub('-', '_').to_sym
+        case method
+        when :alphanumeric, :base64, :hex
+          sets << { type: :method, method: method, args: [count] }
+        when :uuid
+          count.times do
+            sets << { type: :method, method: method }
+          end
+        when :url64
+          sets << { type: :method, method: :urlsafe_base64, args: [count] }
+        when :url64_padded
+          sets << { type: :method, method: :urlsafe_base64, args: [count, true] }
+        end
+      end
+
+      opts.on("--set N:CHARS", "Choose N nondistinct items from CHARS") do |arg|
+        count, chars = arg.split(':', 2)
+        count = count.to_i
+        sets << { type: :method, method: :choose, args: [chars.each_byte.map { |c| c.chr("ASCII-8BIT") }.to_a, count.to_i] }
+      end
+
+      opts.on("--escaped-set N:CHARS", "Choose N items from CHARS (hex escapes, such as \\x00, allowed)") do |arg|
+        count, chars = arg.split(':', 2)
+        count = count.to_i
+        chars = unescape(chars)
+        sets << { type: :method, method: :choose, args: [chars.each_byte.map { |c| c.chr("ASCII-8BIT") }.to_a, count.to_i] }
+      end
+
+      opts.on("--bytes N", "Choose N random bytes") do |count|
+        count = count.to_i
+        sets << { type: :method, method: :random_bytes, args: [count], skip_newline: true }
+      end
+    end.order!(args)
+
+    klass = algorithm_class(algo)
+    rand = new_algo(klass, seed_source)
+    results = generate(rand, sets)
+    output = results.flatten.join(' ')
+    endmsg = sets[-1] && sets[-1][:skip_newline] ? '' : "\n"
+
+    stdout.print(output)
+    stdout.print(endmsg)
+
+    0
+  end
+end
+
+exit RandomGen.main(ARGV, $stdin, $stdout) if $0 == __FILE__
