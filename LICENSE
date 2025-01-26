@@ -30,6 +30,10 @@ Copyright: 2023 brian m. carlson
            2016-2022 The Alacritty Project
 License: Apache-2.0
 
+Files: tmux/theme.conf
+Copyright: 2016–2025 Sven Greb <development@svengreb.de>
+License: Expat
+
 Files: zsh/functions/set_keybindings
 Copyright: 1996 Robert Leslie <rob@mars.org>
            1997-2011 Clint Adams <clint@debian.org>
