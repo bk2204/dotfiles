@@ -1,2 +1,3 @@
 .config/signature/auricblue type=file mode=0600 src=signature/auricblue
 .config/signature/personal type=file mode=0600 src=signature/personal
+.config/signature/work type=file mode=0600 src=signature/work
