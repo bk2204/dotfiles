@@ -79,11 +79,12 @@ class DCTJump
 
   class Configuration
     attr_reader :rules
-    attr_accessor :env
+    attr_accessor :env, :data
 
     def initialize
       @rules = []
       @env = ENV
+      @data = {}
     end
 
     def on(*args, simple: true, &block)
