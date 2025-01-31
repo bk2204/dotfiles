@@ -22,6 +22,33 @@ DCTJump.configure do |c|
   c.on('notes', /(.+)/) do |m|
     c.edit("+Notes #{m[0][1]}")
   end
+
+  c.data[:repos] = {
+    'lfs' => 'git-lfs/git-lfs',
+    'git' => 'git/git',
+  }
+
+  repos_re = Regexp.new("(#{c.data[:repos].keys.join('|')})")
+
+  c.on(/\A#{repos_re}\z/, /\A([ip])?(\d+)?\z/) do |m|
+    suffix = if m[1]
+               case m[1][1]
+               when 'i', nil
+                 "issues/#{m[1][2]}"
+               when 'p'
+                 "pull/#{m[1][2]}"
+               end
+             else
+               ''
+             end
+    c.open("https://github.com/#{c.data[:repos][m[0][1]]}/#{suffix}")
+  end
+
+  c.on('repos') do
+    repos.each do |(name, repo)|
+      $stdout.puts "#{name}\t#{repo}"
+    end
+  end
 end
 
 # vim: set ft=ruby:

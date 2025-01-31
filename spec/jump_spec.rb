@@ -22,6 +22,16 @@ describe :dct_jump do
     expect(@dir.cmd(%w[bin/dct-jump fr bon débarras], **@env)).to eq "https://www.wordreference.com/fren/bon%20d%c3%a9barras\n"
   end
 
+  it 'should open expected repo URLs' do
+    @dir = TestDir.new
+    expect(@dir.cmd(%w[bin/dct-jump lfs], **@env)).to eq "https://github.com/git-lfs/git-lfs/\n"
+    expect(@dir.cmd(%w[bin/dct-jump lfs i1234], **@env)).to eq "https://github.com/git-lfs/git-lfs/issues/1234\n"
+    expect(@dir.cmd(%w[bin/dct-jump lfs p1234], **@env)).to eq "https://github.com/git-lfs/git-lfs/pull/1234\n"
+    expect(@dir.cmd(%w[bin/dct-jump lfs 1234], **@env)).to eq "https://github.com/git-lfs/git-lfs/issues/1234\n"
+    expect(@dir.cmd(%w[bin/dct-jump lfs i], **@env)).to eq "https://github.com/git-lfs/git-lfs/issues/\n"
+    expect(@dir.cmd(%w[bin/dct-jump lfs p], **@env)).to eq "https://github.com/git-lfs/git-lfs/pull/\n"
+  end
+
   it 'should edit notes' do
     expect(@dir.cmd_with_exes(['ex'], %w[bin/dct-jump notes homedir], **@renv)).to eq %Q["ex" "+Notes homedir" ]
   end
