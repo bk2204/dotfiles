@@ -54,7 +54,7 @@ class TestDockerImage
 
   def repo_root
     path = File.join(File.dirname(__FILE__), "..")
-    raise "Can't find repository root (tried #{path})" unless File.exists? File.join(path, "Makefile")
+    raise "Can't find repository root (tried #{path})" unless File.exist? File.join(path, "Makefile")
     path
   end
 end
