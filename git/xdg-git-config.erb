@@ -1,16 +1,40 @@
 <%
+   def which(cmd)
+     ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+       exe = File.join(path, cmd)
+       return exe if File.executable?(exe) && !File.directory?(exe)
+     end
+     nil
+   end
+
    # Determine the kind of signing we're using, if any.
    signing = @data.fetch("git", {})["sign-commits"]
-   signing = "gpg" if signing == true
+   signing = "openpgp" if signing == true
+
+   signing_data_key = case signing
+                      when "openpgp", "gpg", "gpg-sq"
+                        "gpg"
+                      when "ssh"
+                        "ssh"
+                      end
 
    # Adjust the protocol to be in the format Git wants.
-   signing_proto = signing == "gpg" ? "openpgp" : signing
-   key = @data.fetch(signing, {})["signing-key"] || @data.fetch(signing, {})["key"]
+   signing_proto = signing == "gpg" || signing == "gpg-sq" ? "openpgp" : signing
+   key = @data.fetch(signing_data_key, {})["signing-key"] || @data.fetch(signing_data_key, {})["key"]
+
+   program = case signing
+             when "gpg"
+               "gpg"
+             when "gpg-sq"
+               "gpg-sq"
+             when "openpgp"
+               which("gpg-sq") ? "gpg-sq" : nil
+             end
 
    # We need a trailing exclamation point to pick a specific subkey in GnuPG,
    # and a "key::" prefix in OpenSSH.
    key = case signing
-         when "gpg"
+         when "gpg", "gpg-sq", "openpgp"
            key =~ /\A[0-9a-fA-F]+\z/ ? "#{key}!" : key
          when "ssh"
            "key::#{key}"
@@ -35,9 +59,18 @@
 [credential]
     helper = "<%= cred_helper %>"
 <% end -%>
-<% if signing && key -%>
+<% if signing || program -%>
 [gpg]
+<%
+   end
+   if signing
+-%>
     format = <%= signing_proto %>
+<% end -%>
+<% if program -%>
+    program = <%= program %>
+<% end -%>
+<% if key -%>
 [user]
     signingkey = "<%= key %>"
 <% end -%>
