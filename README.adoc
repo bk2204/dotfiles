@@ -2,3 +2,53 @@
 
 These are brian m. carlson's dotfiles. Things that may interest you include the
 configuration files for Vim, zsh, and tmux.
+
+== Installing Dotfiles
+
+Simply clone the dotfiles to a particular location and type `make install`.
+If you wish to install them other than in `HOME`, set `DESTDIR`: `DESTDIR=/tmp/homedir make install`.
+
+The installation is configured by the use of mtree(1)-like files in each directory which can control the permissions and destination of each file.
+This is done by `bin/dct-mtree`.
+
+== Bootstrapping a New Environment
+
+There are several Ansible playbooks in the `playbooks` directory that cover bootstrapping a new environment.
+
+First, if root privileges are obtainable, the `bootstrap.yaml` playbook can be used to bootstrap a new system:
+
+----
+$ ansible-playbook bootstrap.yaml
+----
+
+`-e graphical=true` can be used to bootstrap a graphical environment on Debian or Ubuntu.
+
+Second, if a user account needs to be created, such as in a container, the `create-account.yaml` playbook can be used to create a new account with sudo access:
+
+----
+$ ansible-playbook create-account.yaml
+----
+
+`-e account=bk2204` sets a different account name, and `-e sudo_with_password=true` disables passwordless sudo.
+
+Then, dotfiles can be deployed.
+Note that this must be done without privileges unless root is to have the dotfiles.
+The easiest and most robust way to do this is to use `sudo -u` if on localhost.
+
+----
+$ ansible-playbook deploy-dotfiles.yaml
+----
+
+A different branch can be specified with something like `-e branch=work` and a different checkouts directory with `-e checkouts_dir=/workspaces`.
+
+Note that in all cases, operating on localhost should use `--connection=local -i localhost,`.
+
+These playbooks have been tested on Debian, Ubuntu, and FreeBSD.
+
+== Testing
+
+These dotfiles have a variety of tests available in RSpec form.
+Most of them can be run simply by invoking `rspec`.
+
+The tests for the Ansible playbooks operate inside a Docker container to avoid contaminating the system.
+They can be run by setting `DOCKER_IMAGE` to standard Docker image location.
