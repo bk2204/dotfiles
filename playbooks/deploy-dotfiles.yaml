@@ -6,6 +6,8 @@
   vars:
     checkouts_dir: /home/{{ ansible_user_id }}/checkouts
     branch: dev
+    fonts_src: /usr/share/texlive/texmf-dist/fonts/opentype/adobe
+    fonts_dest: adobe
   tasks:
     - name: Create the directory
       file:
@@ -45,3 +47,22 @@
       file:
         path: '/home/{{ ansible_user_id }}/.local/run/lawn'
         state: directory
+    - name: Create fonts directory
+      file:
+        path: '/home/{{ ansible_user_id }}/.fonts'
+        state: directory
+    - name: Check for fonts
+      stat:
+        path: "{{ fonts_src }}"
+        get_checksum: no
+        get_mime: no
+      register: fonts
+    - name: Create font symlink
+      file:
+        state: link
+        src: "{{ fonts_src }}"
+        dest: '/home/{{ ansible_user_id }}/.fonts/{{ fonts_dest }}'
+      when: fonts.stat.exists and fonts.stat.isdir
+    - name: Regenerate font cache
+      shell: fc-cache
+      when: fonts.stat.exists and fonts.stat.isdir

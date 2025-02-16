@@ -97,7 +97,9 @@
       apt:
         pkg:
           - alacritty
+          - fontconfig
           - mate-desktop
+          - texlive-fonts-extra
       become: true
       become_user: root
       when: graphical
