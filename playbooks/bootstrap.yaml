@@ -34,6 +34,11 @@
       become: true
       become_user: root
       when: ansible_distribution_release == 'focal'
+    - name: Disable /tmp as tmpfs
+      shell: systemctl mask tmp.mount
+      become: true
+      become_user: root
+      ignore_errors: true
     - name: Install Debian packages
       apt:
         pkg:
