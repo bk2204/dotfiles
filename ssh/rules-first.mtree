@@ -1,0 +1,2 @@
+.ssh type=dir mode=0700
+.ssh/config.d type=dir mode=0700

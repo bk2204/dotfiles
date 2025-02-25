@@ -39,6 +39,7 @@ include mutt/rules.mk
 include screen/rules.mk
 include signature/rules.mk
 include snippets/rules.mk
+include ssh/rules.mk
 include tmux/rules.mk
 include vim/rules.mk
 include zsh/rules.mk

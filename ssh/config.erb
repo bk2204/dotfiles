@@ -1,0 +1,89 @@
+<%
+require 'set'
+
+algos = {
+  "Ciphers" => {
+    key: :cipher,
+    # ChaCha is fast and constant-time everywhere.  AES-GCM is faster than CTR
+    # and just as secure.
+    allowed: %w[
+      chacha20-poly1305@openssh.com
+      aes256-gcm@openssh.com
+      aes256-ctr
+      aes192-ctr
+      aes128-gcm@openssh.com
+      aes128-ctr
+    ],
+  },
+  "MACs" => {
+    key: :mac,
+    # Choose encrypt-then-MAC over non-EtM versions.
+    allowed: %w[
+      hmac-sha2-512-etm@openssh.com
+      hmac-sha2-256-etm@openssh.com
+      hmac-sha2-512
+      hmac-sha2-256
+    ],
+  },
+  "KexAlgorithms" => {
+    key: :kex,
+    # Pick hybrid key exchanges first, and prefer the SHA-512-based versions
+    # first since that better matches the security strength.  Then choose
+    # Curve25519, which is less likely to be incorrectly implemented, and then
+    # ECDH in strength order.
+    allowed: %w[
+      sntrup761x25519-sha512
+      sntrup761x25519-sha512@openssh.com
+      mlkem768x25519-sha256
+      curve25519-sha256
+      curve25519-sha256@libssh.org
+      ecdh-sha2-nistp521
+      ecdh-sha2-nistp384
+      ecdh-sha2-nistp256
+    ],
+  },
+  "HostKeyAlgorithms" => {
+    key: :"key-sig",
+    # Pick Ed25519 with security key, then without security key, and then RSA,
+    # and finally ECDSA, since ECDSA can accidentally leak the private key if
+    # incorrectly implemented.  Prefer certificates since they make key rotation
+    # easier.
+    allowed: %w[
+      sk-ssh-ed25519-cert-v01@openssh.com
+      sk-ssh-ed25519@openssh.com
+      ssh-ed25519-cert-v01@openssh.com
+      ssh-ed25519
+      rsa-sha2-512-cert-v01@openssh.com
+      rsa-sha2-512
+      rsa-sha2-256-cert-v01@openssh.com
+      rsa-sha2-256
+      ecdsa-sha2-nistp521-cert-v01@openssh.com
+      ecdsa-sha2-nistp521
+      ecdsa-sha2-nistp384-cert-v01@openssh.com
+      ecdsa-sha2-nistp384
+      ecdsa-sha2-nistp256-cert-v01@openssh.com
+      ecdsa-sha2-nistp256
+    ],
+  }
+}
+algos.each do |_, algo|
+  begin
+    IO.popen(['ssh', '-Q', algo[:key].to_s], 'r') do |io|
+      implemented = io.read.chomp.split("\n").to_set
+      algo[:wanted] = algo[:allowed].select { |alg| implemented.include?(alg) }
+    end
+  rescue Errno::ENOENT
+    # Do nothing, just skip this.
+  end
+end
+-%>
+Include ~/.ssh/config.d/*
+Host *
+<%
+  algos.each do |name, algo|
+    next if !algo[:wanted] || algo[:wanted].empty?
+-%>
+    <%= name -%> <%= algo[:wanted].join(',') %>
+<% end -%>
+    RekeyLimit 1G
+    GSSAPIKeyExchange no
