@@ -54,8 +54,16 @@ describe :zsh do
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL; echo $EDITOR; bmc_editor --detach --no-fallback'], 'DISPLAY' => 'something')).to eq "gvim -f\ngvim -f\ngvim"
     end
 
+    it 'should set EDITOR to nex with non-empty TERM' do
+      @dir = TestDir.new
+      exes = %w[nvim-gtk gvim mvim nex ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'xterm-256color')).to eq "nex\n"
+    end
+
     it 'should set EDITOR to ex with non-empty TERM' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'xterm-256color')).to eq "ex\n"
+      @dir = TestDir.new
+      exes = %w[nvim-gtk gvim mvim ex nvim vimx vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'xterm-256color')).to eq "ex\n"
     end
 
     it 'should set VISUAL to nvim with non-empty TERM' do
@@ -84,11 +92,11 @@ describe :zsh do
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'xterm-256color')).to eq "vim\n"
     end
 
-    it 'should set EDITOR to ex with SSH session and terminal multiplexor' do
+    it 'should set EDITOR to nex with SSH session and terminal multiplexor' do
       expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $EDITOR'],
                       'DISPLAY' => 'something',
                       'SSH_TTY' => 'tty',
-                      'TERM' => 'screen-256color')).to eq "ex\n"
+                      'TERM' => 'screen-256color')).to eq "nex\n"
     end
 
     it 'should set VISUAL to vim with SSH session and terminal multiplexor' do
@@ -98,20 +106,52 @@ describe :zsh do
                       'TERM' => 'screen-256color')).to eq "nvim\n"
     end
 
+    it 'should set EDITOR to nex with TERM=dumb' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim nex ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'dumb')).to eq "nex\n"
+    end
+
     it 'should set EDITOR to ex with TERM=dumb' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'dumb')).to eq "ex\n"
+      @dir = TestDir.new
+      exes = %w[gvim mvim ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'dumb')).to eq "ex\n"
+    end
+
+    it 'should set VISUAL to nex with TERM=dumb' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim nex ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'dumb')).to eq "nex\n"
     end
 
     it 'should set VISUAL to ex with TERM=dumb' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'dumb')).to eq "ex\n"
+      @dir = TestDir.new
+      exes = %w[gvim mvim ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'], 'TERM' => 'dumb')).to eq "ex\n"
+    end
+
+    it 'should set EDITOR to nex with no TERM' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim nex ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'])).to eq "nex\n"
     end
 
     it 'should set EDITOR to ex with no TERM' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $EDITOR'])).to eq "ex\n"
+      @dir = TestDir.new
+      exes = %w[gvim mvim ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'])).to eq "ex\n"
+    end
+
+    it 'should set VISUAL to nex with no TERM' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim nex ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'])).to eq "nex\n"
     end
 
     it 'should set VISUAL to ex with no TERM' do
-      expect(@dir.cmd(['zsh', '-c', 'echo $VISUAL'])).to eq "ex\n"
+      @dir = TestDir.new
+      exes = %w[gvim mvim ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $VISUAL'])).to eq "ex\n"
     end
   end
 

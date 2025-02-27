@@ -121,7 +121,7 @@ bmc_editor () {
     [[ -n $REMOTE_ENV ]] && remote=t
 
     local i
-    for i in 'lawn run -- gvi --no-fork' 'lawn run -- gvi' 'nvim-gtk --no-fork --' 'gvim -f' 'mvim -f' 'nvim-gtk --' gvim mvim nvim vimx vim vi ex
+    for i in 'lawn run -- gvi --no-fork' 'lawn run -- gvi' 'nvim-gtk --no-fork --' 'gvim -f' 'mvim -f' 'nvim-gtk --' gvim mvim nvim vimx vim vi nex ex
     do
         local root="${i%% *}"
         local ok=""
@@ -136,6 +136,7 @@ bmc_editor () {
             gvim:t:t::*:t:*:*) ok=t;;
             mvim::::*:*:*:darwin) ok=t;;
             mvim:t:t::*:*:*:darwin) ok=t;;
+            nex:*::*:t:*:*:*) ok=t;;
             ex:*::*:t:*:*:*) ok=t;;
             nvim:*::*::*:*:*) ok=t;;
             vimx:*::*::*:*:*) ok=t;;
