@@ -208,7 +208,7 @@ then
         /sbin
         /usr/games
     )
-    fpath=($fpath[2,-1] ~/.zsh)
+    fpath=($fpath[2,-1] ~/.config/zsh/functions)
 
     PATH="$PATH:$prevpath"
     unset prevpath
