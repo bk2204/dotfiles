@@ -64,6 +64,10 @@ main () {
             --dry-run)
                 dryrun="t"
                 ;;
+            --backend)
+                backend="$1"
+                shift
+                ;;
             --)
                 break
                 ;;
