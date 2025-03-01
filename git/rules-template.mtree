@@ -1,1 +1,1 @@
-git/xdg-git-config.gen type=file mode=0644 dest=.config/git/config
+.config/git/config type=file mode=0644 src=git/xdg-git-config.gen

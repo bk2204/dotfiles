@@ -1,1 +1,1 @@
-git/gitconfig type=file mode=0644 dest=.gitconfig
+.gitconfig type=file mode=0644 src=git/gitconfig

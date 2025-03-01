@@ -26,8 +26,8 @@ describe :dct_mtree do
   end
 
   SAMPLE1 = <<~EOF
-  bar type=dir mode=0755 dest=barbaz recurse=true filemode=0640 dirmode=0750
-  baz type=dir mode=0755 dest=foobar
+  barbaz type=dir mode=0755 src=bar recurse=true filemode=0640 dirmode=0750
+  foobar type=dir mode=0755 src=baz
 
   # This is a comment.
   #
@@ -37,8 +37,8 @@ describe :dct_mtree do
   EOF
 
   SAMPLE2 = <<~EOF
-  bar type=dir mode=0755 dest=barbaz recurse=true filemode=0640+x dirmode=0750
-  baz type=dir mode=0755 dest=foobar
+  barbaz type=dir mode=0755 src=bar recurse=true filemode=0640+x dirmode=0750
+  foobar type=dir mode=0755 src=baz
   file4 type=file mode=0664
   foo type=dir mode=0755
   EOF

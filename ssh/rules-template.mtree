@@ -1,1 +1,1 @@
-ssh/config.gen type=file mode=0600 dest=.ssh/config
+.ssh/config type=file mode=0600 src=ssh/config.gen

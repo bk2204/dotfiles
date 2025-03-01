@@ -1,1 +1,1 @@
-gnupg/gpg.conf type=file mode=0600 dest=.gnupg/gpg.conf
+.gnupg/gpg.conf type=file mode=0600 src=gnupg/gpg.conf

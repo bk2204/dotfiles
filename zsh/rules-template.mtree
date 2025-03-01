@@ -1,1 +1,1 @@
-zsh/zshenvlocal.gen type=file mode=0600 dest=.config/zsh/zshenvlocal
+.config/zsh/zshenvlocal type=file mode=0600 src=zsh/zshenvlocal.gen

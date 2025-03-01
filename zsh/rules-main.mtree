@@ -1,8 +1,8 @@
-zsh/zshenv type=file mode=0600 dest=.config/zsh/zshenv
-zsh/zshrc type=file mode=0600 dest=.config/zsh/zshrc
-zsh/zlogout type=file mode=0600 dest=.config/zsh/zlogout
-zsh/zprofile type=file mode=0600 dest=.config/zsh/zprofile
-zsh/functions type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 dest=.config/zsh/functions
+.config/zsh/zshenv type=file mode=0600 src=zsh/zshenv
+.config/zsh/zshrc type=file mode=0600 src=zsh/zshrc
+.config/zsh/zlogout type=file mode=0600 src=zsh/zlogout
+.config/zsh/zprofile type=file mode=0600 src=zsh/zprofile
+.config/zsh/functions type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=zsh/functions
 .zshenv type=link mode=0777 link=.config/zsh/zshenv
 .zshrc type=link mode=0777 link=.config/zsh/zshrc
 .zlogout type=link mode=0777 link=.config/zsh/zlogout

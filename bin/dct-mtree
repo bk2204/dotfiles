@@ -136,32 +136,38 @@ format_line () {
     local line src dest
 
     line=$(echo "$args" | tr ' ' '\n' | grep -E '^(type|mode|link|sha[0-9]+(digest)?)=' | tr '\n' ' ' | sed -e 's/ *$//')
-    src="$file"
+    dest="$file"
     case "$kind" in
         dest)
-            dest="$(extract_entry "$args" dest)"
-            file="${dest:-$src}"
+            src="$(extract_entry "$args" src)"
+            src="${src:-$dest}"
             file="$(prefix "$file")"
+            echo "$src"
             echo "$dest"
             echo "$file"
             echo "$file $line"
             ;;
         src)
+            src="$(extract_entry "$args" src)"
+            src="${src:-$dest}"
+            file="$src"
             file="$(prefix "$file")"
+            echo "$src"
             echo "$dest"
             echo "$file"
             echo "$file $line"
             ;;
         both)
-            dest="$(extract_entry "$args" dest)"
-            dest="${dest:-$src}"
+            src="$(extract_entry "$args" src)"
+            src="${src:-$dest}"
             if [ -n "$destdir" ]
             then
                 dest="$destdir/$dest"
             else
-                dest="$(prefix "${dest:-$src}")"
+                dest="$(prefix "${dest:-$file}")"
             fi
-            file="$(prefix "$file")"
+            file="$(prefix "$src")"
+            echo "$src"
             echo "$dest"
             echo "$file"
             echo "$file $dest $line"
@@ -195,11 +201,11 @@ print_mtree () {
     fi
     grep -vE '^(#|[	 ]*$)' | while read -r file args
     do
-        src="$file"
         data="$(format_line "$kind" "$destdir" "$file" "$args")"
-        dest="$(echo "$data" | head -n1)"
-        file="$(echo "$data" | head -n2 | tail -n+2)"
-        echo "$data" | tail -n +3
+        src="$(echo "$data" | sed -n 1p)"
+        dest="$(echo "$data" | sed -n 2p)"
+        file="$(echo "$data" | sed -n 3p)"
+        echo "$data" | sed -n 4p
         recurse="$(extract_entry "$args" recurse)"
         if [ "$recurse" = true ] && [ "$do_recurse" = t ]
         then
@@ -428,10 +434,10 @@ module MTree
                 items = line.split(" ")
                 file = items.shift
                 args = items.map { |item| item.split("=", 2) }.to_h
-                src = unescape(file)
-                src = src[2..] if src.start_with?("./")
-                entry = { src: src, args: args }
-                entry[:dest] = args["dest"] || entry[:src]
+                dest = unescape(file)
+                dest = dest[2..] if dest.start_with?("./")
+                entry = { dest: dest, args: args }
+                entry[:src] = args["src"] || entry[:dest]
                 method.call(MTree, config, entry)
                 if args["recurse"] == "true" && recurse
                     srcdir = entry[:src]
