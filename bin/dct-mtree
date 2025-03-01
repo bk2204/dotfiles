@@ -500,7 +500,7 @@ dispatch () {
             do_ruby mtree_dest "$recurse";;
         *:validate)
             validate;;
-        shinstall)
+        sh:install)
             do_install "$recurse" "$dryrun" "$dest";;
         ruby:install)
             do_ruby install "$recurse" "$dryrun" "$dest";;
