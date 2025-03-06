@@ -169,6 +169,6 @@
     insteadOf = dcts:
 [url "git@github.com:bk2204/"]
     insteadOf = gh:
-[url "https://github.com/"]
+[url "git@github.com:"]
     insteadOf = ghp:
 # vim: set sw=4 ts=4 sts=4 et:
