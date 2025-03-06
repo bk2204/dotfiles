@@ -1,1 +1,1 @@
-bash/bashrc type=file mode=0600 dest=.bashrc
+.bashrc type=file mode=0600 src=bash/bashrc
