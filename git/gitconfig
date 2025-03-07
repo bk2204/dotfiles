@@ -84,6 +84,8 @@
 [color.diff]
 	new = 34
 	old = 203
+[commit]
+	verbose = true
 [core]
 	precomposeUnicode = true
 	logAllRefUpdates = true
