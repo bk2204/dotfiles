@@ -40,6 +40,8 @@ $ ansible-playbook deploy-dotfiles.yaml
 ----
 
 A different branch can be specified with something like `-e branch=work` and a different checkouts directory with `-e checkouts_dir=/workspaces`.
+By default, a group with the same name as the user is used.
+If this is not correct, use `-e group=users` to correct it.
 
 Note that in all cases, operating on localhost should use `--connection=local -i localhost,`.
 

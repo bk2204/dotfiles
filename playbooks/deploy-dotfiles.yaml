@@ -8,13 +8,14 @@
     branch: dev
     fonts_src: /usr/share/texlive/texmf-dist/fonts/opentype/adobe
     fonts_dest: adobe
+    group: "{{ ansible_user_id }}"
   tasks:
     - name: Create the directory
       file:
         path: '{{ checkouts_dir }}'
         state: directory
         owner: '{{ ansible_user_id }}'
-        group: '{{ ansible_user_id }}'
+        group: '{{ group }}'
     - name: Clone dotfiles
       git:
         repo: https://github.com/bk2204/dotfiles.git
