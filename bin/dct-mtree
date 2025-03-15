@@ -304,8 +304,7 @@ do_install () {
     done)
 }
 
-RUBY_SCRIPT='# encoding: ASCII-8BIT
-
+RUBY_SCRIPT='
 module MTree
     def self.unescape(s)
         escapes = {
@@ -316,7 +315,7 @@ module MTree
             "\\t" => "\t",
         }
         escapes.merge((0x01...0xff).map { |c| ["\\%03o" % c, c.chr] }.to_h)
-        s.gsub(/\\([\\#s\n\t]|[0-7]{3})/, escapes)
+        s.gsub(/\\([\\#s\n\t]|[0-7]{3})/n, escapes)
     end
 
     def self.escape(s)
@@ -329,7 +328,7 @@ module MTree
         }
         escapes.merge((0x01...0x1f).map { |c| [c.chr, "%03o" % c] }.to_h)
         escapes.merge((0x7f...0xff).map { |c| [c.chr, "%03o" % c] }.to_h)
-        s.gsub(/[\\# \x01-\x1f\x7f-\xff]/) { |m| "\\%s" % escapes[m] }
+        s.gsub(/[\\# \x01-\x1f\x7f-\xff]/n) { |m| "\\%s" % escapes[m] }
     end
 
     def self.quote(s)
