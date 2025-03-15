@@ -40,6 +40,10 @@
       file:
         path: '/home/{{ ansible_user_id }}/.local'
         state: directory
+    - name: Create .local/share directory
+      file:
+        path: '/home/{{ ansible_user_id }}/.local/share'
+        state: directory
     - name: Create .local/run directory
       file:
         path: '/home/{{ ansible_user_id }}/.local/run'
@@ -50,7 +54,7 @@
         state: directory
     - name: Create fonts directory
       file:
-        path: '/home/{{ ansible_user_id }}/.fonts'
+        path: '/home/{{ ansible_user_id }}/.local/share/fonts'
         state: directory
     - name: Check for fonts
       stat:
@@ -62,7 +66,7 @@
       file:
         state: link
         src: "{{ fonts_src }}"
-        dest: '/home/{{ ansible_user_id }}/.fonts/{{ fonts_dest }}'
+        dest: '/home/{{ ansible_user_id }}/.local/share/fonts/{{ fonts_dest }}'
       when: fonts.stat.exists and fonts.stat.isdir
     - name: Regenerate font cache
       shell: fc-cache
