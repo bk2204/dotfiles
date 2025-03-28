@@ -55,6 +55,37 @@
         follow: false
       become: yes
       become_user: root
+    - name: Create /run
+      file:
+        path: /run
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+      become: yes
+      become_user: root
+    - name: Create /run/user
+      file:
+        path: /run/user
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+      become: yes
+      become_user: root
+    - name: Find user ID
+      getent:
+        database: passwd
+        key: '{{ ansible_user_id }}'
+    - name: "Create /run/user/{{ getent_passwd[ansible_user_id].1 }}"
+      file:
+        path: "/run/user/{{ getent_passwd[ansible_user_id].1 }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: 0700
+      become: yes
+      become_user: root
 - name: Account Setup
   import_playbook: create-account.yaml
 - name: Codespace User Setup
