@@ -127,21 +127,22 @@ bmc_editor () {
         local ok=""
         # True if the command doesn't contain an argument to detach from the terminal.
         local simple="$([ -n "${i##*--no-fork*}" -a -n "${i##*-f}" ] && echo t)"
-        case "$root:$simple:$detach:$console:$dumb:$display:$remote:$OSTYPE" in
-            lawn::::*::t*) ok=t;;
-            lawn:t:t::*::t:*) ok=t;;
-            nvim-gtk::::*:t:*:*) ok=t;;
-            nvim-gtk:t:t::*:t:*:*) ok=t;;
-            gvim::::*:t:*:*) ok=t;;
-            gvim:t:t::*:t:*:*) ok=t;;
-            mvim::::*:*:*:darwin) ok=t;;
-            mvim:t:t::*:*:*:darwin) ok=t;;
-            nex:*::*:t:*:*:*) ok=t;;
-            ex:*::*:t:*:*:*) ok=t;;
-            nvim:*::*::*:*:*) ok=t;;
-            vimx:*::*::*:*:*) ok=t;;
-            vim:*::*::*:*:*) ok=t;;
-            vi:*::*::*:*:*) ok=t;;
+        local pattern="${root}:simple=${simple}:detach=${detach}:console=${console}:dumb=${dumb}:display=${display}:remote=${remote}:os=${OSTYPE}"
+        case "$pattern" in
+            lawn:simple=:detach=:console=:*:display=:remote=t:*) ok=t;;
+            lawn:simple=t:detach=t:console=:*:display=:remote=t:*) ok=t;;
+            nvim-gtk:simple=:detach=:console=:*:display=t:*:*) ok=t;;
+            nvim-gtk:simple=t:detach=t:console=:*:display=t:*:*) ok=t;;
+            gvim:simple=:detach=:console=:*:display=t:*:*) ok=t;;
+            gvim:simple=t:detach=t:console=:*:display=t:*:*) ok=t;;
+            mvim:simple=:detach=:console=:*:*:*:os=darwin) ok=t;;
+            mvim:simple=t:detach=t:console=:*:*:*:os=darwin) ok=t;;
+            nex:*:detach=:*:dumb=t:*:*:*) ok=t;;
+            ex:*:detach=:*:dumb=t:*:*:*) ok=t;;
+            nvim:*:detach=:*:dumb=:*:*:*) ok=t;;
+            vimx:*:detach=:*:dumb=:*:*:*) ok=t;;
+            vim:*:detach=:*:dumb=:*:*:*) ok=t;;
+            vi:*:detach=:*:dumb=:*:*:*) ok=t;;
         esac
 
         if [[ -n "$ok" ]] && command -v "$root" >/dev/null 2>&1
