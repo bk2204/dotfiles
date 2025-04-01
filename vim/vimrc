@@ -51,7 +51,9 @@ set nf=alpha,hex,octal  " Make Ctrl-S and Ctrl-X work on text.
 " Loading files.
 set noml        " We use securemodelines instead.
 set enc=utf-8   " Always use UTF-8.
-set tenc=utf-8
+if has("tenc")
+  set tenc=utf-8
+endif
 set wim=longest,full
 set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set hid         " Don't force saving when changing buffers.
