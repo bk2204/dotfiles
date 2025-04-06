@@ -1,7 +1,39 @@
 = brian m. carlson's dotfiles
 
-These are brian m. carlson's dotfiles. Things that may interest you include the
-configuration files for Vim, zsh, and tmux.
+These are brian m. carlson's dotfiles.
+Things that may interest you include the configuration files for Vim and Neovim, zsh, and tmux.
+
+== Requirements
+:fn-sh: pass:c,q[footnote:[Debian requires that `/bin/sh` support POSIX.1-2017, plus some additional features, notably `local`.  Most POSIX-compatible shells on Linux, macOS, and the BSDs comply, with the notable exception of AT&T ksh.  (mksh and pdksh derivatives do, however, conform.) See https://www.debian.org/doc/debian-policy/ch-files.html#scripts[the Debian Policy requirements] for more details.]]
+
+GNU Make, Git, a Debian-compatible `sh`{fn-sh}, and standard POSIX utilities are required.
+Ruby is strongly recommended and a small number of tools require Perl.
+
+== Configuring Dotfiles
+
+If Ruby is installed, some dotfiles can be generated using ERB based on a file called `config.yaml`.
+Examples are in the `config` directory.
+
+== Extension with Private Dotfiles
+
+The Makefile is extensible to allow installation of a set of private dotfiles as well by symlinking a separate repository's `rules-overlay.mk` into the root of this directory.
+This is a good way to include configuration or scripts which may be sensitive or expose internal company information.
+
+For instance, a set of private dotfiles with additional snippets might contain this `rules-overlay.mk`:
+
+[source,make]
+----
+OVERLAY := $(shell perl -MCwd -e '$$d=Cwd::abs_path($$ARGV[0]);$$d=~s!/[^/]+$$!!;print $$d' rules-overlay.mk)
+
+include $(OVERLAY)/snippets/rules.mk
+
+$(OVERLAY)/manifest.mtree: $(OVERLAY_MTREE_SOURCES)
+        perl -p -e 's/^(?:#|(.*[^\\])#).*$$/$$1/; next if /^\s*$$/; if (m!^(.*)\ssrc=([^ ]+)(\s+.*)?$$!) { $$_ = "$$1 src=$(OVERLAY)/$$2$$3\n"; }' $^ > $@
+
+MTREE_SOURCES += $(OVERLAY)/manifest.mtree
+----
+
+The Perl script causes `OVERLAY` to be set to the canonical path of the private dotfiles directory.
 
 == Installing Dotfiles
 
