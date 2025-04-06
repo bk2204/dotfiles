@@ -86,3 +86,8 @@ Most of them can be run simply by invoking `rspec`.
 
 The tests for the Ansible playbooks operate inside a Docker container to avoid contaminating the system.
 They can be run by setting `DOCKER_IMAGE` to standard Docker image location.
+
+== License
+
+Most files are under the MIT License, but some come from other sources.
+There is a Debian machine-readable copyright file in `LICENSE` that contains copyright and license information.

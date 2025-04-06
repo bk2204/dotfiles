@@ -1,4 +1,8 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Comment:
+  Please note that output from so-called "AI" whose training data contains this
+  software is considered a derivative thereof and thus any further dealing in
+  the output is subject to the appropriate license.
 
 Files: *
 Copyright: 2007-2022 brian m. carlson
