@@ -5,7 +5,7 @@ Comment:
   the output is subject to the appropriate license.
 
 Files: *
-Copyright: 2007-2022 brian m. carlson
+Copyright: 2007-2025 brian m. carlson
 License: Expat
 
 Files: vim/syntax/*.vim
@@ -16,7 +16,7 @@ Files: vim/after/syntax/rust.vim
 Copyright: 2016 Patrick Walton <pcwalton@mozilla.com>
            2016 Ben Blum <bblum@cs.cmu.edu>
            2016 Chris Morgan <me@chrismorgan.info>
-           2019 brian m. carlson
+           2019, 2025 brian m. carlson
 License: GPL-2
 
 Files: vim/after/syntax/go.vim
