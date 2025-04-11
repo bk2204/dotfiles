@@ -725,7 +725,9 @@ if has("nvim")
     au UIEnter * call <SID>SetGUIOptions()
   augroup end
   lua << EOM
-vim.diagnostic.config({ virtual_text = true })
+if vim.diagnostic then
+  vim.diagnostic.config({ virtual_text = true })
+end
 EOM
 elseif has("gui_running")
   call <SID>SetGUIOptions()
