@@ -2,5 +2,9 @@
 # Used for logging out.
 
 
-# Clear the screen, so evil people cannot see what we were doing.
-clear
+# Clear the screen, so evil people cannot see what we were doing, but only on a
+# real TTY.
+if tty 2>/dev/null | grep -qsv pts
+then
+    clear
+fi
