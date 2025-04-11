@@ -61,7 +61,7 @@ Second, if a user account needs to be created, such as in a container, the `crea
 $ ansible-playbook create-account.yaml
 ----
 
-`-e account=bk2204` sets a different account name, and `-e sudo_with_password=true` disables passwordless sudo.
+`-e user=bk2204` sets a different account name, and `-e sudo_with_password=true` disables passwordless sudo.
 
 Then, dotfiles can be deployed.
 Note that this must be done without privileges unless root is to have the dotfiles.

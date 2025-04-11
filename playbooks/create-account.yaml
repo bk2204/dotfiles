@@ -6,7 +6,7 @@
     DEBIAN_FRONTEND: noninteractive
   vars:
     # Name of the account.
-    account: bmc
+    user: bmc
     # Group to grant sudo access.
     sudo_group: sudo
     sudo_locations:
@@ -27,7 +27,7 @@
       become_user: root
     - name: Create a user account
       user:
-        name: '{{ account }}'
+        name: '{{ user }}'
         comment: brian m. carlson
         groups: '{{ sudo_group }}'
         append: true
