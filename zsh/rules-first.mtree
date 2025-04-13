@@ -1,2 +1,3 @@
 .config/zsh type=dir mode=0700
 .config/zsh/functions type=dir mode=0700
+.local/state/zsh type=dir mode=0700

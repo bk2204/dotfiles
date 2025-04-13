@@ -64,7 +64,7 @@ unsetopt bgnice notify nomatch banghist
 # Set history.
 HISTSIZE=1000000
 SAVEHIST=$HISTSIZE
-HISTFILE=~/.zsh_history
+HISTFILE="${XDG_STATE_DIR:-$HOME/.local/state}/zsh/history"
 
 # Set key bindings.
 bindkey -v
