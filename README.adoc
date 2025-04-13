@@ -54,6 +54,7 @@ $ ansible-playbook bootstrap.yaml
 ----
 
 `-e graphical=true` can be used to bootstrap a graphical environment on Debian or Ubuntu.
+`-e development=true` can be used to bootstrap a development environment on Debian or Ubuntu.
 
 Second, if a user account needs to be created, such as in a container, the `create-account.yaml` playbook can be used to create a new account with sudo access:
 

@@ -8,6 +8,9 @@
     # Whether to bootstrap a graphical environment.  This assumes a Debian or
     # Ubuntu system.
     graphical: false
+    # Whether to bootstrap a development environment.  This assumes a Debian or
+    # Ubuntu system.
+    development: false
   tasks:
     - name: Check if this is a minimized Ubuntu image
       stat:
@@ -120,3 +123,10 @@
       become: true
       become_user: root
       when: graphical and (ansible_distribution != 'Debian' or ansible_distribution_version == "n/a")
+    - name: Install development packages
+      apt:
+        pkg:
+          - build-essential
+      become: true
+      become_user: root
+      when: development
