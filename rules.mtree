@@ -2,6 +2,7 @@
 .cache type=dir mode=0755
 .local type=dir mode=0755
 .local/share type=dir mode=0755
+.local/state type=dir mode=0700
 .local/lib type=dir mode=0755
 .local/run type=dir mode=0700
 .local/run/lawn type=dir mode=0700

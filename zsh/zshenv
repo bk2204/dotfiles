@@ -39,18 +39,33 @@ is_privileged () {
 
 setup_xdg_vars () {
     local i
-    [ -n "$XDG_RUNTIME_DIR" ] && return
 
-    zmodload -F zsh/stat b:zstat
-    for i in "/run/user/$(id -u)" \
-        "/var/run/user/$(id -u)"
-    do
-        if [ -d "$i" ] && [ "$(zstat -L +uid "$HOME")" -eq "$(id -u)" ]
-        then
-            export XDG_RUNTIME_DIR="$i"
-            return
-        fi
-    done
+    if [ -z "$XDG_RUNTIME_DIR" ]
+    then
+        zmodload -F zsh/stat b:zstat
+        for i in "/run/user/$(id -u)" \
+            "/var/run/user/$(id -u)"
+        do
+            if [ -d "$i" ] && [ "$(zstat -L +uid "$HOME")" -eq "$(id -u)" ]
+            then
+                export XDG_RUNTIME_DIR="$i"
+                break
+            fi
+        done
+    fi
+
+    if [ -z "$XDG_STATE_DIR" ]
+    then
+        for i in "$HOME/mnt/remote/state" \
+            "$HOME/.local/state"
+        do
+            if [ -d "$i" ]
+            then
+                export XDG_STATE_DIR="$i"
+                break
+            fi
+        done
+    fi
 }
 
 setup_ssh_agent () {
