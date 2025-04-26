@@ -31,10 +31,10 @@ class TestDockerImage
   end
 
   def setup
-    exec("mkdir -p /usr/src/dotfiles && tar -C /usr/src/dotfiles --exclude=.git -cf - . | tar -C /usr/src/dotfiles -xf -", workdir: nil)
+    exec("mkdir -p /usr/src/dotfiles && tar -C /usr/src/repo --exclude=.git -cf - . | tar -C /usr/src/dotfiles -xf -", workdir: nil)
   end
 
-  def exec(command, workdir: "/usr/src/repo")
+  def exec(command, workdir: "/usr/src/dotfiles")
     args = ["-w", workdir] if workdir
     system("docker", "exec", *args, @name, "sh", "-c", command)
   end
