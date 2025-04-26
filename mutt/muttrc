@@ -1,5 +1,5 @@
-source ~/.mutt/profile.active
-source ~/.mutt/aliases
-source ~/.mutt/config/muttlike
-set header_cache=~/.mutt/header_cache/
-set message_cachedir=~/.mutt/message_cache/
+source ~/.config/mutt/profile.active
+source ~/.config/mutt/aliases
+source ~/.config/mutt/config.d/muttlike
+set header_cache=~/.cache/mutt/header/
+set message_cachedir=~/.cache/mutt/message/

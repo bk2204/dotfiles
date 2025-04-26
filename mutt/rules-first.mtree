@@ -1,4 +1,5 @@
-.mutt type=dir mode=0700
-.mutt/header_cache type=dir mode=0700
-.mutt/message_cache type=dir mode=0700
-.mutt/aliases type=file mode=0600 contents=ignore
+.config/mutt type=dir mode=0700
+.cache/mutt type=dir mode=0700
+.cache/mutt/header type=dir mode=0700
+.cache/mutt/message type=dir mode=0700
+.config/mutt/aliases type=file mode=0600 contents=ignore

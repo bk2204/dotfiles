@@ -1,6 +1,6 @@
-source ~/.mutt/config/iface
-source ~/.mutt/config/keys
-source ~/.mutt/config/mime
-source ~/.mutt/config/address
-source ~/.mutt/config/crypto
+source ~/.config/mutt/config.d/iface
+source ~/.config/mutt/config.d/keys
+source ~/.config/mutt/config.d/mime
+source ~/.config/mutt/config.d/address
+source ~/.config/mutt/config.d/crypto
 # vim: set filetype=muttrc: 

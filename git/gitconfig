@@ -135,7 +135,7 @@
 	suppresscc = self
 	suppresscc = sob
 	assume8bitEncoding = UTF-8
-	aliasesFile = ~/.mutt/aliases
+	aliasesFile = ~/.config/mutt/aliases
 	aliasFileType = mutt
 	confirm = always
 	composeencoding = UTF-8
