@@ -100,6 +100,10 @@ class SnippetProgram
         options[:command] = :list
       end
 
+      opts.on("--glob", "Search for snippets by glob") do
+        options[:glob] = true
+      end
+
       opts.on("--format=KIND", "Specify a kind of snippet (exec[utable] or text)", [:exec, :executable, :text]) do |kind|
         case kind
         when :exec
@@ -145,7 +149,14 @@ class SnippetProgram
         @stdout.puts @storage.dirs(options[:kind])
         0
       when 1
-        @stdout.puts @storage.find(args[0], options[:kind])
+        if options[:glob]
+          results = @storage.dirs(options[:kind]).flat_map do |dir|
+            Dir.glob(args[0], base: dir).map { |file| File.join(dir, file) }.to_a
+          end.to_a
+          @stdout.puts results
+        else
+          @stdout.puts @storage.find(args[0], options[:kind])
+        end
         0
       else
         $stderr.puts("Either zero or one snippet names are required")
