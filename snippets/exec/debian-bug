@@ -1,0 +1,30 @@
+#!/bin/sh
+
+OPTS_SPEC="\
+debian-bug [<options>] <bug-number>
+
+debian-bug downloads the maintainer mbox of the Debian bug report bug-number
+into bug-number.mbox in the local directory.
+--
+h,help!   show the help
+"
+
+eval "$(echo "$OPTS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
+while [ $# -gt 0 ]
+do
+    arg="$1"
+    shift
+    case "$arg" in
+        --help)
+            exit 0
+            ;;
+        --)
+            break
+            ;;
+    esac
+done
+
+NUM="$1"
+
+curl -L -o "$NUM.mbox"  "https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=$NUM;mbox=yes;mboxmaint=yes"
