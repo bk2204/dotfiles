@@ -96,15 +96,15 @@ class SnippetProgram
         options[:command] = :print
       end
 
-      opts.on("--list-paths", "List paths for a snippet or all snippets") do
+      opts.on("-l", "--list-paths", "List paths for a snippet or all snippets") do
         options[:command] = :list
       end
 
-      opts.on("--glob", "Search for snippets by glob") do
+      opts.on("-g", "--glob", "Search for snippets by glob") do
         options[:glob] = true
       end
 
-      opts.on("--format=KIND", "Specify a kind of snippet (exec[utable] or text)", [:exec, :executable, :text]) do |kind|
+      opts.on("-f", "--format=KIND", "Specify a kind of snippet (exec[utable] or text)", [:exec, :executable, :text]) do |kind|
         case kind
         when :exec
           options[:kind] = :executable
