@@ -646,6 +646,21 @@ function! s:LoadLSP()
   endfor
 endfunction
 
+" Return a boolean indicating whether the current buffer is executable.
+function! s:IsBufferExecutable()
+  let perm = getfperm(expand("%"))
+  return perm[2] == 'x'
+endfunction
+
+" Returns a symbol suitable for the status line if the buffer is executable and
+" an empty string otherwise.
+function! GetBufferExecutableMarker()
+  if <SID>IsBufferExecutable()
+    return '[' . g:airline_symbols.executable . ']'
+  endif
+  return ''
+endfunction
+
 "" Miscellaneous variables.
 " Make sh highlighting POSIXy.
 let g:is_posix=1
@@ -666,10 +681,12 @@ let g:airline_symbols = {}
 let g:airline_symbols.branch = '⚡'
 let g:airline_symbols.readonly = '☓'
 let g:airline_symbols.linenr = '⁋'
+let g:airline_symbols.executable = '⁑'
 let g:airline_detect_spell = 0
 let g:airline#extensions#wordcount#enabled = 1
 let g:airline#extensions#wordcount#filetypes = '\vmarkdown|rst|org|help|text|asciidoc'
 let g:airline_theme = 'base16_ct_grey'
+let g:airline_section_c = '%<%<%{airline#extensions#fugitiveline#bufname()}%m %#__accent_red#%{airline#util#wrap(airline#parts#readonly(),0)}%{GetBufferExecutableMarker()}%#__restore__#%#__accent_bold#%#__restore__#%#__accent_bold#%#__restore__#'
 
 " Ctrl-P settings.
 let g:ctrlp_max_files = 60000
