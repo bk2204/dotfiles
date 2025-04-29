@@ -105,8 +105,8 @@ class TestDir
   end
 
   def cmd(command, **env)
-    env["HOME"] = @dir
-    env["PATH"] = ENV["PATH"]
+    env["HOME"] ||= @dir
+    env["PATH"] ||= ENV["PATH"]
     IO.popen(env, command, :unsetenv_others => true, :in => "/dev/null", :chdir => @dir).read
   end
 

@@ -168,4 +168,31 @@ describe :zsh do
       expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $COLORTERM'], 'TERM' => 'tmux-direct')).to eq "truecolor\n"
     end
   end
+
+  context 'path' do
+    it 'should include external path components' do
+      home = ENV['HOME']
+      expect(@dir.cmd(['zsh', '-c', 'echo $PATH'],
+                      'HOME' => home, 'PATH' => '/root/bin:/usr/games:/bin:/usr/bin')).to eq \
+        "#{home}/bin:#{home}/.local/bin:/root/bin:#{home}/.rvm/bin:" \
+        "#{home}/.cargo/bin:" \
+        "/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/games\n"
+
+      expect(@dir.cmd(['zsh', '-c', 'echo $PATH'],
+                      'HOME' => home,
+                      'PATH' => "/root/bin:#{home}/.cargo/bin:/nonexistent/bin:/opt/bin:/usr/local/bin:/nothere/bin:/bin:/usr/bin")).to eq \
+        "#{home}/bin:#{home}/.local/bin:" \
+        "/root/bin:#{home}/.rvm/bin:#{home}/.cargo/bin:" \
+        '/nonexistent/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:' \
+        "/nothere/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/games\n"
+
+      expect(@dir.cmd(['zsh', '-c', 'echo $PATH'],
+                      'HOME' => home,
+                      'PATH' => "/root/bin:#{home}/.cargo/bin:/nonexistent/bin:/opt/bin:/usr/local/bin:/bin:/usr/bin:/nothere/bin")).to eq \
+        "#{home}/bin:#{home}/.local/bin:" \
+        "/root/bin:#{home}/.rvm/bin:#{home}/.cargo/bin:" \
+        '/nonexistent/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:' \
+        "/usr/bin:/usr/sbin:/bin:/sbin:/usr/games:/nothere/bin\n"
+    end
+  end
 end

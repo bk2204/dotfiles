@@ -175,6 +175,145 @@ source_if_present () {
     [[ -f $fn ]] && source "$fn"
 }
 
+setup_path_hook () {
+}
+
+setup_path () {
+    setopt localoptions shwordsplit
+
+    local prevpath="$PATH"
+    typeset -UT COREPATH corepath
+    typeset -U personalpath
+    typeset -U softwarepath
+    typeset -U localpath
+    typeset -xU manpath MANPATH
+    local i
+
+    [[ -n $BMC_TEST ]] && return
+
+    personalpath=(
+        ~/bin
+        ~/.local/bin
+    )
+    softwarepath=(
+        ~/.rvm/bin
+        ~/.cargo/bin
+    )
+    localpath=(
+        /usr/local/bin
+        /usr/local/sbin
+    )
+    corepath=(
+        /usr/bin
+        /usr/sbin
+        /bin
+        /sbin
+        /usr/games
+    )
+    manpath=(
+        ~/man
+        /usr/share/man
+        /usr/local/share/man
+    )
+
+    setup_path_hook
+
+    typeset -A components chosen
+    typeset -xU path cdpath
+    typeset -xU PATH CDPATH
+
+    for i in $personalpath
+    do
+        components+=([$i]=personal)
+    done
+    for i in $softwarepath
+    do
+        components+=([$i]=software)
+    done
+    for i in $localpath
+    do
+        components+=([$i]="local")
+    done
+    for i in $corepath
+    do
+        components+=([$i]=core)
+    done
+
+    path=($personalpath)
+    chosen+=([personal]=t)
+
+    for i in $(echo "$prevpath" | PATH="$COREPATH" tr : '\n')
+    do
+        case "$components[$i]" in
+            personal)
+                ;;
+            software)
+                if [[ -z $chosen[software] ]]
+                then
+                    path+=($softwarepath)
+                    chosen+=([software]=t)
+                fi
+                ;;
+            local)
+                if [[ -z $chosen[software] ]]
+                then
+                    path+=($softwarepath)
+                    chosen+=([software]=t)
+                fi
+                if [[ -z $chosen["local"] ]]
+                then
+                    path+=($localpath)
+                    chosen+=(["local"]=t)
+                fi
+                ;;
+            core)
+                if [[ -z $chosen[software] ]]
+                then
+                    path+=($softwarepath)
+                    chosen+=([software]=t)
+                fi
+                if [[ -z $chosen["local"] ]]
+                then
+                    path+=($localpath)
+                    chosen+=(["local"]=t)
+                fi
+                if [[ -z $chosen[core] ]]
+                then
+                    path+=($corepath)
+                    chosen+=([core]=t)
+                fi
+                ;;
+            *)
+                path+=($i)
+                ;;
+        esac
+    done
+
+    if [[ -z $chosen[software] ]]
+    then
+        path+=($softwarepath)
+        chosen+=([software]=t)
+    fi
+    if [[ -z $chosen["local"] ]]
+    then
+        path+=($localpath)
+        chosen+=(["local"]=t)
+    fi
+    if [[ -z $chosen[core] ]]
+    then
+        path+=($corepath)
+        chosen+=([core]=t)
+    fi
+
+    fpath=($fpath[2,-1] ~/.config/zsh/functions)
+
+    PATH="$PATH:$prevpath"
+    unset prevpath
+
+    # Export miscellaneous paths.
+    export MANPATH PATH COREPATH
+}
+
 # Set up some limits.
 unlimit
 limit | grep -qs core && limit core 0
@@ -191,46 +330,10 @@ unsetopt globalrcs
 
 if [[ -z $BMC_TEST ]]
 then
-    prevpath=$PATH
-
     # Nuke dupes.
-    typeset -U path cdpath manpath fpath
-    typeset -U PATH CDPATH MANPATH FPATH
-    typeset -UT COREPATH corepath
-
-    # Set up miscellaneous paths.
-    manpath=(
-        ~/man
-        /usr/share/man
-        /usr/local/share/man
-    )
-    path=(
-        ~/bin
-        ~/.local/bin
-        ~/.rvm/bin
-        ~/.cargo/bin
-        /usr/local/bin
-        /usr/local/sbin
-        /usr/bin
-        /usr/sbin
-        /bin
-        /sbin
-        /usr/games
-    )
-    corepath=(
-        /usr/bin
-        /usr/sbin
-        /bin
-        /sbin
-        /usr/games
-    )
+    typeset -U fpath
+    typeset -xU FPATH
     fpath=($fpath[2,-1] ~/.config/zsh/functions)
-
-    PATH="$PATH:$prevpath"
-    unset prevpath
-
-    # Export miscellaneous paths.
-    export MANPATH PATH COREPATH
 fi
 
 local the_preferred_locale=$(preferred_locale)
@@ -312,6 +415,7 @@ setup_ssh_agent
 setup_temp
 source_if_present "$HOME/.rvm/scripts/rvm"
 source_if_present "$HOME/.config/zsh/zshenvlocal"
+setup_path
 
 unfunction is_privileged
 unfunction has_locale
@@ -319,6 +423,8 @@ unfunction preferred_locale
 unfunction setup_xdg_vars
 unfunction setup_ssh_agent
 unfunction setup_temp
+unfunction setup_path
+unfunction setup_path_hook
 
 unset the_preferred_locole
 true
