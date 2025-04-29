@@ -1,155 +1,155 @@
 [user]
-	name = brian m. carlson
+    name = brian m. carlson
 [alias]
-	# Checkout, recursing into submodules, however that's supported.
-	co = "!f() { if git checkout -h | grep -qs recurse-submodules; \
-		then git checkout --recurse-submodules \"$@\"; \
-		else git checkout \"$@\" && git sui; \
-		fi; };f"
-	cor = "!f() { git co \"$@\"; };f"
-	st = status
-	pff = pull --ff-only
-	pnff = pull --no-ff
-	mff = merge --ff-only
-	mnff = merge --no-ff
-	amend = commit --amend
-	update = commit --amend --no-edit
-	namend = commit --amend
-	nupdate = commit --amend --no-edit
-	ramend = commit --amend --reset-author
-	rupdate = commit --amend --reset-author --no-edit
-	los = log --simplify-merges --topo-order
-	lops = log -p -C --simplify-merges --topo-order
-	lowps = log -p -C --simplify-merges --topo-order --word-diff
-	oneline = log --format=oneline
-	gr = log --graph --decorate
-	grs = log --graph --decorate --simplify-merges
-	sui = submodule update --init
-	# Word diff.
-	wdiff = diff --word-diff
-	# Word diff staged changes
-	wdiffc = diff --word-diff --cached
-	# Diff staged changes.
-	diffc = diff --cached
-	# Stash changes, keeping the index unmodified.
-	stake = stash save --keep-index
-	# Full rebase, using merge strategies and autosquashing.
-	frebase = rebase -m -i --autosquash
-	# Full rebase, using merge strategies and autosquashing while keeping marks.
-	fkrebase = rebase -m -i --keep-empty --autosquash
-	# Noninteractive rebase with merge strategies and autosquashing.
-	srebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --autosquash \"$@\"; };f"
-	# Noninteractive rebase with merge strategies and autosquashing while
-	# keeping marks.
-	skrebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --keep-empty --autosquash \"$@\"; };f"
-	# Rebase using merge strategies.
-	mrebase = rebase -m
-	# Rebase using merge strategies, keeping empty commits (marks).
-	mkrebase = rebase -m --keep-empty
-	# List the original commit currently being rebased.
-	mrcommit = "!f() { local gd=\"$(git rev-parse --git-dir)\"; cat \"$gd/rebase-merge/cmt.$(cat \"$gd/rebase-merge/msgnum\")\"; };f"
-	# List the commit message for the commit currently being rebased.
-	mrmsg = "!f() { git log -1 $(git mrcommit); };f"
-	# Create an empty commit with a specially formatted message.
-	set-mark="!f() { local m=\"${1:-$(git rev-parse --abbrev-ref HEAD)}\"; git commit --allow-empty -m \":$m\"; };f"
-	# Find the branch mark commit at the base of the given branch (or the
-	# current one).
-	mark="!f() { local m=\"${1:-$(git rev-parse --abbrev-ref HEAD)}\"; git rev-parse --verify \":/^:$m\n\"; };f"
-	# Print a range for this branch at the given time, starting at the mark.
-	range="!f() { local b=\"$(git rev-parse --abbrev-ref HEAD)\"; local head=\"$(git rev-parse \"$b@{${1:-now}}\")\"; echo \"$(git at -s \"$head\" \"^:$b\")..$head\"; };f"
-	# Import a tarball in such a way as to produce predictable SHA-1 values.
-	setup = "!f() { git init && git add -f . && GIT_COMMITTER_DATE=1000684800 GIT_AUTHOR_DATE=1000684800 git commit -m 'initial import' && git tag start; };f"
-	# Import patches in such a way as to produce predictable SHA-1 values.
-	import-patches = "!f() { GIT_COMMITTER_DATE=1000684800 GIT_AUTHOR_DATE=1000684800 git am -3 \"$@\"; };f"
-	lsf = ls-files
-	# List files matching a grep pattern.
-	lsg = "!f() { git ls-files | grep \"$@\"; };f"
-	# List branches matching a grep pattern.
-	brg = "!f() { git for-each-ref --format='%(refname)' refs/heads | sed 's!^refs/heads/!!' | grep \"$@\"; };f"
-	# List conflicted files, one per line.
-	conflicted = "!f() { git status -s | grep -E '^(DD|AA|.U|U.)' | cut -b4-; };f"
-	# Exits zero if the two treeishes are the same, nonzero otherwise.
-	same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
-	# Describe a revision in a form suitable for a commit message.
-	describe-rev = show -s --date=short --pretty='format:%h (\"%s\", %ad)'
-	# Squashes a commit matching the given commit message.
-	squash = "!f() { if [ \"$1\" = -s ]; then s=-s; shift; fi; d=\"$1\"; shift; git commit --squash $(git at --no-fixup $s \"$d\") \"$@\"; };f"
-	# Like above, but a fixup commit instead of a squash.
-	fixup = "!f() { if [ \"$1\" = -s ]; then s=-s; shift; fi; d=\"$1\"; shift; git commit --fixup $(git at --no-fixup $s \"$d\") \"$@\"; }; f"
+    # Checkout, recursing into submodules, however that's supported.
+    co = "!f() { if git checkout -h | grep -qs recurse-submodules; \
+        then git checkout --recurse-submodules \"$@\"; \
+        else git checkout \"$@\" && git sui; \
+        fi; };f"
+    cor = "!f() { git co \"$@\"; };f"
+    st = status
+    pff = pull --ff-only
+    pnff = pull --no-ff
+    mff = merge --ff-only
+    mnff = merge --no-ff
+    amend = commit --amend
+    update = commit --amend --no-edit
+    namend = commit --amend
+    nupdate = commit --amend --no-edit
+    ramend = commit --amend --reset-author
+    rupdate = commit --amend --reset-author --no-edit
+    los = log --simplify-merges --topo-order
+    lops = log -p -C --simplify-merges --topo-order
+    lowps = log -p -C --simplify-merges --topo-order --word-diff
+    oneline = log --format=oneline
+    gr = log --graph --decorate
+    grs = log --graph --decorate --simplify-merges
+    sui = submodule update --init
+    # Word diff.
+    wdiff = diff --word-diff
+    # Word diff staged changes
+    wdiffc = diff --word-diff --cached
+    # Diff staged changes.
+    diffc = diff --cached
+    # Stash changes, keeping the index unmodified.
+    stake = stash save --keep-index
+    # Full rebase, using merge strategies and autosquashing.
+    frebase = rebase -m -i --autosquash
+    # Full rebase, using merge strategies and autosquashing while keeping marks.
+    fkrebase = rebase -m -i --keep-empty --autosquash
+    # Noninteractive rebase with merge strategies and autosquashing.
+    srebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --autosquash \"$@\"; };f"
+    # Noninteractive rebase with merge strategies and autosquashing while
+    # keeping marks.
+    skrebase = "!f() { GIT_SEQUENCE_EDITOR=true git rebase -m -i --keep-empty --autosquash \"$@\"; };f"
+    # Rebase using merge strategies.
+    mrebase = rebase -m
+    # Rebase using merge strategies, keeping empty commits (marks).
+    mkrebase = rebase -m --keep-empty
+    # List the original commit currently being rebased.
+    mrcommit = "!f() { local gd=\"$(git rev-parse --git-dir)\"; cat \"$gd/rebase-merge/cmt.$(cat \"$gd/rebase-merge/msgnum\")\"; };f"
+    # List the commit message for the commit currently being rebased.
+    mrmsg = "!f() { git log -1 $(git mrcommit); };f"
+    # Create an empty commit with a specially formatted message.
+    set-mark="!f() { local m=\"${1:-$(git rev-parse --abbrev-ref HEAD)}\"; git commit --allow-empty -m \":$m\"; };f"
+    # Find the branch mark commit at the base of the given branch (or the
+    # current one).
+    mark="!f() { local m=\"${1:-$(git rev-parse --abbrev-ref HEAD)}\"; git rev-parse --verify \":/^:$m\n\"; };f"
+    # Print a range for this branch at the given time, starting at the mark.
+    range="!f() { local b=\"$(git rev-parse --abbrev-ref HEAD)\"; local head=\"$(git rev-parse \"$b@{${1:-now}}\")\"; echo \"$(git at -s \"$head\" \"^:$b\")..$head\"; };f"
+    # Import a tarball in such a way as to produce predictable SHA-1 values.
+    setup = "!f() { git init && git add -f . && GIT_COMMITTER_DATE=1000684800 GIT_AUTHOR_DATE=1000684800 git commit -m 'initial import' && git tag start; };f"
+    # Import patches in such a way as to produce predictable SHA-1 values.
+    import-patches = "!f() { GIT_COMMITTER_DATE=1000684800 GIT_AUTHOR_DATE=1000684800 git am -3 \"$@\"; };f"
+    lsf = ls-files
+    # List files matching a grep pattern.
+    lsg = "!f() { git ls-files | grep \"$@\"; };f"
+    # List branches matching a grep pattern.
+    brg = "!f() { git for-each-ref --format='%(refname)' refs/heads | sed 's!^refs/heads/!!' | grep \"$@\"; };f"
+    # List conflicted files, one per line.
+    conflicted = "!f() { git status -s | grep -E '^(DD|AA|.U|U.)' | cut -b4-; };f"
+    # Exits zero if the two treeishes are the same, nonzero otherwise.
+    same-tree = "!f() { git diff-tree --exit-code \"$@\" >/dev/null; };f"
+    # Describe a revision in a form suitable for a commit message.
+    describe-rev = show -s --date=short --pretty='format:%h (\"%s\", %ad)'
+    # Squashes a commit matching the given commit message.
+    squash = "!f() { if [ \"$1\" = -s ]; then s=-s; shift; fi; d=\"$1\"; shift; git commit --squash $(git at --no-fixup $s \"$d\") \"$@\"; };f"
+    # Like above, but a fixup commit instead of a squash.
+    fixup = "!f() { if [ \"$1\" = -s ]; then s=-s; shift; fi; d=\"$1\"; shift; git commit --fixup $(git at --no-fixup $s \"$d\") \"$@\"; }; f"
 [advice]
-	ignoredHook = false
-	waitingForEditor = false
+    ignoredHook = false
+    waitingForEditor = false
 [color]
-	ui = auto
+    ui = auto
 [color.diff]
-	new = 34
-	old = 203
+    new = 34
+    old = 203
 [commit]
-	verbose = true
+    verbose = true
 [core]
-	precomposeUnicode = true
-	logAllRefUpdates = true
+    precomposeUnicode = true
+    logAllRefUpdates = true
 [diff]
-	algorithm = histogram
-	indentHeuristic = true
-	renames = copies
-	tool = gvimdiff
-	wsErrorHighlight = old,new
+    algorithm = histogram
+    indentHeuristic = true
+    renames = copies
+    tool = gvimdiff
+    wsErrorHighlight = old,new
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	process = git-lfs filter-process
-	smudge = git-lfs smudge -- %f
+    clean = git-lfs clean -- %f
+    process = git-lfs filter-process
+    smudge = git-lfs smudge -- %f
 [gc]
-	reflogExpire = never
-	reflogExpireUnreachable = never
+    reflogExpire = never
+    reflogExpireUnreachable = never
 [hub]
-	protocol = https
+    protocol = https
 [http "https://git.crustytoothpaste.net"]
-	emptyAuth = true
+    emptyAuth = true
 [init]
-	defaultBranch = dev
+    defaultBranch = dev
 [i18n]
-	commitEncoding = UTF-8
+    commitEncoding = UTF-8
 [lfs]
-	largeFileWarning = false
+    largeFileWarning = false
 [log]
-	decorate = false
-	mailmap = true
+    decorate = false
+    mailmap = true
 [merge]
-	conflictStyle = zdiff3
+    conflictStyle = zdiff3
 [pull]
-	rebase = false
+    rebase = false
 [push]
-	default = simple
+    default = simple
 [repack]
-	useDeltaBaseOffset = true
+    useDeltaBaseOffset = true
 [rerere]
-	enabled = true
+    enabled = true
 [sendemail]
-	smtpuser = bmc
-	smtppass =
-	smtpencryption = tls
-	smtpserver = mail.crustytoothpaste.net
-	smtpserverport = 587
-	suppresscc = author
-	suppresscc = self
-	suppresscc = sob
-	assume8bitEncoding = UTF-8
-	aliasesFile = ~/.config/mutt/aliases
-	aliasFileType = mutt
-	confirm = always
-	composeencoding = UTF-8
-	chainreplyto = false
+    smtpuser = bmc
+    smtppass =
+    smtpencryption = tls
+    smtpserver = mail.crustytoothpaste.net
+    smtpserverport = 587
+    suppresscc = author
+    suppresscc = self
+    suppresscc = sob
+    assume8bitEncoding = UTF-8
+    aliasesFile = ~/.config/mutt/aliases
+    aliasFileType = mutt
+    confirm = always
+    composeencoding = UTF-8
+    chainreplyto = false
 [submodule]
-	fetchJobs = 4
+    fetchJobs = 4
 [transfer]
-	unpackLimit = 5
+    unpackLimit = 5
 [url "https://git.crustytoothpaste.net/git/bmc/"]
-	insteadOf = dct:
+    insteadOf = dct:
 [url "git@git.crustytoothpaste.net:/bmc/"]
-	insteadOf = dcts:
+    insteadOf = dcts:
 [url "git@github.com:bk2204/"]
-	insteadOf = gh:
+    insteadOf = gh:
 [url "https://github.com/"]
-	insteadOf = ghp:
-# vim: set noet:
+    insteadOf = ghp:
+# vim: set sw=4 ts=4 sts=4 et:
