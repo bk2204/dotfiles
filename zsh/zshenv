@@ -305,9 +305,6 @@ setup_path () {
         chosen+=([core]=t)
     fi
 
-    PATH="$PATH:$prevpath"
-    unset prevpath
-
     # Export miscellaneous paths.
     export MANPATH PATH COREPATH
 }
