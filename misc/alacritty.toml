@@ -1,3 +1,4 @@
+[general]
 ipc_socket = true
 live_config_reload = true
 
