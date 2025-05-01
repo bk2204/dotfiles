@@ -6,6 +6,7 @@ set duplicate_threads=yes
 set include=yes
 set quit=ask-no
 set index_format="%4C %Z %[%b %d] %-15.15F (%4c) %s"
+set mark_old=no
 set recall=no
 set sort=threads
 set sort_aux=date
