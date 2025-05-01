@@ -22,6 +22,9 @@ set pipe_split=yes
 set record="=[Gmail]/Sent Mail"
 set mark_old=no
 unset record
+# Editing.
+set editor="$VISUAL \"+set fo+=w\""
+set text_flowed=yes
 # Headers.
 my_hdr From: "brian m. carlson" <bk2204@github.com>
 # Hooks.
