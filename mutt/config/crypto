@@ -4,7 +4,6 @@ set ssl_use_sslv3=no
 set ssl_use_tlsv1=no
 set ssl_use_tlsv1_1=no
 set ssl_starttls=yes
-set certificate_file=~/.certs/public
 # OpenPGP.
 set crypt_autosign=yes
 set crypt_autosmime=no
