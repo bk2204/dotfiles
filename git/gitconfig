@@ -79,6 +79,8 @@
 [advice]
     ignoredHook = false
     waitingForEditor = false
+[clone]
+    defaultRemoteName = def
 [color]
     ui = auto
 [color.diff]
