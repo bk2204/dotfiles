@@ -21,6 +21,9 @@ v0:
     gvi:
       if: true
       command: '!f() { REMOTE_HOST=%(sq:cenv:HOSTNAME) CODESPACE_NAME=%(sq:cenv:CODESPACE_NAME) CWD=%(sq:cenv:PWD) nvim-gtk --nvim-bin-path "$HOME/bin/ssh-nvim" "$@" </dev/null; };f'
+    sha256sum:
+      if: true
+      command: '!f() { if command -v sha256sum >/dev/null 2>&1; then sha256sum "$@"; else shasum -a 256 "$@"; fi; };f'
   fs:
     test:
       if: true
