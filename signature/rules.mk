@@ -1,3 +1,4 @@
 SIGNATURES		= auricblue personal
-INSTALL_PAIRS	+= $(foreach s,$(SIGNATURES),signature/$s .signature-$s)
-MTREE_SOURCES	+= signature/rules-main.mtree
+INSTALL_DIRS	+= .config/signature
+INSTALL_PAIRS	+= $(foreach s,$(SIGNATURES),signature/$s .config/signature/$s)
+MTREE_SOURCES	+= signature/rules-first.mtree signature/rules-main.mtree

@@ -1,2 +1,2 @@
-.signature-auricblue type=file mode=0600 src=signature/auricblue
-.signature-personal type=file mode=0600 src=signature/personal
+.config/signature/auricblue type=file mode=0600 src=signature/auricblue
+.config/signature/personal type=file mode=0600 src=signature/personal

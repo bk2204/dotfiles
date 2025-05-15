@@ -25,4 +25,6 @@ unset record
 my_hdr From: "brian m. carlson" <bk2204@gmail.com>
 # Hooks.
 save-hook ~p =Handled
+# Signature.
+set signature=~/.config/signature/personal
 # vim: set syntax=muttrc:

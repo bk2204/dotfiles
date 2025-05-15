@@ -24,4 +24,6 @@ set pipe_split=yes
 my_hdr From: "brian m. carlson" <sandals@crustytoothpaste.net>
 # Hooks.
 save-hook ~p =Handled
+# Signature.
+set signature=~/.config/signature/personal
 # vim: set syntax=muttrc:
