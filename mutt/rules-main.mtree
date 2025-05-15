@@ -1,2 +1,5 @@
 .config/mutt/muttrc type=file mode=0600 src=mutt/muttrc
 .config/mutt/config.d type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=mutt/config
+.config/mutt/profile.auricblue type=file mode=0600 src=mutt/profiles/auricblue
+.config/mutt/profile.gmail type=file mode=0600 src=mutt/profiles/gmail
+.config/mutt/profile.personal type=file mode=0600 src=mutt/profiles/personal
