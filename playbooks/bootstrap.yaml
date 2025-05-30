@@ -42,6 +42,16 @@
       become: true
       become_user: root
       ignore_errors: true
+    - name: Set up proper /tmp cleaning
+      copy:
+        src: "{{ playbook_dir }}/files/etc/tmpfiles.d/tmp.conf"
+        dest: "/etc/tmpfiles.d/tmp.conf"
+        owner: root
+        group: root
+        mode: "644"
+      become: true
+      become_user: root
+      ignore_errors: true
     - name: Install Debian packages
       apt:
         pkg:
