@@ -214,6 +214,8 @@ setup_path () {
 
     [[ -n $BMC_TEST ]] && return
 
+    unset CDPATH
+
     personalpath=(
         ~/bin
         ~/.local/bin
@@ -242,8 +244,8 @@ setup_path () {
     setup_path_hook
 
     typeset -A components chosen
-    typeset -xU path cdpath
-    typeset -xU PATH CDPATH
+    typeset -xU path
+    typeset -xU PATH
 
     setup_path_components personal software local core
 
