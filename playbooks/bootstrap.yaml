@@ -30,13 +30,13 @@
         repo: ppa:git-core/ppa
       become: true
       become_user: root
-      when: ansible_distribution_release == 'focal'
+      when: ansible_distribution == 'Ubuntu'
     - name: Install neovim-stable PPA
       apt_repository:
         repo: ppa:neovim-ppa/stable
       become: true
       become_user: root
-      when: ansible_distribution_release == 'focal'
+      when: ansible_distribution == 'Ubuntu'
     - name: Disable /tmp as tmpfs
       shell: systemctl mask tmp.mount
       become: true
