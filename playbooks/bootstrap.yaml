@@ -11,7 +11,16 @@
     # Whether to bootstrap a development environment.  This assumes a Debian or
     # Ubuntu system.
     development: false
-    op_keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+    apt_repos:
+      - repository: 1Password
+        remote_keyring: https://downloads.1password.com/linux/keys/1password.asc
+        downloaded_keyring: /usr/share/keyrings/1password-archive-keyring.gpg.asc
+        keyring: /usr/share/keyrings/1password-archive-keyring.gpg
+        sources_list_path: /etc/apt/sources.list.d/1password.list
+        packages:
+          - 1password
+          - 1password-cli
+        condition: "{{ graphical and ansible_userspace_architecture == 'x86_64' }}"
   tasks:
     - name: Check if this is a minimized Ubuntu image
       stat:
@@ -144,47 +153,9 @@
       become: true
       become_user: root
       when: graphical and (ansible_distribution != 'Debian' or ansible_distribution_version == "n/a")
-    - name: Check for 1Password keyring
-      stat:
-        path: "{{ op_keyring }}"
-        get_checksum: no
-        get_mime: no
-      register: opkeyring
-    - name: Download 1Password keyring
-      get_url:
-        dest: "{{ op_keyring }}.asc"
-        mode: 0644
-        owner: root
-        group: root
-        url: https://downloads.1password.com/linux/keys/1password.asc
-        use_netrc: false
-      become: true
-      become_user: root
-      when: graphical and ansible_userspace_architecture == 'x86_64' and not opkeyring.stat.exists
-    - name: Dearmor 1Password keyring
-      command: "gpg --dearmor --output {{ op_keyring }} {{ op_keyring }}.asc"
-      become: true
-      become_user: root
-      when: graphical and ansible_userspace_architecture == 'x86_64' and not opkeyring.stat.exists
-    - name: Set up 1Password sources.list entry
-      copy:
-        src: "{{ playbook_dir }}/files/etc/apt/sources.list.d/1password.list"
-        dest: "/etc/apt/sources.list.d/1password.list"
-        owner: root
-        group: root
-        mode: "644"
-      become: true
-      become_user: root
-      when: graphical and ansible_userspace_architecture == 'x86_64'
-    - name: Install 1Password
-      apt:
-        pkg:
-          - 1password
-          - 1password-cli
-        update_cache: true
-      become: true
-      become_user: root
-      when: graphical and ansible_userspace_architecture == 'x86_64'
+    - name: Install APT repositories
+      include_tasks: "{{ playbook_dir }}/install-apt-repo.yaml"
+      loop: "{{ apt_repos }}"
     - name: Install development packages
       apt:
         pkg:
