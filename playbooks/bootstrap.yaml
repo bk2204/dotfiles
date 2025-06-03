@@ -107,13 +107,23 @@
       become: true
       become_user: root
       when: ansible_distribution == 'FreeBSD'
-    - name: Install graphical packages
+    - name: Install graphical and desktop packages
       apt:
         pkg:
           - alacritty
+          - buildah
+          - clementine
+          - docker.io
           - fontconfig
+          - libsecret-tools
           - mate-desktop
+          - mutt
+          - podman
+          - podman-toolbox
           - texlive-fonts-extra
+          - tmuxinator
+          - urlview
+          - xclip
       become: true
       become_user: root
       when: graphical
