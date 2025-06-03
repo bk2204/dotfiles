@@ -178,6 +178,29 @@ source_if_present () {
 setup_path_hook () {
 }
 
+setup_path_components () {
+    local name
+    for name in "$@"
+    do
+        eval "for i in \$${name}path
+        do
+            components+=([\$i]=$name)
+        done"
+    done
+}
+
+append_paths () {
+    local name
+    for name in "$@"
+    do
+        if [[ -z $chosen[$name] ]]
+        then
+            eval "path+=(\$${name}path)"
+            chosen+=([$name]=t)
+        fi
+    done
+}
+
 setup_path () {
     setopt localoptions shwordsplit
 
@@ -222,22 +245,7 @@ setup_path () {
     typeset -xU path cdpath
     typeset -xU PATH CDPATH
 
-    for i in $personalpath
-    do
-        components+=([$i]=personal)
-    done
-    for i in $softwarepath
-    do
-        components+=([$i]=software)
-    done
-    for i in $localpath
-    do
-        components+=([$i]="local")
-    done
-    for i in $corepath
-    do
-        components+=([$i]=core)
-    done
+    setup_path_components personal software local core
 
     path=($personalpath)
     chosen+=([personal]=t)
@@ -248,40 +256,13 @@ setup_path () {
             personal)
                 ;;
             software)
-                if [[ -z $chosen[software] ]]
-                then
-                    path+=($softwarepath)
-                    chosen+=([software]=t)
-                fi
+                append_paths software
                 ;;
             local)
-                if [[ -z $chosen[software] ]]
-                then
-                    path+=($softwarepath)
-                    chosen+=([software]=t)
-                fi
-                if [[ -z $chosen["local"] ]]
-                then
-                    path+=($localpath)
-                    chosen+=(["local"]=t)
-                fi
+                append_paths software local
                 ;;
             core)
-                if [[ -z $chosen[software] ]]
-                then
-                    path+=($softwarepath)
-                    chosen+=([software]=t)
-                fi
-                if [[ -z $chosen["local"] ]]
-                then
-                    path+=($localpath)
-                    chosen+=(["local"]=t)
-                fi
-                if [[ -z $chosen[core] ]]
-                then
-                    path+=($corepath)
-                    chosen+=([core]=t)
-                fi
+                append_paths software local core
                 ;;
             *)
                 path+=($i)
@@ -289,21 +270,7 @@ setup_path () {
         esac
     done
 
-    if [[ -z $chosen[software] ]]
-    then
-        path+=($softwarepath)
-        chosen+=([software]=t)
-    fi
-    if [[ -z $chosen["local"] ]]
-    then
-        path+=($localpath)
-        chosen+=(["local"]=t)
-    fi
-    if [[ -z $chosen[core] ]]
-    then
-        path+=($corepath)
-        chosen+=([core]=t)
-    fi
+    append_paths software local core
 
     # Export miscellaneous paths.
     export MANPATH PATH COREPATH
@@ -420,6 +387,8 @@ unfunction setup_ssh_agent
 unfunction setup_temp
 unfunction setup_path
 unfunction setup_path_hook
+unfunction append_paths
+unfunction setup_path_components
 
 unset the_preferred_locole
 true
