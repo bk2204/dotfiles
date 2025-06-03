@@ -189,6 +189,7 @@
       apt:
         pkg:
           - build-essential
+          - git-autofixup
       become: true
       become_user: root
       when: development
