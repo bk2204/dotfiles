@@ -118,7 +118,7 @@
     decorate = false
     mailmap = true
 [merge]
-    conflictStyle = zdiff3
+    conflictStyle = diff3
 [pull]
     rebase = false
 [push]
