@@ -132,6 +132,7 @@
           - clementine
           - dconf-cli
           - docker.io
+          - elinks
           - fontconfig
           - libsecret-tools
           - mate-desktop
