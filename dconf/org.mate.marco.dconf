@@ -1,0 +1,13 @@
+[general]
+action-double-click-titlebar='toggle_maximize'
+allow-tiling=false
+auto-raise=true
+auto-raise-delay=500
+button-layout='menu:minimize,maximize,close'
+center-new-windows=true
+focus-mode='sloppy'
+num-workspaces=5
+
+[window-keybindings]
+move-to-monitor-e='disabled'
+move-to-monitor-w='disabled'

@@ -11,6 +11,7 @@ CONFIG_FILE ?= config.yaml
 MTREE_SOURCES += rules.mtree
 
 TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 1)
+DCONF ?= $(shell command -v dconf 2>/dev/null)
 
 all:
 	@echo To install, set DESTDIR and run make install.
@@ -31,6 +32,7 @@ clean:
 install-legacy: install-links install-dirs install-standard
 
 include bin/rules.mk
+include dconf/rules.mk
 include firefox/rules.mk
 include git/rules.mk
 include gnupg/rules.mk
@@ -54,8 +56,12 @@ manifest.mtree: $(MTREE_SOURCES) $(DESTDIR)
 
 build-standard: $(TEMPLATE_FILES)
 
-install: build-standard manifest.mtree
+install-extra: do-install
+
+do-install: build-standard manifest.mtree
 	cat manifest.mtree | bin/dct-mtree --recurse --install $(DESTDIR)
+
+install: do-install install-extra
 
 install-dirs:
 	for i in $(INSTALL_DIRS); \

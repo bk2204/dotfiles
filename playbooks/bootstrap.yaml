@@ -130,6 +130,7 @@
           - alacritty
           - buildah
           - clementine
+          - dconf-cli
           - docker.io
           - fontconfig
           - libsecret-tools
