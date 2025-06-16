@@ -37,4 +37,4 @@
     update_cache: true
   become: true
   become_user: root
-  when: item.condition and item.packages
+  when: item.condition and item.packages != None
