@@ -1,6 +1,4 @@
-#!/bin/bash
-#/ Usage: dct-cs COMMAND [OPTIONS]
-#/
+#!/usr/bin/env ruby
 #/ This script provides several subcommands and works mainly around the concept
 #/ of a bound port specific to a codespace (and generated deterministically with
 #/ SHA-256).  The codespaces is set up (in the parlance of this script, deployed)
@@ -12,242 +10,488 @@
 #/ SSH, so we bind (mount) a dummy SSH connection on that specific port which we
 #/ can then send our Ansible connection and all other traffic over.
 
-set -em
+require 'digest'
+require 'open3'
+require 'optparse'
+require 'openssl'
+require 'random/formatter'
+require 'securerandom'
+require 'yaml'
 
-# Generate a high port specific to the codespace specified.
-cs_port () {
-  local id="$1"
-  local first_hash=$(printf '%s' "$id"| shasum -a 256 | cut -b1-3)
-  echo $(( 0x$first_hash + 50000 ))
-}
-
-# Create a codespace and set it up with Ansible, printing the codespace ID to
-# standard output.  The port is left mounted.
-cs_create () {
-  if [ "$1" = "--help" ]
-  then
-    gh cs create "$1"
-    return
-  fi
-  local id=$(gh cs create "$@")
-  printf 'Created Codespace with ID %s\n' "$id" >&2
-  local port="$(cs_port "$id")"
-  local parameters="$(cs_find_parameters "$id")"
-  local username="$(cs_find_username "$parameters")"
-  local pid=$(cs_mount_port "$id" "$parameters")
-  (
-    cd "$HOME/checkouts/dotfiles" &&
-    ansible-playbook -u "$username" -i localhost:$port, playbooks/codespace-setup.yaml
-  )
-  echo "$id"
-}
-
-cs_delete () {
-  gh cs delete -c "$@"
-}
-
-wait_for_port () {
-  local port="$1"
-  local username="$2"
-
-  for i in $(seq 20)
-  do
-    if ssh -p "$port" "$username@localhost" true >/dev/null 2>&1 </dev/null
-    then
-      return
-    fi
-    sleep 1
-  done
-}
-
-# Find the parameters we're using on the codespace and print it to standard
-# output.
-cs_find_parameters () {
-  local id="$1"
-  gh cs ssh -c "$id" -- \
-    $(git rev-parse --sq-quote \
-      sh -c 'printf "%s=%s\n"
-        username "$(id -un)"
-        user-id "$(id -u)"
-        lawn-bin "$(command -v lawn)"
-    ')  2>/dev/null </dev/null
-}
-
-# Find the username we're using on the codespace and print it to standard
-# output.
-cs_find_username () {
-  local parameters="$1"
-  cs_find_parameter "$parameters" "username"
-}
-
-cs_find_parameter () {
-  local parameters="$1"
-  local name="$2"
-  echo "$parameters" | sed -ne "/^$name=/s/^.*=//p"
-}
-
-# Set up the given codespace with Ansible.  The port must be mounted first.
-cs_deploy () {
-  local id="$1"
-  local port=$(cs_port "$id")
-  local parameters="$(cs_find_parameters "$id")"
-  local username="$(cs_find_username "$parameters")"
-  (
-    cd "$HOME/checkouts/dotfiles" &&
-    ansible-playbook -u "$username" -i localhost:$port, playbooks/codespace-setup.yaml
-  )
-}
-
-cs_port_mounted () {
-  local id="$1"
-  local port="$(cs_port "$id")"
-  [ -n "$(lsof "-iTCP:$port" -sTCP:LISTEN -t)" ]
-}
-
-cs_mount_port () {
-  local id="$1"
-  local parameters="$2"
-  local skip_session="$3"
-  local port="$(cs_port "$id")"
-  [ -z "$parameters" ] && parameters="$(cs_find_parameters "$id")"
-  local username="$(cs_find_username "$parameters")"
-  local lawn_bin
-  [ -z "$skip_session" ] && lawn_bin="$(cs_find_parameter "$parameters" "lawn-bin")"
-
-  ruby -rsecurerandom -e '
-    sock = "/home/#{ARGV[2]}/.local/run/lawn/server-#{SecureRandom.alphanumeric(10)}.sock"
-    args = if ARGV[3].empty?
-      ["gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--", "-N"]
+class Processor
+  def initialize(stdout, stderr, **options)
+    cache_dir = options[:cache_dir] || if ENV["XDG_CACHE_HOME"]
+      File.join(ENV["XDG_CACHE_HOME"], "dct-cs")
     else
-      [
-        "gh", "cs", "ssh", "-c", ARGV[0], "--server-port", ARGV[1], "--",
-        "-R", "#{sock}:/run/user/1000/lawn/server-0.sock",
-        "dct-cs", "session", "start"
-      ]
+      File.join(ENV["HOME"], ".cache", "dct-cs")
     end
-    puts spawn(*args,
-      :in => :close,
-      :out => :close,
-      :err => :close,
-    )
-  ' "$id" "$port" "$username" "$lawn_bin"
-  wait_for_port "$port" "$username"
-}
+    @options = {
+      format: :plain,
+      verbosity: 0,
+      dry_run: false,
+      cache_dir: cache_dir,
+    }
+    @stdout = stdout
+    @stderr = stderr
+    @rng = RNG.new(options[:seed] || SecureRandom.bytes(32))
+  end
 
-cs_umount_port () {
-  local pid="$1"
-  kill -s TERM "$pid"
-}
+  def port(id)
+    hexval = Digest::SHA256.hexdigest(id)[0..2]
+    hexval.to_i(16) + 50000
+  end
 
-cs_umount_port_for_id () {
-  local id="$1"
-  local parameters="$(cs_find_parameters "$id")"
-  local lawn="$(cs_find_parameter "$parameters" "lawn-bin")"
-  local port=$(cs_port "$id")
-  cs_ssh "dct-cs session stop" >/dev/null 2>/dev/null || true
-  kill -s TERM $(lsof "-iTCP:$port" -sTCP:LISTEN -t)
-}
+  def parameters(id)
+    wanted = {
+      "username" => "id -un",
+      "user-id" => "id -u",
+      "lawn-bin" => "command -v lawn",
+    }
+    command_args = wanted.map { |k, v| "#{k} \"$(#{v})\"" }.join(" ")
+    command = %q[printf '%s=%s\\n' ] + command_args
+    data, _ = exec("gh", "cs", "ssh", "-c", id, "--", "sh", "-c", sq_quote_one(command), stdout: :read)
+    data.chomp.split("\n").map { |s| k, v = s.split("=", 2); [k.gsub('-', "_").to_sym, v] }.to_h
+  end
 
-cs_mount () {
-  local id="$1"
-  local port="$(cs_port "$id")"
-  local parameters="$(cs_find_parameters "$id")"
-  local username="$(cs_find_username "$parameters")"
-  nohup gh cs ssh -c "$id" --server-port "$port" -- -N 2> /dev/null &
-  mkdir -p "$XDG_RUNTIME_DIR/mnt/cs"
-  [ -L "$HOME/mnt/cs" ] || ln -sf "$XDG_RUNTIME_DIR/mnt/cs" "$HOME/mnt/cs"
-  mkdir -p "$HOME/mnt/cs/$id"
-  wait_for_port "$port" "$username"
-  sshfs -p "$port" "$username@localhost:/workspaces" "$HOME/mnt/cs/$id"
-}
+  def cached_parameters(id)
+    begin
+      Dir.mkdir @options[:cache_dir]
+    rescue Errno::EEXIST
+    end
+    cache_file = File.join(@options[:cache_dir], "cs-#{id}.yaml")
+    begin
+      YAML.safe_load(File.open(cache_file).read, permitted_classes: [Symbol])
+    rescue Errno::ENOENT
+      params = parameters(id)
+      fp = File.open(cache_file, "wb")
+      fp.write YAML.dump(params)
+      params
+    end
+  end
 
-cs_umount () {
-  local id="$1"
-  local port="$(cs_port "$id")"
-  fusermount -uz "$HOME/mnt/cs/$id"
-  rmdir "$HOME/mnt/cs/$id"
-  kill -s TERM $(lsof "-iTCP:$port" -sTCP:LISTEN -t)
-  :
-}
-
-cs_ssh () {
-  local id="$1"
-  local parameters="$(cs_find_parameters "$id")"
-  local username="$(cs_find_username "$parameters")"
-  shift
-  ssh -p "$(cs_port "$id")" -A "$username@localhost" "$@"
-}
-
-case "$1" in
-  create)
-    shift
-    cs_create "$@"
-    ;;
-  delete)
-    shift
-    cs_delete "$@"
-    ;;
-  session)
-    shift
-    case "$1" in
-      start)
-        # This command is intentionally blocking.
-        lawn mount --fd --type=sftp default -- sshfs -o slave :/ ~/mnt/remote >/tmp/lawn-mount
-        ;;
-      stop)
-        fusermount -uz ~/mnt/remote || true
-        ;;
-    esac
-    ;;
-  mount)
-    shift
-    cs_mount "$@"
-    ;;
-  umount)
-    shift
-    cs_umount "$@"
-    ;;
-  deploy)
-    shift
-    cs_deploy "$@"
-    ;;
-  parameters)
-    shift
-    if [ -n "$2" ]
-    then
-      parameters="$(cs_find_parameters "$1")"
-      cs_find_parameter "$parameters" "$2"
+  def exec(*args, **options)
+    opts = options.each_pair.select { |k, _| [:chdir].include? k }.to_h
+    if options[:stdout] == :read
+      debug("Spawning command #{args.join(" ")} to read stdout")
+      return ["", 0] if @options[:dry_run]
+      Open3.popen2(*args, **opts) do |stdin, stdout, thr|
+        stdin.close
+        data = stdout.read
+        [data, thr.value.exitstatus]
+      end
     else
-      cs_find_parameters "$@"
-    fi
-    ;;
-  port)
-    shift
-    case "$1" in
-      mount)
-        shift
-        id="$1"
-        shift
-        [ "$1" = "--skip-session" ] && skip_session=true
-        cs_port_mounted "$id" || cs_mount_port "$id" "" "$skip_session" >/dev/null
-        cs_port "$id"
-        ;;
-      mounted)
-        shift
-        cs_port_mounted "$1"
-        ;;
-      umount)
-        shift
-        cs_umount_port_for_id "$@"
-        ;;
-    esac
-    ;;
-  ssh)
-    shift
-    cs_ssh "$@"
-    ;;
-  --help)
-    usage
-    exit 0
-    ;;
-esac
+      io_opts = options[:io] == :inherit ? {} : {in: "/dev/null", out: "/dev/null", err: options[:stderr] || :err}
+      opts.merge(io_opts)
+      debug("Spawning command #{args.join(" ")}")
+      return [nil, 0] if @options[:dry_run]
+      pid = Process.spawn(*args, **opts)
+      return [nil, nil] if options[:no_wait]
+      Process.waitpid(pid)
+      [nil, $?.exitstatus]
+    end
+  end
+
+  def sq_quote_inner(s)
+    s.gsub("'", "'\\\\''")
+  end
+
+  def sq_quote_one(s)
+    "'#{s.gsub("'", "'\\\\''")}'"
+  end
+
+  def sq_quote(*args)
+    "'#{args.map { |s| sq_quote_inner("'#{sq_quote_inner(s)}'") }.join(" ")}'"
+  end
+
+  def run(args)
+    command = args.shift
+    case command
+    when "create"
+      cmd_create(args)
+    when "parameters"
+      cmd_parameters(args)
+    when "deploy"
+      cmd_deploy(args)
+    when "ssh"
+      cmd_ssh(args)
+    when "ssh-port"
+      subcommand = args.shift
+      case subcommand
+      when "is-mounted"
+        cmd_ssh_port_is_mounted(args)
+      when "mount"
+        cmd_ssh_port_mount(args)
+      when "show"
+        cmd_ssh_port_show(args)
+      when "umount"
+        cmd_ssh_port_umount(args)
+      else
+        error "Unknown command: #{command} #{subcommand}"
+        2
+      end
+    when "ports"
+      subcommand = args.shift
+      case subcommand
+      when "mount"
+        cmd_ports_mount(args)
+      else
+        error "Unknown command: #{command} #{subcommand}"
+        2
+      end
+    when "session"
+      subcommand = args.shift
+      case subcommand
+      when "start"
+        cmd_session_start(args)
+      when "stop"
+        cmd_session_stop(args)
+      else
+        error "Unknown command: #{command} #{subcommand}"
+        2
+      end
+    else
+      error "Unknown command: #{command}"
+      2
+    end
+  end
+
+  def say(msg)
+    @stdout.puts(msg) if @options[:format] != :script
+  end
+
+  def chat(msg)
+    @stderr.puts(msg) if @options[:format] != :script
+  end
+
+  def error(msg)
+    @stderr.puts(msg)
+  end
+
+  def debug(msg)
+    @stderr.puts("D: #{msg}") if @options[:format] != :script && @options[:verbosity] > 0
+  end
+
+  def script_say(msg)
+    @stdout.puts(msg) if @options[:format] == :script
+  end
+
+  def general_say(msg)
+    @stdout.puts(msg)
+  end
+
+  def bind_ports(id)
+    _json, code = exec("gh", "cs", "ports", "-c", id, "--json", "sourcePort", stdout: read)
+    return code if code != 0
+    # TODO: actually bind ports.
+  end
+
+  def mount_port(id, parameters, **options)
+    return if port_mounted?(id)
+    portno = port(id)
+    args = %w[gh cs ssh -c] + [id, "--server-port", portno.to_s, "--", "-A"]
+    if options[:socket]
+      args += ["-R", "/home/#{parameters[:username]}/.local/run/lawn/server-#{@rng.alphanumeric(10)}.sock:/run/user/1000/lawn/server-0.sock"]
+    end
+    if options[:session]
+      args += %w[dct-cs session start]
+    else
+      args += %w[-N]
+    end
+    exec(*args, no_wait: true)
+    wait_for_port(portno, parameters[:username])
+  end
+
+  def umount_port(id, parameters, **options)
+    portno = port(id)
+    do_ssh(id, parameters, %w[dct-cs session stop]) if options[:session]
+    s, exitst = exec("lsof", "-iTCP:#{portno}", "-sTCP:LISTEN", "-t", stdout: :read)
+    Process.kill("TERM", s.to_i) if !s.empty?
+    exitst
+  end
+
+  def do_ssh(id, params, args, **options)
+    extra_args = []
+    if options[:socket]
+      extra_args += ["-R", "/home/#{params[:username]}/.local/run/lawn/server-#{@rng.alphanumeric(10)}.sock:/run/user/1000/lawn/server-0.sock"]
+    end
+    args = if port_mounted?(id)
+             portno = port(id)
+             %w[ssh -p] + [portno.to_s, *extra_args, "#{params[:username]}@localhost"] + args
+           else
+             %w[gh cs ssh -c] + [id, "--"] + extra_args + args
+           end
+    exec(*args, io: :inherit)[1]
+  end
+
+  def port_mounted?(id)
+    portno = port(id)
+    s, exitst = exec("lsof", "-iTCP:#{portno}", "-sTCP:LISTEN", "-t", stdout: :read)
+    exitst == 0 && !s.empty?
+  end
+
+  def wait_for_port(port, username)
+    20.times do
+      _, st = exec("ssh", "-p", port.to_s, "#{username}@localhost", "true", stderr: "/dev/null")
+      if st == 0
+        return
+      end
+      sleep 1
+    end
+  end
+
+  # Set up the given codespace with Ansible.  The port must be mounted first.
+  def deploy(id, params)
+    portno = port(id)
+    _, code = exec("ansible-playbook", "-v", "-u", params[:username], "-i", "localhost:#{portno},", "-e", "user=#{params[:username]}", "playbooks/codespace-setup.yaml", chdir: File.join(ENV["HOME"], "checkouts", "dotfiles"))
+    code
+  end
+
+  def general_options(parser)
+    parser.on("-f FORMAT", "--format FORMAT", "Choose format (plain or script)") do |format|
+      @options[:format] = format.to_s
+    end
+
+    parser.on("-v", "--verbose", "Be more verbose") do
+      @options[:verbosity] += 1
+    end
+  end
+
+  def cmd_create(args)
+    OptionParser.new do |parser|
+      parser.on("--help", "Print help output") do
+        @options[:help] = true
+      end
+
+      general_options(parser)
+    end.parse!(args)
+
+    if @options[:help]
+      _, code = exec("gh", "cs", "create", "--help")
+      return code
+    end
+
+    id, code = exec("gh", "cs", "create", *args, stdout: :read)
+    return code if code != 0
+    id.chomp!
+    chat "Created Codespace with ID #{id}"
+    params = parameters(id)
+    mount_port(id, params)
+    deploy(id, params)
+    script_say id
+    0
+  end
+
+  def cmd_parameters(args)
+    OptionParser.new do |parser|
+      general_options(parser)
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      params = cached_parameters(id)
+      formatted_params = params.map { |k, v| [k.to_s.gsub('_', '-'), v] }.to_h
+      if args.empty?
+        formatted_params.each do |k, v|
+          general_say "#{k}=#{v}"
+        end
+      else
+        args.each do |k|
+          general_say formatted_params[k]
+        end
+      end
+      0
+    end
+  end
+
+  def cmd_deploy(args)
+    options = {}
+    OptionParser.new do |parser|
+      general_options(parser)
+
+      parser.on("--mount", "Keep the port mounted after deployment") do
+        options[:mount] = true
+      end
+
+      parser.on("--socket", "Mount the socket to the remote system") do
+        options[:socket] = true
+      end
+
+      parser.on("--session", "Run the session code on the remote system") do
+        options[:session] = true
+      end
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      params = parameters(id)
+      mounted = port_mounted?(id)
+      mount_port(id, params) unless mounted
+      deploy(id, params)
+      if !mounted
+        umount_port(id, params)
+        mount_port(id, params, **options) if !options.empty?
+      end
+      0
+    end
+  end
+
+  def cmd_ssh(args)
+    options = {}
+    OptionParser.new do |parser|
+      general_options(parser)
+
+      parser.on("--socket", "Mount the socket to the remote system") do
+        options[:socket] = true
+      end
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      params = cached_parameters(id)
+      do_ssh(id, params, args, **options)
+    end
+  end
+
+  def cmd_ssh_port_mount(args)
+    options = {}
+    OptionParser.new do |parser|
+      general_options(parser)
+
+      parser.on("--socket", "Mount the socket to the remote system") do
+        options[:socket] = true
+      end
+
+      parser.on("--session", "Run the session code on the remote system") do
+        options[:session] = true
+      end
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      params = parameters(id)
+      mount_port(id, params, **options)
+      0
+    end
+  end
+
+  def cmd_ssh_port_is_mounted(args)
+    OptionParser.new do |parser|
+      general_options(parser)
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      port_mounted?(id) ? 0 : 1
+    end
+  end
+
+  def cmd_ssh_port_show(args)
+    OptionParser.new do |parser|
+      general_options(parser)
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      general_say(port(id).to_s)
+      0
+    end
+  end
+
+  def cmd_ssh_port_umount(args)
+    options = {}
+    OptionParser.new do |parser|
+      general_options(parser)
+
+      parser.on("--session", "Run the session code on the remote system") do
+        options[:session] = true
+      end
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      params = cached_parameters(id)
+      umount_port(id, params, **options)
+    end
+  end
+
+  def cmd_ports_mount(args)
+    OptionParser.new do |parser|
+      general_options(parser)
+
+      parser.on("--detach", "Detach from the terminal") do
+        @options[:detach] = true
+      end
+    end.parse!(args)
+
+    if args.length == 0
+      error "Need a Codespace ID"
+      3
+    else
+      id = args.shift
+      bind_ports(id)
+      0
+    end
+  end
+
+  def cmd_session_start(args)
+    OptionParser.new do |parser|
+      general_options(parser)
+    end.parse!(args)
+
+    _, status = exec(["sh", "-c", "lawn mount --fd --type=sftp default -- sshfs -o slave :/ ~/mnt/remote >/tmp/lawn-mount"])
+    status
+  end
+
+  def cmd_session_stop(args)
+    OptionParser.new do |parser|
+      general_options(parser)
+    end.parse!(args)
+
+    _, status = exec(["sh", "-c", "fusermount -uz ~/mnt/remote || true"])
+    status
+  end
+end
+
+class RNG
+  include Random::Formatter
+
+  def initialize(seed)
+    @seed = seed
+    @counter = 0
+  end
+
+  def bytes(n)
+    resp = []
+    while n > 0
+      r = OpenSSL::HMAC.digest("SHA512", @seed, @counter.to_s)
+      @counter += 1
+      chunk = r[0...[n, 64].min]
+      n -= chunk.length
+      resp << chunk
+    end
+    resp.join
+  end
+end
+
+exit Processor.new($stdout, $stderr).run(ARGV) if __FILE__ == $PROGRAM_NAME
