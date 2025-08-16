@@ -1,4 +1,16 @@
 #!/bin/sh
 
-formail -c -X List-Unsubscribe | perl -ne 'print if s!^(?i:List-Unsubscribe):.*<(https?://[^>]+)>.*$!$1!' | \
+formail -c -X List-Unsubscribe | ruby -ne '
+    if $_ =~ %r[^(?i:List-Unsubscribe):(.*)]
+        line = $1
+        line.gsub!(/=\?(?:utf-8|us-ascii|iso-8859-\d+)\?([qb])\?(\S+)\?=(\s+|$)/i) do |m|
+            case $1
+            when "q"
+                $2.gsub("_", "\x20").unpack("M")[0]
+            when "b"
+                $2.unpack("m")[0]
+            end
+        end
+        puts $1 if line =~ %r[^.*<(https?://[^>]+)>.*$];
+    end' | \
     xargs curl -X POST -H'Content-Type: application/x-www-form-urlencoded' -dList-Unsubscribe=One-Click
