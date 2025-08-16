@@ -5,3 +5,5 @@ user_pref("dom.private-attribution.submission.enabled", false);
 user_pref("privacy.donottrackheader.enabled", true);
 // Always indicate that we don't want our information shared or sold.
 user_pref("privacy.globalprivacycontrol.enabled", true);
+// Turn off all machine learning functionality.
+user_pref("browser.ml.enable", false);
