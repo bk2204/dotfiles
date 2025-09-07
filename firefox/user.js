@@ -7,3 +7,5 @@ user_pref("privacy.donottrackheader.enabled", true);
 user_pref("privacy.globalprivacycontrol.enabled", true);
 // Turn off all machine learning functionality.
 user_pref("browser.ml.enable", false);
+// Always show the full URL in the address bar.
+user_pref("browser.urlbar.trimURLs", false);
