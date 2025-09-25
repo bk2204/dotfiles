@@ -5,9 +5,9 @@ formail -c -X List-Unsubscribe | ruby -ne '
         line = $1
         line.gsub!(/=\?(?:utf-8|us-ascii|iso-8859-\d+)\?([qb])\?(\S+)\?=(\s+|$)/i) do |m|
             case $1
-            when "q"
+            when "q", "Q"
                 $2.gsub("_", "\x20").unpack("M")[0]
-            when "b"
+            when "b", "B"
                 $2.unpack("m")[0]
             end
         end
