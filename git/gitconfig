@@ -47,7 +47,14 @@
     # Rebase using merge strategies, keeping empty commits (marks).
     mkrebase = rebase -m --keep-empty
     # Update the given branch from its default remote.  If prefixed with plus, forces the update.
-    refresh = "!f() { local br=\"${1#+}\"; local plus=\"$([ -z \"${1%%+*}\" ] && echo +)\"; git fetch --update-head-ok \"$(git config branch.\"$br\".remote)\" \"${plus}$(git config branch.\"$br\".merge):$br\"; };f"
+    refresh = "!f() { local br=\"$(git rev-parse --abbrev-ref \"${1#+}\")\"; \
+        local plus=\"$([ -z \"${1%%+*}\" ] && echo +)\"; \
+        local remote=\"$(git config branch.\"$br\".remote)\"; \
+        local refspec=\"${plus}$(git config branch.\"$br\".merge):$br\"; \
+        if [ \"$br\" = \"$(git rev-parse --abbrev-ref HEAD)\" ]; \
+        then git pull \"$remote\" \"$refspec\"; \
+        else git fetch \"$remote\" \"$refspec\"; \
+        fi; };f"
     # List the original commit currently being rebased.
     mrcommit = "!f() { local gd=\"$(git rev-parse --git-dir)\"; cat \"$gd/rebase-merge/cmt.$(cat \"$gd/rebase-merge/msgnum\")\"; };f"
     # List the commit message for the commit currently being rebased.
