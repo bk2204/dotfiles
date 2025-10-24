@@ -9,6 +9,7 @@ set index_format="%4C %Z %[%b %d] %-15.15F (%4c) %s"
 set recall=no
 set sort=threads
 set sort_aux=date
+set sort_thread_groups=last-date-received
 set wait_key=no
 color status bold cyan black
 # vim: set syntax=muttrc:
