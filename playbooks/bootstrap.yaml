@@ -141,6 +141,7 @@
           - podman-toolbox
           - texlive-fonts-extra
           - tmuxinator
+          - traceroute
           - urlview
           - xclip
       become: true
