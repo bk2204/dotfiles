@@ -1,0 +1,3 @@
+.config/xkb/symbols/bmc type=file mode=0600 src=xkb/symbols
+.config/xkb/rules/evdev type=file mode=0600 src=xkb/evdev
+.config/xkb/rules/evdev.xml type=file mode=0600 src=xkb/evdev.xml

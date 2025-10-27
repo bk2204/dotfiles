@@ -1,0 +1,4 @@
+! option = symbols
+  bmc:bmc = +bmc(bmc)
+
+! include %S/evdev

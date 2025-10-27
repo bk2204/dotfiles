@@ -1,0 +1,20 @@
+partial alphanumeric_keys modifier_keys
+xkb_symbols "bmc" {
+
+    include "us(basic)"
+
+    name[Group1]= "en-custom (English, US, custom)";
+
+    // Map right Ctrl to Super.
+    replace key <RCTL> { type[group1] = "ONE_LEVEL", [ Super_L ] };
+    // Map Caps Lock to Escape.
+    replace key <CAPS> { type[group1] = "ONE_LEVEL", [ Escape ] };
+    // Map the Start key to Compose.
+    replace key <LWIN> { type[group1] = "TWO_LEVEL", [ Multi_key, Multi_key ] };
+    // Make Ctrl-Alt-Bksp terminate the X server.
+    key <BKSP> {
+        type="CTRL+ALT",
+        symbols[Group1] = [ NoSymbol, NoSymbol, NoSymbol, NoSymbol, Terminate_Server ]
+    };
+    modifier_map Mod4  { <RCTL> };
+};

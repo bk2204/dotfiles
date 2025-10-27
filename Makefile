@@ -44,6 +44,7 @@ include snippets/rules.mk
 include ssh/rules.mk
 include tmux/rules.mk
 include vim/rules.mk
+include xkb/rules.mk
 include zsh/rules.mk
 
 -include rules-overlay.mk

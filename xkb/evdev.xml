@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xkbConfigRegistry SYSTEM "xkb.dtd">
+<xkbConfigRegistry version="1.1">
+  <layoutList>
+    <layout>
+      <configItem>
+        <name>bmc</name>
+        <countryList>
+          <iso3166Id>CA</iso3166Id>
+          <iso3166Id>US</iso3166Id>
+        </countryList>
+        <languageList>
+          <iso639Id>eng</iso639Id>
+        </languageList>
+        <description>English (US, bmc custom layout)</description>
+      </configItem>
+    </layout>
+  </layoutList>
+</xkbConfigRegistry>
+<!-- vim: set et tw=2 sw=2 sts=2 -->

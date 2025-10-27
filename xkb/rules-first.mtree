@@ -1,0 +1,6 @@
+.config/xkb type=dir mode=0700
+.config/xkb/compat type=dir mode=0700
+.config/xkb/keycodes type=dir mode=0700
+.config/xkb/rules type=dir mode=0700
+.config/xkb/symbols type=dir mode=0700
+.config/xkb/types type=dir mode=0700
