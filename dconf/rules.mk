@@ -1,4 +1,5 @@
 DCONF_FILES		+= dconf/org.mate.marco.dconf
+DCONF_FILES		+= dconf/org.mate.desktop.peripherals.keyboard.kbd.dconf
 
 ifneq ($(DCONF),)
 install-extra: install-extra-dconf
