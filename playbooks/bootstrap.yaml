@@ -129,6 +129,7 @@
         pkg:
           - alacritty
           - buildah
+          - chrony
           - clementine
           - dconf-cli
           - docker.io
