@@ -33,6 +33,7 @@
       - curl
       - dc
       - git
+      - jq
       - less
       - libpam-tmpdir
       - locales-all
