@@ -91,6 +91,15 @@
 - name: Codespace User Setup
   hosts: all
   tasks:
+    - name: Create $HOME/.ssh
+      file:
+        path: '/home/{{ ansible_user_id }}/.ssh'
+        state: directory
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        mode: 0700
+    - name: Add github.com to $HOME/.ssh/known_hosts
+      shell: "curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed 's/^/github.com /' >>$HOME/.ssh/known_hosts"
     - name: Clone dotfiles
       git:
         repo: https://github.com/bk2204/dotfiles.git
