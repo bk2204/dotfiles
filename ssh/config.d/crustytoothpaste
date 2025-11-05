@@ -1,0 +1,9 @@
+Host *.crustytoothpaste.net
+    GSSAPIAuthentication yes
+    GSSAPIKeyExchange no
+    GSSAPIDelegateCredentials yes
+    GSSAPIRenewalForcesRekey yes
+    GSSAPITrustDNS no
+    ForwardAgent yes
+    Protocol 2
+    VerifyHostKeyDNS yes

@@ -1,4 +1,4 @@
-MTREE_SOURCES	+= ssh/rules-first.mtree
+MTREE_SOURCES	+= ssh/rules-first.mtree ssh/rules-main.mtree
 
 ifeq ($(TEMPLATE),1)
 TEMPLATE_FILES	+= ssh/config.gen

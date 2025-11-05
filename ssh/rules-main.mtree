@@ -1,0 +1,1 @@
+.ssh/config.d type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=ssh/config.d
