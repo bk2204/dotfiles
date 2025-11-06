@@ -14,6 +14,10 @@ class TestConfig
   def self.docker_image
     ENV["DOCKER_IMAGE"]
   end
+
+  def self.docker_binary
+    ENV['DOCKER_BIN'] || 'podman'
+  end
 end
 
 class TestDockerImage
@@ -24,7 +28,7 @@ class TestDockerImage
 
   def run
     name = "dotfiles-spec-#{SecureRandom.alphanumeric(20)}"
-    pid = Process.spawn("docker", "run", "--name", name, "-v", "#{@root}:/usr/src/repo", @image, "sh", "-c", "while true; do sleep 20; done")
+    pid = Process.spawn(TestConfig.docker_binary, "run", "--name", name, "-v", "#{@root}:/usr/src/repo", @image, "sh", "-c", "while true; do sleep 20; done")
     ObjectSpace.define_finalizer(self, Remover.new(name, pid))
     @name = name
     sleep 2
@@ -36,7 +40,7 @@ class TestDockerImage
 
   def exec(command, workdir: "/usr/src/dotfiles")
     args = ["-w", workdir] if workdir
-    system("docker", "exec", *args, @name, "sh", "-c", command)
+    system(TestConfig.docker_binary, "exec", *args, @name, "sh", "-c", command)
   end
 
   private
@@ -48,7 +52,7 @@ class TestDockerImage
     end
 
     def call(*args)
-      system("docker", "kill", @name)
+      system(TestConfig.docker_binary, "kill", @name)
     end
   end
 
