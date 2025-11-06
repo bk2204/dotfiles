@@ -137,23 +137,29 @@
       apt:
         pkg:
           - alacritty
+          - asciidoctor
           - buildah
           - chrony
           - clementine
           - dconf-cli
           - docker.io
+          - docbook5-xml
+          - dcbook-xsl-ns
           - elinks
           - fontconfig
           - libsecret-tools
           - mate-desktop
           - mutt
+          - pandoc
           - podman
           - podman-toolbox
+          - ruby-asciidoctor-pdf
           - texlive-fonts-extra
           - tmuxinator
           - traceroute
           - urlview
           - xclip
+          - xsltproc
       become: true
       become_user: root
       when: graphical
