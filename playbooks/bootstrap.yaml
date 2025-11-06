@@ -146,7 +146,7 @@
           - dconf-cli
           - docker.io
           - docbook5-xml
-          - dcbook-xsl-ns
+          - docbook-xsl-ns
           - elinks
           - fontconfig
           - krb5-user
