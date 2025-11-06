@@ -7,7 +7,7 @@ CONFIG_FILE ?= config.yaml
 MTREE_SOURCES += rules.mtree
 
 TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 1)
-DCONF ?= $(shell command -v dconf 2>/dev/null)
+DCONF ?= $(shell [ -n "$$DISPLAY" ] && command -v dconf 2>/dev/null)
 
 all:
 	@echo To install, set DESTDIR and run make install.
