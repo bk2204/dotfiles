@@ -9,6 +9,7 @@
     fonts_src: /usr/share/texlive/texmf-dist/fonts/opentype/adobe
     fonts_dest: adobe
     group: "{{ ansible_user_id }}"
+    dotfiles_config: 'config/config-dev.yaml'
   tasks:
     - name: Create the directory
       file:
@@ -22,6 +23,19 @@
         remote: def
         dest: '{{ checkouts_dir }}/dotfiles'
         version: '{{ branch }}'
+    - name: Determine config
+      stat:
+        path: '{{ checkouts_dir }}/dotfiles/config.yaml'
+        follow: false
+      register: config
+    - name: Set default config
+      file:
+        src: '{{ dotfiles_config }}'
+        dest: '{{ checkouts_dir }}/dotfiles/config.yaml'
+        owner: '{{ ansible_user_id }}'
+        group: '{{ ansible_user_id }}'
+        state: link
+      when: config.stat.exists is defined and not config.stat.exists
     - name: Checkout submodules for dotfiles
       shell: 'git submodule update --init'
       args:
