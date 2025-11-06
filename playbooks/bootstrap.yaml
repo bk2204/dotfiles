@@ -87,6 +87,7 @@
           - ncurses-term
           - neovim
           - nvi
+          - openssh-client
           - perl
           - procps
           - python3
@@ -101,6 +102,14 @@
         update_cache: true
       become: true
       become_user: root
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    - name: Install optional packages
+      apt:
+        pkg:
+          - openssh-client-gssapi
+      become: true
+      become_user: root
+      ignore_errors: true
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     - name: Install FreeBSD packages
       package:
