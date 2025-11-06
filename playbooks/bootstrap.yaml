@@ -138,6 +138,8 @@
         pkg:
           - alacritty
           - asciidoctor
+          - bind9-dnsutils
+          - bind9-host
           - buildah
           - chrony
           - clementine
