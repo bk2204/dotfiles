@@ -149,6 +149,7 @@
           - dcbook-xsl-ns
           - elinks
           - fontconfig
+          - krb5-user
           - libsecret-tools
           - mate-desktop
           - mutt
