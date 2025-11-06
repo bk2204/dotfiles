@@ -10,6 +10,7 @@
     fonts_dest: adobe
     group: "{{ ansible_user_id }}"
     dotfiles_config: 'config/config-dev.yaml'
+    private_dotfiles: true
   tasks:
     - name: Create the directory
       file:
@@ -46,6 +47,25 @@
         chdir: '{{ checkouts_dir }}/dotfiles'
       when: ansible_distribution != 'FreeBSD'
     - name: Deploy dotfiles with gmake
+      shell: 'gmake install'
+      args:
+        chdir: '{{ checkouts_dir }}/dotfiles'
+      when: ansible_distribution == 'FreeBSD'
+    # This happens after the initial deployment because we need the ssh config
+    # to set VerifyHostKeyDNS for us.
+    - name: Clone dotfiles-private
+      git:
+        repo: ssh://git@git.crustytoothpaste.net/bmc/dotfiles-private.git
+        remote: def
+        dest: '{{ checkouts_dir }}/dotfiles-private'
+        version: '{{ branch }}'
+      when: private_dotfiles
+    - name: Re-deploy dotfiles with make
+      shell: 'make install'
+      args:
+        chdir: '{{ checkouts_dir }}/dotfiles'
+      when: ansible_distribution != 'FreeBSD'
+    - name: Re-deploy dotfiles with gmake
       shell: 'gmake install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
