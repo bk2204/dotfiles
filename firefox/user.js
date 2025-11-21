@@ -9,9 +9,14 @@ user_pref("privacy.globalprivacycontrol.enabled", true);
 user_pref("browser.ml.enable", false);
 user_pref("browser.ml.chat.enabled", false);
 user_pref("browser.ml.linkPreview.enabled", false);
+user_pref("browser.ml.chat.menu", false);
+user_pref("browser.ml.chat.page", false);
+user_pref("browser.ml.chat.sidebar", false);
 user_pref("browser.tabs.groups.smart.enabled", false);
 user_pref("browser.tabs.groups.smart.userEnabled", false);
 user_pref("extensions.ml.enabled", false);
+user_pref("pdfjs.enableAltTextModelDownload", false);
+user_pref("pdfjs.enableGuessAltText", false);
 user_pref("sidebar.revamp", false);
 // Always show the full URL in the address bar.
 user_pref("browser.urlbar.trimURLs", false);
