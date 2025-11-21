@@ -3,6 +3,16 @@ def uri_encode(s)
 end
 
 DCTJump.configure do |c|
+  c.editor = ->(foreground: false) do
+    command = ['zsh', '-c', "bmc_editor \"$@\"", "bmc_editor"]
+    command += (foreground ? %w[--detach] : [])
+    data = ''
+    IO.popen(c.env, command, 'r') do |io|
+      data = io.read
+    end
+    data
+  end
+
   c.on('hello') do
     puts "Hello, world!"
   end

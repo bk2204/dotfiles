@@ -79,12 +79,13 @@ class DCTJump
 
   class Configuration
     attr_reader :rules
-    attr_accessor :env, :data
+    attr_accessor :env, :data, :editor
 
     def initialize
       @rules = []
       @env = ENV
       @data = {}
+      @editor = nil
     end
 
     def on(*args, simple: true, &block)
@@ -96,14 +97,17 @@ class DCTJump
       self
     end
 
-    def edit(*args, foreground: false, editor_cmd: 'bmc_editor')
-      command = ['zsh', '-c', "#{editor_cmd} \"$0\" \"$@\""]
-      command += (foreground ? %w[--detach] : [])
-      data = ''
-      IO.popen(env, command, 'r') do |io|
-        data = io.read
-      end
-      system(env, 'sh', '-c', %Q[#{data} "$0" "$@"], *args)
+    def edit(*args, foreground: false)
+      editor = if @editor
+                 @editor.call(foreground: foreground)
+               elsif @env['TERM'] && @env['TERM'] != 'dumb' && @env['VISUAL']
+                 @env['VISUAL']
+               elsif @env['EDTIOR']
+                 @env['EDITOR']
+               else
+                 'vi'
+               end
+      system(@env, 'sh', '-c', %Q[#{editor} "$@"], editor, *args)
     end
 
     def open(*args)
