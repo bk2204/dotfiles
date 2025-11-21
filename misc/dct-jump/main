@@ -56,6 +56,23 @@ DCTJump.configure do |c|
     c.open("https://github.com/#{c.data[:repos][m[0][1]]}/#{suffix}")
   end
 
+  c.on('gh', /\A(#{repos_re}|[A-Za-z0-9-]+\/[A-Za-z0-9]+)\z/, /\A([ipd])?(\d+)?\z/) do |m|
+    suffix = if m[1]
+               case m[1][1]
+               when 'i', nil
+                 "issues/#{m[1][2]}"
+               when 'p'
+                 "pull/#{m[1][2]}"
+               when 'd'
+                 "discussions/#{m[1][2]}"
+               end
+             else
+               ''
+             end
+    repo = c.data[:repos][m[0][1]] || m[0][1]
+    c.open("https://github.com/#{repo}/#{suffix}")
+  end
+
   c.on('repos') do
     repos.each do |(name, repo)|
       $stdout.puts "#{name}\t#{repo}"
