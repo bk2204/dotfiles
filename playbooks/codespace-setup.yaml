@@ -13,24 +13,24 @@
           - cargo
           - rustc
         update_cache: true
-      become: yes
+      become: true
       become_user: root
     - name: Install gopls
       apt:
         pkg:
           - gopls
-      become: yes
+      become: true
       become_user: root
       ignore_errors: true
     # This is required because otherwise installing the zsh configuration causes
     # zsh to fail because compinit operates on an insecure directory (~/.zsh).
     - name: Remove broken ACL for /workspaces
       shell: 'if [ -n "$(getfacl -s /workspaces)" ]; then setfacl -Rb /workspaces; fi'
-      become: yes
+      become: true
       become_user: root
     - name: Remove broken ACL for /tmp
       shell: 'if [ -n "$(getfacl -s /tmp)" ]; then setfacl -Rb /tmp; fi'
-      become: yes
+      become: true
       become_user: root
     # We would like sane ownership and permissions here.
     - name: Undo unexpected ACL ownership on /workspaces
@@ -42,7 +42,7 @@
         group: '{{ ansible_user_id }}'
         mode: o-w
         follow: false
-      become: yes
+      become: true
       become_user: root
     - name: Undo unexpected ACL ownership on home directory
       file:
@@ -53,7 +53,7 @@
         group: '{{ ansible_user_id }}'
         mode: o-rwx
         follow: false
-      become: yes
+      become: true
       become_user: root
     - name: Create /run
       file:
@@ -62,7 +62,7 @@
         owner: root
         group: root
         mode: 0755
-      become: yes
+      become: true
       become_user: root
     - name: Create /run/user
       file:
@@ -71,7 +71,7 @@
         owner: root
         group: root
         mode: 0755
-      become: yes
+      become: true
       become_user: root
     - name: Find user ID
       getent:
@@ -84,7 +84,7 @@
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_id }}"
         mode: 0700
-      become: yes
+      become: true
       become_user: root
 - name: Account Setup
   import_playbook: create-account.yaml
