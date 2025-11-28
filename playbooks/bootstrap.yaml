@@ -195,7 +195,7 @@
       become_user: root
       when: development
     - name: Configure DNSSEC in local resolver
-      shell: "perl -pi -E 'BEGIN { @x = qw/edns0 trust-ad/; } if (/^options/) { for my $i (@x) { s/$/ $i/ unless / $i/; } @x = (); } say qq[options @x] if eof && @x;'"
+      shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
       become_user: root
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
