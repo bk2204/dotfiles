@@ -2,8 +2,8 @@
 - name: 'Check for {{ item.repository }} keyring'
   stat:
     path: '{{ item.keyring }}'
-    get_checksum: no
-    get_mime: no
+    get_checksum: false
+    get_mime: false
   register: keyring
 - name: 'Download {{ item.repository }} keyring'
   get_url:

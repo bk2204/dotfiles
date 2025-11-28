@@ -93,8 +93,8 @@
     - name: Check for fonts
       stat:
         path: "{{ fonts_src }}"
-        get_checksum: no
-        get_mime: no
+        get_checksum: false
+        get_mime: false
       register: fonts
     - name: Create font symlink
       file:

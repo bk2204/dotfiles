@@ -32,9 +32,9 @@
     - name: Check if this is a minimized Ubuntu image
       stat:
         path: /etc/dpkg/dpkg.cfg.d/excludes
-        get_checksum: no
-        get_mime: no
-        get_attributes: no
+        get_checksum: false
+        get_mime: false
+        get_attributes: false
       register: minimized_image
     - name: Install manual pages
       shell: 'yes | unminimize'
