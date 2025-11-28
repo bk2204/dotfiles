@@ -39,7 +39,7 @@ class DCTJump
     def match(args)
       s = args.join(" ")
       pat = if @pat.is_a? String
-              Regexp.escape(@pat)
+              /\A#{Regexp.escape(@pat)}\z/
             else
               @pat
             end
@@ -65,7 +65,7 @@ class DCTJump
         return nil if arg.nil? || pat.nil?
 
         pat, insert = if pat.is_a? String
-                        [Regexp.escape(pat), false]
+                        [/\A#{Regexp.escape(pat)}\z/, false]
                       else
                         [pat, true]
                       end

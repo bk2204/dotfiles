@@ -21,6 +21,14 @@ DCTJump.configure do |c|
     puts "Hello, #{m[0][1]}!"
   end
 
+  c.on('good-bye') do |m|
+    puts "Goodbye, world!"
+  end
+
+  c.on('good-bye', /(.+)/) do |m|
+    puts "Goodbye, #{m[0][1]}!"
+  end
+
   c.on(/\A(es|fr|de)\z/, /(.+)/) do |m|
     c.open("https://www.wordreference.com/#{m[0][1]}en/#{uri_encode(m[1][1])}")
   end

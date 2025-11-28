@@ -15,6 +15,13 @@ describe :dct_jump do
     expect(@dir.cmd(['bin/dct-jump', 'hello', 'New', 'Jersey'])).to eq "Hello, New Jersey!\n"
   end
 
+  it 'should dismiss appropriately' do
+    @dir = TestDir.new
+    expect(@dir.cmd(['bin/dct-jump', 'good-bye'])).to eq "Goodbye, world!\n"
+    expect(@dir.cmd(['bin/dct-jump', 'good-bye', 'Toronto'])).to eq "Goodbye, Toronto!\n"
+    expect(@dir.cmd(['bin/dct-jump', 'good-bye', 'New', 'Jersey'])).to eq "Goodbye, New Jersey!\n"
+  end
+
   it 'should open expected URLs' do
     @dir = TestDir.new
     expect(@dir.cmd(%w[bin/dct-jump es sin querer queriendo], **@env)).to eq "https://www.wordreference.com/esen/sin%20querer%20queriendo\n"
