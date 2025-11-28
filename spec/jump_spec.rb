@@ -42,4 +42,8 @@ describe :dct_jump do
   it 'should edit notes' do
     expect(@dir.cmd_with_exes(['ex'], %w[bin/dct-jump notes homedir], **@renv)).to eq %Q["ex" "+Notes homedir" ]
   end
+
+  it 'should print repos' do
+    expect(@dir.cmd(%w[bin/dct-jump repos], **@renv)).to match %r[^git\tgit/git$]m
+  end
 end

@@ -82,7 +82,7 @@ DCTJump.configure do |c|
   end
 
   c.on('repos') do
-    repos.each do |(name, repo)|
+    c.data[:repos].each do |(name, repo)|
       $stdout.puts "#{name}\t#{repo}"
     end
   end
