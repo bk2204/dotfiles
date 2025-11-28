@@ -1,3 +1,2 @@
 [/]
-layouts=['bmc']
 options=['capslock\tcapslock:escape', 'compose\tcompose:lwin', 'terminate\tterminate:ctrl_alt_bksp', 'Compose key\tcompose:lwin', 'caps\tcaps:escape']
