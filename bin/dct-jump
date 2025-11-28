@@ -61,6 +61,7 @@ class DCTJump
       if args.length > @pats.length
         args = args[0..@pats.length-2] + [args[@pats.length-1..].join(" ")]
       end
+      return nil if args.empty?
       args.zip(@pats).each do |arg, pat|
         return nil if arg.nil? || pat.nil?
 

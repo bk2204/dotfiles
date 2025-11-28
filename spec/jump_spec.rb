@@ -8,6 +8,11 @@ describe :dct_jump do
     @renv = @env.merge("PATH" => @dir.test_bin)
   end
 
+  it 'should do nothing if no command given' do
+    @dir = TestDir.new
+    expect(@dir.cmd(['bin/dct-jump'])).to eq ""
+  end
+
   it 'should greet appropriately' do
     @dir = TestDir.new
     expect(@dir.cmd(['bin/dct-jump', 'hello'])).to eq "Hello, world!\n"
