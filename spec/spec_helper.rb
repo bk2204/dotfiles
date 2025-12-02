@@ -83,6 +83,8 @@ class TestDir
     FileUtils.cp_r(".", @src)
     system({ "HOME" => @dir, "PATH" => ENV["PATH"], **extra_env }, "make", "clean", out: "/dev/null", chdir: @src)
     system({ "HOME" => @dir, "PATH" => ENV["PATH"], **extra_env }, "make", "install", out: "/dev/null", chdir: @src)
+    dir = @dir
+    ObjectSpace.define_finalizer(self, Remover.new(dir))
   end
 
   def tempdir
@@ -135,6 +137,18 @@ class TestDir
     ensure
       file.close
       file.unlink
+    end
+  end
+
+  private
+
+  class Remover
+    def initialize(dir)
+      @dir = dir
+    end
+
+    def call(*args)
+      FileUtils.rm_rf(@dir)
     end
   end
 end
