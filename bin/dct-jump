@@ -20,6 +20,9 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+require 'optparse'
+require 'shellwords'
+
 class DCTJump
   class << self
     def config
@@ -100,13 +103,14 @@ class DCTJump
 
   class Configuration
     attr_reader :rules
-    attr_accessor :env, :data, :editor
+    attr_accessor :env, :data, :editor, :options
 
     def initialize
       @rules = []
       @env = ENV
       @data = {}
       @editor = nil
+      @options = {output: :run}
     end
 
     def on(*args, simple: true, &block)
@@ -118,25 +122,40 @@ class DCTJump
       self
     end
 
+    def do_command(env, cmd, *args)
+      $stderr.puts Shellwords.join([cmd] + args) if @options[:verbose]
+      system(env, cmd, *args)
+    end
+
     def edit(*args, foreground: false)
-      editor = if @editor
-                 @editor.call(foreground: foreground)
-               elsif @env['TERM'] && @env['TERM'] != 'dumb' && @env['VISUAL']
-                 @env['VISUAL']
-               elsif @env['EDTIOR']
-                 @env['EDITOR']
-               else
-                 'vi'
-               end
-      system(@env, 'sh', '-c', %Q[#{editor} "$@"], editor, *args)
+      case options[:output]
+      when :print
+        $stdout.puts Shellwords.join(args)
+      else
+        editor = if @editor
+                   @editor.call(foreground: foreground)
+                 elsif @env['TERM'] && @env['TERM'] != 'dumb' && @env['VISUAL']
+                   @env['VISUAL']
+                 elsif @env['EDTIOR']
+                   @env['EDITOR']
+                 else
+                   'vi'
+                 end
+        do_command(@env, 'sh', '-c', %Q[#{editor} "$@"], editor, *args)
+      end
     end
 
     def open(*args)
-      commands = ['xdg-open', 'open']
-      commands.each do |cmd|
-        if which(cmd)
-          system(env, cmd, *args)
-          return
+      case options[:output]
+      when :print
+        $stdout.puts Shellwords.join(args)
+      else
+        commands = ['xdg-open', 'open']
+        commands.each do |cmd|
+          if which(cmd)
+            do_command(env, cmd, *args)
+            return
+          end
         end
       end
     end
@@ -159,21 +178,41 @@ class DCTJump
     end
   end
 
-  def self.main(args, env)
-    if !args.empty? && args[0] == "--help"
-      $stdout.puts <<~EOM
-      Usage: dct-jump [args]
+  def self.parse_args(args)
+    options = {output: :run}
+    OptionParser.new do |opts|
+      opts.on('--help', 'Print this usage information') do
+        puts opts
 
-      Evaluates the specified arguments using the configuration file and
-      performs the action matching the given arguments.  Common actions include
-      opening a URL in the browser or opening a file in an editor.
-      EOM
-      return 0
-    end
+        $stdout.puts <<~EOM
+        Usage: dct-jump [args]
+
+        Evaluates the specified arguments using the configuration file and
+        performs the action matching the given arguments.  Common actions include
+        opening a URL in the browser or opening a file in an editor.
+        EOM
+        options[:command] = :help
+      end
+
+      opts.on('--print', 'Print URLs and files instead of running them') do
+        options[:output] = :print
+      end
+
+      opts.on('-v', '--verbose', 'Print commands before running them') do
+        options[:verbose] = :true
+      end
+    end.parse!(args)
+    [options, args]
+  end
+
+  def self.main(args, env)
+    options, args = parse_args(args)
+    return 0 if options[:command] == :help
 
     config_path = env["XDG_CONFIG_HOME"] || File.join(env["HOME"], '.config')
     configure do |c|
       c.env = env
+      c.options = options
       c.include(File.join(config_path, 'dct-jump', 'config'))
     end
 
