@@ -1,7 +1,6 @@
 .dircolors type=file mode=0640 src=misc/dircolors
 .libao type=file mode=0640 src=misc/libao
 .mailcap type=file mode=0640 src=misc/mailcap
-.Xsession type=file mode=0640 src=misc/Xsession
 .Xmodmap type=file mode=0640 src=misc/Xmodmap
 .config/lawn/config.yaml type=file mode=0600 src=misc/lawn.yaml
 .config/alacritty/alacritty.yml type=file mode=0640 src=misc/alacritty.yml
