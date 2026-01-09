@@ -20,14 +20,14 @@
         packages:
           - 1password
           - 1password-cli
-        condition: "{{ graphical and ansible_userspace_architecture == 'x86_64' }}"
+        condition: '{{ graphical and ansible_facts["userspace_architecture"] == "x86_64" }}'
       - repository: GitHub CLI
         remote_keyring: https://cli.github.com/packages/githubcli-archive-keyring.gpg
         downloaded_keyring: /etc/apt/keyrings/githubcli-archive-keyring.gpg
         keyring: /etc/apt/keyrings/githubcli-archive-keyring.gpg
         sources_list_path: /etc/apt/sources.list.d/github-cli.list
         packages: ~
-        condition: '{{ development and (ansible_distribution != "Debian" or ansible_distribution_version == "n/a") }}'
+        condition: '{{ development and (ansible_facts["distribution"] != "Debian" or ansible_facts["distribution_version"] == "n/a") }}'
   tasks:
     - name: Check if this is a minimized Ubuntu image
       stat:
@@ -47,13 +47,13 @@
         repo: ppa:git-core/ppa
       become: true
       become_user: root
-      when: ansible_distribution == 'Ubuntu'
+      when: ansible_facts["distribution"] == 'Ubuntu'
     - name: Install neovim-stable PPA
       apt_repository:
         repo: ppa:neovim-ppa/stable
       become: true
       become_user: root
-      when: ansible_distribution == 'Ubuntu'
+      when: ansible_facts["distribution"] == 'Ubuntu'
     - name: Disable /tmp as tmpfs
       shell: systemctl mask tmp.mount
       become: true
@@ -102,7 +102,7 @@
         update_cache: true
       become: true
       become_user: root
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      when: ansible_facts["distribution"] == 'Debian' or ansible_facts["distribution"] == 'Ubuntu'
     - name: Install optional packages
       apt:
         pkg:
@@ -110,7 +110,7 @@
       become: true
       become_user: root
       ignore_errors: true
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      when: ansible_facts["distribution"] == 'Debian' or ansible_facts["distribution"] == 'Ubuntu'
     - name: Install FreeBSD packages
       package:
         name:
@@ -132,7 +132,7 @@
           - zsh
       become: true
       become_user: root
-      when: ansible_distribution == 'FreeBSD'
+      when: ansible_facts["distribution"] == 'FreeBSD'
     - name: Install graphical and desktop packages
       apt:
         pkg:
@@ -172,16 +172,16 @@
           - firefox-esr
       become: true
       become_user: root
-      # ansible_distribution_version is "n/a" on sid.  Otherwise, it contains
+      # ansible_facts["distribution_version"] is "n/a" on sid.  Otherwise, it contains
       # the version number.
-      when: graphical and ansible_distribution == 'Debian' and ansible_distribution_version != "n/a"
+      when: graphical and ansible_facts["distribution"] == 'Debian' and ansible_facts["distribution_version"] != "n/a"
     - name: Install Firefox
       apt:
         pkg:
           - firefox
       become: true
       become_user: root
-      when: graphical and (ansible_distribution != 'Debian' or ansible_distribution_version == "n/a")
+      when: graphical and (ansible_facts["distribution"] != 'Debian' or ansible_facts["distribution_version"] == "n/a")
     - name: Install APT repositories
       include_tasks: "{{ playbook_dir }}/install-apt-repo.yaml"
       loop: "{{ apt_repos }}"
@@ -198,4 +198,4 @@
       shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
       become_user: root
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      when: ansible_facts["distribution"] == 'Debian' or ansible_facts["distribution"] == 'Ubuntu'

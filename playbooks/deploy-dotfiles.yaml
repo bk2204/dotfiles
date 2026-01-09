@@ -4,11 +4,11 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
   vars:
-    checkouts_dir: /home/{{ ansible_user_id }}/checkouts
+    checkouts_dir: /home/{{ ansible_facts["user_id"] }}/checkouts
     branch: dev
     fonts_src: /usr/share/texlive/texmf-dist/fonts/opentype/adobe
     fonts_dest: adobe
-    group: "{{ ansible_user_id }}"
+    group: '{{ ansible_facts["user_id"] }}'
     dotfiles_config: 'config/config-dev.yaml'
     private_dotfiles: true
   tasks:
@@ -16,7 +16,7 @@
       file:
         path: '{{ checkouts_dir }}'
         state: directory
-        owner: '{{ ansible_user_id }}'
+        owner: '{{ ansible_facts["user_id"] }}'
         group: '{{ group }}'
     - name: Clone dotfiles
       git:
@@ -33,8 +33,8 @@
       file:
         src: '{{ dotfiles_config }}'
         dest: '{{ checkouts_dir }}/dotfiles/config.yaml'
-        owner: '{{ ansible_user_id }}'
-        group: '{{ ansible_user_id }}'
+        owner: '{{ ansible_facts["user_id"] }}'
+        group: '{{ ansible_facts["user_id"] }}'
         state: link
       when: config.stat.exists is defined and not config.stat.exists
     - name: Checkout submodules for dotfiles
@@ -45,12 +45,12 @@
       shell: 'make install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_distribution != 'FreeBSD'
+      when: ansible_facts["distribution"] != 'FreeBSD'
     - name: Deploy dotfiles with gmake
       shell: 'gmake install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_distribution == 'FreeBSD'
+      when: ansible_facts["distribution"] == 'FreeBSD'
     # This happens after the initial deployment because we need the ssh config
     # to set VerifyHostKeyDNS for us.
     - name: Clone dotfiles-private
@@ -64,31 +64,31 @@
       shell: 'make install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_distribution != 'FreeBSD'
+      when: ansible_facts["distribution"] != 'FreeBSD'
     - name: Re-deploy dotfiles with gmake
       shell: 'gmake install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_distribution == 'FreeBSD'
+      when: ansible_facts["distribution"] == 'FreeBSD'
     - name: Create .local directory
       file:
-        path: '/home/{{ ansible_user_id }}/.local'
+        path: '/home/{{ ansible_facts["user_id"] }}/.local'
         state: directory
     - name: Create .local/share directory
       file:
-        path: '/home/{{ ansible_user_id }}/.local/share'
+        path: '/home/{{ ansible_facts["user_id"] }}/.local/share'
         state: directory
     - name: Create .local/run directory
       file:
-        path: '/home/{{ ansible_user_id }}/.local/run'
+        path: '/home/{{ ansible_facts["user_id"] }}/.local/run'
         state: directory
     - name: Create Lawn directory
       file:
-        path: '/home/{{ ansible_user_id }}/.local/run/lawn'
+        path: '/home/{{ ansible_facts["user_id"] }}/.local/run/lawn'
         state: directory
     - name: Create fonts directory
       file:
-        path: '/home/{{ ansible_user_id }}/.local/share/fonts'
+        path: '/home/{{ ansible_facts["user_id"] }}/.local/share/fonts'
         state: directory
     - name: Check for fonts
       stat:
@@ -100,7 +100,7 @@
       file:
         state: link
         src: "{{ fonts_src }}"
-        dest: '/home/{{ ansible_user_id }}/.local/share/fonts/{{ fonts_dest }}'
+        dest: '/home/{{ ansible_facts["user_id"] }}/.local/share/fonts/{{ fonts_dest }}'
       when: fonts.stat.exists and fonts.stat.isdir
     - name: Regenerate font cache
       shell: fc-cache
