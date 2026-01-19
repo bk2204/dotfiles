@@ -59,14 +59,17 @@ class Processor
     rescue Errno::EEXIST
     end
     cache_file = File.join(@options[:cache_dir], "cs-#{id}.yaml")
-    begin
+    params = begin
       YAML.safe_load(File.open(cache_file).read, permitted_classes: [Symbol])
     rescue Errno::ENOENT
+      nil
+    end
+    if params.nil?
       params = parameters(id)
       fp = File.open(cache_file, "wb")
       fp.write YAML.dump(params)
-      params
     end
+    params
   end
 
   def exec(*args, **options)
