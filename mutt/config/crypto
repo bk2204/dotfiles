@@ -5,11 +5,11 @@ set ssl_use_tlsv1=no
 set ssl_use_tlsv1_1=no
 set ssl_starttls=yes
 # OpenPGP.
-set crypt_autosign=yes
+set crypt_autosign=no
 set crypt_autosmime=no
-set crypt_replyencrypt=yes
-set crypt_replysign=yes
-set crypt_replysignencrypted=yes
+set crypt_replyencrypt=no
+set crypt_replysign=no
+set crypt_replysignencrypted=no
 set crypt_verify_sig=yes
 set crypt_timestamp=yes
 set pgp_use_gpg_agent=yes
