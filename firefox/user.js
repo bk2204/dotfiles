@@ -20,3 +20,5 @@ user_pref("pdfjs.enableGuessAltText", false);
 user_pref("sidebar.revamp", false);
 // Always show the full URL in the address bar.
 user_pref("browser.urlbar.trimURLs", false);
+// Make clicking on website hover menus work in KDE.
+user_pref("widget.gtk.ignore-bogus-leave-notify", 1);
