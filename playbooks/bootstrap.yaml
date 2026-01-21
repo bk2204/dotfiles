@@ -102,7 +102,7 @@
         update_cache: true
       become: true
       become_user: root
-      when: ansible_facts["distribution"] == 'Debian' or ansible_facts["distribution"] == 'Ubuntu'
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install optional packages
       apt:
         pkg:
@@ -110,7 +110,7 @@
       become: true
       become_user: root
       ignore_errors: true
-      when: ansible_facts["distribution"] == 'Debian' or ansible_facts["distribution"] == 'Ubuntu'
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install FreeBSD packages
       package:
         name:
@@ -198,4 +198,4 @@
       shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
       become_user: root
-      when: ansible_facts["distribution"] == 'Debian' or ansible_facts["distribution"] == 'Ubuntu'
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
