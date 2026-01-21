@@ -69,6 +69,7 @@
       become: true
       become_user: root
       ignore_errors: true
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install Debian packages
       apt:
         pkg:
