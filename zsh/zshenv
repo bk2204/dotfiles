@@ -209,6 +209,7 @@ setup_path () {
     typeset -U personalpath
     typeset -U softwarepath
     typeset -U localpath
+    typeset -U expansionpath
     typeset -xU manpath MANPATH
     local i
 
@@ -227,6 +228,10 @@ setup_path () {
     localpath=(
         /usr/local/bin
         /usr/local/sbin
+    )
+    expansionpath=(
+        /opt/homebrew/bin
+        /opt/homebrew/sbin
     )
     corepath=(
         /usr/bin
@@ -263,8 +268,11 @@ setup_path () {
             local)
                 append_paths software local
                 ;;
+            expansion)
+                append_paths software local expansion
+                ;;
             core)
-                append_paths software local core
+                append_paths software local expansion core
                 ;;
             *)
                 path+=($i)
@@ -272,7 +280,7 @@ setup_path () {
         esac
     done
 
-    append_paths software local core
+    append_paths software local expansion core
 
     # Export miscellaneous paths.
     export MANPATH PATH COREPATH
