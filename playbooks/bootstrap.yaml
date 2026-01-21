@@ -5,11 +5,11 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
   vars:
-    # Whether to bootstrap a graphical environment.  This assumes a Debian or
-    # Ubuntu system.
+    # Whether to bootstrap a graphical environment.  This assumes a Debian,
+    # Ubuntu, or macOS system.
     graphical: false
-    # Whether to bootstrap a development environment.  This assumes a Debian or
-    # Ubuntu system.
+    # Whether to bootstrap a development environment.  This assumes a Debian,
+    # Ubuntu, or macOS system.
     development: false
     apt_repos:
       - repository: 1Password
@@ -166,7 +166,7 @@
           - xsltproc
       become: true
       become_user: root
-      when: graphical
+      when: graphical and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install Firefox ESR
       apt:
         pkg:
@@ -182,10 +182,11 @@
           - firefox
       become: true
       become_user: root
-      when: graphical and (ansible_facts["distribution"] != 'Debian' or ansible_facts["distribution_version"] == "n/a")
+      when: graphical and (ansible_facts["distribution"] == 'Ubuntu' or (ansible_facts["distribution"] == 'Debian' and ansible_facts["distribution_version"] == "n/a"))
     - name: Install APT repositories
       include_tasks: "{{ playbook_dir }}/install-apt-repo.yaml"
       loop: "{{ apt_repos }}"
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install development packages
       apt:
         pkg:
@@ -194,7 +195,7 @@
           - git-autofixup
       become: true
       become_user: root
-      when: development
+      when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Configure DNSSEC in local resolver
       shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
