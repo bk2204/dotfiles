@@ -136,7 +136,6 @@
     - name: Install graphical and desktop packages
       apt:
         pkg:
-          - alacritty
           - asciidoctor
           - bind9-dnsutils
           - bind9-host
@@ -149,6 +148,7 @@
           - docbook-xsl-ns
           - elinks
           - fontconfig
+          - kitty
           - krb5-user
           - libsecret-tools
           - mate-desktop
