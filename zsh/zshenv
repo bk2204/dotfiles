@@ -400,5 +400,5 @@ unfunction setup_path_hook
 unfunction append_paths
 unfunction setup_path_components
 
-unset the_preferred_locole
+unset the_preferred_locale
 true
