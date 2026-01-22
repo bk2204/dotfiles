@@ -27,6 +27,12 @@ require 'shellwords'
 
 COMMANDS = [
   {
+    func: ->(options) do
+      ["sh", "-c", ENV["DCT_BROWSER"], ENV["DCT_BROWSER"]]
+    end,
+    if: ->() { ENV["DCT_BROWSER"] }
+  },
+  {
     func: ->(options) { ["lawn", "run", "--", "browser"] },
     if: ->() { ENV["REMOTE_ENV"] }
   },
@@ -82,9 +88,11 @@ def do_exec(commands, options, args)
     return 2
   end
   prog += args
+  env = ENV.to_h
+  env.delete("DCT_BROWSER")
   filter = cmd[:filter_stderr]
   if filter
-    Open3.popen3(*prog) do |stdin, stdout, stderr, wait_thr|
+    Open3.popen3(env, *prog) do |stdin, stdout, stderr, wait_thr|
       stdin.close
       buffer = nil
       items = Set.new([stdout, stderr])
@@ -129,7 +137,7 @@ def do_exec(commands, options, args)
       end
     end
   else
-    exec(*prog)
+    exec(env, *prog)
   end
 end
 
