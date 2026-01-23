@@ -150,7 +150,12 @@ class DCTJump
       when :print
         $stdout.puts Shellwords.join(args)
       else
-        commands = ['xdg-open', 'open']
+        if options[:private] && env["BROWSER"] == "dct-browser" && args.any? { |a| a.start_with?(%r[https?://]) }
+          commands = ['dct-browser']
+          args.unshift('--private')
+        else
+          commands = ['xdg-open', 'open']
+        end
         commands.each do |cmd|
           if which(cmd)
             do_command(env, cmd, *args)
@@ -196,6 +201,10 @@ class DCTJump
 
       opts.on('--print', 'Print URLs and files instead of running them') do
         options[:output] = :print
+      end
+
+      opts.on('--private', 'Open URLs in a private window (requires dct-browser as BROWSER)') do
+        options[:private] = true
       end
 
       opts.on('-v', '--verbose', 'Print commands before running them') do
