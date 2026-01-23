@@ -37,15 +37,49 @@ COMMANDS = [
     if: ->() { ENV["REMOTE_ENV"] }
   },
   {
-    func: ->(options) { ["firefox"] },
+    func: ->(options) do
+      args = ["firefox"]
+      args << "--private-window" if options[:private]
+      args
+    end,
     filter_stderr: ->(ln) { ln !~ /Gtk-|GTK\+/ },
     if: ->() { File.exist?("/snap/firefox/current/usr/lib/firefox/firefox") },
   },
-  {func: ->(options) { ["firefox"] }},
-  {func: ->(options) { ["iceweasel"] }},
-  {func: ->(options) { ["google-chrome-beta"] }},
-  {func: ->(options) { ["chromium-browser"] }},
-  {func: ->(options) { ["google-chrome"] }},
+  {
+    func: ->(options) do
+      args = ["firefox"]
+      args << "--private-window" if options[:private]
+      args
+    end
+  },
+  {
+    func: ->(options) do
+      args = ["iceweasel"]
+      args << "--private-window" if options[:private]
+      args
+    end
+  },
+  {
+    func: ->(options) do
+      args = ["google-chrome-beta"]
+      args << "--incognito" if options[:private]
+      args
+    end
+  },
+  {
+    func: ->(options) do
+      args = ["chromium-browser"]
+      args << "--incognito" if options[:private]
+      args
+    end
+  },
+  {
+    func: ->(options) do
+      args = ["google-chrome"]
+      args << "--incognito" if options[:private]
+      args
+    end
+  },
 ]
 
 def parse_args(args)
@@ -57,6 +91,10 @@ def parse_args(args)
       puts <<-EOM.gsub(/^\s+/, '')
       Open a URL in the default browser.
       EOM
+    end
+
+    opts.on('--private', 'Open in a private window') do
+      options[:private] = true
     end
   end.parse!(args)
   [options, args]
