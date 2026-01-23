@@ -107,7 +107,7 @@ class DCTJump
 
     def initialize
       @rules = []
-      @env = ENV
+      @env = ENV.to_h
       @data = {}
       @editor = nil
       @options = {output: :run}
