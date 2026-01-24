@@ -1,0 +1,22 @@
+---
+- name: Install FreeBSD packages
+  package:
+    name:
+      - curl
+      - fusefs-sshfs
+      - git
+      - gmake
+      - gnupg
+      - less
+      - ncurses
+      - neovim
+      - perl5
+      - python3
+      - rsync
+      - ruby
+      - rubygem-neovim
+      - tmux
+      - xxd
+      - zsh
+  become: true
+  become_user: root

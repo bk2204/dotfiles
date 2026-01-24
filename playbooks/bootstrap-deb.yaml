@@ -1,0 +1,117 @@
+---
+- name: Install git-core PPA
+  apt_repository:
+    repo: ppa:git-core/ppa
+  become: true
+  become_user: root
+  when: ansible_facts["distribution"] == 'Ubuntu'
+- name: Install neovim-stable PPA
+  apt_repository:
+    repo: ppa:neovim-ppa/stable
+  become: true
+  become_user: root
+  when: ansible_facts["distribution"] == 'Ubuntu'
+- name: Install Debian packages
+  apt:
+    pkg:
+      - bc
+      - curl
+      - dc
+      - git
+      - gnupg
+      - less
+      - libpam-tmpdir
+      - locales-all
+      - make
+      - man-db
+      - manpages
+      - manpages-dev
+      - ncurses-term
+      - neovim
+      - nvi
+      - openssh-client
+      - perl
+      - procps
+      - python3
+      - rsync
+      - ruby
+      - ruby-neovim
+      - sshfs
+      - sudo
+      - tmux
+      - xxd
+      - zsh
+    update_cache: true
+  become: true
+  become_user: root
+  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+- name: Install optional packages
+  apt:
+    pkg:
+      - openssh-client-gssapi
+  become: true
+  become_user: root
+  ignore_errors: true
+  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+- name: Install graphical and desktop packages
+  apt:
+    pkg:
+      - asciidoctor
+      - bind9-dnsutils
+      - bind9-host
+      - buildah
+      - chrony
+      - clementine
+      - dconf-cli
+      - docker.io
+      - docbook5-xml
+      - docbook-xsl-ns
+      - elinks
+      - fontconfig
+      - kitty
+      - krb5-user
+      - libsecret-tools
+      - mate-desktop
+      - mutt
+      - pandoc
+      - podman
+      - podman-toolbox
+      - ruby-asciidoctor-pdf
+      - texlive-fonts-extra
+      - tmuxinator
+      - traceroute
+      - urlview
+      - xclip
+      - xsltproc
+  become: true
+  become_user: root
+  when: graphical
+- name: Install Firefox ESR
+  apt:
+    pkg:
+      - firefox-esr
+  become: true
+  become_user: root
+  # ansible_facts["distribution_version"] is "n/a" on sid.  Otherwise, it contains
+  # the version number.
+  when: graphical and ansible_facts["distribution"] == 'Debian' and ansible_facts["distribution_version"] != "n/a" and not homebrew
+- name: Install Firefox
+  apt:
+    pkg:
+      - firefox
+  become: true
+  become_user: root
+  when: graphical and (ansible_facts["distribution"] == 'Ubuntu' or (ansible_facts["distribution"] == 'Debian' and ansible_facts["distribution_version"] == "n/a"))
+- name: Install APT repositories
+  include_tasks: "{{ playbook_dir }}/install-apt-repo.yaml"
+  loop: "{{ apt_repos }}"
+  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+- name: Install development packages
+  apt:
+    pkg:
+      - build-essential
+      - gh
+      - git-autofixup
+  become: true
+  become_user: root
+  when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
