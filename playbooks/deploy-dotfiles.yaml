@@ -45,12 +45,12 @@
       shell: 'make install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_facts["distribution"] != 'FreeBSD'
+      when: ansible_facts["distribution"] not in ["FreeBSD", "Darwin"]
     - name: Deploy dotfiles with gmake
       shell: 'gmake install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_facts["distribution"] == 'FreeBSD'
+      when: ansible_facts["distribution"] in ["FreeBSD", "Darwin"]
     # This happens after the initial deployment because we need the ssh config
     # to set VerifyHostKeyDNS for us.
     - name: Clone dotfiles-private
@@ -64,12 +64,12 @@
       shell: 'make install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_facts["distribution"] != 'FreeBSD'
+      when: ansible_facts["distribution"] not in ["FreeBSD", "Darwin"]
     - name: Re-deploy dotfiles with gmake
       shell: 'gmake install'
       args:
         chdir: '{{ checkouts_dir }}/dotfiles'
-      when: ansible_facts["distribution"] == 'FreeBSD'
+      when: ansible_facts["distribution"] in ["FreeBSD", "Darwin"]
     - name: Create .local directory
       file:
         path: '{{ ansible_facts["user_dir"] }}/.local'
