@@ -1,0 +1,78 @@
+---
+- name: Check if Homebrew is installed
+  shell: command -v brew
+  register: brew_check
+  ignore_errors: true
+- name: Install Homebrew if missing
+  shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: brew_check.rc != 0
+- name: Disable Homebrew analytics
+  shell: brew analytics off
+- name: Install Debian packages
+  apt:
+    pkg:
+      - build-essential
+  become: true
+  become_user: root
+  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+- name: Install Homebrew taps
+  community.general.homebrew_tap:
+    name:
+      - macos-fuse-t/homebrew-cask
+      - dimentium/autoraise
+  when: ansible_facts["os_family"] == 'Darwin'
+- name: Install Homebrew packages
+  community.general.homebrew:
+    name:
+      - curl
+      - git
+      - gnupg
+      - make
+      - ncurses
+      - neovim
+      - nvi
+      - perl
+      - python
+      - rsync
+      - ruby
+      - tmux
+      - vim
+      - zsh
+- name: Install graphical and desktop packages for Homebrew
+  community.general.homebrew:
+    name:
+      - asciidoctor
+      - chrony
+      - docbook
+      - docbook-xsl
+      - docker
+      - felinks
+      - mutt
+      - pandoc
+      - tmuxinator
+      - urlview
+      - libxslt
+  when: graphical
+- name: Install graphical and desktop casks for Homebrew
+  community.general.homebrew_cask:
+    name:
+      - dimentium/autoraise/autoraise
+      - firefox
+      - font-source-code-pro
+      - kitty
+      - podman-desktop
+  when: graphical and ansible_facts["os_family"] == 'Darwin'
+- name: Install development packages for Homebrew
+  community.general.homebrew:
+    name:
+      - gh
+  when: development
+- name: Install git-autofixup
+  get_url:
+    dest: '/usr/local/bin/git-autofixup'
+    mode: 0755
+    url: https://raw.githubusercontent.com/torbiak/git-autofixup/55e32975088c0184e356085834995dc42245c25f/git-autofixup
+    use_netrc: false
+    checksum: sha256:d76e33715e3a25ed924f47878b8d9cfd6693bc6b121664661195c1a0914a3b11
+  become: true
+  become_user: root

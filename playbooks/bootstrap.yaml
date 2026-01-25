@@ -4,6 +4,8 @@
   gather_facts: true
   environment:
     DEBIAN_FRONTEND: noninteractive
+    NONINTERACTIVE: 1
+    PATH: /usr/local/sbin:/usr/local/bin:/opt/homebrew/sbin:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/linuxbrew/.linuxbrew/bin:/usr/bin:/usr/sbin:/bin:/sbin
   vars:
     # Whether to bootstrap a graphical environment.  This assumes a Debian,
     # Ubuntu, or macOS system.
@@ -11,6 +13,7 @@
     # Whether to bootstrap a development environment.  This assumes a Debian,
     # Ubuntu, or macOS system.
     development: false
+    homebrew: '{{ ansible_facts["os_family"] == "Darwin" }}'
     apt_repos:
       - repository: 1Password
         remote_keyring: https://downloads.1password.com/linux/keys/1password.asc
@@ -60,10 +63,13 @@
       when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install Debian packages
       include_tasks: "{{ playbook_dir }}/bootstrap-deb.yaml"
-      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu'] and not homebrew
     - name: Install FreeBSD packages
       include_tasks: "{{ playbook_dir }}/bootstrap-freebsd.yaml"
       when: ansible_facts["distribution"] == 'FreeBSD'
+    - name: Install Homebrew packages
+      include_tasks: "{{ playbook_dir }}/bootstrap-homebrew.yaml"
+      when: homebrew
     - name: Configure DNSSEC in local resolver
       shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
