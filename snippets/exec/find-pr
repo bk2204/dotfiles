@@ -1,10 +1,11 @@
 #!/bin/sh
 
 OPTS_SPEC="\
-find-pr [<options>] <revision>
+find-pr [<options>] <revision> [<base>]
 
-find-pr finds the pull request or merge request that introduced a commit
-and prints the number to standard output.
+find-pr finds the pull request or merge request that introduced a commit and
+prints the number to standard output.  The history traversed is that of the
+specified base, or HEAD if not specified.
 --
 h,help!   show the help
 "
@@ -26,7 +27,26 @@ do
 done
 
 REV="$1"
+HEAD="${2:-HEAD}"
 
-git log --topo-order --format='%H %s' | \
-    ruby -e "rev=%q[$(git rev-parse --verify "$REV^{object}")]" \
-    -e 'while gets; pr = $2.to_i if /^([0-9a-f]+) Merge pull request #(\d+)/; break if /^#{rev}/; end; puts pr'
+(
+  git log --ancestry-path --format='A %H %s' "$REV..$HEAD";
+  git log --first-parent --format='F %H %s' "$REV..$HEAD";
+) | \
+  ruby -e '
+  a = {}
+  f = [];
+  while gets
+    if $_ =~ /^A ([0-9a-f]+) Merge pull request #(\d+)/
+      a[$1] = $2.to_i
+    end
+    if $_ =~ /^F ([0-9a-f]+)/ && a[$1];
+      f << $1
+    end
+  end
+  if f.empty?
+    exit 1
+  else
+    puts a[f.last]
+  end
+'
