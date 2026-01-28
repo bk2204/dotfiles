@@ -683,6 +683,7 @@ let g:airline_symbols.readonly = '☓'
 let g:airline_symbols.linenr = '⁋'
 let g:airline_symbols.executable = '⁑'
 let g:airline_detect_spell = 0
+let g:airline#extensions#whitespace#mixed_indent_algo = 2
 let g:airline#extensions#wordcount#enabled = 1
 let g:airline#extensions#wordcount#filetypes = '\vmarkdown|rst|org|help|text|asciidoc'
 let g:airline_theme = 'base16_ct_grey'
