@@ -37,6 +37,10 @@ is_privileged () {
     [ "$(zstat -L +uid "$HOME")" -ne "$(id -u)" ]
 }
 
+has_display () {
+    [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ] || [ "$(launchctl managername 2>/dev/null)" = Aqua ]
+}
+
 setup_xdg_vars () {
     local i
 
@@ -131,7 +135,7 @@ bmc_editor () {
         shift
     done
 
-    [[ -n $DISPLAY ]] && display=t
+    has_display && display=t
     [[ $TERM = dumb ]] && dumb=t
     [[ -n $REMOTE_ENV ]] && remote=t
 
