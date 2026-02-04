@@ -83,8 +83,14 @@ set_tty () {
 }
 has_term () {
     local termname="$1"
-    # Redirection is required because zsh complains about bad TERM.
-    TERM=$termname echotc xo >/dev/null 2>/dev/null
+
+    if command -v infocmp >/dev/null 2>&1
+    then
+        infocmp "$termname" >/dev/null 2>&1
+    else
+        # Redirection is required because zsh complains about bad TERM.
+        TERM=$termname echotc xo >/dev/null 2>/dev/null
+    fi
 }
 set_if_has_term () {
     local termname
