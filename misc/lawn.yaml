@@ -31,3 +31,8 @@ v0:
     default:
       if: true
       location: '!printf "%%s/data/remote" "$HOME"'
+  proxy:
+    ssh:
+      timeout:
+        poll_ms: 100
+        server_read_ms: 100
