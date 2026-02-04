@@ -1,1 +1,2 @@
 .ssh/config type=file mode=0600 src=ssh/config.gen
+.ssh/config.d/crustytoothpaste type=file mode=0600 src=ssh/config.d/crustytoothpaste.gen

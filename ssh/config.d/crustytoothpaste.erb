@@ -1,9 +1,15 @@
+<%
+require 'etc'
+require 'set'
+-%>
 Host *.crustytoothpaste.net
+<% if Etc.uname[:sysname] == "Linux" -%>
     GSSAPIAuthentication yes
     GSSAPIKeyExchange no
     GSSAPIDelegateCredentials yes
     GSSAPIRenewalForcesRekey yes
     GSSAPITrustDNS no
+<% end -%>
     ForwardAgent yes
     Protocol 2
     VerifyHostKeyDNS yes

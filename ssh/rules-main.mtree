@@ -1,2 +1,2 @@
-.ssh/config.d type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=ssh/config.d
+.ssh/config.d type=dir mode=0700 src=ssh/config.d
 .ssh/authorized_signers type=file mode=0600 src=ssh/authorized_signers.gen
