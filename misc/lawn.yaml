@@ -36,3 +36,16 @@ v0:
       timeout:
         poll_ms: 100
         server_read_ms: 100
+  credential:
+    if: true
+    control: |
+      !f() {
+        case $0 in
+          create-location)
+            echo /memory/vault/;;
+        esac
+      }; f
+    backends:
+      - name: memory
+        type: memory
+        if: true
