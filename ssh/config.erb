@@ -1,4 +1,5 @@
 <%
+require 'etc'
 require 'set'
 
 algos = {
@@ -86,6 +87,8 @@ Host *
     <%= name -%> <%= algo[:wanted].join(',') %>
 <% end -%>
     RekeyLimit 1G
+<% if Etc.uname[:sysname] == "Linux" -%>
     GSSAPIKeyExchange no
+<% end -%>
     SendEnv LANG LC_* GIT_PROTOCOL
     CheckHostIP no

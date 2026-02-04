@@ -3,7 +3,7 @@ SSH_AUTHORIZED_SIGNERS = $(wildcard ssh/authorized_signers.d/*)
 GENERATED_FILES += ssh/authorized_signers.gen
 
 ifeq ($(TEMPLATE),1)
-TEMPLATE_FILES	+= ssh/config.gen
+TEMPLATE_FILES	+= ssh/config.gen ssh/config.d/crustytoothpaste.gen
 MTREE_SOURCES	+= ssh/rules-template.mtree
 endif
 
