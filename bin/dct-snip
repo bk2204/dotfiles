@@ -61,7 +61,7 @@ class SnippetStorage
   end
 
   def find_text(snip)
-    if File.absolute_path?(snip)
+    if snip.start_with?("/")
       if File.exists?(snip)
         return snip
       else
@@ -74,7 +74,7 @@ class SnippetStorage
   end
 
   def find_executable(snip)
-    if File.absolute_path?(snip)
+    if snip.start_with?("/")
       if File.executable?(snip)
         return snip
       else
