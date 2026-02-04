@@ -10,3 +10,5 @@ email:
 git:
     credential-helper: os
     sign-commits: openpgp
+gui:
+    desktop: kde
