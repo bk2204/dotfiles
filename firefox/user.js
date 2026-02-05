@@ -28,6 +28,8 @@ user_pref("sidebar.revamp", false);
 user_pref("browser.urlbar.trimURLs", false);
 // Make clicking on website hover menus work in KDE.
 user_pref("widget.gtk.ignore-bogus-leave-notify", 1);
+// Use the default system certificate if necessary.
+user_pref("security.default_personal_cert", "Select Automatically");
 // Disable all telemetry.
 user_pref("toolkit.telemetry.archive.enabled", false);
 user_pref("toolkit.telemetry.server", "");
