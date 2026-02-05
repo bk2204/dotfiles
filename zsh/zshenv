@@ -73,7 +73,8 @@ dct-set-up-ssh-agent () {
     local i
     dct-is-ssh-session && return
     dct-is-privileged && return
-    for i in "$HOME/.1password/agent.sock"
+    for i in "$HOME/.1password/agent.sock" \
+        "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     do
         if [[ -S "$i" ]]
         then
