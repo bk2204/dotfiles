@@ -20,7 +20,7 @@ v0:
       command: '!$BROWSER'
     gvi:
       if: true
-      command: '!f() { export REMOTE_HOST=%(sq:cenv:HOSTNAME) CODESPACE_NAME=%(sq:cenv:CODESPACE_NAME) CWD=%(sq:cenv:PWD); if command -v neovide >/dev/null 2>&1; then neovide --neovim-bin "$HOME/bin/ssh-nvim" "$@" </dev/null; else nvim-gtk --nvim-bin-path "$HOME/bin/ssh-nvim" "$@" </dev/null; fi; };f'
+      command: '!f() { export REMOTE_HOST=%(sq:cenv:HOSTNAME) CODESPACE_NAME=%(sq:cenv:CODESPACE_NAME) CWD=%(sq:cenv:PWD) NEOVIDE_FORK=1; if command -v neovide >/dev/null 2>&1; then neovide --neovim-bin "$HOME/bin/ssh-nvim" "$@" </dev/null; else nvim-gtk --nvim-bin-path "$HOME/bin/ssh-nvim" "$@" </dev/null; fi; };f'
     sha256sum:
       if: true
       command: '!f() { if command -v sha256sum >/dev/null 2>&1; then sha256sum "$@"; else shasum -a 256 "$@"; fi; };f'
