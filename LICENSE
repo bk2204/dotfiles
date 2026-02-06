@@ -5,7 +5,7 @@ Comment:
   the output is subject to the appropriate license.
 
 Files: *
-Copyright: 2007-2025 brian m. carlson
+Copyright: 2007-2026 brian m. carlson
 License: Expat
 
 Files: vim/syntax/*.vim
