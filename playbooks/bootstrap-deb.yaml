@@ -3,6 +3,8 @@
   apt:
     pkg:
       - gnupg
+  become: true
+  become_user: root
 - name: Install git-core PPA
   apt_repository:
     repo: ppa:git-core/ppa
