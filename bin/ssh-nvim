@@ -8,17 +8,20 @@ set_sock () {
     fi
 }
 
+HOST_OS="$(uname -s)"
+
 if [ -n "$CODESPACE_NAME" ]
 then
     set_sock localhost
-    exec lawn proxy -- gh cs ssh -c "$CODESPACE_NAME" -- -A -oIdentityAgent='$SSH_AUTH_SOCK' "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
+    exec lawn proxy -- gh cs ssh -c "$CODESPACE_NAME" -- -A -oIdentityAgent='$SSH_AUTH_SOCK' "cd \"$CWD\" && env -u TERM HOST_OS=\"$HOST_OS\" nvim $(git rev-parse --sq-quote "$@")"
 fi
 
 if [ "$REMOTE_HOST" = "$(hostname)" ] || [ "$REMOTE_HOST" = "$(hostname -f)" ]
 then
     cd "$CWD"
+    export HOST_OS
     exec nvim "$@"
 fi
 
 set_sock "$REMOTE_HOST"
-exec lawn proxy -- ssh -A -oIdentityAgent='$SSH_AUTH_SOCK' "$REMOTE_HOST" "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
+exec lawn proxy -- ssh -A -oIdentityAgent='$SSH_AUTH_SOCK' "$REMOTE_HOST" "cd \"$CWD\" && env -u TERM HOST_OS=\"$HOST_OS\" nvim $(git rev-parse --sq-quote "$@")"
