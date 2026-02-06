@@ -595,7 +595,10 @@ function! s:SetGUIOptions()
     if has("nvim")
       let g:neovide_cursor_animation_length = 0
       let g:neovide_scroll_animation_length = 0
-      if !has("mac")
+
+      " If we're not running on a Mac and we're not running on a remote system
+      " via Lawn with the UI on a Mac…
+      if !has("mac") && expand("$HOST_OS") != "Darwin"
         let g:neovide_scale_factor = 0.5
       endif
       if exists(":Guifont")
