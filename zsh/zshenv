@@ -246,11 +246,8 @@ setup_path () {
         /sbin
         /usr/games
     )
-    manpath=(
-        ~/man
-        /usr/share/man
-        /usr/local/share/man
-    )
+
+    MANPATH="$HOME/.local/share/man:"
 
     setup_path_hook
 
