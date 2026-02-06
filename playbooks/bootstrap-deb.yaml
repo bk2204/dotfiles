@@ -1,4 +1,8 @@
 ---
+- name: Install PPA prerequisites
+  apt:
+    pkg:
+      - gnupg
 - name: Install git-core PPA
   apt_repository:
     repo: ppa:git-core/ppa
@@ -18,7 +22,6 @@
       - curl
       - dc
       - git
-      - gnupg
       - less
       - libpam-tmpdir
       - locales-all
