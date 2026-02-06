@@ -270,6 +270,13 @@ if (v:version >= 702 || (v:version == 701 && has("patch40"))) && s:mode != 'ex'
     au ColorScheme  *       hi def link bmcSpaceTabWhitespace Error
     au ColorScheme  *       hi def link bmcTrailingNewline  Error
   augroup end
+
+  if exists(":terminal") == 2
+    augroup whitespace
+      au TermOpen     *       call s:SetWhitespacePattern(0)
+      au TermLeave    *       call clearmatches()
+    augroup end
+  endif
 endif
 
 " Event-related tasks.
@@ -351,7 +358,7 @@ function! s:GetPatternList()
 endfunction
 
 function! s:GetDefaultWhitespaceMode()
-  return &ft == "help" && &readonly ? 0 : 1
+  return (&ft == "help" && &readonly) || &bt == "terminal" ? 0 : 1
 endfunction
 
 " Set up the patterns.
