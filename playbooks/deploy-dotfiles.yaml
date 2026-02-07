@@ -4,7 +4,7 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
   vars:
-    checkouts_dir: /home/{{ ansible_facts["user_id"] }}/checkouts
+    checkouts_dir: '{{ ansible_facts["user_dir"] }}/checkouts'
     branch: dev
     fonts_src: /usr/share/texlive/texmf-dist/fonts/opentype/adobe
     fonts_dest: adobe
@@ -72,23 +72,23 @@
       when: ansible_facts["distribution"] == 'FreeBSD'
     - name: Create .local directory
       file:
-        path: '/home/{{ ansible_facts["user_id"] }}/.local'
+        path: '{{ ansible_facts["user_dir"] }}/.local'
         state: directory
     - name: Create .local/share directory
       file:
-        path: '/home/{{ ansible_facts["user_id"] }}/.local/share'
+        path: '{{ ansible_facts["user_dir"] }}/.local/share'
         state: directory
     - name: Create .local/run directory
       file:
-        path: '/home/{{ ansible_facts["user_id"] }}/.local/run'
+        path: '{{ ansible_facts["user_dir"] }}/.local/run'
         state: directory
     - name: Create Lawn directory
       file:
-        path: '/home/{{ ansible_facts["user_id"] }}/.local/run/lawn'
+        path: '{{ ansible_facts["user_dir"] }}/.local/run/lawn'
         state: directory
     - name: Create fonts directory
       file:
-        path: '/home/{{ ansible_facts["user_id"] }}/.local/share/fonts'
+        path: '{{ ansible_facts["user_dir"] }}/.local/share/fonts'
         state: directory
     - name: Check for fonts
       stat:
@@ -100,7 +100,7 @@
       file:
         state: link
         src: "{{ fonts_src }}"
-        dest: '/home/{{ ansible_facts["user_id"] }}/.local/share/fonts/{{ fonts_dest }}'
+        dest: '{{ ansible_facts["user_dir"] }}/.local/share/fonts/{{ fonts_dest }}'
       when: fonts.stat.exists and fonts.stat.isdir
     - name: Regenerate font cache
       shell: fc-cache
