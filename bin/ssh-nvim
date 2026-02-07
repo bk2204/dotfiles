@@ -1,8 +1,17 @@
 #!/bin/sh
 
+set_sock () {
+    local agent=$(ssh -G "$1" | grep identityagent | awk '{ print $2 }')
+    if [ -z "$SSH_AUTH_SOCK" ] && [ -n "$agent" ]
+    then
+        export SSH_AUTH_SOCK="$agent"
+    fi
+}
+
 if [ -n "$CODESPACE_NAME" ]
 then
-    exec lawn proxy -- gh cs ssh -c "$CODESPACE_NAME" -- "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
+    set_sock localhost
+    exec lawn proxy -- gh cs ssh -c "$CODESPACE_NAME" -- -A -oIdentityAgent='$SSH_AUTH_SOCK' "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
 fi
 
 if [ "$REMOTE_HOST" = "$(hostname)" ] || [ "$REMOTE_HOST" = "$(hostname -f)" ]
@@ -11,4 +20,5 @@ then
     exec nvim "$@"
 fi
 
-exec lawn proxy -- ssh "$REMOTE_HOST" "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
+set_sock "$REMOTE_HOST"
+exec lawn proxy -- ssh -A -oIdentityAgent='$SSH_AUTH_SOCK' "$REMOTE_HOST" "cd \"$CWD\" && env -u TERM nvim $(git rev-parse --sq-quote "$@")"
