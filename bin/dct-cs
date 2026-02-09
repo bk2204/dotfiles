@@ -14,9 +14,13 @@ require 'digest'
 require 'open3'
 require 'optparse'
 require 'openssl'
-require 'random/formatter'
 require 'securerandom'
 require 'yaml'
+
+begin
+  require 'random/formatter'
+rescue LoadError
+end
 
 class Processor
   def initialize(stdout, stderr, **options)
