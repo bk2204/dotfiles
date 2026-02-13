@@ -1,2 +1,3 @@
 .ssh/config.d type=dir mode=0700 src=ssh/config.d
+.ssh/config.d/codespaces type=file mode=0600 src=ssh/config.d/codespaces
 .ssh/authorized_signers type=file mode=0600 src=ssh/authorized_signers.gen

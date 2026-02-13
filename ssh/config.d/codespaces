@@ -1,0 +1,5 @@
+Host localhost
+    NoHostAuthenticationForLocalhost yes
+    UserKnownHostsFile /dev/null
+    StrictHostKeyChecking no
+    ForwardAgent yes
