@@ -38,7 +38,8 @@ is_privileged () {
 }
 
 has_display () {
-    [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ] || [ "$(launchctl managername 2>/dev/null)" = Aqua ]
+    [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ] || [ "$(launchctl managername 2>/dev/null)" = Aqua ] ||
+        ([ "$(uname -s)" = Darwin ] && [ -z "$REMOTE_ENV" ])
 }
 
 setup_xdg_vars () {
