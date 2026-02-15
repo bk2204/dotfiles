@@ -11,5 +11,21 @@ set sort=threads
 set sort_aux=date
 set sort_thread_groups=last-date-received
 set wait_key=no
+
+color normal white black
+color attachment brightyellow black
+color hdrdefault cyan black
+color indicator black cyan
+color markers brightred black
+color quoted brightgreen black
+color signature cyan black
+color status brightgreen blue
+color tilde blue black
+color tree red black
+
+color index brightred black ~D
+color index brightcyan black ~T
+
+color header cyan black ^
 color status bold cyan black
 # vim: set syntax=muttrc:
