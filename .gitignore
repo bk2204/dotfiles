@@ -2,6 +2,8 @@
 *.xhtml
 *.gen
 config.yaml
+config/config-default.yaml
+playbooks/foo*.yaml
 rules-overlay.mk
 manifest.mtree
 firefox/rules-main.mtree
