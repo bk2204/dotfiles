@@ -13,7 +13,7 @@
   when: ansible_facts["distribution"] == 'Ubuntu'
 - name: Install neovim-stable PPA
   apt_repository:
-    repo: ppa:neovim-ppa/stable
+    repo: ppa:neovim-ppa/unstable
   become: true
   become_user: root
   when: ansible_facts["distribution"] == 'Ubuntu'
