@@ -9,4 +9,4 @@ files:
                 AutoRaise: true
                 ClickRaise: false
                 FocusPolicy: FocusFollowsMouse
-                FocusStealingPrevention: 0
+                FocusStealingPreventionLevel: 0
