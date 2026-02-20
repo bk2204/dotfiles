@@ -1,0 +1,12 @@
+---
+files:
+    kwinrc:
+        groups:
+            Desktops:
+                Number: 5
+                Rows: 1
+            Windows:
+                AutoRaise: true
+                ClickRaise: false
+                FocusPolicy: FocusFollowsMouse
+                FocusStealingPrevention: 0
