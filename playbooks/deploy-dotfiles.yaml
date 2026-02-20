@@ -34,7 +34,7 @@
         src: '{{ dotfiles_config }}'
         dest: '{{ checkouts_dir }}/dotfiles/config.yaml'
         owner: '{{ ansible_facts["user_id"] }}'
-        group: '{{ ansible_facts["user_id"] }}'
+        group: '{{ group }}'
         state: link
       when: config.stat.exists is defined and not config.stat.exists
     - name: Checkout submodules for dotfiles
