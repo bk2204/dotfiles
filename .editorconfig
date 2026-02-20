@@ -8,7 +8,7 @@ indent_size = 4
 [{*.rb,bin/{dct-{browser,clip,erb,snip,sound},errno,find-unicode,format-text,pick-color,tmux-generate-session}}]
 indent_size = 2
 
-[snippets/exec/{hash-git,randomgen,recode}]
+[snippets/exec/{hash-git,kprocessconfig,randomgen,recode}]
 indent_size = 2
 
 [{Makefile,*.mk}]

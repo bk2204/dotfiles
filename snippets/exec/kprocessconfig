@@ -1,0 +1,77 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'yaml'
+
+class KProcessConfig
+  def initialize(stdin, stdout, stderr)
+    @stdin = stdin
+    @stdout = stdout
+    @stderr = stderr
+  end
+
+  def process_config(options, cfg, groups, key, value)
+    if value.is_a?(Hash)
+      groups = groups.dup
+      groups << key
+      value.each do |(key, val)|
+        process_config(options, cfg, groups, key, val)
+      end
+    else
+      file = File.join(options[:base], cfg)
+      args = ["kwriteconfig6", "--file", file]
+      args += groups.flat_map { |g| ["--group", g] }
+      args += ["--key", key.to_s]
+      case value
+      when [true, false]
+        args += ["--type=bool", value.to_s]
+      when nil
+        args += ["--delete"]
+      else
+        args += [value.to_s]
+      end
+      $stderr.puts "Running #{args.join(" ")}" if options[:verbose]
+      unless options[:dry_run]
+        spawn(options[:env], 'kwriteconfig6', *args)
+        Process.wait
+      end
+    end
+  end
+
+  def process_file(options, file)
+    data = YAML.safe_load(File.read(file))
+    data["files"].each do |(cfg, cfgdata)|
+      cfgdata["groups"].each do |(group, groupdata)|
+        groupdata.each do |(key, value)|
+          process_config(options, cfg, [group], key, value)
+        end
+      end
+    end
+  end
+
+  def run(env, args)
+    env = env.to_h
+    base = env["XDG_CONFIG_HOME"] || File.join(env["HOME"], ".config")
+    options = {files: [], base: base, env: env}
+    OptionParser.new do |opts|
+      opts.on("-f", "--file FILE", "process FILE") do |arg|
+        options[:files] << arg
+      end
+
+      opts.on("-v", "--verbose", "be more verbose") do
+        options[:verbose] = true
+      end
+
+      opts.on("-n", "--dry-run", "just print what would be done, don't do it") do
+        options[:dry_run] = true
+      end
+    end.order!(args)
+
+    options[:files].each do |file|
+      process_file(options, file)
+    end
+    0
+  end
+end
+
+exit KProcessConfig.new($stdin, $stdout, $stderr).run(ENV, ARGV) if __FILE__ == $0
