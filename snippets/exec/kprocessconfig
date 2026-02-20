@@ -19,7 +19,7 @@ class KProcessConfig
       end
     else
       file = File.join(options[:base], cfg)
-      args = ["kwriteconfig6", "--file", file]
+      args = ["--file", file]
       args += groups.flat_map { |g| ["--group", g] }
       args += ["--key", key.to_s]
       case value
