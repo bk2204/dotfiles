@@ -99,7 +99,7 @@ class TestDir
       fp.close
     end
     real_path = ENV["PATH"].split(":")
-    %w[sed grep id hostname ruby zsh sh printf].each do |name|
+    %w[sed grep id hostname ruby zsh sh printf uname].each do |name|
       real_path.each do |dir|
          loc = File.join(dir, name)
          if File.exist? loc
