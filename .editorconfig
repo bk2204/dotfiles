@@ -11,6 +11,9 @@ indent_size = 2
 [snippets/exec/{hash-git,kprocessconfig,randomgen,recode}]
 indent_size = 2
 
+[vim/vimrc]
+indent_size = 2
+
 [{Makefile,*.mk}]
 indent_style = tab
 
