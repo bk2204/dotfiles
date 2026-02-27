@@ -124,8 +124,22 @@
   apt:
     pkg:
       - build-essential
+  become: true
+  become_user: root
+  when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+- name: Install gh
+  apt:
+    pkg:
       - gh
+  become: true
+  become_user: root
+  ignore_errors: true
+  when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+- name: Install git-autofixup
+  apt:
+    pkg:
       - git-autofixup
   become: true
   become_user: root
+  ignore_errors: true
   when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
