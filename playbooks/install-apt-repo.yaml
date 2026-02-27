@@ -12,7 +12,6 @@
     owner: root
     group: root
     url: '{{ item.remote_keyring }}'
-    use_netrc: false
   become: true
   become_user: root
   when: item.condition and not keyring.stat.exists
