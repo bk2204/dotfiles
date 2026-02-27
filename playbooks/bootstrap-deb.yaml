@@ -17,6 +17,15 @@
   become: true
   become_user: root
   when: ansible_facts["distribution"] == 'Ubuntu'
+- name: Create /etc/apt/keyrings
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  become_user: root
 - name: Install Debian packages
   apt:
     pkg:
