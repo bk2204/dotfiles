@@ -5,7 +5,7 @@ indent_style = space
 end_of_line = lf
 indent_size = 4
 
-[{*.rb,bin/{dct-{browser,clip,erb,snip,sound},errno,find-unicode,format-text,pick-color,tmux-generate-session}}]
+[{**/*.rb,bin/{dct-{browser,clip,erb,snip,sound},errno,find-unicode,format-text,pick-color,tmux-generate-session}}]
 indent_size = 2
 
 [snippets/exec/{hash-git,kprocessconfig,randomgen,recode}]
