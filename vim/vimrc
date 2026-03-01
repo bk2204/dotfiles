@@ -506,6 +506,17 @@ function! s:ModulePath(module)
   return ''
 endfunction
 
+function! s:ComputeExecutableMode(fperm, umask)
+    let perms = substitute(a:fperm, '\(...\)\(...\)\(...\)', 'u=\1g=\2o=\3', '')
+    let umask = substitute(a:umask, ',', '', 'g')
+    for char in ['u', 'g', 'o']
+      if match(umask, char .. '=\(r\?w\?x\)') != -1
+        let perms = substitute(perms, '\(' .. char .. '=[r-][w-]\)\([x-]\)', {m -> m[1] .. (m[2] == "-" ? "x" : "-")}, '')
+      endif
+    endfor
+    return substitute(perms, '[ugo]=', '', 'g')
+endfunction
+
 " Toggle the executable bit on the file underlying the current buffer, using
 " either Ruby or Perl, as available.  The file should be saved and unmodified.
 function! s:ToggleExecutable()
@@ -513,15 +524,8 @@ function! s:ToggleExecutable()
   if exists("*getfperm") && exists("*setfperm")
     let file = expand("%")
     let perms = getfperm(file)
-    let perms = substitute(perms, '\(...\)\(...\)\(...\)', 'u=\1g=\2o=\3', '')
     let umask = system(['sh', '-c', 'umask -S | tr -d "\n"'])
-    let umask = substitute(umask, ',', '', 'g')
-    for char in ['u', 'g', 'o']
-      if match(umask, char .. '=\(r\?w\?x\)') != -1
-        let perms = substitute(perms, '\(' .. char .. '=[r-][w-]\)\([x-]\)', {m -> m[1] .. (m[2] == "-" ? "x" : "-")}, '')
-      endif
-    endfor
-    let perms = substitute(perms, '[ugo]=', '', 'g')
+    let perms = s:ComputeExecutableMask(fperm, umask)
     call setfperm(file, perms)
   elseif has("ruby")
     ruby <<EOM
@@ -689,6 +693,10 @@ function! GetBufferExecutableMarker()
     return '[' . g:airline_symbols.executable . ']'
   endif
   return ''
+endfunction
+
+function! DCTFuncref(name)
+  return function(a:name)
 endfunction
 
 "" Miscellaneous variables.

@@ -1,0 +1,4 @@
+Execute (Executable parsing):
+  let F = DCTFuncref("s:ComputeExecutableMode")
+  AssertEqual "rw-rw-rw-", F("rwxrwxrwx", "u=rwx,g=rwx,o=rx")
+  AssertEqual "rwxrwx---", F("rw-rw----", "u=rwx,g=rx,o=")
