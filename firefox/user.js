@@ -6,6 +6,12 @@ user_pref("privacy.donottrackheader.enabled", true);
 // Always indicate that we don't want our information shared or sold.
 user_pref("privacy.globalprivacycontrol.enabled", true);
 // Turn off all machine learning functionality.
+user_pref("browser.ai.control.default", "blocked");
+user_pref("browser.ai.control.linkPreviewKeyPoints", "blocked");
+user_pref("browser.ai.control.pdfjsAltText", "blocked");
+user_pref("browser.ai.control.sidebarChatbot", "blocked");
+user_pref("browser.ai.control.smartTabGroups", "blocked");
+user_pref("browser.ai.control.translations", "blocked");
 user_pref("browser.ml.enable", false);
 user_pref("browser.ml.chat.enabled", false);
 user_pref("browser.ml.linkPreview.enabled", false);
