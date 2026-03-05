@@ -28,3 +28,26 @@ user_pref("sidebar.revamp", false);
 user_pref("browser.urlbar.trimURLs", false);
 // Make clicking on website hover menus work in KDE.
 user_pref("widget.gtk.ignore-bogus-leave-notify", 1);
+// Disable all telemetry.
+user_pref("toolkit.telemetry.archive.enabled", false);
+user_pref("toolkit.telemetry.server", "");
+user_pref("toolkit.telemetry.enabled", false);
+user_pref("toolkit.telemetry.prompted", 2);
+user_pref("toolkit.telemetry.rejected", true);
+user_pref("toolkit.telemetry.coverage.opt-out", true);
+user_pref("toolkit.telemetry.unified", false);
+user_pref("toolkit.telemetry.unifiedIsOptIn", false);
+user_pref("toolkit.telemetry.bhrPing.enabled", false);
+user_pref("toolkit.telemetry.firstShutdownPing.enabled", false);
+user_pref("toolkit.telemetry.hybridContent.enabled", false);
+user_pref("toolkit.telemetry.newProfilePing.enabled", false);
+user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);
+user_pref("toolkit.telemetry.shutdownPingSender.enabled", false);
+user_pref("toolkit.telemetry.updatePing.enabled", false);
+user_pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
+user_pref("browser.newtabpage.activity-stream.telemetry", false);
+user_pref("browser.ping-centre.telemetry", false);
+user_pref("experiments.activeExperiment", false);
+user_pref("experiments.enabled", false);
+user_pref("experiments.supported", false);
+user_pref("network.allow-experiments", false);
