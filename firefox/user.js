@@ -51,3 +51,12 @@ user_pref("experiments.activeExperiment", false);
 user_pref("experiments.enabled", false);
 user_pref("experiments.supported", false);
 user_pref("network.allow-experiments", false);
+// Disable system extensions from Mozilla.
+user_pref("extensions.systemAddon.update.enabled", false);
+user_pref("extensions.systemAddon.update.url", "");
+user_pref("messaging-system.rsexperimentloader.enabled", false);
+user_pref("app.shield.optoutstudies.enabled", false);
+user_pref("app.normandy.enabled", false);
+user_pref("app.normandy.api_url", "");
+user_pref("app.normandy.api_url", "");
+user_pref("app.normandy.user_id", "");
