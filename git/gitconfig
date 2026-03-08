@@ -113,6 +113,8 @@
 [gc]
     reflogExpire = never
     reflogExpireUnreachable = never
+[gpg.ssh]
+    allowedSignersFile = ~/.ssh/authorized_signers
 [hub]
     protocol = https
 [http "https://git.crustytoothpaste.net"]
