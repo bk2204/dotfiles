@@ -1,2 +1,6 @@
 fork = true
 tabs = false
+
+[font]
+normal = "Source Code Pro"
+size = 12.0
