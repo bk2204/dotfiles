@@ -2,9 +2,10 @@ name: home
 root: ~/
 windows:
   - 0:
-      layout: even-horizontal
+      layout: main-vertical
       panes:
         - mutt
+        - ""
         - ""
   - 1:
       layout: even-horizontal
