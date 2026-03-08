@@ -10,6 +10,9 @@ TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 
 DCONF ?= $(shell [ -n "$$DISPLAY" ] && command -v dconf 2>/dev/null)
 KWRITECONFIG ?= $(shell [ -n "$$DISPLAY" ] && command -v kwriteconfig6 2>/dev/null)
 
+# Non-template generated files.
+GENERATED_FILES =
+
 all:
 	@echo To install, set DESTDIR and run make install.
 
@@ -23,7 +26,7 @@ print:
 	fi
 
 clean:
-	$(RM) $(TEMPLATE_FILES)
+	$(RM) $(TEMPLATE_FILES) $(GENERATED_FILES)
 	$(RM) manifest.mtree
 
 include bin/rules.mk
