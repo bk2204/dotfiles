@@ -70,6 +70,20 @@
     - name: Install Homebrew packages
       include_tasks: "{{ playbook_dir }}/bootstrap-homebrew.yaml"
       when: homebrew
+    - name: Check if git-autofixup is installed
+      shell: command -v git-autofixup
+      register: autofixup_check
+      ignore_errors: true
+    - name: Install git-autofixup
+      get_url:
+        dest: '/usr/local/bin/git-autofixup'
+        mode: 0755
+        url: https://raw.githubusercontent.com/torbiak/git-autofixup/55e32975088c0184e356085834995dc42245c25f/git-autofixup
+        use_netrc: false
+        checksum: sha256:d76e33715e3a25ed924f47878b8d9cfd6693bc6b121664661195c1a0914a3b11
+      become: true
+      become_user: root
+      when: development and autofixup_check.rc != 0
     - name: Configure DNSSEC in local resolver
       shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
