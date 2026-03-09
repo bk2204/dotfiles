@@ -1,3 +1,14 @@
 #!/bin/zsh
 
 source "$HOME/.zshenv"
+
+if [ -z "${ZSH_ARGZERO##/*}" ]
+then
+    export SHELL="$ZSH_ARGZERO"
+elif [ -z "${ZSH_ARGZERO##-/*}" ]
+then
+    export SHELL="${ZSH_ARGZERO##-}"
+elif command -v "$ZSH_NAME" >/dev/null 2>&1
+then
+    export SHELL="$(command -v "$ZSH_NAME" 2>/dev/null)"
+fi
