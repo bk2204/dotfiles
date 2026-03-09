@@ -17,6 +17,9 @@ indent_size = 2
 [**/*.vader]
 indent_size = 2
 
+[playbooks/**/*.yaml]
+indent_size = 2
+
 [{Makefile,*.mk}]
 indent_style = tab
 
