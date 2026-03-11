@@ -47,6 +47,7 @@
       - perl
       - procps
       - python3
+      - rename
       - rsync
       - ruby
       - ruby-neovim

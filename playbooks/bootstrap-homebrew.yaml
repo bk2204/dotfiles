@@ -38,6 +38,13 @@
       - tmux
       - vim
       - zsh
+- name: Unlink util-linux for rename
+  shell: brew unlink util-linux
+  ignore_errors: true
+- name: Install rename
+  community.general.homebrew:
+    name:
+      - rename
 - name: Install graphical and desktop packages for Homebrew
   community.general.homebrew:
     name:
