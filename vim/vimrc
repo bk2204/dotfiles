@@ -526,7 +526,7 @@ function! s:ToggleExecutable()
     let file = expand("%")
     let perms = getfperm(file)
     let umask = system(['sh', '-c', 'umask -S | tr -d "\n"'])
-    let perms = s:ComputeExecutableMask(fperm, umask)
+    let perms = s:ComputeExecutableMode(perms, umask)
     call setfperm(file, perms)
   elseif has("ruby")
     ruby <<EOM
