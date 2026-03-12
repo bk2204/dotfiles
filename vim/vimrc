@@ -535,13 +535,6 @@ function! s:ToggleExecutable()
     mode ^= (00111 & ~File.umask)
     File.chmod(mode, file)
 EOM
-  elseif has("perl")
-    perl <<EOM
-    my $file = VIM::Eval('expand("%")');
-    my $mode = (stat($file))[2] & 07777;
-    $mode ^= (00111 & ~umask);
-    chmod($mode, $file);
-EOM
   endif
   exe "checktime " . bufnr("%")
   set ar<
