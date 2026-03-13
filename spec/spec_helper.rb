@@ -24,14 +24,22 @@ class TestDockerImage
   def initialize(image)
     @image = image
     @root = repo_root
+    @tmpdir = nil
   end
 
   def run
+    @tmpdir = Dir.mktmpdir
     name = "dotfiles-spec-#{SecureRandom.alphanumeric(20)}"
-    pid = Process.spawn(TestConfig.docker_binary, "run", "--name", name, "-v", "#{@root}:/usr/src/repo", @image, "sh", "-c", "while true; do sleep 20; done")
+    pid = Process.spawn(TestConfig.docker_binary, "run", "--detach", "--name", name, "-v", "#{@tmpdir}:/tmp/system", "-v", "#{@root}:/usr/src/repo", @image, "sh", "-c", "touch /tmp/system/ready; while true; do sleep 20; done")
+    dir = @tmpdir
     ObjectSpace.define_finalizer(self, Remover.new(name, pid))
+    ObjectSpace.define_finalizer(self, TestDir::Remover.new(dir))
     @name = name
-    sleep 2
+    ready_file = File.join(@tmpdir, "ready")
+    20.times do
+      break if File.exist?(ready_file)
+      sleep 1
+    end
   end
 
   def setup
@@ -139,8 +147,6 @@ class TestDir
       file.unlink
     end
   end
-
-  private
 
   class Remover
     def initialize(dir)
