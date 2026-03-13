@@ -6,4 +6,5 @@
 .vim/bundle type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 src=vim/bundle
 .vim/colors type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 src=vim/colors
 .vim/pathogen type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 src=vim/pathogen
+.vim/spell type=dir mode=0750
 .vim/syntax type=dir mode=0750 recurse=true filemode=0640+x dirmode=0750 src=vim/syntax

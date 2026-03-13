@@ -7,3 +7,5 @@ playbooks/foo*.yaml
 rules-overlay.mk
 manifest.mtree
 firefox/rules-main.mtree
+vim/spell
+vim/rules-spell.mtree

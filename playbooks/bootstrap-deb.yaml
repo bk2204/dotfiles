@@ -125,6 +125,11 @@
   apt:
     pkg:
       - build-essential
+      - hunspell
+      - hunspell-en-us
+      - hunspell-en-ca
+      - hunspell-es
+      - hunspell-fr-classical
   become: true
   become_user: root
   when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']

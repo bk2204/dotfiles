@@ -1,0 +1,158 @@
+#!/bin/sh -e
+
+OPTS_SPEC="\
+build-vim-spell [<options>] <args>...
+
+Build Vim and Neovim spell files.
+
+With --depend, generate Makefile rules for the languages specified as
+arguments, writing the spell files into the given directory.
+
+With --build, build a spell file for the given languages, writing it to the
+requested output file.
+--
+h,help!         show this help
+
+o,output=       output to this file
+d,dir=          specify dependencies relative to this directory
+vim-bin=        specify the Vim or Neovim binary
+extra-target=   specify extra targets to depend on generated files
+restrict        restrict building languages to only those for the output file
+
+ Commands
+depend!         generate dependencies for make
+build!          build the spell file for a particular language
+"
+
+find_dictionaries () {
+    LC_ALL=C hunspell -D 2>&1 | sed -n '1,/AVAILABLE DICTIONARIES/d;/LOADED DICTIONARY/q;p'
+}
+
+lang_from_dict () {
+    echo "$1" | sed -E 's!^.*/([a-z]+)(_.*)!\1!'
+}
+
+depend () {
+    local output="$1"
+    local dir="$2"
+    local extra_targets="$3"
+
+    shift 3
+
+    local regex="$(printf '%s\n' "$@" | paste -d'|' -s)"
+    regex="(${regex})\$"
+
+    if [ "$output" = - ]
+    then
+        output=/dev/stdout
+    else
+        : >"$output"
+    fi
+
+    local dictionaries="$(find_dictionaries | grep -E "$regex")"
+    local langs=""
+    local dict
+    local tgt
+
+    for dict in $dictionaries
+    do
+        local lang="$(lang_from_dict "$dict")"
+        langs="$langs $lang"
+        [ -e "$dict.aff" ] && echo "$dir/$lang.utf-8.spl: $dict.aff" >>"$output"
+        [ -e "$dict.dic" ] && echo "$dir/$lang.utf-8.spl: $dict.dic" >>"$output"
+    done
+
+    for lang in $(printf '%s\n' $langs | sort | uniq)
+    do
+        echo "$dir/$lang.utf-8.spl: $dir" >>"$output"
+    done
+
+    for tgt in $extra_targets
+    do
+        for lang in $(printf '%s\n' $langs | sort | uniq)
+        do
+            echo "$tgt: $dir/$lang.utf-8.spl" >>"$output"
+        done
+    done
+}
+
+build () {
+    local output="$1"
+    local vimbin="$2"
+    local restrict="$3"
+
+    shift 3
+
+    local regex
+    local lang="$(echo "$output" | sed -E 's!.*/([a-z]+)\.[^.]+\.spl!\1!')"
+    local root="$(echo "$output" | sed -E 's!(.*/[a-z]+)\.[^.]+\.spl!\1!')"
+
+    if [ -n "$restrict" ]
+    then
+        regex="$(printf '%s\n' "$@" | grep -E "^${lang}(_.*|\$)" | paste -d'|' -s)"
+    else
+        regex="$(printf '%s\n' "$@" | paste -d'|' -s)"
+    fi
+    regex="(${regex})\$"
+
+    local dictionaries="$(find_dictionaries | grep -E "$regex")"
+    "$vimbin" -es -c "mkspell! $root $(echo $dictionaries)" -cq
+}
+
+main () {
+    eval "$(echo "$OPTS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
+    local cmd=""
+    local output="-"
+    local dir=""
+    local restrict=""
+    local extra_targets=""
+    local vimbin="$(command -v nvim 2>/dev/null || command -v vim 2>/dev/null)"
+
+    while test $# -gt 0
+    do
+        local opt="$1"
+        shift
+        case "$opt" in
+            -o)
+                output="$1"
+                shift
+                ;;
+            -d)
+                dir="$1"
+                shift
+                ;;
+            --vim-bin)
+                vimbin="$1"
+                shift
+                ;;
+            --extra-target)
+                extra_targets="$extra_targets $1"
+                shift
+                ;;
+            --depend)
+                cmd=depend
+                ;;
+            --build)
+                cmd=build
+                ;;
+            --restrict)
+                restrict=t
+                ;;
+            --)
+                break
+                ;;
+        esac
+    done
+
+    [ -z "$cmd" ] && { echo "Need a command." >&2; exit 2; }
+
+    case "$cmd" in
+        depend)
+            depend "$output" "$dir" "$extra_targets" "$@";;
+        build)
+            build "$output" "$vimbin" "$restrict" "$@";;
+    esac
+}
+
+main "$@"
