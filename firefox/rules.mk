@@ -11,4 +11,6 @@ firefox/rules-main.mtree: $(DESTDIR)/.mozilla/firefox/profiles.ini $(DESTDIR)
 	echo ".mozilla/firefox type=dir mode=0700" >>$@
 	echo "$(FIREFOX_PROFILE_DIR) type=dir mode=0700 src=firefox" >>$@
 	echo "$(FIREFOX_PROFILE_DIR)/user.js type=file mode=0600 src=firefox/user.js" >>$@
+
+GENERATED_FILES += firefox/rules-main.mtree
 endif
