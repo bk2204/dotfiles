@@ -26,7 +26,7 @@ print:
 	fi
 
 clean:
-	$(RM) $(TEMPLATE_FILES) $(GENERATED_FILES)
+	$(RM) -r $(TEMPLATE_FILES) $(GENERATED_FILES)
 	$(RM) manifest.mtree
 
 include bin/rules.mk
