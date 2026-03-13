@@ -38,6 +38,10 @@ COMMANDS = {
       func: ->(options) { ["xsel", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
       if: ->() { ENV["DISPLAY"] },
     },
+    {
+      func: ->(options) { ["wl-copy"] + (options[:location] == :clipboard ? [] : ["-p"]) },
+      if: ->() { ENV["WAYLAND_DISPLAY"] },
+    },
   ],
   paste: [
     {
@@ -52,6 +56,10 @@ COMMANDS = {
     {
       func: ->(options) { ["xsel", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
       if: ->() { ENV["DISPLAY"] },
+    },
+    {
+      func: ->(options) { ["wl-paste", "-n"] + (options[:location] == :clipboard ? [] : ["-p"]) },
+      if: ->() { ENV["WAYLAND_DISPLAY"] },
     },
   ]
 }
