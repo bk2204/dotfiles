@@ -30,8 +30,14 @@ COMMANDS = {
       if: ->() { ENV["REMOTE_ENV"] }
     },
     {func: ->(options) { ["pbcopy"] }},
-    {func: ->(options) { ["xclip","-i",  "-selection", options[:location].to_s] }},
-    {func: ->(options) { ["xsel", "-i", options[:location] == :clipboard ? "-b" : "-p"] }},
+    {
+      func: ->(options) { ["xclip","-i",  "-selection", options[:location].to_s] },
+      if: ->() { ENV["DISPLAY"] },
+    },
+    {
+      func: ->(options) { ["xsel", "-i", options[:location] == :clipboard ? "-b" : "-p"] },
+      if: ->() { ENV["DISPLAY"] },
+    },
   ],
   paste: [
     {
@@ -39,8 +45,14 @@ COMMANDS = {
       if: ->() { ENV["REMOTE_ENV"] }
     },
     {func: ->(options) { ["pbpaste"] }},
-    {func: ->(options) { ["xclip", "-o", "-selection", options[:location].to_s] }},
-    {func: ->(options) { ["xsel", "-o", options[:location] == :clipboard ? "-b" : "-p"] }},
+    {
+      func: ->(options) { ["xclip", "-o", "-selection", options[:location].to_s] },
+      if: ->() { ENV["DISPLAY"] },
+    },
+    {
+      func: ->(options) { ["xsel", "-o", options[:location] == :clipboard ? "-b" : "-p"] },
+      if: ->() { ENV["DISPLAY"] },
+    },
   ]
 }
 
