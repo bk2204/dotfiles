@@ -39,7 +39,7 @@ depend () {
 
     shift 3
 
-    local regex="$(printf '%s\n' "$@" | paste -d'|' -s)"
+    local regex="$(printf '%s\n' "$@" | paste -d'|' -s -)"
     regex="(${regex})\$"
 
     if [ "$output" = - ]
@@ -89,9 +89,9 @@ build () {
 
     if [ -n "$restrict" ]
     then
-        regex="$(printf '%s\n' "$@" | grep -E "^${lang}(_.*|\$)" | paste -d'|' -s)"
+        regex="$(printf '%s\n' "$@" | grep -E "^${lang}(_.*|\$)" | paste -d'|' -s -)"
     else
-        regex="$(printf '%s\n' "$@" | paste -d'|' -s)"
+        regex="$(printf '%s\n' "$@" | paste -d'|' -s -)"
     fi
     regex="(${regex})\$"
 
