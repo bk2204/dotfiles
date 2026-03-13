@@ -76,7 +76,6 @@
       - bind9-host
       - buildah
       - chrony
-      - clementine
       - dconf-cli
       - docker.io
       - docbook5-xml
@@ -92,6 +91,7 @@
       - podman
       - podman-toolbox
       - ruby-asciidoctor-pdf
+      - strawberry
       - texlive-fonts-extra
       - tmuxinator
       - traceroute
