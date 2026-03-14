@@ -80,7 +80,7 @@ class TestDir
     Dir.mkdir(@test_bin)
     @src = File.join(@dir, "src")
     Dir.mkdir(@src)
-    extra_env = {}
+    extra_env = {"HUNSPELL" => ""}
     if config_yaml
       @config_path = File.join(@dir, "config.yaml")
       fp = File.open(@config_path, "wb")
