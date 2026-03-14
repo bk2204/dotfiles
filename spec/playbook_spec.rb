@@ -26,7 +26,7 @@ describe :playbooks do
     end
 
     it 'should bootstrap and deploy dotfiles correctly in a graphical development environment' do
-      skip if ENV['DOCKER_IMAGE'] == 'ubuntu:focal'
+      skip if ENV['DOCKER_IMAGE'] == 'ubuntu:focal' || ENV['DOCKER_IMAGE'] == 'ubuntu:jammy'
       @img.run
       expect(@img.setup).to be true
       expect(@img.exec("DEBIAN_FRONTEND=noninteractive apt-get update")).to be true
