@@ -156,10 +156,10 @@ end
 def status(command, **env)
   res = nil
   IO.popen(env, command, :in => "/dev/null", :err => [:child, :out], :chdir => File.join(File.dirname(__FILE__), "..")) do |io|
-      res = io.read
+    res = io.read
   end
   unless $?.success?
-      $stderr.puts res
+    $stderr.puts res
   end
   $?.exitstatus
 end
