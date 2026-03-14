@@ -1,0 +1,69 @@
+---
+name: CI
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  linux:
+    name: Linux
+    strategy:
+      fail-fast: false
+      matrix:
+        sets:
+          - {os: debian:trixie, bootstrap: true}
+          - {os: debian:bookworm, bootstrap: true}
+          - {os: debian:trixie, bootstrap: false}
+          - {os: debian:bookworm, bootstrap: false}
+          - {os: ubuntu:noble, bootstrap: false}
+          - {os: ubuntu:jammy, bootstrap: false}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.sets.os }}
+    steps:
+      - name: Update package lists
+        run: apt-get update
+      - name: Install packages
+        run: apt-get install -y --no-install-recommends git make mtree-netbsd ruby-rspec vim-nox vim-vader
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - name: Install packages for bootstrap
+        run: apt-get install -y --no-install-recommends ansible
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        if: ${{ matrix.sets.bootstrap == true }}
+      - name: Install packages for non-bootstrap
+        run: apt-get install -y --no-install-recommends ncurses-term neovim nvi zsh
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        if: ${{ matrix.sets.bootstrap == false }}
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Bootstrap
+        run: ansible-playbook --connection=local -i localhost, playbooks/bootstrap.yaml
+        if: ${{ matrix.sets.bootstrap == true }}
+      - name: Run tests
+        run: rspec
+        env:
+          LC_ALL: C.UTF-8
+  bootstrap:
+    name: Bootstrap
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - debian:trixie
+          - debian:bookworm
+          - ubuntu:noble
+          - ubuntu:jammy
+          - ubuntu:focal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Install packages
+        run: sudo apt-get install -y --no-install-recommends make git ruby-rspec
+      - name: Run tests
+        run: rspec spec/playbook_spec.rb
+        env:
+          DOCKER_IMAGE: ${{ matrix.os }}
+          DOCKER_BIN: docker
