@@ -171,31 +171,31 @@ describe :zsh do
 
   context 'path' do
     it 'should include external path components' do
-      home = ENV['HOME']
-      expect(@dir.cmd(['zsh', '-c', 'echo $PATH'],
-                      'HOME' => home, 'PATH' => '/root/bin:/usr/games:/bin:/usr/bin')).to eq \
-        "#{home}/bin:#{home}/.local/bin:/root/bin:#{home}/.rvm/bin:" \
+      home, path = @dir.cmd(['zsh', '-c', 'echo $HOME; echo $PATH'],
+                            'PATH' => '/superroot/bin:/usr/games:/bin:/usr/bin').split("\n", 2)
+      expect(path).to eq \
+        "#{home}/bin:#{home}/.local/bin:/superroot/bin:#{home}/.rvm/bin:" \
         "#{home}/.cargo/bin:" \
         '/usr/local/bin:/usr/local/sbin:' \
         '/opt/homebrew/bin:/opt/homebrew/sbin:' \
         "/usr/bin:/usr/sbin:/bin:/sbin:/usr/games\n"
 
-      expect(@dir.cmd(['zsh', '-c', 'echo $PATH'],
-                      'HOME' => home,
-                      'PATH' => "/root/bin:#{home}/.cargo/bin:/nonexistent/bin:/opt/bin:/usr/local/bin:/nothere/bin:/bin:/usr/bin")).to eq \
+      home, path = @dir.cmd(['zsh', '-c', 'echo $HOME; echo $PATH'],
+                            'PATH' => "/superroot/bin:#{home}/.cargo/bin:/nonexistent/bin:/opt/bin:/usr/local/bin:/nothere/bin:/bin:/usr/bin").split("\n", 2)
+      expect(path).to eq \
         "#{home}/bin:#{home}/.local/bin:" \
-        "/root/bin:#{home}/.rvm/bin:#{home}/.cargo/bin:" \
+        "/superroot/bin:#{home}/.rvm/bin:#{home}/.cargo/bin:" \
         '/nonexistent/bin:/opt/bin:' \
         '/usr/local/bin:/usr/local/sbin:' \
         '/nothere/bin:' \
         '/opt/homebrew/bin:/opt/homebrew/sbin:' \
         "/usr/bin:/usr/sbin:/bin:/sbin:/usr/games\n"
 
-      expect(@dir.cmd(['zsh', '-c', 'echo $PATH'],
-                      'HOME' => home,
-                      'PATH' => "/root/bin:#{home}/.cargo/bin:/nonexistent/bin:/opt/bin:/usr/local/bin:/bin:/usr/bin:/nothere/bin")).to eq \
+      home, path = @dir.cmd(['zsh', '-c', 'echo $HOME; echo $PATH'],
+                            'PATH' => "/superroot/bin:#{home}/.cargo/bin:/nonexistent/bin:/opt/bin:/usr/local/bin:/bin:/usr/bin:/nothere/bin").split("\n", 2)
+      expect(path).to eq \
         "#{home}/bin:#{home}/.local/bin:" \
-        "/root/bin:#{home}/.rvm/bin:#{home}/.cargo/bin:" \
+        "/superroot/bin:#{home}/.rvm/bin:#{home}/.cargo/bin:" \
         '/nonexistent/bin:/opt/bin:/usr/local/bin:/usr/local/sbin:' \
         '/opt/homebrew/bin:/opt/homebrew/sbin:' \
         "/usr/bin:/usr/sbin:/bin:/sbin:/usr/games:/nothere/bin\n"
