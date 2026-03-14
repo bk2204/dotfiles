@@ -16,6 +16,15 @@ describe :playbooks do
       expect(@img.exec("ansible-playbook -v -i localhost, --connection=local -e '{\"private_dotfiles\":false}' playbooks/deploy-dotfiles.yaml")).to be true
     end
 
+    it 'should bootstrap and deploy dotfiles correctly in a non-graphical development environment' do
+      @img.run
+      expect(@img.setup).to be true
+      expect(@img.exec("DEBIAN_FRONTEND=noninteractive apt-get update")).to be true
+      expect(@img.exec("DEBIAN_FRONTEND=noninteractive apt-get install -y git gnupg ansible")).to be true
+      expect(@img.exec("ansible-playbook -v -i localhost, --connection=local -e '{\"development\":true,\"graphical\":false}' playbooks/bootstrap.yaml")).to be true
+      expect(@img.exec("ansible-playbook -v -i localhost, --connection=local -e '{\"private_dotfiles\":false}' playbooks/deploy-dotfiles.yaml")).to be true
+    end
+
     it 'should bootstrap and deploy dotfiles correctly in a graphical development environment' do
       skip if ENV['DOCKER_IMAGE'] == 'ubuntu:focal'
       @img.run
