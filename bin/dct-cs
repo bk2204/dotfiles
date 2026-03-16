@@ -249,7 +249,7 @@ class Processor
   # Set up the given codespace with Ansible.  The port must be mounted first.
   def deploy(id, params)
     portno = port(id)
-    _, code = exec("ansible-playbook", "-v", "-u", params[:username], "-i", "localhost:#{portno},", "-e", "user=#{params[:username]}", "playbooks/codespace-setup.yaml", chdir: File.join(ENV["HOME"], "checkouts", "dotfiles"))
+    _, code = exec("ansible-playbook", "-v", "-u", params[:username], "-i", "localhost:#{portno},", "-e", %Q[{"user":"#{params[:username]}","development":true}], "playbooks/codespace-setup.yaml", chdir: File.join(ENV["HOME"], "checkouts", "dotfiles"))
     code
   end
 
