@@ -3,7 +3,7 @@
 require 'optparse'
 require 'yaml'
 
-class KProcessConfig
+class DesktopConfigProcessor
   def initialize(stdin, stdout, stderr)
     @stdin = stdin
     @stdout = stdout
@@ -74,4 +74,4 @@ class KProcessConfig
   end
 end
 
-exit KProcessConfig.new($stdin, $stdout, $stderr).run(ENV, ARGV) if __FILE__ == $0
+exit DesktopConfigProcessor.new($stdin, $stdout, $stderr).run(ENV, ARGV) if __FILE__ == $0
