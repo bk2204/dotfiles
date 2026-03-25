@@ -4,20 +4,61 @@ require 'optparse'
 require 'yaml'
 
 class DesktopConfigProcessor
-  def initialize(stdin, stdout, stderr)
-    @stdin = stdin
-    @stdout = stdout
-    @stderr = stderr
+  class BaseDesktopConfigProcessor
+    attr_reader :config, :options
+
+    def process
+      config[top_section].each do |(cfg, cfgdata)|
+        cfgdata[entry_section].each do |(group, groupdata)|
+          groupdata.each do |(key, value)|
+            process_config(options, cfg, [group], key, value)
+          end
+        end
+      end
+    end
+
+    def process_config(options, cfg, groups, key, value)
+      if value.is_a?(Hash)
+        groups = groups.dup
+        groups << key
+        value.each do |(key, val)|
+          process_config(options, cfg, groups, key, val)
+        end
+      else
+        run_command(format_args(cfg, groups, key, value))
+      end
+    end
+
+    protected
+
+    def run_command(args)
+      $stderr.puts "Running #{args.join(" ")}" if options[:verbose]
+      unless options[:dry_run]
+        spawn(options[:env], command, *args)
+        Process.wait
+      end
+    end
   end
 
-  def process_config(options, cfg, groups, key, value)
-    if value.is_a?(Hash)
-      groups = groups.dup
-      groups << key
-      value.each do |(key, val)|
-        process_config(options, cfg, groups, key, val)
-      end
-    else
+  class KDEDesktopConfigProcessor < BaseDesktopConfigProcessor
+    def initialize(config, options)
+      @config = config
+      @options = options
+    end
+
+    def top_section
+      'files'
+    end
+
+    def entry_section
+      'groups'
+    end
+
+    def command
+      'kwriteconfig6'
+    end
+
+    def format_args(cfg, groups, key, value)
       file = File.join(options[:base], cfg)
       args = ["--file", file]
       args += groups.flat_map { |g| ["--group", g] }
@@ -30,23 +71,19 @@ class DesktopConfigProcessor
       else
         args += [value.to_s]
       end
-      $stderr.puts "Running #{args.join(" ")}" if options[:verbose]
-      unless options[:dry_run]
-        spawn(options[:env], 'kwriteconfig6', *args)
-        Process.wait
-      end
     end
+  end
+
+  def initialize(stdin, stdout, stderr)
+    @stdin = stdin
+    @stdout = stdout
+    @stderr = stderr
   end
 
   def process_file(options, file)
     data = YAML.safe_load(File.read(file))
-    data["files"].each do |(cfg, cfgdata)|
-      cfgdata["groups"].each do |(group, groupdata)|
-        groupdata.each do |(key, value)|
-          process_config(options, cfg, [group], key, value)
-        end
-      end
-    end
+    p = KDEDesktopConfigProcessor.new(data, options)
+    p.process
   end
 
   def run(env, args)
