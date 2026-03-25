@@ -32,7 +32,7 @@ class DesktopConfigProcessor
     protected
 
     def run_command(args)
-      $stderr.puts "Running #{args.join(" ")}" if options[:verbose]
+      $stderr.puts "Running #{command} #{args.join(" ")}" if options[:verbose]
       unless options[:dry_run]
         spawn(options[:env], command, *args)
         Process.wait
