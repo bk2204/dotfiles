@@ -135,13 +135,14 @@ class TestDir
   def stream(command, input, **options)
     dir = options[:chdir] || @dir
     env = options[:env] || {}
+    err = options[:err] || "/dev/stderr"
     env["HOME"] = @dir
     env["PATH"] = ENV["PATH"]
     file = Tempfile.new()
     begin
       file.write(input)
       file.flush
-      IO.popen(env, command, :unsetenv_others => true, :in => file.path, :err => "/dev/stderr", :chdir => dir).read
+      IO.popen(env, command, :unsetenv_others => true, :in => file.path, :err => err, :chdir => dir).read
     ensure
       file.close
       file.unlink
