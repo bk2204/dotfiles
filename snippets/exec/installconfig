@@ -4,6 +4,8 @@ require 'optparse'
 require 'yaml'
 
 class DesktopConfigProcessor
+  class BadExitStatus < StandardError; end
+
   class BaseDesktopConfigProcessor
     attr_reader :config, :options
 
@@ -40,6 +42,7 @@ class DesktopConfigProcessor
       unless options[:dry_run]
         spawn(options[:env], command, *args)
         Process.wait
+        raise BadExitStatus, $? unless $?.success?
       end
     end
   end
