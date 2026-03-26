@@ -9,6 +9,7 @@ MTREE_SOURCES += rules.mtree
 TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 1)
 DCONF ?= $(shell [ -n "$$DISPLAY" ] && command -v dconf 2>/dev/null)
 KWRITECONFIG ?= $(shell [ -n "$$DISPLAY" ] && command -v kwriteconfig6 2>/dev/null)
+DEFAULTSCMD ?= $(shell [ "$$(uname -s)" = Darwin ] && command -v defaults 2>/dev/null)
 
 # Non-template generated files.
 GENERATED_FILES =
@@ -35,6 +36,7 @@ include firefox/rules.mk
 include git/rules.mk
 include gnupg/rules.mk
 include kde/rules.mk
+include macos/rules.mk
 include misc/rules.mk
 include mutt/rules.mk
 include screen/rules.mk

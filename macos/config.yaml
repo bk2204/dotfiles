@@ -1,0 +1,9 @@
+---
+domains:
+    com.apple.menuextra.clock:
+        keys:
+            ShowSeconds: true
+    Apple Global Domain:
+        keys:
+            AppleICUForce24HourTime: true
+            com.apple.sound.beep.sound: /System/Library/Sounds/Sosumi.aiff
