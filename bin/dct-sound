@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Copyright © 2024 brian m. carlson
+# Copyright © 2024, 2026 brian m. carlson
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -89,6 +89,7 @@ def find_command(commands, options, args)
       next
     end
     prog = cmd[:cmd].call(options, args)
+    return [], nil if prog.nil?
     return prog, cmd if which(prog[0])
   end
   nil
@@ -96,9 +97,11 @@ end
 
 def do_capture(commands, options, args)
   prog, cmd = find_command(commands, options, args)
-  if cmd.nil?
+  if prog.nil?
     $stderr.puts 'Unable to find utility'
     return nil
+  elsif cmd.nil?
+    return [nil, true]
   end
   o, s = Open3.capture2(*prog, stdin_data: '')
   if s.success?
