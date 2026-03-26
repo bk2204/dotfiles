@@ -5,7 +5,7 @@ require 'securerandom'
 describe :desktop do
   before(:all) do
     @dir = TestDir.new
-    @cmd = File.join(@dir.tempdir, ".local", "lib", "dct-snip", "snippets", "kprocessconfig")
+    @cmd = File.join(@dir.tempdir, ".local", "lib", "dct-snip", "snippets", "installconfig")
   end
 
   before(:each) do
