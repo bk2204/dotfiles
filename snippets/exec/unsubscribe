@@ -14,3 +14,8 @@ formail -c -X List-Unsubscribe | ruby -ne '
         puts $1 if line =~ %r[^.*<(https?://[^>]+)>.*$];
     end' | \
     xargs curl -X POST -H'Content-Type: application/x-www-form-urlencoded' -dList-Unsubscribe=One-Click
+
+if [ "$1" = "--wait" ]
+then
+    read -r dummy </dev/tty
+fi
