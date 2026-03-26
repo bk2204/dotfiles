@@ -32,8 +32,8 @@ describe :desktop do
       output = <<~EOF
       Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Desktops --key Number 5
       Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Desktops --key Rows 1
-      Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Windows --key AutoRaise true
-      Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Windows --key ClickRaise false
+      Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Windows --key AutoRaise --type=bool true
+      Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Windows --key ClickRaise --type=bool false
       Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Windows --key FocusPolicy FocusFollowsMouse
       Running kwriteconfig6 --file TEMPDIR/.config/kwinrc --group Windows --key FocusStealingPreventionLevel 0
       EOF

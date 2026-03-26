@@ -64,7 +64,7 @@ class DesktopConfigProcessor
       args += groups.flat_map { |g| ["--group", g] }
       args += ["--key", key.to_s]
       case value
-      when [true, false]
+      when true, false
         args += ["--type=bool", value.to_s]
       when nil
         args += ["--delete"]
