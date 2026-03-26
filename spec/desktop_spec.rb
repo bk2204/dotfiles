@@ -43,4 +43,29 @@ describe :desktop do
       expect(@dir.stream([@cmd, '--file', filename, '--dry-run', '--verbose'], '', err: [:child, :out])).to eq expected
     end
   end
+
+  context 'macOS config generation' do
+    it 'should process an expected config file' do
+      input = <<~EOF
+      ---
+      domains:
+          com.apple.menuextra.clock:
+              keys:
+                  ShowSeconds: true
+          Apple Global Domain:
+              keys:
+                  AppleICUForce24HourTime: true
+                  com.apple.sound.beep.sound: /System/Library/Sounds/Sosumi.aiff
+      EOF
+      output = <<~EOF
+      Running defaults write com.apple.menuextra.clock ShowSeconds -bool TRUE
+      Running defaults write Apple Global Domain AppleICUForce24HourTime -bool TRUE
+      Running defaults write Apple Global Domain com.apple.sound.beep.sound /System/Library/Sounds/Sosumi.aiff
+      EOF
+      filename = File.join(@tempdir, "foo.yaml")
+      File.write(filename, input)
+      expected = output.gsub(/TEMPDIR/, @dir.tempdir)
+      expect(@dir.stream([@cmd, '--desktop=macos', '--file', filename, '--dry-run', '--verbose'], '', err: [:child, :out])).to eq expected
+    end
+  end
 end

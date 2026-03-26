@@ -10,8 +10,12 @@ class DesktopConfigProcessor
     def process
       config[top_section].each do |(cfg, cfgdata)|
         cfgdata[entry_section].each do |(group, groupdata)|
-          groupdata.each do |(key, value)|
-            process_config(options, cfg, [group], key, value)
+          if groupdata.is_a?(Hash)
+            groupdata.each do |(key, value)|
+              process_config(options, cfg, [group], key, value)
+            end
+          else
+            process_config(options, cfg, [], group, groupdata)
           end
         end
       end
@@ -74,6 +78,41 @@ class DesktopConfigProcessor
     end
   end
 
+  class MacOSDesktopConfigProcessor < BaseDesktopConfigProcessor
+    def initialize(config, options)
+      @config = config
+      @options = options
+    end
+
+    def top_section
+      'domains'
+    end
+
+    def entry_section
+      'keys'
+    end
+
+    def command
+      'defaults'
+    end
+
+    def format_args(cfg, groups, key, value)
+      args = [cfg, key.to_s]
+      subcommand = 'write'
+      case value
+      when true, false
+        args += ["-bool", value.to_s.upcase]
+      when nil
+        subcommand = 'delete'
+      when Integer
+        args += ["-int", value.to_s]
+      else
+        args += [value.to_s]
+      end
+      [subcommand] + args
+    end
+  end
+
   def initialize(stdin, stdout, stderr)
     @stdin = stdin
     @stdout = stdout
@@ -82,14 +121,19 @@ class DesktopConfigProcessor
 
   def process_file(options, file)
     data = YAML.safe_load(File.read(file))
-    p = KDEDesktopConfigProcessor.new(data, options)
+    p = case options[:desktop]
+        when :kde
+          KDEDesktopConfigProcessor.new(data, options)
+        when :macos
+          MacOSDesktopConfigProcessor.new(data, options)
+        end
     p.process
   end
 
   def run(env, args)
     env = env.to_h
     base = env["XDG_CONFIG_HOME"] || File.join(env["HOME"], ".config")
-    options = {files: [], base: base, env: env}
+    options = {files: [], base: base, env: env, desktop: :kde}
     OptionParser.new do |opts|
       opts.on("-f", "--file FILE", "process FILE") do |arg|
         options[:files] << arg
@@ -101,6 +145,10 @@ class DesktopConfigProcessor
 
       opts.on("-n", "--dry-run", "just print what would be done, don't do it") do
         options[:dry_run] = true
+      end
+
+      opts.on("-d DESKTOP", "--desktop DESKTOP", [:kde, :macos], "choose the given desktop") do |desktop|
+        options[:desktop] = desktop
       end
     end.order!(args)
 
