@@ -59,7 +59,6 @@
     update_cache: true
   become: true
   become_user: root
-  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
 - name: Install optional packages
   apt:
     pkg:
@@ -67,7 +66,6 @@
   become: true
   become_user: root
   ignore_errors: true
-  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
 - name: Install graphical and desktop packages
   apt:
     pkg:
@@ -120,7 +118,6 @@
 - name: Install APT repositories
   include_tasks: "{{ playbook_dir }}/install-apt-repo.yaml"
   loop: "{{ apt_repos }}"
-  when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
 - name: Install development packages
   apt:
     pkg:
@@ -132,7 +129,7 @@
       - hunspell-fr-classical
   become: true
   become_user: root
-  when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+  when: development
 - name: Install optional development packages
   apt:
     pkg:
@@ -140,7 +137,7 @@
   become: true
   become_user: root
   ignore_errors: true
-  when: development and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+  when: development
   loop:
     - gh
     - git-autofixup
