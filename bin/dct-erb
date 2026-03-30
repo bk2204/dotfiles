@@ -37,10 +37,16 @@ class Template
 
   def erb(file)
     if RUBY_VERSION >= '2.6'
-      ERB.new(File.read(file), trim_mode: '-%', eoutvar: name).result(binding)
+      ERB.new(File.read(file), trim_mode: '-%', eoutvar: name).result(get_binding)
     else
-      ERB.new(File.read(file), nil, '-%', name).result(binding)
+      ERB.new(File.read(file), nil, '-%', name).result(get_binding)
     end
+  end
+
+  private
+
+  def get_binding
+    binding
   end
 end
 
