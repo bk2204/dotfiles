@@ -121,6 +121,7 @@
     emptyAuth = true
 [init]
     defaultBranch = dev
+    defaultRefFormat = reftable
 [i18n]
     commitEncoding = UTF-8
 [lfs]
