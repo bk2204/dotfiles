@@ -7,6 +7,9 @@
 % end
 %
 % # Determine the kind of signing we're using, if any.
+% force_proto = @data.fetch("git", {})["force-proto"]
+%
+% # Determine the kind of signing we're using, if any.
 % signing = @data.fetch("git", {})["sign-commits"]
 % signing = "openpgp" if signing == true
 %
@@ -69,5 +72,9 @@
 % if key
 [user]
     signingkey = "<%= key %>"
+% end
+% if force_proto == "ssh"
+[url "ssh://git@github.com/"]
+    insteadOf = https://github.com/
 % end
 <%= File.read("git/gitconfig") -%>

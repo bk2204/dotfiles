@@ -104,5 +104,32 @@ describe :git do
       EOM
       expect(actual).to eq complete_config(expected)
     end
+
+    it 'should generate expected values for forcing the SSH protocol' do
+      yaml = <<~EOM
+      ---
+      git:
+          sign-commits: ssh
+          force-proto: ssh
+      gpg:
+          key: 6A09E667BB67AE853C6EF372A54FF53A510E527F
+      ssh:
+          key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
+      EOM
+      @dir = TestDir.new(config_yaml: yaml)
+      gitconfig = File.join(@dir.tempdir, ".config", "git", "config")
+      actual = File.read(gitconfig)
+      expected = <<~EOM
+      [commit]
+          gpgsign = true
+      [gpg]
+          format = ssh
+      [user]
+          signingkey = "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
+      [url "ssh://git@github.com/"]
+          insteadOf = https://github.com/
+      EOM
+      expect(actual).to eq complete_config(expected)
+    end
   end
 end
