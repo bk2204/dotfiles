@@ -1,0 +1,23 @@
+#!/bin/sh
+
+OVMF_LOCATION="/usr/share/OVMF"
+
+OVMF_CODE="$OVMF_LOCATION/OVMF_CODE_4M.ms.fd"
+OVMF_VARS="$OVMF_LOCATION/OVMF_VARS_4M.ms.fd"
+
+tempdir="$(mktemp -d)"
+trap 'rm -fr "$tempdir"' EXIT
+
+cp "$OVMF_VARS" "$tempdir/vars.fd"
+OVMF_VARS="$tempdir/vars.fd"
+
+qemu-system-x86_64 \
+        -enable-kvm \
+        -object rng-random,filename=/dev/urandom,id=rng0 \
+        -device virtio-rng-pci,rng=rng0 \
+        -vga virtio \
+        -machine q35,smm=on \
+        -global driver=cfi.pflash01,property=secure,value=on \
+        -drive if=pflash,format=raw,unit=0,file="${OVMF_CODE}",readonly=on \
+        -drive if=pflash,format=raw,unit=1,file="${OVMF_VARS}" \
+        "$@"
