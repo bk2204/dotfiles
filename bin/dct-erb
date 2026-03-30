@@ -37,9 +37,9 @@ class Template
 
   def erb(file)
     if RUBY_VERSION >= '2.6'
-      ERB.new(File.read(file), trim_mode: '-', eoutvar: name).result(binding)
+      ERB.new(File.read(file), trim_mode: '-%', eoutvar: name).result(binding)
     else
-      ERB.new(File.read(file), nil, '-', name).result(binding)
+      ERB.new(File.read(file), nil, '-%', name).result(binding)
     end
   end
 end
