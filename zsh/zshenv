@@ -294,6 +294,7 @@ setup_path () {
 setopt shwordsplit
 setopt rmstarsilent
 unsetopt bgnice
+unsetopt equals
 unsetopt nomatch
 
 # Set up some limits.
