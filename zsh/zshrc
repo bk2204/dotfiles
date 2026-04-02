@@ -51,15 +51,14 @@ alias en='LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 '
 PROMPT='%n@%m:%~(%?%)%# '
 
 # Set options.
-setopt shwordsplit bareglobqual
+setopt bareglobqual
 setopt interactivecomments
 setopt promptsubst
-setopt rmstarsilent
 setopt histignorespace
 setopt extendedhistory
 setopt incappendhistorytime
 setopt extendedglob
-unsetopt bgnice notify nomatch banghist
+unsetopt notify banghist
 
 # Set history.
 HISTSIZE=1000000

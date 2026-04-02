@@ -290,6 +290,12 @@ setup_path () {
     export MANPATH PATH COREPATH
 }
 
+# Set options.
+setopt shwordsplit
+setopt rmstarsilent
+unsetopt bgnice
+unsetopt nomatch
+
 # Set up some limits.
 unlimit
 limit | grep -qs core && limit core 0
