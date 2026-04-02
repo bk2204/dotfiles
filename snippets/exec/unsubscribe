@@ -1,6 +1,6 @@
 #!/bin/sh
 
-formail -c -X List-Unsubscribe | ruby -ne '
+URL=$(formail -c -X List-Unsubscribe | ruby -ne '
     if $_ =~ %r[^(?i:List-Unsubscribe):(.*)]
         line = $1
         line.gsub!(/=\?(?:utf-8|us-ascii|iso-8859-\d+)\?([qb])\?(\S+)\?=(\s+|$)/i) do |m|
@@ -12,8 +12,16 @@ formail -c -X List-Unsubscribe | ruby -ne '
             end
         end
         puts $1 if line =~ %r[^.*<(https?://[^>]+)>.*$];
-    end' | \
-    xargs curl -X POST -H'Content-Type: application/x-www-form-urlencoded' -dList-Unsubscribe=One-Click
+    end')
+
+if [ -n "$URL" ]
+then
+    printf 'Unsubscribing via %s\n' "$URL"
+    curl -X POST -H'Content-Type: application/x-www-form-urlencoded' -dList-Unsubscribe=One-Click "$URL"
+else
+    printf 'No URL found.' >&2
+    exit 1
+fi
 
 if [ "$1" = "--wait" ]
 then
