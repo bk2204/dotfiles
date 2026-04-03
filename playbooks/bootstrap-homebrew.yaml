@@ -19,7 +19,7 @@
   community.general.homebrew_tap:
     name:
       - macos-fuse-t/homebrew-cask
-      - dimentium/autoraise
+      - dimentium/homebrew-autoraise
   when: ansible_facts["os_family"] == 'Darwin'
 - name: Install Homebrew packages
   community.general.homebrew:
@@ -65,7 +65,7 @@
 - name: Install graphical and desktop casks for Homebrew
   community.general.homebrew_cask:
     name:
-      - dimentium/autoraise/autoraise
+      - dimentium/homebrew-autoraise/autoraise
       - firefox
       - font-source-code-pro
       - kitty
