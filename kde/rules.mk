@@ -1,4 +1,5 @@
 KDE_FILES		+= kde/kwin.yaml
+KDE_FILES		+= kde/kglobalshortcuts.yaml
 
 ifneq ($(KWRITECONFIG),)
 install-extra: install-extra-kde
