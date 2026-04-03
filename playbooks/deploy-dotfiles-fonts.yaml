@@ -1,0 +1,13 @@
+---
+- name: Check for fonts
+  stat:
+    path: "{{ item.key }}"
+    get_checksum: false
+    get_mime: false
+  register: fonts
+- name: Create font symlink
+  file:
+    state: link
+    src: "{{ item.key }}"
+    dest: '{{ ansible_facts["user_dir"] }}/.local/share/fonts/{{ item.value }}'
+  when: fonts.stat.exists and fonts.stat.isdir

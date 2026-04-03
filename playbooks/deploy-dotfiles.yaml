@@ -6,8 +6,9 @@
   vars:
     checkouts_dir: '{{ ansible_facts["user_dir"] }}/checkouts'
     branch: dev
-    fonts_src: /usr/share/texlive/texmf-dist/fonts/opentype/adobe
-    fonts_dest: adobe
+    font_srcs:
+      /usr/share/texlive/texmf-dist/fonts/opentype: texlive-opentype
+      /usr/share/texlive/texmf-dist/fonts/truetype: texlive-truetype
     group: '{{ ansible_facts["user_id"] }}'
     dotfiles_config: 'config/config-dev.yaml'
     private_dotfiles: true
@@ -90,18 +91,9 @@
       file:
         path: '{{ ansible_facts["user_dir"] }}/.local/share/fonts'
         state: directory
-    - name: Check for fonts
-      stat:
-        path: "{{ fonts_src }}"
-        get_checksum: false
-        get_mime: false
-      register: fonts
-    - name: Create font symlink
-      file:
-        state: link
-        src: "{{ fonts_src }}"
-        dest: '{{ ansible_facts["user_dir"] }}/.local/share/fonts/{{ fonts_dest }}'
-      when: fonts.stat.exists and fonts.stat.isdir
+    - name: Set up fonts
+      include_tasks: "{{ playbook_dir }}/deploy-dotfiles-fonts.yaml"
+      loop: "{{ font_srcs | dict2items }}"
     - name: Regenerate font cache
       shell: fc-cache
       when: fonts.stat.exists and fonts.stat.isdir
