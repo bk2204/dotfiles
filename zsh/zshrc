@@ -104,6 +104,43 @@ set_if_has_term () {
 }
 set_sane_term () {
     local i
+    local parent_exe
+    if [ "$OSTYPE" = linux-gnu ]
+    then
+        parent_exe="/proc/$PPID/exe"
+        parent_exe="${parent_exe:A}"
+    else
+        parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
+    fi
+    case "$TERM:$parent_exe" in
+        xterm:*vim*)
+            [[ $COLORTERM = truecolor ]] && set_if_has_term xterm-direct xterm-256color;;
+        xterm:*xfce4-terminal|xterm:*gnome-terminal|xterm:*mate-terminal)
+            set_if_has_term vte-direct xterm-direct vte-256color xterm-256color;;
+        xterm:*konsole)
+            set_if_has_term konsole-256color;;
+        screen*:*)
+            is_ssh_session && EDITOR=$(bmc_editor --dumb --console) && VISUAL=$(bmc_editor --console)
+            set_if_has_term screen-256color;;
+        tmux*:*tmux)
+            is_ssh_session && EDITOR=$(bmc_editor --dumb --console) && VISUAL=$(bmc_editor --console)
+            set_if_has_term tmux-direct tmux-256color screen-256color;;
+        tmux*:*)
+            set_if_has_term tmux-direct tmux-256color screen-256color;;
+        rxvt:*mrxvt-full)
+            set_if_has_term rxvt-256color;;
+        linux:*)
+            # Usually /proc/$PPID/exe will be inaccessible because it's
+            # /bin/login and owned by root, so don't try to match on it.
+            set_if_has_term linux-16color;;
+        *:*fbterm)
+            # fbterm supports 256 colors.
+            set_if_has_term fbterm;;
+        xterm-kitty:*kitty|kitty*:*kitty)
+            set_if_has_term kitty-direct kitty xterm-kitty;;
+        *) ;;
+    esac
+
     # Make sure our terminal definition works right.
     if ! has_term "$TERM"
     then
@@ -142,42 +179,6 @@ set_sane_term () {
             done
         fi
     fi
-    local parent_exe
-    if [ "$OSTYPE" = linux-gnu ]
-    then
-        parent_exe="/proc/$PPID/exe"
-        parent_exe="${parent_exe:A}"
-    else
-        parent_exe="$(ps -p $PPID -o comm= 2>/dev/null)"
-    fi
-    case "$TERM:$parent_exe" in
-        xterm:*vim*)
-            [[ $COLORTERM = truecolor ]] && set_if_has_term xterm-direct xterm-256color;;
-        xterm:*xfce4-terminal|xterm:*gnome-terminal|xterm:*mate-terminal)
-            set_if_has_term vte-direct xterm-direct vte-256color xterm-256color;;
-        xterm:*konsole)
-            set_if_has_term konsole-256color;;
-        screen*:*)
-            is_ssh_session && EDITOR=$(bmc_editor --dumb --console) && VISUAL=$(bmc_editor --console)
-            set_if_has_term screen-256color;;
-        tmux*:*tmux)
-            is_ssh_session && EDITOR=$(bmc_editor --dumb --console) && VISUAL=$(bmc_editor --console)
-            set_if_has_term tmux-direct tmux-256color screen-256color;;
-        tmux*:*)
-            set_if_has_term tmux-direct tmux-256color screen-256color;;
-        rxvt:*mrxvt-full)
-            set_if_has_term rxvt-256color;;
-        linux:*)
-            # Usually /proc/$PPID/exe will be inaccessible because it's
-            # /bin/login and owned by root, so don't try to match on it.
-            set_if_has_term linux-16color;;
-        *:*fbterm)
-            # fbterm supports 256 colors.
-            set_if_has_term fbterm;;
-        xterm-kitty:*kitty|kitty*:*kitty)
-            set_if_has_term kitty-direct kitty xterm-kitty;;
-        *) ;;
-    esac
 
     if is_ssh_session && [[ $SSH_TTY == $TTY ]]
     then
