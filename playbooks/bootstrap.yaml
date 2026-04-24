@@ -54,6 +54,17 @@
       become_user: root
       ignore_errors: true
       when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
+    - name: Set up appropriate environment variables
+      copy:
+        src: "{{ playbook_dir }}/files/etc/environment.d/99-local.conf"
+        dest: "/etc/environment.d/99-local.conf"
+        owner: root
+        group: root
+        mode: "644"
+      become: true
+      become_user: root
+      ignore_errors: true
+      when: ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Install Debian packages
       include_tasks: "{{ playbook_dir }}/bootstrap-deb.yaml"
       when: ansible_facts["distribution"] in ['Debian', 'Ubuntu'] and not homebrew
