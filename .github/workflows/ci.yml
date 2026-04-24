@@ -1,6 +1,8 @@
 ---
 name: CI
 on: [push, pull_request, workflow_dispatch]
+env:
+  DO_NOT_TRACK: '1'
 
 jobs:
   linux:
