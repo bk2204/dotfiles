@@ -24,13 +24,6 @@
           - 1password
           - 1password-cli
         condition: '{{ graphical and ansible_facts["userspace_architecture"] == "x86_64" }}'
-      - repository: GitHub CLI
-        remote_keyring: https://cli.github.com/packages/githubcli-archive-keyring.gpg
-        downloaded_keyring: /etc/apt/keyrings/githubcli-archive-keyring.gpg
-        keyring: /etc/apt/keyrings/githubcli-archive-keyring.gpg
-        sources_list_path: /etc/apt/sources.list.d/github-cli.list
-        packages: ~
-        condition: '{{ development and (ansible_facts["distribution"] != "Debian" or ansible_facts["distribution_version"] == "n/a") }}'
   tasks:
     - name: Check if this is a minimized Ubuntu image
       stat:
