@@ -155,6 +155,12 @@ describe :zsh do
     end
   end
 
+  context 'environment' do
+    it 'should indicate we do not want to be tracked' do
+      expect(@dir.cmd(['zsh', '-c', 'echo $DO_NOT_TRACK'])).to eq "1\n"
+    end
+  end
+
   context 'prompt' do
     it 'should not print escape characters with a dumb terminal' do
       expect(@dir.cmd(['zsh', '-c', 'source .zshrc; echo $PS1'])).not_to match(/\x1b/)

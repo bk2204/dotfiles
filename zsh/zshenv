@@ -375,6 +375,7 @@ GOPATH="$HOME/checkouts/go"
 GOPROXY=direct
 GOTOOLCHAIN=local
 BROWSER=dct-browser
+DO_NOT_TRACK=1
 
 if [[ ! -e "$XML_CATALOG_FILES" ]]; then
     unset XML_CATALOG_FILES
