@@ -3,7 +3,7 @@ files:
     kwinrc:
         groups:
             Desktops:
-                Number: 5
+                Number: 6
                 Rows: 1
             Windows:
                 AutoRaise: true
