@@ -614,7 +614,7 @@ function! s:SetGUIOptions()
 
       " If we're not running on a Mac and we're not running on a remote system
       " via Lawn with the UI on a Mac…
-      if !has("mac") && expand("$HOST_OS") != "Darwin"
+      if !has("mac") && expand("$HOST_OS") != "Darwin" && expand("$WINIT_X11_SCALE_FACTOR") == ''
         let g:neovide_scale_factor = 0.5
       endif
       if exists(":Guifont")
