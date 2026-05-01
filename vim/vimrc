@@ -629,9 +629,9 @@ function! s:SetGUIOptions()
         let g:neovide_scale_factor = 0.5
       endif
       if exists(":Guifont")
-        Guifont SourceCodePro:h10
+        Guifont SourceCodePro:h12
       else
-        set gfn=Source\ Code\ Pro:h10
+        set gfn=Source\ Code\ Pro:h12
       endif
     endif
   endif
