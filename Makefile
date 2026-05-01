@@ -36,6 +36,7 @@ include firefox/rules.mk
 include git/rules.mk
 include gnupg/rules.mk
 include kde/rules.mk
+include kitty/rules.mk
 include macos/rules.mk
 include misc/rules.mk
 include mutt/rules.mk

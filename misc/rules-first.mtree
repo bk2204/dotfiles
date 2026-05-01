@@ -1,8 +1,5 @@
 .config/alacritty type=dir mode=0700
-.config/kitty type=dir mode=0700
 .local/state/gh type=dir mode=0700
-.local/state/kitty type=dir mode=0700
-.local/state/kitty/sessions type=dir mode=0700
 .config/lawn type=dir mode=0700
 .config/neovide type=dir mode=0750
 .local/share/Last.fm type=dir mode=0700
