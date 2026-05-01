@@ -1,0 +1,16 @@
+% def setting_for(name)
+%   return nil if @data.nil? || !@data.is_a?(Hash)
+%   %w[kitty default].each do |key|
+%     cfg = @data.dig("fonts", "monospace", key, name)
+%     return cfg if cfg
+%   end
+% end
+% family = setting_for("family")
+% size = setting_for("size")
+%
+% if family
+font_family family="<%= family %>"
+% end
+% if size
+font_size <%= size %>
+% end

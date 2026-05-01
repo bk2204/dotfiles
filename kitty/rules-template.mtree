@@ -1,0 +1,1 @@
+.config/kitty/conf.d/fonts.conf type=file mode=0640 src=kitty/conf.d/fonts.conf.gen

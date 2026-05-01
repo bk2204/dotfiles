@@ -1,3 +1,4 @@
 .config/kitty type=dir mode=0700
+.config/kitty/conf.d type=dir mode=0700
 .local/state/kitty type=dir mode=0700
 .local/state/kitty/sessions type=dir mode=0700
