@@ -25,6 +25,17 @@
           - 1password-cli
         condition: '{{ graphical and ansible_facts["userspace_architecture"] == "x86_64" }}'
   tasks:
+    - name: Get netrc permissions
+      stat:
+        path: '{{ ansible_facts["user_dir"] }}/.netrc'
+      register: netrc_stat
+    - name: Set netrc permissions
+      file:
+        path: '{{ ansible_facts["user_dir"] }}/.netrc'
+        state: file
+        owner: '{{ ansible_facts["user_id"] }}'
+        mode: '0600'
+      when: netrc_stat.stat.exists
     - name: Check if this is a minimized Ubuntu image
       stat:
         path: /etc/dpkg/dpkg.cfg.d/excludes
