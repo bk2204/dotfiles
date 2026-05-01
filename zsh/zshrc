@@ -19,18 +19,18 @@ then
     alias rename='prename'
 fi
 
-local vi=$(bmc_editor --console)
+local vi="$(bmc_editor --console)"
 if [[ $vi != vi ]]
 then
-    alias vi=$vi
-    [[ $vi != vim ]] && alias vim=$vi
+    alias vi="$vi"
+    [[ $vi != vim ]] && alias vim="$vi"
 fi
 unset vi
 
-local gvi=$(bmc_editor --detach --no-fallback)
+local gvi="$(bmc_editor --detach --no-fallback)"
 if [[ -n $gvi ]]
 then
-    alias gvi=$gvi
+    alias gvi="$gvi"
 fi
 unset gvi
 
