@@ -12,3 +12,8 @@ git:
     sign-commits: openpgp
 gui:
     desktop: kde
+fonts:
+    monospace:
+        default:
+            family: Source Code Pro
+            size: 10
