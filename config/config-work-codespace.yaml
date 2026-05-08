@@ -6,3 +6,8 @@ email:
 git:
     credential-helper: ~
     sign-commits: ssh
+fonts:
+    monospace:
+        kitty:
+            family: Source Code Pro
+            size: 11
