@@ -7,3 +7,8 @@ git:
     credential-helper: ~
     force-proto: ssh
     sign-commits: ssh
+fonts:
+    monospace:
+        kitty:
+            family: Source Code Pro
+            size: 11
