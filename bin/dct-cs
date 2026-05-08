@@ -466,7 +466,7 @@ class Processor
       general_options(parser)
     end.parse!(args)
 
-    _, status = exec(["sh", "-c", "lawn mount --fd --type=sftp default -- sshfs -o slave :/ ~/mnt/remote >/tmp/lawn-mount"])
+    _, status = exec("sh", "-c", "lawn mount --fd --auto --type=sftp default ~/mnt/remote >/tmp/lawn-mount")
     status
   end
 
@@ -475,7 +475,7 @@ class Processor
       general_options(parser)
     end.parse!(args)
 
-    _, status = exec(["sh", "-c", "fusermount -uz ~/mnt/remote || true"])
+    _, status = exec("sh", "-c", "fusermount -uz ~/mnt/remote || true")
     status
   end
 end
