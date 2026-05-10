@@ -196,6 +196,7 @@ augroup setf
   au BufEnter,BufRead,BufNewFile *.mx                     setf groff
   au BufEnter,BufRead,BufNewFile COMMIT_EDITMSG           setf gitcommit
   au BufEnter,BufRead,BufNewFile $VIMRUNTIME/doc/*.txt    setf help
+  au BufEnter,BufRead,BufNewFile .devcontainer/*.json     setf jsonc
   au BufEnter,BufRead,BufNewFile reportbug-*              setf mail
   au BufEnter,BufRead,BufNewFile reportbug.*              setf mail
   au BufEnter,BufRead,BufNewFile *.xml                    setf xml
