@@ -314,6 +314,7 @@ zle-line-init () {
     fi
     choose_prompt "main"
 }
+
 zle-line-finish () {
     if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
         emulate -L zsh
