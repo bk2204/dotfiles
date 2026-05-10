@@ -2,16 +2,14 @@ setxkbmap -option capslock:escape -option compose:lwin \
 	-option terminate:ctrl_alt_bksp -option ctrl:swap_rwin_rctl
 xmodmap ~/.Xmodmap
 zsh -c '
-<%
-   desktop = @data.fetch("gui", {})["desktop"]
-   if desktop == "mate" || desktop.nil?
--%>
+% desktop = @data.fetch("gui", {})["desktop"]
+% if desktop == "mate" || desktop.nil?
 export QT_QPA_PLATFORMTHEME=gtk2
 mate-session
-<% elsif desktop == "kde" -%>
+% elsif desktop == "kde"
 unset QT_QPA_PLATFORMTHEME
 startplasma-x11
-<% else -%>
+% else
 /etc/xdg/xfce4/xinitrc -- /etc/X11/xinit/xserverrc
-<% end -%>
+% end
 '
