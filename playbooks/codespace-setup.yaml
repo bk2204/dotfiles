@@ -138,7 +138,7 @@
     - name: Deploy scutiger
       command: 'cargo install --locked scutiger-bin'
     - name: Setup remote repository
-      shell: 'for i in /workspaces/*; do "$HOME/bin/dct-snip" -r setup-repository "$i"; done'
+      shell: 'for i in /workspaces/*; do [ ! -d "$(realpath "$i")" ] || "$HOME/bin/dct-snip" -r setup-repository "$i"; done'
     - name: Install neovim-gtk helper
       get_url:
         dest: '{{ ansible_facts["user_dir"] }}/.vim/plugin/nvim_gui_shim.vim'
