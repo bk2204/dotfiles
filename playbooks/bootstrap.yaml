@@ -19,7 +19,7 @@
         remote_keyring: https://downloads.1password.com/linux/keys/1password.asc
         downloaded_keyring: /usr/share/keyrings/1password-archive-keyring.gpg.asc
         keyring: /usr/share/keyrings/1password-archive-keyring.gpg
-        sources_list_path: /etc/apt/sources.list.d/1password.list
+        sources_list_path: /etc/apt/sources.list.d/1password.sources
         packages:
           - 1password
           - 1password-cli
