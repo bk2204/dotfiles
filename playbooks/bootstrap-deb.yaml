@@ -141,3 +141,13 @@
   loop:
     - gh
     - git-autofixup
+- name: Install optional graphical packages
+  apt:
+    pkg:
+      - '{{ item }}'
+  become: true
+  become_user: root
+  ignore_errors: true
+  when: graphical
+  loop:
+    - keyd

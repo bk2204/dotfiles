@@ -98,6 +98,17 @@
       become: true
       become_user: root
       when: development and autofixup_check.rc != 0
+    - name: Install keyd cofig
+      copy:
+        src: "{{ playbook_dir }}/files/etc/keyd/main.conf"
+        dest: "/etc/keyd/main.conf"
+        owner: root
+        group: root
+        mode: "644"
+      become: true
+      become_user: root
+      ignore_errors: true
+      when: graphical and ansible_facts["distribution"] in ['Debian', 'Ubuntu']
     - name: Configure DNSSEC in local resolver
       shell: "ruby -e 'x = %w[edns0 trust-ad]; res = []; f = File.open(ARGV[0], %q[r+]); while f.gets; if $_ =~ /^options/; x.each { |i| $_.sub!(/$/, %Q[ #{i}]) unless $_ =~ / #{i}/ }; x = []; end; res << $_; end; res << %Q[options #{x.join(%q[ ])}] if f.eof? && !x.empty?; f.rewind; f.truncate(0); f.puts res' /etc/resolv.conf"
       become: true
