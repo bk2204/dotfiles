@@ -7,6 +7,7 @@
 #/ * Rename the main remote from `origin` to `def`.
 #/ * Set the remote HEAD for `def`.
 #/ * Set the default branch to be called `dev` locally.
+#/ * Remove any hooks.
 #/
 #/ If this repository is on a Codespace, the appropriate file is sourced to
 #/ acquire credentials.  This script is intended to be idempotent and will
@@ -63,3 +64,5 @@ then
   git branch -m "$branch" dev
 fi
 
+HOOKS_DIR="$(git rev-parse --git-path hooks)"
+[ ! -d "$HOOKS_DIR" ] || rm -fr "$HOOKS_DIR"
