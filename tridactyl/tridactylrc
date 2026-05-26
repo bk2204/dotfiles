@@ -1,0 +1,9 @@
+" Neovide on macOS is not in the PATH except for in the shell, so invoke zsh to
+" find the path properly.
+set editorcmd zsh -c '$(bmc_editor) "$0" "$@"'
+
+" Load the file with archive.ph.
+bind \a urlmodify -r https:// https://archive.ph/https%3a//
+
+" Load private configuration.
+source ~/.config/tridactyl/tridactylrc.private

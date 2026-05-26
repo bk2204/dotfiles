@@ -1,0 +1,2 @@
+.config/tridactyl type=dir mode=0700
+.config/tridactyl/tridactylrc.private type=file mode=0600 contents=ignore
