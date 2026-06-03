@@ -5,5 +5,9 @@ set editorcmd zsh -c '$(bmc_editor) "$0" "$@"'
 " Load the file with archive.ph.
 bind \a urlmodify -r https:// https://archive.ph/https%3a//
 
+" Move back to the previous tab when closing with d.
+bind d composite tabprev; tabclose #
+bind D tabclose
+
 " Load private configuration.
 source ~/.config/tridactyl/tridactylrc.private
