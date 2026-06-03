@@ -90,6 +90,8 @@
   import_playbook: create-account.yaml
 - name: Codespace User Setup
   hosts: all
+  vars:
+    private_dotfiles: true
   tasks:
     - name: Create $HOME/.ssh
       file:
@@ -112,6 +114,7 @@
         remote: def
         dest: /workspaces/dotfiles-private
         version: GitHub
+      when: private_dotfiles
     - name: Enable dotfiles-private
       file:
         src: ../dotfiles-private/rules-overlay.mk
@@ -119,6 +122,7 @@
         owner: '{{ ansible_facts["user_id"] }}'
         group: '{{ ansible_facts["user_id"] }}'
         state: link
+      when: private_dotfiles
     - name: Checkout submodules for dotfiles
       shell: 'git submodule update --init'
       args:
