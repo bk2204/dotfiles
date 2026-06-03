@@ -37,12 +37,12 @@
     mode: 0640
     url: https://github.com/neovim/neovim-releases/releases/download/v0.10.4/nvim-linux-x86_64.deb
     checksum: sha256:d26f9c0478702c7632a6436f952dc425924cb28dad2184382ce8f138e347f608
-  when: ansible_facts["distribution"] == 'Ubuntu' and ansible_facts["distribution_version"] == '20.04'
+  when: ansible_facts["distribution"] == 'Ubuntu' and ansible_facts["distribution_version"] == '20.04' and ansible_facts["architecture"] == 'x86_64'
 - name: Install neovim package
   command: dpkg -i {{ ansible_facts["user_dir"] }}/tmp/nvim-linux-x86_64.deb
   become: true
   become_user: root
-  when: ansible_facts["distribution"] == 'Ubuntu' and ansible_facts["distribution_version"] == '20.04'
+  when: ansible_facts["distribution"] == 'Ubuntu' and ansible_facts["distribution_version"] == '20.04' and ansible_facts["architecture"] == 'x86_64'
 - name: Install Debian packages
   apt:
     pkg:
