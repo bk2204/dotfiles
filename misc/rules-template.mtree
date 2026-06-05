@@ -1,1 +1,1 @@
-.Xsession type=file mode=0640 src=misc/Xsession.gen
+.Xsession type=file mode=0750 src=misc/Xsession.gen
