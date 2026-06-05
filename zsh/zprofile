@@ -2,10 +2,10 @@
 
 source "$HOME/.zshenv"
 
-if [ -z "${ZSH_ARGZERO##/*}" ]
+if [ -z "${ZSH_ARGZERO##/*zsh}" ]
 then
     export SHELL="$ZSH_ARGZERO"
-elif [ -z "${ZSH_ARGZERO##-/*}" ]
+elif [ -z "${ZSH_ARGZERO##-/*zsh}" ]
 then
     export SHELL="${ZSH_ARGZERO##-}"
 elif command -v "$ZSH_NAME" >/dev/null 2>&1
