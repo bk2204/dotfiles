@@ -114,8 +114,14 @@ describe :zsh do
 
     it 'should set EDITOR to nex with TERM=dumb' do
       @dir = TestDir.new
-      exes = %w[gvim mvim nex ex vim vi]
+      exes = %w[gvim mvim nex nvi ex vim vi]
       expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'dumb')).to eq "nex\n"
+    end
+
+    it 'should set EDITOR to nvi with TERM=dumb' do
+      @dir = TestDir.new
+      exes = %w[gvim mvim nvi ex vim vi]
+      expect(@dir.cmd_with_exes(exes, ['zsh', '-c', 'echo $EDITOR'], 'TERM' => 'dumb')).to eq "nvi -e\n"
     end
 
     it 'should set EDITOR to ex with TERM=dumb' do

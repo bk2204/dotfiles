@@ -27,4 +27,5 @@ vimx::                     :detach=n:console=t:dumb=n:display=a:remote=a:
 vim::                      :detach=n:console=t:dumb=n:display=a:remote=a:
 vi::                       :detach=n:console=t:dumb=n:display=a:remote=a:
 nex::                      :detach=n:console=t:dumb=a:display=a:remote=a:
+nvi:-e:                    :detach=n:console=t:dumb=a:display=a:remote=a:
 ex::                       :detach=n:console=t:dumb=a:display=a:remote=a:
