@@ -7,6 +7,6 @@ install-extra-macos: $(MACOS_FILES)
 	for i in $(MACOS_FILES); \
 	do \
 		command -v ruby >/dev/null 2>&1 && \
-		dct-snip -r installconfig -d macos -f "$$i";\
+		snippets/exec/installconfig -d macos -f "$$i";\
 	done
 endif
