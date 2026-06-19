@@ -9,5 +9,8 @@ bind \a urlmodify -r https:// https://archive.ph/https%3a//
 bind d composite tabprev; tabclose #
 bind D tabclose
 
+# Open something in a private window.
+bind gp fillcmdline winopen -private
+
 " Load private configuration.
 source ~/.config/tridactyl/tridactylrc.private
