@@ -1,0 +1,30 @@
+# This configuration file is set up the following way:
+#
+# The first field is the name of the binary, the second is the arguments in
+# shell-quoted form, the third is padding, and the remainder are attributes.
+# An attribute is `t` if the value must be true to select this editor, `n` if
+# it must be false, and `a` if the editor will work in either case.
+#
+# The attributes are as follows:
+#
+# detach - This editor detaches from the terminal.
+# console - This editor requires a console (command-line interface, not necessarily a TTY).
+# dumb - This editor works in a dumb terminal.
+# display - This editor requires a GUI.
+# remote - This editor will work on a remote system (e.g., via SSH).
+lawn:run -- gvi --no-fork: :detach=n:console=n:dumb=a:display=n:remote=t:
+lawn:run -- gvi:           :detach=t:console=n:dumb=a:display=n:remote=t:
+neovide:--no-fork:         :detach=n:console=n:dumb=a:display=t:remote=n:
+neovide:--fork:            :detach=t:console=n:dumb=a:display=t:remote=n:
+nvim-gtk:--no-fork --:     :detach=n:console=n:dumb=a:display=t:remote=n:
+nvim-gtk:--:               :detach=t:console=n:dumb=a:display=t:remote=n:
+gvim:-f:                   :detach=n:console=n:dumb=a:display=t:remote=n:
+gvim::                     :detach=t:console=n:dumb=a:display=t:remote=n:
+mvim:-f:                   :detach=n:console=n:dumb=a:display=t:remote=n:
+mvim::                     :detach=f:console=n:dumb=a:display=t:remote=n:
+nvim::                     :detach=n:console=t:dumb=n:display=a:remote=a:
+vimx::                     :detach=n:console=t:dumb=n:display=a:remote=a:
+vim::                      :detach=n:console=t:dumb=n:display=a:remote=a:
+vi::                       :detach=n:console=t:dumb=n:display=a:remote=a:
+nex::                      :detach=n:console=t:dumb=a:display=a:remote=a:
+ex::                       :detach=n:console=t:dumb=a:display=a:remote=a:

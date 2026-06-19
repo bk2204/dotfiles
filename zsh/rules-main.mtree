@@ -1,3 +1,4 @@
+.config/zsh/editors type=file mode=0600 src=zsh/editors
 .config/zsh/zshenv type=file mode=0600 src=zsh/zshenv
 .config/zsh/zshrc type=file mode=0600 src=zsh/zshrc
 .config/zsh/zlogout type=file mode=0600 src=zsh/zlogout
