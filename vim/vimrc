@@ -55,6 +55,7 @@ if has("tenc")
   set tenc=utf-8
 endif
 set wim=longest,full
+set nofic
 set su=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set hid         " Don't force saving when changing buffers.
 
