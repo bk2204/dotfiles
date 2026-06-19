@@ -30,7 +30,7 @@
       - make
       - ncurses
       - neovim
-      - nvi
+      - nvi2
       - perl
       - python
       - rsync
