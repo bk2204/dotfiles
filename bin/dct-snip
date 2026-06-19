@@ -163,6 +163,7 @@ class SnippetProgram
       File.open(snip) do |f|
         IO.copy_stream(f, @stdout)
       end
+      0
     when :list
       case args.length
       when 0
