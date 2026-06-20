@@ -215,4 +215,22 @@ describe :dct_mtree do
       expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], INSTALL1, chdir: @tempdir)).to eq ''
     end
   end
+
+  context 'edge cases' do
+    ORDER = <<~EOF
+    . type=dir
+    ./.config type=dir mode=0700
+    ./.config/nvim type=link link=../.vim
+    EOF
+
+    it 'should install modified files in order for ruby backend' do
+      expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], ORDER, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], ORDER, chdir: @tempdir)).to eq ''
+    end
+
+    it 'should install modified files in order for sh backend' do
+      expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], ORDER, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], ORDER, chdir: @tempdir)).to eq ''
+    end
+  end
 end

@@ -280,7 +280,7 @@ do_install () {
     local dryrun="$2"
     local dest="$3"
 
-    print_mtree both "$recurse" "$dest" | sort | tail -n+2 | (while read -r src dest args
+    print_mtree both "$recurse" "$dest" | tail -n+2 | (while read -r src dest args
     do
         local src="$(unescape "$src")"
         local dest="$(unescape "$dest")"
