@@ -223,6 +223,20 @@ describe :dct_mtree do
     ./.config/nvim type=link link=../.vim
     EOF
 
+    CONTENTS_INSTALL = <<~EOF
+    . type=dir
+    ./.config type=dir mode=0700
+    ./.config/mutt type=dir mode=0700
+    ./.config/mutt/aliases type=file mode=0600 contents=ignore
+    EOF
+
+    CONTENTS_VERIFY = <<~EOF
+    . type=dir
+    ./.config type=dir mode=0700
+    ./.config/mutt type=dir mode=0700
+    ./.config/mutt/aliases type=file mode=0600 size=0
+    EOF
+
     it 'should install modified files in order for ruby backend' do
       expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], ORDER, chdir: @tempdir)).to eq ''
       expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], ORDER, chdir: @tempdir)).to eq ''
@@ -231,6 +245,16 @@ describe :dct_mtree do
     it 'should install modified files in order for sh backend' do
       expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], ORDER, chdir: @tempdir)).to eq ''
       expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], ORDER, chdir: @tempdir)).to eq ''
+    end
+
+    it 'should accept contents=ignore for ruby backend' do
+      expect(@dir.stream([@mtree, '--backend=ruby', '--install', 'dest'], CONTENTS_INSTALL, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], CONTENTS_VERIFY, chdir: @tempdir)).to eq ''
+    end
+
+    it 'should accept contents=ignore for sh backend' do
+      expect(@dir.stream([@mtree, '--backend=sh', '--install', 'dest'], CONTENTS_INSTALL, chdir: @tempdir)).to eq ''
+      expect(@dir.stream(['sh', '-c', 'cd dest && mtree -f /dev/stdin'], CONTENTS_VERIFY, chdir: @tempdir)).to eq ''
     end
   end
 end

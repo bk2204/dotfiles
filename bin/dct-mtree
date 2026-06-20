@@ -155,7 +155,7 @@ format_line () {
 
     local line src dest
 
-    line=$(echo "$args" | tr ' ' '\n' | grep -E '^(type|mode|link|sha[0-9]+(digest)?)=' | tr '\n' ' ' | sed -e 's/ *$//')
+    line=$(echo "$args" | tr ' ' '\n' | grep -E '^(type|mode|link|sha[0-9]+(digest)?|contents)=' | tr '\n' ' ' | sed -e 's/ *$//')
     dest="$file"
     case "$kind" in
         dest)
