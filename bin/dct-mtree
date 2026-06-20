@@ -293,9 +293,12 @@ do_install () {
                 if [ -n "$dryrun" ]
                 then
                     echo "Would create directory '$dest' with mode $mode"
-                else
+                elif [ -n "$mode" ]
+                then
                     mkdir -m "$mode" -p "$dest"
                     chmod "$mode" "$dest"
+                else
+                    mkdir -p "$dest"
                 fi
                 ;;
             file)
