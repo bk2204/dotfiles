@@ -142,7 +142,12 @@ class TestDir
     begin
       file.write(input)
       file.flush
-      IO.popen(env, command, :unsetenv_others => true, :in => file.path, :err => err, :chdir => dir).read
+      data = nil
+      IO.popen(env, command, :unsetenv_others => true, :in => file.path, :err => err, :chdir => dir) do |io|
+        data = io.read
+      end
+      raise "stream failed with #{$?}" unless $?.success?
+      data
     ensure
       file.close
       file.unlink
