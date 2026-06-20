@@ -39,6 +39,7 @@ backend=    choose the backend to use (sh or ruby)
  Commands
 mtree-src!  print a full mtree format file for the source directory
 mtree-dest! print a full mtree format file for the destination directory
+format!     format the default mtree format into per-line format
 validate!   validate the input file
 install!    install the input file
 dump!       dump the internal Ruby script
@@ -73,6 +74,9 @@ main () {
                 ;;
             --dump)
                 cmd=dump
+                ;;
+            --format)
+                cmd=format
                 ;;
             --file)
                 file="$1"
@@ -370,6 +374,59 @@ module MTree
         config[:stdout].printf("%s %s\n", path, filter_args(entry[:args]).map { |k, v| "#{k}=#{v}" }.join(" "))
     end
 
+    def self.format_entries(defaults, values)
+        fixed = %w[
+            type uname gname mode nlink size link time cksum
+            md5 md5digest
+            rmd160 rmd160digest
+            sha1 sha1digest
+            sha256 sha256digest
+            sha384 sha384digest
+            sha512 sha512digest
+            flags
+        ]
+        extra = defaults.keys + values.keys
+        fixed.each { |k| extra.delete(k) }
+
+        [*fixed, *extra].map do |k|
+            val = values[k] || defaults[k]
+            val ? "#{k}=#{val}" : nil
+        end.compact.join(" ")
+    end
+
+    def self.format(config)
+        dirname = []
+        defaults = {}
+        while line = config[:stdin].gets
+            line.chomp!
+            if line =~ /^(#|$)/
+                next
+            elsif line =~ /^(.*) \\$/
+                line = $1 + config[:stdin].gets.chomp
+                redo
+            elsif line =~ %r[^/set\s+(.*)]
+                defaults = $1.split(/\s+/).map { |kv| kv.split(/=/, 2) }.to_h
+            elsif line =~ /^\.\.\s*$/
+                dirname.pop
+            elsif line =~ /^\s*(\S+)\s+(.*)/
+                path = $1
+                values = $2.split(/\s+/).map { |kv| kv.split(/=/, 2) }.to_h
+                full_path = path[1..].include?("/")
+                if values["type"] == "dir"
+                    if full_path
+                        dirname = path.split(%r[/])
+                    else
+                        dirname << path
+                    end
+                    config[:stdout].puts "#{File.join(*dirname)} #{format_entries(defaults, values)}"
+                else
+                    path = full_path ? path : File.join(*dirname, path)
+                    config[:stdout].puts "#{path} #{format_entries(defaults, values)}"
+                end
+            end
+        end
+    end
+
     def self.install(config, entry)
         fullpath = entry[:root] ? config[:installdest] : File.join(config[:installdest], entry[:dest])
         mode = entry[:args]["mode"]&.to_i(8)
@@ -447,6 +504,12 @@ module MTree
         dryrun = cmdargs.length >= 3 && !cmdargs[2].nil? && !cmdargs[2].empty?
         installdest = cmdargs.length >= 4 && cmdargs[3]
         config = { installdest: installdest, dry_run: dryrun, stdin: stdin, stdout: stdout }
+        simple = cmdargs[0].to_sym == :format
+
+        if simple
+            method.call(MTree, config)
+            return 0
+        end
 
         entry = { src: ".", dest: ".", args: { "type" => "dir" }, root: true }
         method.call(MTree, config, entry)
@@ -538,6 +601,12 @@ dispatch () {
             do_install "$recurse" "$dryrun" "$dest";;
         ruby:install)
             do_ruby install "$recurse" "$dryrun" "$dest";;
+        sh:format)
+            printf 'This option is not supported in the sh backend.' >&2
+            exit 2
+            ;;
+        ruby:format)
+            do_ruby format;;
         *:dump)
             printf '%s' "$RUBY_SCRIPT"
     esac
