@@ -258,6 +258,46 @@ describe :dct_mtree do
     end
   end
 
+  context 'escaping' do
+    ALL_BYTES = (0..255).map { |b| b.chr("ASCII-8BIT") }.join
+    ALL_NONNULL_BYTES = (1..255).map { |b| b.chr("ASCII-8BIT") }.join
+
+    it 'should accept FreeBSD (VIS_OCTAL) escaping' do
+      octal = (0..255).map { |b| "\\%03o" % b }.join
+      expect(@dir.stream([@mtree, '--backend=ruby', '--unescape'], octal).b).to eq ALL_BYTES
+      expect(@dir.stream([@mtree, '--backend=perl', '--unescape'], octal).b).to eq ALL_BYTES
+
+      octal = (1..255).map { |b| "\\%03o" % b }.join
+      expect(@dir.stream([@mtree, '--backend=perl', '--unescape'], octal, chdir: @tempdir).b).to eq ALL_NONNULL_BYTES
+      expect(@dir.stream([@mtree, '--backend=sh', '--unescape'], octal, chdir: @tempdir).b).to eq ALL_NONNULL_BYTES
+      expect(@dir.stream([@mtree, '--backend=ruby', '--unescape'], octal, chdir: @tempdir).b).to eq ALL_NONNULL_BYTES
+    end
+
+    it 'should accept NetBSD (VIS_CSTYLE) escaping' do
+      cstyle = "\\0\\^A\\^B\\^C\\^D\\^E\\^F\\a\\b\\t\\n\\v\\f\\r\\^N\\^O\\^P\\^Q\\^R\\^S\\^T\\^U\\^V\\^W\\^X\\^Y\\^Z\\^[\\^\\\\^]\\^^\\^_\\s!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\\^?\\M^@\\M^A\\M^B\\M^C\\M^D\\M^E\\M^F\\M^G\\M^H\\M^I\\M^J\\M^K\\M^L\\M^M\\M^N\\M^O\\M^P\\M^Q\\M^R\\M^S\\M^T\\M^U\\M^V\\M^W\\M^X\\M^Y\\M^Z\\M^[\\M^\\\\M^]\\M^^\\M^_\\240\\M-!\\M-\"\\M-#\\M-$\\M-%\\M-&\\M-'\\M-(\\M-)\\M-*\\M-+\\M-,\\M--\\M-.\\M-/\\M-0\\M-1\\M-2\\M-3\\M-4\\M-5\\M-6\\M-7\\M-8\\M-9\\M-:\\M-;\\M-<\\M-=\\M->\\M-?\\M-@\\M-A\\M-B\\M-C\\M-D\\M-E\\M-F\\M-G\\M-H\\M-I\\M-J\\M-K\\M-L\\M-M\\M-N\\M-O\\M-P\\M-Q\\M-R\\M-S\\M-T\\M-U\\M-V\\M-W\\M-X\\M-Y\\M-Z\\M-[\\M-\\\\M-]\\M-^\\M-_\\M-`\\M-a\\M-b\\M-c\\M-d\\M-e\\M-f\\M-g\\M-h\\M-i\\M-j\\M-k\\M-l\\M-m\\M-n\\M-o\\M-p\\M-q\\M-r\\M-s\\M-t\\M-u\\M-v\\M-w\\M-x\\M-y\\M-z\\M-{\\M-|\\M-}\\M-~\\M^?"
+      expect(@dir.stream([@mtree, '--backend=ruby', '--unescape'], cstyle, chdir: @tempdir).b).to eq ALL_BYTES
+      expect(@dir.stream([@mtree, '--backend=perl', '--unescape'], cstyle, chdir: @tempdir).b).to eq ALL_BYTES
+
+      cstyle = cstyle[2..]
+      expect(@dir.stream([@mtree, '--backend=ruby', '--unescape'], cstyle, chdir: @tempdir).b).to eq ALL_NONNULL_BYTES
+      expect(@dir.stream([@mtree, '--backend=perl', '--unescape'], cstyle, chdir: @tempdir).b).to eq ALL_NONNULL_BYTES
+      expect(@dir.stream([@mtree, '--backend=sh', '--unescape'], cstyle, chdir: @tempdir).b).to eq ALL_NONNULL_BYTES
+    end
+
+    it 'should escape characters sensibly' do
+      expected = "\\000\\001\\002\\003\\004\\005\\006\\007\\010\\t\\n\\013\\014\\015\\016\\017\\020\\021\\022\\023\\024\\025\\026\\027\\030\\031\\032\\033\\034\\035\\036\\037\\s!\"\\#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\134]^_`abcdefghijklmnopqrstuvwxyz{|}~\\177\\200\\201\\202\\203\\204\\205\\206\\207\\210\\211\\212\\213\\214\\215\\216\\217\\220\\221\\222\\223\\224\\225\\226\\227\\230\\231\\232\\233\\234\\235\\236\\237\\240\\241\\242\\243\\244\\245\\246\\247\\250\\251\\252\\253\\254\\255\\256\\257\\260\\261\\262\\263\\264\\265\\266\\267\\270\\271\\272\\273\\274\\275\\276\\277\\300\\301\\302\\303\\304\\305\\306\\307\\310\\311\\312\\313\\314\\315\\316\\317\\320\\321\\322\\323\\324\\325\\326\\327\\330\\331\\332\\333\\334\\335\\336\\337\\340\\341\\342\\343\\344\\345\\346\\347\\350\\351\\352\\353\\354\\355\\356\\357\\360\\361\\362\\363\\364\\365\\366\\367\\370\\371\\372\\373\\374\\375\\376\\377".b
+
+      expect(@dir.stream([@mtree, '--backend=ruby', '--escape'], ALL_BYTES, chdir: @tempdir).b).to eq expected
+      expect(@dir.stream([@mtree, '--backend=perl', '--escape'], ALL_BYTES, chdir: @tempdir).b).to eq expected
+
+      expected = expected[4..].sub(/\\n/, '')
+      input = ALL_NONNULL_BYTES.sub(/\n/, '')
+      expect(@dir.stream([@mtree, '--backend=ruby', '--escape'], input, chdir: @tempdir).b).to eq expected
+      expect(@dir.stream([@mtree, '--backend=perl', '--escape'], input, chdir: @tempdir).b).to eq expected
+      expect(@dir.stream([@mtree, '--backend=sh', '--escape'], input, chdir: @tempdir).b).to eq expected
+    end
+  end
+
   context 'format' do
     DEFAULT = <<~'EOF'
     # .

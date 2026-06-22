@@ -40,6 +40,8 @@ backend=    choose the backend to use (sh or ruby)
 mtree-src!  print a full mtree format file for the source directory
 mtree-dest! print a full mtree format file for the destination directory
 format!     format the default mtree format into per-line format
+escape!     escape standard input suitably for mtree
+unescape!   unescape standard input suitably for mtree
 validate!   validate the input file
 install!    install the input file
 dump!       dump the internal Ruby script
@@ -77,6 +79,12 @@ main () {
                 ;;
             --format)
                 cmd=format
+                ;;
+            --escape)
+                cmd=escape
+                ;;
+            --unescape)
+                cmd=unescape
                 ;;
             --file)
                 file="$1"
@@ -118,28 +126,165 @@ extract_entry () {
     echo "$args" | sed -ne 's/^\(.* \)\{0,\}'"$entry"'=\([^ ]*\).*$/\2/p'
 }
 
+do_escape () {
+    local backend="$1"
+    if command -v perl >/dev/null 2>&1 && [ "$backend" != sh ]
+    then
+        LC_ALL=C perl -pe 's/\\/\\134/g; s/#/\\#/g; s/ /\\s/g; s/\n/\\n/g; s/\t/\\t/g; s/([\x00-\x1f\x7f-\xff])/sprintf "\\%03o", ord($1)/ge;'
+    else
+        LC_ALL=C awk '
+            function setup_escapes(c, i, e, rechars) {
+                for (i = 1; i < 256; i++) {
+                    if (i == 32) {
+                        escapes[sprintf("%c", i)] = "\\s";
+                    } else if (i == 9) {
+                        escapes[sprintf("%c", i)] = "\\t";
+                    } else if (i == 10) {
+                        escapes[sprintf("%c", i)] = "\\n";
+                    } else if (i == 35) {
+                        escapes[sprintf("%c", i)] = "\\#";
+                    } else if (i == 92) {
+                        continue;
+                    } else if (i < 32 || i > 126) {
+                        escapes[sprintf("%c", i)] = sprintf("\\%03o", i);
+                    }
+                }
+            }
+            function convert(s) {
+                gsub("\\\\", "\\134", s);
+                for (i in escapes) {
+                    gsub(i, escapes[i], s);
+                }
+                return s
+            }
+            BEGIN {
+                setup_escapes();
+            }
+            { printf "%s", convert($0) }
+        '
+    fi
+}
+
+do_unescape () {
+    local backend="$1"
+    if command -v perl >/dev/null 2>&1 && [ "$backend" != sh ]
+    then
+        LC_ALL=C perl -pe '
+            $x = {
+                (map {
+                    (sprintf("%03o", $_), chr($_))
+                } 0..255),
+                "\\" => "\\", "#" => "#", 0 => "\0",
+                a => "\a", b => "\b", f => "\f", n => "\n", r => "\r", s => " ", t => "\t", v => "\x0b",
+                "^?" => "\x7f", "M^@" => "\x80", "M^?" => "\xff",
+                (map {
+                    (
+                        sprintf("^%c", 0x40 + $_) => chr($_),
+                        sprintf("M^%c", 0x40 + $_) => chr(0x80 + $_),
+                    )
+                } 0x01..0x1f),
+                (map {
+                    (sprintf("M-%c", $_) => chr(0x80 + $_))
+                } 0x21..0x7e),
+            };
+            s/\\(\^[A-_?]|M[-^][!-~]|[\\#abfnrstv]|[0-7]{3}|0(?![0-7]))/$x->{$1}/ge;
+        '
+    else
+        LC_ALL=C awk '
+            function setup_escapes(c, i, e, rechars) {
+                for (i = 0; i < 256; i++) {
+                    if (i == 92)
+                        continue;
+                    c = sprintf("\\\\%03o", i)
+                    if (i == 38) {
+                        escapes[c] = sprintf("\\%c", i)
+                    } else {
+                        escapes[c] = sprintf("%c", i)
+                    }
+                }
+                rechars["["] = 1;
+                rechars["]"] = 1;
+                rechars["("] = 1;
+                rechars[")"] = 1;
+                rechars["|"] = 1;
+                rechars["\\"] = 1;
+                rechars["{"] = 1;
+                rechars["}"] = 1;
+                rechars["?"] = 1;
+                rechars["+"] = 1;
+                rechars["*"] = 1;
+                rechars["^"] = 1;
+                rechars["$"] = 1;
+                rechars["."] = 1;
+                for (i = 1; i < 32; i++) {
+                    c = sprintf("%c", i + 64);
+                    if (c == "\\")
+                        continue;
+                    if (rechars[c]) {
+                        e = "\\"
+                    } else {
+                        e = ""
+                    }
+                    escapes[sprintf("\\\\\\^%s%c", e, 64 + i)] = sprintf("%c", i);
+                    escapes[sprintf("\\\\M\\^%s%c", e, 64 + i)] = sprintf("%c", (128 + i));
+                }
+                for (i = 33; i < 127; i++) {
+                    c = sprintf("%c", i)
+                    if (rechars[c]) {
+                        e = "\\"
+                    } else {
+                        e = ""
+                    }
+                    escapes[sprintf("\\\\M-%s%c", e, i)] = sprintf("%c", (128 + i))
+                }
+                escapes["\\\\a"] = "\a"
+                escapes["\\\\b"] = "\b"
+                escapes["\\\\f"] = "\f"
+                escapes["\\\\n"] = "\n"
+                escapes["\\\\r"] = "\r"
+                escapes["\\\\s"] = " "
+                escapes["\\\\t"] = "\t"
+                escapes["\\\\v"] = "\v"
+                escapes["\\\\\\^\\?"] = "\177"
+                escapes["\\\\M\\^@"] = "\200"
+                escapes["\\\\M\\^\\?"] = "\377"
+            }
+            function convert(s) {
+                # This is ugly and technically incorrect. If we place \^\ next
+                # to another escape sequence, such as \^], then we have \^\\^],
+                # which gets parsed as a double backslash.  It is not possible
+                # in the general case to do multi-pass parsing here when \ is
+                # not solely an escape character and awk is incapable of doing
+                # the required substitution for single-pass parse.
+                gsub("\\\\\\^\\\\", "\\034", s);
+                gsub("\\\\M\\^\\\\", "\\234", s);
+                gsub("\\\\M-\\\\", "\\334", s);
+                gsub("\\\\\\\\", "\\134", s);
+                for (i in escapes) {
+                    gsub(i, escapes[i], s);
+                }
+                gsub("\\\\0", "\000", s);
+                gsub("\\\\134", "\\", s);
+                return s
+            }
+            BEGIN {
+                setup_escapes();
+            }
+            { printf "%s", convert($0) }
+        '
+    fi
+}
+
 escape () {
     local name="$1"
-    echo "$name" | if command -v perl >/dev/null 2>&1
-    then
-        perl -pe 'chomp; s/\\/\\\\/g; s/#/\\#/g; s/ /\\s/g; s/([\x01-\x1f\x7f-\xff])/sprintf "\\%03o", ord($1)/ge;'
-    else
-        sed -e 's/\\/\\\\/g' -e 's/#/\\#/g' -e 's/ /\\s/g'
-    fi
+    local backend="$2"
+    printf '%s' "$name" | do_escape "$backend"
 }
 
 unescape () {
     local name="$1"
-    echo "$name" | if command -v perl >/dev/null 2>&1
-    then
-        perl -pe '
-            $x = { (map { (sprintf("%03o", $_), chr($_)) } 0..255), "\\" => "\\", s => " ", "#" => "#", t => "\t", n => "\n" };
-            chomp;
-            s/\\([\\#stn]|[0-7]{3})/$x->{$1}/ge;
-        '
-    else
-        sed -e 's/\\\\/\\/g' -e 's/\\#/#/g' -e 's/\\s/ /g'
-    fi
+    local backend="$2"
+    printf '%s' "$name" | do_unescape "$backend"
 }
 
 prefix () {
@@ -337,25 +482,44 @@ module MTree
         escapes = {
             "\\\\" => "\\",
             "\\#" => "#",
-            "\\s" => " ",
+            "\\0" => "\0",
+            "\\a" => "\a",
+            "\\b" => "\b",
+            "\\f" => "\f",
             "\\n" => "\n",
+            "\\r" => "\r",
+            "\\s" => " ",
             "\\t" => "\t",
+            "\\v" => "\v",
+            "\\^?" => "\x7f",
+            "\\M^@" => "\x80",
+            "\\M^?" => "\xff",
         }
-        escapes.merge((0x01...0xff).map { |c| ["\\%03o" % c, c.chr] }.to_h)
-        s.gsub(/\\([\\#s\n\t]|[0-7]{3})/n, escapes)
+        escapes.merge!((0x00..0xff).map { |c| ["\\%03o" % c, c.chr] }.to_h)
+        escapes.merge!((0x01..0x1f).map do |c|
+            [
+                ["\\^%c" % (0x40 + c).chr, c.chr],
+                ["\\M^%c" % (0x40 + c).chr, (c + 0x80).chr],
+            ]
+        end.flatten(1).to_h)
+        escapes.merge!((0x21..0x7e).map do |c|
+            ["\\M-%c" % c.chr, (c + 0x80).chr]
+        end.to_h)
+        s.gsub(/\\(\^[A-_?]|M[-^][!-~]|[\\#abfnrstv]|[0-7]{3}|0(?![0-7]))/n, escapes)
     end
 
     def self.escape(s)
-        escapes = {
-            "\\" => "\\",
+        escapes = {}
+        escapes.merge!((0x00..0x1f).map { |c| [c.chr, "%03o" % c] }.to_h)
+        escapes.merge!((0x7f..0xff).map { |c| [c.chr, "%03o" % c] }.to_h)
+        escapes.merge!({
+            "\\" => "134",
             "#" => "#",
             " " => "s",
             "\n" => "n",
             "\t" => "t",
-        }
-        escapes.merge((0x01...0x1f).map { |c| [c.chr, "%03o" % c] }.to_h)
-        escapes.merge((0x7f...0xff).map { |c| [c.chr, "%03o" % c] }.to_h)
-        s.gsub(/[\\# \x01-\x1f\x7f-\xff]/n) { |m| "\\%s" % escapes[m] }
+        })
+        s.gsub(/[\\# \x00-\x1f\x7f-\xff]/n) { |m| "\\%s" % escapes[m] }
     end
 
     def self.quote(s)
@@ -504,10 +668,15 @@ module MTree
         dryrun = cmdargs.length >= 3 && !cmdargs[2].nil? && !cmdargs[2].empty?
         installdest = cmdargs.length >= 4 && cmdargs[3]
         config = { installdest: installdest, dry_run: dryrun, stdin: stdin, stdout: stdout }
-        simple = cmdargs[0].to_sym == :format
 
-        if simple
+        if cmdargs[0].to_sym == :format
             method.call(MTree, config)
+            return 0
+        elsif cmdargs[0].to_sym == :escape
+            stdout.print escape(stdin.read)
+            return 0
+        elsif cmdargs[0].to_sym == :unescape
+            stdout.print unescape(stdin.read)
             return 0
         end
 
@@ -601,6 +770,18 @@ dispatch () {
             do_install "$recurse" "$dryrun" "$dest";;
         ruby:install)
             do_ruby install "$recurse" "$dryrun" "$dest";;
+        sh:escape)
+            do_escape "sh";;
+        perl:escape)
+            do_escape "perl";;
+        ruby:escape)
+            do_ruby escape;;
+        sh:unescape)
+            do_unescape "sh";;
+        perl:unescape)
+            do_unescape "perl";;
+        ruby:unescape)
+            do_ruby unescape;;
         sh:format)
             printf 'This option is not supported in the sh backend.' >&2
             exit 2
