@@ -46,11 +46,16 @@
     mrebase = rebase -m
     # Rebase using merge strategies, keeping empty commits (marks).
     mkrebase = rebase -m --keep-empty
-    # Update the given branch from its default remote.  If prefixed with plus, forces the update.
-    refresh = "!f() { local br=\"$(git rev-parse --abbrev-ref \"${1#+}\")\"; \
+    # Update the given branch from its default remote (or the first argument, if
+    # multiple are specified).  If prefixed with plus, forces the update.
+    refresh = "!f() { \
+        local remote; \
+        [ $# -eq 2 ] && { remote=\"$1\"; shift; }; \
+        local br=\"$(git rev-parse --abbrev-ref \"${1#+}\")\"; \
         local plus=\"$([ -z \"${1%%+*}\" ] && echo +)\"; \
-        local remote=\"$(git config branch.\"$br\".remote)\"; \
-        local refspec=\"${plus}$(git config branch.\"$br\".merge):$br\"; \
+        remote=\"${remote:-\"$(git config branch.\"$br\".remote)\"}\"; \
+        local rbr=\"$(git config branch.\"$br\".merge)\"; \
+        local refspec=\"${plus}${rbr:-$br}:$br\"; \
         if [ \"$br\" = \"$(git rev-parse --abbrev-ref HEAD)\" ]; \
         then git pull \"$remote\" \"$refspec\"; \
         else git fetch \"$remote\" \"$refspec\"; \
