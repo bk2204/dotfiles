@@ -1,4 +1,6 @@
 .config/alacritty type=dir mode=0700
+.config/containers type=dir mode=0700
+.config/containers/containers.conf.d type=dir mode=0700
 .local/state/gh type=dir mode=0700
 .config/lawn type=dir mode=0700
 .config/neovide type=dir mode=0750
