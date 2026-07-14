@@ -92,6 +92,9 @@ set_if_has_term () {
 set_sane_term () {
     local i
     local parent_exe
+
+    autoload -U bmc_is_container
+
     if [ "$OSTYPE" = linux-gnu ]
     then
         parent_exe="/proc/$PPID/exe"
@@ -178,7 +181,7 @@ set_sane_term () {
         esac
     fi
 
-    if is_docker_session
+    if bmc_is_container
     then
         case $TERM in
             xterm*)

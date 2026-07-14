@@ -24,10 +24,6 @@ bmc_palette_ () {
     color_fg $args
 }
 
-bmc_palette_is_container() {
-    grep -qs docker /proc/1/cgroup || test -e /run/.containerenv || test -e /.dockerenv
-}
-
 bmc_palette () {
     local bold
     local pattern
@@ -62,7 +58,7 @@ bmc_palette () {
         local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
 
         # In a container, use the hostname as the color instead of a hash of it.
-        bmc_palette_is_container && grep -qsE '^[a-f0-9]{8}' <<<"$hostname" && hostcolor="$hostname"
+        bmc_is_container && grep -qsE '^[a-f0-9]{8}' <<<"$hostname" && hostcolor="$hostname"
 
         colors[hostcolor]="no
                            0x$(cut -b1-6 <<<"$hostcolor")

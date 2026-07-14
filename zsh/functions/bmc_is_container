@@ -1,0 +1,4 @@
+bmc_is_container() {
+    [ -e /run/.containerenv ] || [ -e /.dockerenv ] || grep -qs docker /proc/1/cgroup
+}
+
