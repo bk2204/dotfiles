@@ -656,7 +656,7 @@ function! s:SetLSPRoot()
   let root = s:FindLSPRoot()
 
   if !empty(root)
-    let b:ale_lsp_root = root
+    let b:ale_root = root
   endif
 endfunction
 
