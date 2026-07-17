@@ -1,0 +1,35 @@
+#!/bin/sh -e
+
+OPTS_SPEC="\
+with-gpg COMMAND [ARGS...]
+
+On some Debian and Ubuntu systems, gpg may point the the Sequoia PGP wrapper.
+with-gpg overrides PATH to make gpg point to the GnuPG implementation instead
+and then runs the specified command with the specified arguments.
+--
+h,help!   show the help
+"
+
+eval "$(echo "$OPTS_SPEC" | git rev-parse --parseopt --stop-at-non-option -- "$@" || echo exit $?)"
+
+while [ $# -gt 0 ]
+do
+    arg="$1"
+    shift
+    case "$arg" in
+        --help)
+            exit 0
+            ;;
+        --)
+            break
+            ;;
+    esac
+done
+
+gpg=$(command -v gpg-g10code)
+dir=$(mktemp -d)
+trap 'rm -fr "$dir"' EXIT
+ln -s "$gpg" "$dir/gpg"
+export PATH="$dir:$PATH"
+
+"$@"
