@@ -9,3 +9,4 @@ manifest.mtree
 firefox/rules-main.mtree
 vim/spell
 vim/rules-spell.mtree
+zsh/completion

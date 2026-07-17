@@ -296,7 +296,7 @@ then
     # Nuke dupes.
     typeset -U fpath
     typeset -xU FPATH
-    fpath+=(~/.config/zsh/functions)
+    fpath+=(~/.config/zsh/functions ~/.config/zsh/completion)
 fi
 
 local the_preferred_locale=$(preferred_locale)

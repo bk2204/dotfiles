@@ -4,6 +4,7 @@
 .config/zsh/zlogout type=file mode=0600 src=zsh/zlogout
 .config/zsh/zprofile type=file mode=0600 src=zsh/zprofile
 .config/zsh/functions type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=zsh/functions
+.config/zsh/completion type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=zsh/completion
 .zshenv type=link mode=0777 link=.config/zsh/zshenv
 .zshrc type=link mode=0777 link=.config/zsh/zshrc
 .zlogout type=link mode=0777 link=.config/zsh/zlogout

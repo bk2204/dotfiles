@@ -10,6 +10,7 @@ TEMPLATE ?= $(shell command -v ruby >/dev/null && [ -f $(CONFIG_FILE) ] && echo 
 DCONF ?= $(shell [ -n "$$DISPLAY" ] && command -v dconf 2>/dev/null)
 KWRITECONFIG ?= $(shell [ -n "$$DISPLAY" ] && command -v kwriteconfig6 2>/dev/null)
 DEFAULTSCMD ?= $(shell [ "$$(uname -s)" = Darwin ] && command -v defaults 2>/dev/null)
+COMPLETION ?= $(shell command -v ruby >/dev/null && echo 1)
 
 # Non-template generated files.
 GENERATED_FILES =
@@ -24,6 +25,12 @@ print:
 		echo "Using configuration file $(CONFIG_FILE)"; \
 	else \
 		echo "Templating disabled."; \
+	fi
+	@if [ "$(COMPLETION)" = 1 ]; \
+	then \
+		echo "Completion enabled."; \
+	else \
+		echo "Completion disabled."; \
 	fi
 
 clean:
@@ -60,9 +67,19 @@ manifest.mtree: $(MTREE_SOURCES) $(DESTDIR)
 
 build-standard: $(TEMPLATE_FILES)
 
+ifneq ($(COMPLETION),)
+build-standard: completion
+endif
+
 install-extra: do-install
 
 do-install: build-standard manifest.mtree
 	cat manifest.mtree | bin/dct-mtree --recurse --install $(DESTDIR)
 
 install: do-install install-extra
+
+zsh/completion:
+	mkdir -p $@
+
+completion: $(COMPLETION_SOURCES)
+$(COMPLETION_SOURCES): zsh/completion
