@@ -333,6 +333,15 @@ function! s:AdjustLinters()
     \   'callback': 'ale#handlers#ruby#HandleSyntaxErrors',
     \})
   endif
+  if has("nvim-0.8") && &ft == 'ruby'
+    call ale#linter#Define('ruby', {
+    \   'name': 'ruby-lsp',
+    \   'lsp': 'stdio',
+    \   'executable': 'ruby-lsp',
+    \   'command': '%e run',
+    \   'project_root': function("s:FindLSPRoot")
+    \})
+  endif
 endfunction
 
 "" Whitespace handling functions.
