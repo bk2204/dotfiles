@@ -98,7 +98,7 @@ $p_host $p_pchar$p_space"
 prompt_bmc_setup () {
     prompt_bmc_setup_base
 
-    choose_prompt "main"
+    dct-choose-prompt "main"
 }
 
 # In this function, we have to put the setopt after the exitstatus assignment,

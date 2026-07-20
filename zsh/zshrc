@@ -2,19 +2,19 @@
 # For interactive use.
 
 # Preparatory functions.
-silent () {
+dct-silent () {
     "$@" >/dev/null 2>&1
 }
-has_colors () {
+dct-has-colors () {
     [[ $TERM != dumb ]]
 }
 
 # Set up some aliases.
-silent ls --color=auto && has_colors && alias ls='ls --color=auto'
-if silent command -v file-rename
+dct-silent ls --color=auto && dct-has-colors && alias ls='ls --color=auto'
+if dct-silent command -v file-rename
 then
     alias rename='file-rename'
-elif silent command -v prename
+elif dct-silent command -v prename
 then
     alias rename='prename'
 fi
@@ -34,7 +34,7 @@ then
 fi
 unset gvi
 
-has_colors && alias grep='grep --color=auto'
+dct-has-colors && alias grep='grep --color=auto'
 alias rless='env -u LESSOPEN -u LESSCLOSE less'
 alias loadenv='eval $(cat $HOME/.environment)'
 alias tloadenv='[ -n "$TMUX" ] && eval $(tmux show-environment -s)'
@@ -61,13 +61,13 @@ SAVEHIST=$HISTSIZE
 HISTFILE="${XDG_STATE_DIR:-$HOME/.local/state}/zsh/history"
 
 # Some useful features.
-set_tty () {
+dct-set-tty () {
     [[ -n $TTY ]] && return 0
     [[ -n $GPG_TTY ]] && TTY=$GPG_TTY && return 0
     [[ -n $SSH_TTY ]] && TTY=$SSH_TTY && return 0
     TTY=$(tty) || TTY=""
 }
-has_term () {
+dct-has-term () {
     local termname="$1"
 
     if command -v infocmp >/dev/null 2>&1
@@ -78,18 +78,18 @@ has_term () {
         TERM=$termname echotc xo >/dev/null 2>/dev/null
     fi
 }
-set_if_has_term () {
+dct-set-if-has-term () {
     local termname
     for termname in "$@"
     do
-        if has_term "$termname"
+        if dct-has-term "$termname"
         then
             export TERM="$termname";
             break
         fi
     done
 }
-set_sane_term () {
+dct-set-sane-term () {
     local i
     local parent_exe
 
@@ -104,41 +104,41 @@ set_sane_term () {
     fi
     case "$TERM:$parent_exe" in
         xterm:*vim*)
-            [[ $COLORTERM = truecolor ]] && set_if_has_term xterm-direct xterm-256color;;
+            [[ $COLORTERM = truecolor ]] && dct-set-if-has-term xterm-direct xterm-256color;;
         xterm:*xfce4-terminal|xterm:*gnome-terminal|xterm:*mate-terminal)
-            set_if_has_term vte-direct xterm-direct vte-256color xterm-256color;;
+            dct-set-if-has-term vte-direct xterm-direct vte-256color xterm-256color;;
         xterm:*konsole)
-            set_if_has_term konsole-256color;;
+            dct-set-if-has-term konsole-256color;;
         screen*:*)
             dct-is-ssh-session && EDITOR=$(dct-editor --dumb --console) && VISUAL=$(dct-editor --console)
-            set_if_has_term screen-256color;;
+            dct-set-if-has-term screen-256color;;
         tmux*:*tmux)
             dct-is-ssh-session && EDITOR=$(dct-editor --dumb --console) && VISUAL=$(dct-editor --console)
-            set_if_has_term tmux-direct tmux-256color screen-256color;;
+            dct-set-if-has-term tmux-direct tmux-256color screen-256color;;
         tmux*:*)
-            set_if_has_term tmux-direct tmux-256color screen-256color;;
+            dct-set-if-has-term tmux-direct tmux-256color screen-256color;;
         rxvt:*mrxvt-full)
-            set_if_has_term rxvt-256color;;
+            dct-set-if-has-term rxvt-256color;;
         linux:*)
             # Usually /proc/$PPID/exe will be inaccessible because it's
             # /bin/login and owned by root, so don't try to match on it.
-            set_if_has_term linux-16color;;
+            dct-set-if-has-term linux-16color;;
         *:*fbterm)
             # fbterm supports 256 colors.
-            set_if_has_term fbterm;;
+            dct-set-if-has-term fbterm;;
         xterm-kitty:*kitty|kitty*:*kitty)
-            set_if_has_term kitty-direct kitty xterm-kitty;;
+            dct-set-if-has-term kitty-direct kitty xterm-kitty;;
         *) ;;
     esac
 
     # Make sure our terminal definition works right.
-    if ! has_term "$TERM"
+    if ! dct-has-term "$TERM"
     then
         # No column results?  Do we have any working terminal definitions?
         local echotc_works=""
         for i in vt220 ansi xterm linux dumb
         do
-            if has_term $i
+            if dct-has-term $i
             then
                 # Yes, we do.
                 echotc_works=1
@@ -164,7 +164,7 @@ set_sane_term () {
             fi
             for i in $preferred
             do
-                set_if_has_term $i
+                dct-set-if-has-term $i
                 break
             done
         fi
@@ -186,7 +186,7 @@ set_sane_term () {
         case $TERM in
             xterm*)
                 # We're logging in from a tmux session.
-                set_if_has_term xterm-256color
+                dct-set-if-has-term xterm-256color
                 export COLORTERM=truecolor;;
             *)
                 ;;
@@ -204,21 +204,21 @@ set_sane_term () {
     # Don't print weird escape characters on dumb terminals (e.g. gvim).
     [[ $TERM = dumb ]] && unset zle_bracketed_paste
 }
-adjust_term_settings () {
+dct-adjust-term-settings () {
     # Turn off flow control.
-    silent stty -ixon -ixoff
+    dct-silent stty -ixon -ixoff
 
     # Make sure that other people can't mess with our terminal.
-    silent mesg n || true
+    dct-silent mesg n || true
 }
-remove_perl_overrides () {
+dct-remove-perl-overrides () {
     [ -n "$PERL_LOCAL_LIB_ROOT" ] && path=("${(@)path:#$PERL_LOCAL_LIB_ROOT/bin}")
     unset PERL_MB_OPT PERL_MM_OPT PERL_LOCAL_LIB_ROOT PERL5LIB
 }
 sless () {
     (
         # Help less handle compressed files better.
-        silent whence lesspipe && eval $(lesspipe)
+        dct-silent whence lesspipe && eval $(lesspipe)
         less "$@"
     )
 }
@@ -232,8 +232,8 @@ dumpenv () {
     ) > $HOME/.environment
     true
 }
-setup_colors () {
-    has_colors || return
+dct-set-up-colors () {
+    dct-has-colors || return
     [[ -f $HOME/.dircolors ]] && eval "$(dircolors $HOME/.dircolors 2>/dev/null)"
 
     # Set up termcap colors for less (from grml).
@@ -254,7 +254,7 @@ setup_colors () {
         export GREP_COLORS=fn=$(bmc_palette_ansi grep)
     fi
 }
-setup_autoload () {
+dct-set-up-autoload () {
     local func i
     for func in $^fpath/*(.:t);
     do
@@ -281,22 +281,22 @@ tmux-clear-title () {
 
 # Do this before any sort of importing or prompt setup, so that the prompt can
 # take advantage of terminal features such as 256-color support.
-set_tty
-set_sane_term
-adjust_term_settings
+dct-set-tty
+dct-set-sane-term
+dct-adjust-term-settings
 
 # Autoload some stuff.
-setup_autoload
+dct-set-up-autoload
 
 typeset -Ag bmc_palette_colors
 autoload -Uz bmc_palette
 
 set_keybindings
-remove_perl_overrides
+dct-remove-perl-overrides
 
 dct-is-ssh-session && dumpenv
 
-choose_prompt () {
+dct-choose-prompt () {
     local km=$1
     [[ -n $km ]] || km=$KEYMAP
     case $km in
@@ -306,7 +306,7 @@ choose_prompt () {
 }
 
 zle-keymap-select () {
-    choose_prompt
+    dct-choose-prompt
     zle reset-prompt
 }
 
@@ -315,7 +315,7 @@ zle-line-init () {
         emulate -L zsh
         printf '%s' ${terminfo[smkx]}
     fi
-    choose_prompt "main"
+    dct-choose-prompt "main"
 }
 
 zle-line-finish () {
@@ -323,7 +323,7 @@ zle-line-finish () {
         emulate -L zsh
         printf '%s' ${terminfo[rmkx]}
     fi
-    choose_prompt "main"
+    dct-choose-prompt "main"
 }
 
 zle-isearch-finish () {
@@ -354,10 +354,10 @@ bmc_palette
 promptinit
 prompt bmc
 
-silent whence lesspipe && eval $(lesspipe)
+dct-silent whence lesspipe && eval $(lesspipe)
 
 setup_completion
-setup_colors
+dct-set-up-colors
 
 # Succeed.
 true
