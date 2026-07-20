@@ -1,9 +1,9 @@
 #!/bin/zsh
 
-# Print a prompt code (valid for print -P) that sets the appropriate background
+# Print a prompt code (valid for print -P) that sets the appropriate foreground
 # color.  The color can be a name that zsh understands or a numerical value
 # appropriate for the terminal.
-color_bg () {
+dct-color-fg () {
     zmodload zsh/zutil
     local -a c16 c256 ctrue cbold
 
@@ -26,10 +26,10 @@ color_bg () {
     elif [[ $ncolors -ge 256 ]] && [[ -n ${c256[-1]} ]]
     then
         # We have 256 or more colors and a 256-color entry.
-        printf "%%K{%s}" ${c256[-1]}
+        printf "%%F{%s}" ${c256[-1]}
     else
         # All we have left is 8 or 16 colors.
-        printf "%%K{%s}" ${c16[-1]}
+        printf "%%F{%s}" ${c16[-1]}
     fi
     printf '%%}'
 }

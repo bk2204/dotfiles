@@ -93,7 +93,7 @@ dct-set-sane-term () {
     local i
     local parent_exe
 
-    autoload -U bmc_is_container
+    autoload -U dct-is-container
 
     if [ "$OSTYPE" = linux-gnu ]
     then
@@ -181,7 +181,7 @@ dct-set-sane-term () {
         esac
     fi
 
-    if bmc_is_container
+    if dct-is-container
     then
         case $TERM in
             xterm*)
@@ -240,10 +240,10 @@ dct-set-up-colors () {
 
     export LESS_TERMCAP_mb=$(print -P $bmc_palette_colors[bold])
     export LESS_TERMCAP_md=$(print -P $bmc_palette_colors[bold])
-    export LESS_TERMCAP_me=$(print -P $(color_reset))
-    export LESS_TERMCAP_se=$(print -P $(color_reset))
+    export LESS_TERMCAP_me=$(print -P $(dct-color-reset))
+    export LESS_TERMCAP_se=$(print -P $(dct-color-reset))
     export LESS_TERMCAP_so=$(print -P $bmc_palette_colors[standout])
-    export LESS_TERMCAP_ue=$(print -P $(color_reset))
+    export LESS_TERMCAP_ue=$(print -P $(dct-color-reset))
     export LESS_TERMCAP_us=$(print -P $bmc_palette_colors[underline])
     export MANROFFOPT=-c
     export CLICOLOR=1
@@ -251,7 +251,7 @@ dct-set-up-colors () {
 
     if !grep -qs Microsoft /proc/version 2>/dev/null
     then
-        export GREP_COLORS=fn=$(bmc_palette_ansi grep)
+        export GREP_COLORS=fn=$(dct-palette-ansi grep)
     fi
 }
 dct-set-up-autoload () {
@@ -289,9 +289,9 @@ dct-adjust-term-settings
 dct-set-up-autoload
 
 typeset -Ag bmc_palette_colors
-autoload -Uz bmc_palette
+autoload -Uz dct-palette
 
-set_keybindings
+dct-set-keybindings
 dct-remove-perl-overrides
 
 dct-is-ssh-session && dumpenv
@@ -350,13 +350,13 @@ bindkey '\eOH' vi-beginning-of-line
 
 # Set up the prompt.
 colors
-bmc_palette
+dct-palette
 promptinit
 prompt bmc
 
 dct-silent whence lesspipe && eval $(lesspipe)
 
-setup_completion
+dct-set-up-completion
 dct-set-up-colors
 
 # Succeed.

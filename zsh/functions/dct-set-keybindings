@@ -1,0 +1,67 @@
+dct-set-keybindings () {
+    # Set up key handling for non-Debian systems.  This is already handled
+    # properly in Debian, since this code has been taken from Debian's
+    # /etc/zsh/zshrc.  Modified slightly with changes from grml's zshrc.
+    typeset -A key
+    key=(
+        BackSpace  "${terminfo[kbs]}"
+        Home       "${terminfo[khome]}"
+        End        "${terminfo[kend]}"
+        Insert     "${terminfo[kich1]}"
+        Delete     "${terminfo[kdch1]}"
+        Up         "${terminfo[kcuu1]}"
+        Down       "${terminfo[kcud1]}"
+        Left       "${terminfo[kcub1]}"
+        Right      "${terminfo[kcuf1]}"
+        PageUp     "${terminfo[kpp]}"
+        PageDown   "${terminfo[knp]}"
+    )
+
+    dct-bind2maps () {
+        local i sequence widget
+        local -a maps
+
+        while [[ "$1" != "--" ]]; do
+            maps+=( "$1" )
+            shift
+        done
+        shift
+
+        if [[ "$1" == "-s" ]]; then
+            shift
+            sequence="$1"
+        else
+            sequence="${key[$1]}"
+        fi
+        widget="$2"
+
+        [[ -z "$sequence" ]] && return 1
+
+        for i in "${maps[@]}"; do
+            bindkey -M "$i" "$sequence" "$widget"
+        done
+    }
+
+    dct-bind2maps emacs             -- BackSpace   backward-delete-char
+    dct-bind2maps       viins       -- BackSpace   vi-backward-delete-char
+    dct-bind2maps             vicmd -- BackSpace   vi-backward-char
+    dct-bind2maps emacs             -- Home        beginning-of-line
+    dct-bind2maps       viins vicmd -- Home        vi-beginning-of-line
+    dct-bind2maps emacs             -- End         end-of-line
+    dct-bind2maps       viins vicmd -- End         vi-end-of-line
+    dct-bind2maps emacs viins       -- Insert      overwrite-mode
+    dct-bind2maps             vicmd -- Insert      vi-insert
+    dct-bind2maps emacs             -- Delete      delete-char
+    dct-bind2maps       viins vicmd -- Delete      vi-delete-char
+    dct-bind2maps emacs viins vicmd -- Up          up-line-or-history
+    dct-bind2maps emacs viins vicmd -- Down        down-line-or-history
+    dct-bind2maps emacs             -- Left        backward-char
+    dct-bind2maps       viins vicmd -- Left        vi-backward-char
+    dct-bind2maps emacs             -- Right       forward-char
+    dct-bind2maps       viins vicmd -- Right       vi-forward-char
+    dct-bind2maps emacs viins       -- -s '^xi'    insert-unicode-char
+    dct-bind2maps emacs viins       -- -s '^xe'    edit-command-line
+    dct-bind2maps emacs viins       -- -s '^x^e'   edit-command-line
+
+    unfunction dct-bind2maps
+}

@@ -3,7 +3,7 @@
 # Perform an action based on the number of supported colors.  The first argument
 # is for true color, second for 256 colors, third for 8 or 16 colors, and the
 # fourth is for terminals without color.
-color_count_for () {
+dct-color-count-for () {
     local ctrue="$1"
     local c256="$2"
     local c16="$3"

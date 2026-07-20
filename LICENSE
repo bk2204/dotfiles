@@ -38,7 +38,7 @@ Files: tmux/theme.conf
 Copyright: 2016–2025 Sven Greb <development@svengreb.de>
 License: Expat
 
-Files: zsh/functions/set_keybindings
+Files: zsh/functions/dct-set-keybindings
 Copyright: 1996 Robert Leslie <rob@mars.org>
            1997-2011 Clint Adams <clint@debian.org>
            2011-2012 Michael Prokop <mika@debian.org>
@@ -47,7 +47,7 @@ Copyright: 1996 Robert Leslie <rob@mars.org>
            2012-2013 Richard Hartmann <richih@debian.org>
 License: Expat
 
-Files: zsh/functions/setup_completion
+Files: zsh/functions/dct-set-up-completion
 Copyright: 2004-2009 Michael Prokop <mika@grml.org>
 License: GPL-2
 

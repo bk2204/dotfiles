@@ -1,4 +1,4 @@
-setup_completion () {
+dct-set-up-completion () {
     # don't complete backup files as executables
     zstyle ':completion:*:complete:-command-::commands' ignored-patterns '(aptitude-*|*\~)'
 

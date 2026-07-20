@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-bmc_palette_sha256 () {
+dct-palette-sha256 () {
     if command -v sha256sum >/dev/null 2>&1
     then
         sha256sum "$@"
@@ -9,7 +9,7 @@ bmc_palette_sha256 () {
     fi
 }
 
-bmc_palette_ () {
+dct-palette--helper () {
     local bold="$1"
     local ctrue="$2"
     local c256="$3"
@@ -21,10 +21,10 @@ bmc_palette_ () {
     [[ -n $c256 ]] && args+=(--color-256 $c256)
     [[ -n $c16 ]] && args+=(--color-16 $c16)
 
-    color_fg $args
+    dct-color-fg $args
 }
 
-bmc_palette () {
+dct-palette () {
     local bold
     local pattern
     local -A colors
@@ -55,10 +55,10 @@ bmc_palette () {
         colors[hostcolor]="no 0xffffff 15 white"
     else
         local hostname=$(hostname -f 2>/dev/null || hostname 2>/dev/null || printf localhost)
-        local hostcolor="$(printf '%s' "$hostname" | bmc_palette_sha256)"
+        local hostcolor="$(printf '%s' "$hostname" | dct-palette-sha256)"
 
         # In a container, use the hostname as the color instead of a hash of it.
-        bmc_is_container && grep -qsE '^[a-f0-9]{8}' <<<"$hostname" && hostcolor="$hostname"
+        dct-is-container && grep -qsE '^[a-f0-9]{8}' <<<"$hostname" && hostcolor="$hostname"
 
         colors[hostcolor]="no
                            0x$(cut -b1-6 <<<"$hostcolor")
@@ -69,8 +69,8 @@ bmc_palette () {
     local key val
     for key val in "${(@kv)colors}"
     do
-        bmc_palette_colors[$key]=$(bmc_palette_ $colors[$key])
+        bmc_palette_colors[$key]=$(dct-palette--helper $colors[$key])
     done
 }
 
-bmc_palette
+dct-palette
