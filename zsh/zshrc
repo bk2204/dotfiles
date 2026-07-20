@@ -19,7 +19,7 @@ then
     alias rename='prename'
 fi
 
-local vi="$(bmc_editor --console)"
+local vi="$(dct-editor --console)"
 if [[ $vi != vi ]]
 then
     alias vi="$vi"
@@ -27,7 +27,7 @@ then
 fi
 unset vi
 
-local gvi="$(bmc_editor --detach --no-fallback)"
+local gvi="$(dct-editor --detach --no-fallback)"
 if [[ -n $gvi ]]
 then
     alias gvi="$gvi"
@@ -110,10 +110,10 @@ set_sane_term () {
         xterm:*konsole)
             set_if_has_term konsole-256color;;
         screen*:*)
-            is_ssh_session && EDITOR=$(bmc_editor --dumb --console) && VISUAL=$(bmc_editor --console)
+            dct-is-ssh-session && EDITOR=$(dct-editor --dumb --console) && VISUAL=$(dct-editor --console)
             set_if_has_term screen-256color;;
         tmux*:*tmux)
-            is_ssh_session && EDITOR=$(bmc_editor --dumb --console) && VISUAL=$(bmc_editor --console)
+            dct-is-ssh-session && EDITOR=$(dct-editor --dumb --console) && VISUAL=$(dct-editor --console)
             set_if_has_term tmux-direct tmux-256color screen-256color;;
         tmux*:*)
             set_if_has_term tmux-direct tmux-256color screen-256color;;
@@ -170,7 +170,7 @@ set_sane_term () {
         fi
     fi
 
-    if is_ssh_session && [[ $SSH_TTY == $TTY ]]
+    if dct-is-ssh-session && [[ $SSH_TTY == $TTY ]]
     then
         case $TERM in
             screen-256color|tmux*)
@@ -294,7 +294,7 @@ autoload -Uz bmc_palette
 set_keybindings
 remove_perl_overrides
 
-is_ssh_session && dumpenv
+dct-is-ssh-session && dumpenv
 
 choose_prompt () {
     local km=$1
