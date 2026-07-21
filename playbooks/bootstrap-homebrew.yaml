@@ -30,7 +30,6 @@
       - make
       - ncurses
       - neovim
-      - nvi2
       - perl
       - python
       - rsync
@@ -38,6 +37,11 @@
       - tmux
       - vim
       - zsh
+- name: Install Homebrew packages for macOS only
+  community.general.homebrew:
+    name:
+      - nvi2
+  when: ansible_facts["os_family"] == 'Darwin'
 - name: Unlink util-linux for rename
   shell: brew unlink util-linux
   ignore_errors: true
