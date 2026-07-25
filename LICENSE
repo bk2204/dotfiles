@@ -8,6 +8,12 @@ Files: *
 Copyright: 2007-2026 brian m. carlson
 License: Expat
 
+Files:
+    bin/dct-dc
+    spec/dct_dc_spec.rb
+Copyright: 2026 brian m. carlson
+License: GPL-2
+
 Files: vim/syntax/*.vim
 Copyright: 2007-2019 brian m. carlson
 License: GPL-2
