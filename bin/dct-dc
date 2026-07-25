@@ -1,0 +1,1277 @@
+#!/usr/bin/env -S ruby -Kn
+# Copyright © 2026 brian m. carlson
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation: version 2 of the License, dated June 1991.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
+require 'bigdecimal'
+require 'bigdecimal/util'
+require 'optparse'
+require 'set'
+
+module DC
+  class Exception < StandardError
+  end
+
+  # A generic dc error.
+  class CalculatorError < DC::Exception
+    attr_reader :name
+  end
+
+  # An exception representing an unknown or invalid command.
+  class InvalidCommandError < CalculatorError
+    attr_reader :command
+
+    def initialize(command)
+      @name = :command
+      if command.is_a? Symbol
+        @command = command
+        super("Invalid command '#{command}'")
+      else
+        super(command)
+      end
+    end
+  end
+
+  # An exception representing an extension that has not been enabled.
+  class UnsupportedExtensionError < InvalidCommandError
+    attr_reader :command, :standard
+
+    def initialize(command, standard)
+      super("Unsupported extension '#{command}': " \
+            "standards #{standard} not enabled")
+      @name = :extension
+      @command = command
+      @standard = standard
+    end
+  end
+
+  # An exception occurring when square brackets are mismatched.
+  class UnbalancedBracketsError < CalculatorError
+    def initialize
+      @name = :unbalanced
+      super('Unbalanced brackets')
+    end
+  end
+
+  # An internal error.
+  class InternalCalculatorError < CalculatorError
+  end
+
+  # An error when attempting to run a shell command in secure mode.
+  class InsecureCommandError < CalculatorError
+  end
+
+  class GeneratorError < DC::Exception
+  end
+
+  class UnimplementedNodeError < GeneratorError
+  end
+
+  class InvalidNameError < GeneratorError
+  end
+
+  class InvalidRegisterAccessError < GeneratorError
+  end
+
+  class GeneratorFrameError < GeneratorError
+  end
+
+  module CodeGenerator
+    class ForthParser
+      def initialize(s)
+        @s = s
+      end
+
+      def tokens
+        @s.each_line do |ln|
+          ln.sub!(/\\.*\n/, '')
+          ln.scan(/\S+/) do |token|
+            yield token
+          end
+        end
+      end
+    end
+
+    class EmissionFrame
+      attr_accessor :result, :state, :function, :environment, :register, :temporaries, :locals
+      def initialize(state, options = {})
+        @result = []
+        @state = state
+        @function = options[:function]
+        @environment = options[:environment]
+        @register = options[:register]
+        @temporaries = options[:temporaries]
+        @locals = options[:locals]
+      end
+
+      def function_register
+        function.length == 1 ? function : " #{function}"
+      end
+
+      def function_frame?
+        %i[function].include?(@state)
+      end
+
+      def loop_frame?
+        %i[begin].include?(@state)
+      end
+
+      def conditional_frame?
+        %i[if].include?(@state)
+      end
+
+      def macro_frame?
+        function_frame? || loop_frame? || conditional_frame?
+      end
+    end
+
+    # A class to generate dc code from Forth.
+    #
+    # This class is intentionally designed to be very stupid. It is designed simply to make it
+    # easier to write and test implementations of the math library, and
+    # hopefully to aid others in developing additional useful functions.
+    class Generator
+      def initialize(toplevel = false, options = {})
+        @toplevel = toplevel
+        @code_reg = 0
+        @registers = {}
+        @code_registers = {}
+        @frames = []
+        @ignored_functions = options[:ignored_functions] || []
+        @options = options
+      end
+
+      def process(s)
+        push_frame(:toplevel) if @frames.empty?
+        process_chunk(ForthParser.new(s))
+      end
+
+      def emit
+        @frames.length == 1 ? pop_frame.join : nil
+      end
+
+      protected
+
+      def push_frame(state, options = {})
+        @frames.push(EmissionFrame.new(state, options))
+      end
+
+      def pop_frame
+        @frames.pop.result
+      end
+
+      def function
+        @frames.select { |f| f.function_frame? }.first
+      end
+
+      def parent_frame
+        @frames[-2]
+      end
+
+      def frame
+        @frames.last
+      end
+
+      def drop
+        "X+d-K+k"
+      end
+
+      def drop_temporaries(temps)
+        " 0#{temps.map { |t| t.length > 1 ? "L #{t} X+" : "L#{t}X+" }.join}d-K+k"
+      end
+
+      def process_chunk(parser)
+        comparisons = { "<" => ">", ">" => "<", "<>" => "!=", "=" => "=" }
+        parser.tokens do |token|
+          frame.result << debug("token: #{token}")
+          if frame.state == :toplevel && token == ':'
+            push_frame(:funccolon)
+          elsif frame.state == :funccolon
+            push_frame(:function, function: token, locals: Set.new)
+            frame.result << prologue
+          elsif frame.state == :function && token == ';'
+            frame.result << drop_temporaries(frame.locals)
+            frame.result << epilogue
+            result = "[\n#{frame.result.join}\n]S#{frame.function_register}\n"
+            pop_frame
+            raise GeneratorFrameError if frame.state != :funccolon
+            pop_frame
+            frame.result << result
+          elsif frame.state == :envstate && token == "@"
+            result = frame.register.upcase
+            pop_frame
+            frame.result << result
+          elsif frame.state == :envstate && token == "!"
+            result = frame.register
+            pop_frame
+            frame.result << result
+          elsif frame.state == :envstate
+            raise InvalidRegisterAccessError
+          elsif token == "{"
+            push_frame(:localdecl, locals: [])
+          elsif token == "}"
+            raise GeneratorFrameError if frame.state != :localdecl || parent_frame.state != :function
+            result = frame.locals.reverse_each.map do |local|
+              local.length == 1 ? "S#{local} " : "S #{local} "
+            end
+            pop_frame
+            frame.result << "#{result.join.strip}\n"
+          elsif frame.state == :localdecl && (token.length == 1 || token =~ /\A[a-z][a-z0-9_]*\z/)
+            parent_frame.locals << token
+            frame.locals << token
+          elsif token =~ /\A#(-?\d+(\.\d+)?)\z/
+            num = $1.sub('-', '_')
+            frame.result << "I Ai #{num} ri\n"
+          elsif token =~ /\A(-?\d+(\.\d+)?)\z/
+            num = $1.sub('-', '_')
+            frame.result << " #{num} "
+          elsif %w[+ - * %].include?(token)
+            frame.result << token
+          elsif token == "f/"
+            frame.result << "/"
+          elsif token == "/"
+            frame.result << "KSa0k / Lak\n"
+          elsif token == "truncate"
+            frame.result << "KSa0k 1 / Lak\n"
+          elsif token == "to-scale"
+            frame.result << "KSa k 1 / Lak\n"
+          elsif token == ".s"
+            frame.result << "f\n"
+          elsif token == "swap"
+            frame.result << "r\n"
+          elsif token == "dup"
+            frame.result << "d\n"
+          elsif token == "drop"
+            frame.result << "Xd-K+k\n"
+          elsif token == "bye"
+            frame.result << "99999999Qq\n"
+          elsif token == "sqrt"
+            frame.result << "v\n"
+          elsif token == "pow"
+            frame.result << "^\n"
+          elsif token == "fscale"
+            # This is the bc scale() function.
+            frame.result << "X\n"
+          elsif token == "length"
+            frame.result << "d XSA ZSB [lA]SC[lB]SD lBlA>C lBlA!>D #{drop_temporaries(%w[A B C D])}\n"
+          elsif token == "."
+            frame.result << "p #{drop}\n"
+          elsif token == "negate"
+            frame.result << "_1*\n"
+          elsif token == "exit"
+            frame.result << ", 0;#{data_register} -1+\n"
+            frame.result << "#{drop_temporaries(function.locals)}\n"
+            @frames.reverse_each do |fr|
+              break if fr.function_frame?
+              next unless fr.temporaries
+              frame.result << "#{drop_temporaries(fr.temporaries)}"
+            end
+            frame.result << "#{epilogue}Q\n"
+          elsif token == "scale"
+            # This is the bc scale register.
+            push_frame(:envstate, register: "k")
+          elsif token == "base"
+            push_frame(:envstate, register: "i")
+          elsif comparisons.keys.include?(token)
+            # Forth and dc differ in the argument order for comparisons.
+            frame.result << "0SA [lA1+sA]SB #{comparisons[token]}B LA #{drop_temporaries(%w[B])}\n"
+          elsif token == "begin"
+            push_frame(:begin)
+          elsif frame.state == :begin && token == "while"
+            frame.result << "[, lD- Q]sE 0 =E"
+          elsif frame.state == :begin && token == "repeat"
+            result = pop_frame
+            frame.result << "[\n#{result.join}\n lCx\n]SC []SE ,SD lCx #{drop_temporaries(%w[C D E])}\n"
+          elsif token == "0="
+            frame.result << "0SA [lA1+sA]SB 0 =B LA #{drop_temporaries(%w[B])}\n"
+          elsif token == "0<"
+            frame.result << "0SA [lA1+sA]SB 0 >B LA #{drop_temporaries(%w[B])}\n"
+          elsif token == "if"
+            push_frame(:if, temporaries: %w[A B])
+          elsif frame.state == :if && token == "else"
+            push_frame(:else)
+          elsif %i[if else].include?(frame.state) && token == "leave"
+            frames = @frames.reverse_each.take_while { |f| !f.loop_frame? }.select { |f| f.macro_frame? }.to_a
+            temps = frames.map(&:temporaries).flatten
+            level = frames.count + 1
+            frame.result << drop_temporaries(temps)
+            frame.result << "#{level}Q\n"
+          elsif frame.state == :if && token == "then"
+            result = pop_frame
+            frame.result << "[#{result.join}]SA []SB 0 !=A #{drop_temporaries(%w[A B])}\n"
+          elsif frame.state == :else && token == "then"
+            # The parent frame must be an :if frame.
+            elseres = pop_frame
+            raise GeneratorFrameError if frame.state != :if
+            ifres = pop_frame
+            # If we take the if branch, we need to drop the top of stack that
+            # we'd use to compare against 0 to potentially branch to B in case
+            # we call exit.  However, we need to put a true value back if we
+            # leave the macro so that we can perform the comparison.
+            frame.result << "[#{drop} #{ifres.join} 1]SA [#{elseres.join}]SB d 0 !=A 0 =B #{drop_temporaries(%w[A B])}\n"
+          elsif token == "to"
+            push_frame(:regstate)
+          elsif frame.state == :regstate && token.length == 1
+            pop_frame
+            debug_store(token)
+            frame.result << "s#{token}"
+          elsif frame.state == :regstate && token =~ /\A[a-z][a-z0-9_]*\z/
+            pop_frame
+            debug_store(token)
+            frame.result << "s #{token} "
+          elsif function && function.locals.include?(token) && token.length == 1
+            frame.result << "l#{token}"
+          elsif function && function.locals.include?(token) && token =~ /\A[a-z][a-z0-9_]*\z/
+            frame.result << "l #{token} "
+          elsif token.length == 1
+            frame.result << "l#{token}x\n"
+          elsif token =~ /\A[a-z][a-z0-9_]*\z/
+            frame.result << "l #{token} x\n"
+          elsif token == "i"
+          end
+        end
+      end
+
+      # The register that is used for arrays.
+      def data_register
+        '@'
+      end
+
+      # var is an Array for variables and an Integer for code.  These are not
+      # actually registers, but index values for the array specified with
+      # data_register.  Single-digit index values are reserved for the prologue
+      # and epilogue.
+      def register(var)
+        @registers[var] ||= (10 + @registers.length)
+      end
+
+      def next_code_register
+        @code_reg += 1
+      end
+
+      def code_register(var)
+        @code_registers[var] ||= (65 + @code_registers.length).chr('ASCII-8BIT')
+      end
+
+      # We need the ability to be able to pop any stacks we've allocated for
+      # code whether or not they've been used.  However, the only way to know if
+      # they've been used is to run the code.  To ensure we always clean up
+      # properly, we preallocate any stacks we use by pushing an empty macro on
+      # them, and then unconditionally pop those stacks in the epilogue.
+      def preallocate_registers(range)
+        range.map { |r| "[]S#{code_register(r)}" }.join(' ')
+      end
+
+      def debug(text)
+        return '' unless @options[:debug]
+        "\n[#{text}]p #{drop}\n"
+      end
+
+      def debug_store(var)
+        return '' unless @options[:debug]
+        "\n[Storing ]n dn [ in #{var}\n]n\n"
+      end
+
+      def prologue
+        reg = data_register
+        "0S#{reg} ,0:#{reg}"
+      end
+
+      def epilogue
+        reg = data_register
+        "L#{reg}#{drop}"
+      end
+
+      # We could use the FreeBSD "R" for this, but that doesn't work on GNU dc.
+      # Convert the top of stack to a number, duplicate it, and subtract, which
+      # gives us 0.  Then add that to the current scale.  Unlike some others,
+      # this technique works even if there is nothing else on the stack.
+      def drop
+        'Xd-K+k'
+      end
+    end
+  end
+
+  # A set of utility functions.
+  module Util
+    class << self
+      protected
+
+      # Converts a value into its integral and fractional components.
+      def split(x)
+        i = x.to_i
+        frac = x - i
+        [i, frac]
+      end
+
+      # Appends the integral part of x in the given base to the string,
+      # returning the fractional part of x.
+      def append_integral(s, x, base)
+        i, frac = split(x)
+        s << i.to_s(base)
+        frac
+      end
+    end
+
+    def self.stringify(x, scale, base = 10)
+      sign = x < 0 ? '-' : ''
+      x = x.abs.to_r / 10**scale
+      s = ''
+      frac = append_integral(s, x, base)
+      s = '' if s == '0' && frac != 0
+      s << '.' if scale > 0
+      frac_digits = (scale * (Math.log(10) / Math.log(base))).ceil.to_i
+      frac_digits.times do
+        frac *= base
+        frac = append_integral(s, frac, base)
+      end
+      sign + s
+    end
+
+    def self.length(x, scale)
+      stringify(x, scale).sub(/^-?0?\.0*/, '.').gsub(/[.-]/, '').length
+    end
+
+    def self.scale(x, scale)
+      stringify(x, scale).split('.')[1].to_s.length
+    end
+  end
+
+  # An object representing the precision of the calculator.
+  #
+  # The value of this object is the number of decimal digits after the decimal
+  # point.
+  #
+  # This is essentially a glorified integer wrapped in a class.  DC uses a
+  # global scale value in some math operations, which means that it must be an
+  # object to be shared across multiple objects and kept in sync.
+  class Scale
+    attr_accessor :value
+
+    def initialize(val)
+      @value = val.to_i
+    end
+
+    def <=>(other)
+      @value <=> other.to_r
+    end
+
+    def to_i
+      @value.to_i
+    end
+
+    def to_f
+      @value.to_f
+    end
+
+    def to_r
+      @value.to_r
+    end
+  end
+
+  # A rational number in a dc calculator.
+  class Numeric
+    include Comparable
+
+    attr_accessor :value, :scale
+
+    def initialize(value, scale, calc_scale)
+      @value = Integer(value)
+      @scale = scale.to_i
+      @k = calc_scale
+    end
+
+    def dup_with_scale(scale)
+      adjustment = 10 ** (scale - @scale).abs
+      value = scale > @scale ? @value * adjustment : @value / adjustment
+      Numeric.new(value, scale, @k)
+    end
+
+    def -@
+      Numeric.new(-@value, @scale, @k)
+    end
+
+    def +(other)
+      other = numericize(other)
+      scale = [@scale, other.scale].max
+      Numeric.new(self.dup_with_scale(scale).value + other.dup_with_scale(scale).value, scale, @k)
+    end
+
+    def -(other)
+      other = numericize(other)
+      scale = [@scale, other.scale].max
+      Numeric.new(self.dup_with_scale(scale).value - other.dup_with_scale(scale).value, scale, @k)
+    end
+
+    def *(other)
+      other = numericize(other)
+      scale = [@scale + other.scale, [@scale, other.scale, k].max].min
+      value = self.dup_with_scale(scale).value
+      ovalue = other.dup_with_scale(scale).value
+      v = (value * ovalue)
+      Numeric.new(v, scale * 2, @k).dup_with_scale(scale)
+    end
+
+    def /(other)
+      other = numericize(other)
+      length = [self.length, other.length, k].max
+      value = self.to_d
+      ovalue = other.to_d
+      v = value.div(ovalue, length + k)
+      v *= (10 ** k).to_i
+      Numeric.new(v.to_i, k, @k)
+    end
+
+    def %(other)
+      other = numericize(other)
+      scale = other.scale + k
+      value = self.dup_with_scale(scale)
+      ovalue = other.dup_with_scale(scale)
+      value - ((value / ovalue) * ovalue)
+    end
+
+    def **(other)
+      other = numericize(other)
+      scale = [@scale, k].max
+      value = (self.value.to_d / (10 ** @scale)).power(other.to_i, scale)
+      value = (value * (10 ** scale)).to_i
+      Numeric.new(value, scale, @k).dup_with_scale(k)
+    end
+
+    def sqrt
+      scale = [@scale, k].max
+      d = @value.to_d / (10 ** @scale)
+      res = d.sqrt(scale) * (10 ** scale)
+      r = Numeric.new(res, scale, @k)
+      r
+    end
+
+    def modexp(exp, mod)
+      exp = exp.to_i
+      return 1 if exp == 0
+      mod = mod.to_i
+
+      factor = self.to_i
+      result = 1
+      while exp > 0
+        result *= factor if (exp & 1) != 0
+        result %= mod
+        exp >>= 1
+        factor **= 2
+        factor %= mod
+      end
+
+      Numeric.new(result, 0, @k)
+    end
+
+    def respond_to_missing?(symbol, *args)
+      super(symbol, *args) || @value.respond_to?(symbol, *args)
+    end
+
+    def method_missing(symbol, *args)
+      if @value.respond_to?(symbol)
+        @value.send(symbol, *args)
+      else
+        super
+      end
+    end
+
+    def <=>(other)
+      return @value <=> other unless other.is_a? Numeric
+      self.to_r <=> other.to_r
+    end
+
+    def to_r
+      (@value.to_r / (10.to_r ** @scale)).to_r
+    end
+
+    def to_d
+      (@value.to_d / (10 ** @scale).to_d).to_d
+    end
+
+    def to_i
+      (@value / (10 ** scale)).to_i
+    end
+
+    def to_f
+      @value.to_r.to_f
+    end
+
+    def to_s(base = 10)
+      DC::Util.stringify(@value, @scale, base)
+    end
+
+    # Number of digits.
+    def length
+      DC::Util.length(@value, @scale)
+    end
+
+    protected
+
+    def k
+      @k.to_i
+    end
+
+    def numericize(other)
+      return other if other.is_a? Numeric
+      Numeric.new(other, k, @k)
+    end
+  end
+
+  class Stringy
+    def initialize(ops, string)
+      @ops = ops
+      @string = string
+    end
+
+    def ops
+      @ops
+    end
+
+    def length
+      @string.length
+    end
+
+    def to_s
+      @string
+    end
+  end
+
+  # A calculator implementing the dc language.
+  class Calculator
+    attr_reader :stack, :registers, :input, :output
+    attr_accessor :ibase, :obase
+
+    def initialize(input = $stdin, output = $stdout, error = $stderr, options = {})
+      @stack = []
+      @registers = Hash.new { |hash, key| hash[key] = [] }
+      @arrays = Hash.new { |hash, key| hash[key] = [] }
+      @input = input
+      @output = output
+      @error = error
+      @string_depth = 0
+      @string = nil
+      @ibase = @obase = 10
+      @scale = Scale.new 0
+      @extensions = Set.new
+      @frames = []
+      @break = true
+      @ops = [[]]
+      @strings = []
+      @debug = true if options.delete(:debug)
+      %i[gnu freebsd extregs].each do |ext|
+        @extensions.add ext if options[ext] || options[:all]
+      end
+      @extensions.add :insecure if options[:insecure]
+      @new = true
+      BigDecimal.mode(BigDecimal::ROUND_MODE, :truncate)
+    end
+
+    def scale
+      @scale.to_r
+    end
+
+    def scale=(x)
+      @scale.value = x.to_i
+    end
+
+    def arrays
+      @arrays.map { |k, v| [k, v[0]] }.to_h
+    end
+
+    def extension?(option)
+      option = [option] unless option.is_a? Enumerable
+      @extensions.intersect? option
+    end
+
+    def extensions
+      @extensions.sort
+    end
+
+    def push(*args)
+      args.each do |val|
+        if val.nil?
+          raise InternalCalculatorError, 'Trying to push invalid value'
+        end
+        if val.is_a?(Integer) || val.is_a?(String)
+          raise InternalCalculatorError, 'Trying to push Integer or String'
+        end
+      end
+      @stack.unshift(*args)
+    end
+
+    def pop(*args)
+      count = args.empty? ? 1 : args[0]
+      if @stack.length < count
+        raise InternalCalculatorError, 'Trying to pop empty stack'
+      end
+      @stack.shift(*args)
+    end
+
+    def parse(line)
+      if @new
+        do_parse_new(line) ? true : false
+      else
+        do_parse(line) ? true : false
+      end
+    end
+
+    def secure?
+      !@extensions.include? :insecure
+    end
+
+    protected
+
+    def self.ext_op(exts, fn)
+      exts.map { |e| [e, fn] }.to_h
+    end
+
+    DISPATCH = {
+      :';' => lambda do |reg|
+        @arrays[reg][0] ||= []
+        push(@arrays[reg][0][pop] || int(0))
+      end,
+      :':' => lambda do |reg|
+        @arrays[reg][0] ||= []
+        index, value = pop(2)
+        @arrays[reg][0][index] = value
+      end,
+      :| => lambda do
+        mod = pop.to_r
+        exp, base = pop(2)
+        push base.modexp(exp, mod)
+      end,
+      :~ => lambda do
+        denom, num = pop(2)
+        push num / denom
+        push num % denom
+      end,
+      :a => ext_op(%i[gnu freebsd], -> { stringify }),
+      :c => -> { @stack.clear },
+      :d => -> { push @stack[0] },
+      :f => -> { @stack.each { |item| @output.puts printable(item) } },
+      :G => { freebsd: -> { extcmpop(:==) } },
+      :i => -> { base_setop(:ibase=) },
+      :I => -> { push(int(@ibase)) },
+      :k => -> { base_setop(:scale=) },
+      :K => -> { push(int(@scale.to_r)) },
+      :l => ->(reg) { push @registers[reg][0] || int(0) },
+      :L => lambda do |reg|
+        push @registers[reg].shift
+        @arrays[reg].shift
+      end,
+      :m => { freebsd: -> do
+        a, b = pop(2)
+        push(int((a != 0 || b != 0) ? 1 : 0))
+      end},
+      :M => { freebsd: -> do
+        a, b = pop(2)
+        push(int((a != 0 && b != 0) ? 1 : 0))
+      end},
+      :n => ext_op(%i[gnu freebsd], -> { @output.print printable(pop) }),
+      :N => { freebsd: -> { push(int(pop == 0 ? 1 : 0)) } },
+      :o => -> { base_setop(:obase=) },
+      :O => -> { push(int(@obase)) },
+      :p => -> { @output.puts printable(@stack[0]) },
+      :P => lambda do
+        val = pop
+        val = num_to_bytes(val) if val.is_a? DC::Numeric
+        @output.print val
+      end,
+      :r => ext_op(%i[gnu freebsd], lambda do
+        a, b = pop(2)
+        push b, a
+      end),
+      :R => { freebsd: -> { pop } },
+      :s => ->(reg) { @registers[reg][0] = pop },
+      :S => lambda do |reg|
+        @registers[reg].unshift pop
+        @arrays[reg].unshift []
+      end,
+      :v => lambda do
+        push(pop.sqrt)
+      end,
+      :x => -> { do_execute(pop) if @stack[0].is_a? Stringy },
+      :X => lambda do
+        top = pop
+        push(int(top.is_a?(Stringy) ? 0 : top.scale))
+      end,
+      :z => -> { push int(@stack.length) },
+      :Z => -> { push int(pop.length) },
+      :+ => -> { binop(:+) },
+      :- => -> { binop(:-) },
+      :* => -> { binop(:*) },
+      :/ => -> { binop(:/) },
+      :% => -> { binop(:%) },
+      :^ => -> { binop(:**) },
+      :!= =>   ->(treg, ereg = nil) { cmpop(:!=, treg, ereg) },
+      :'=' =>  ->(treg, ereg = nil) { cmpop(:==, treg, ereg) },
+      :> =>    ->(treg, ereg = nil) { cmpop(:>, treg, ereg) },
+      :'!>' => ->(treg, ereg = nil) { cmpop(:<=, treg, ereg) },
+      :< =>    ->(treg, ereg = nil) { cmpop(:<, treg, ereg) },
+      :'!<' => ->(treg, ereg = nil) { cmpop(:>=, treg, ereg) },
+      :'(' => { freebsd: -> { extcmpop(:<) } },
+      :')' => { freebsd: -> { extcmpop(:>) } },
+      :'{' => { freebsd: -> { extcmpop(:<=) } },
+      :'}' => { freebsd: -> { extcmpop(:>=) } },
+      :',' => { freebsd: -> { push(int(@frames.length)) } },
+    }.freeze
+
+    def strip_line(line)
+      line = line.to_s.chomp
+      unless line.include?('[')
+        line.gsub!(/(?:^|([^eSsLl:;<>=0-9A-F])|([eSsLl:;<>=0-9A-F]\s))\s+/, '\1\2')
+      end
+      line
+    end
+
+    def do_execute(line)
+      if @new
+        @frames.push(line.ops.dup)
+        @frames.length
+      else
+        @frames.push(strip_line(line))
+        @frames.length
+      end
+    end
+
+    def do_parse_new(line)
+      line = line.dup
+      line.force_encoding('BINARY')
+
+      extregs = extension?(:extregs)
+      freebsd = extension?(:freebsd)
+
+      @frames << do_parse_line(line, extregs: extregs, freebsd: freebsd)
+
+      until @frames.empty?
+        ret = do_exec_ops(@frames[-1])
+        return ret if ret != :next
+        while @frames[-1]&.empty?
+          @frames.pop
+        end
+      end
+      @frames.length
+    end
+
+    def do_parse(line)
+      line = line.dup
+      line.force_encoding('BINARY')
+      @frames << strip_line(line)
+
+      extregs = extension?(:extregs)
+      freebsd = extension?(:freebsd)
+
+      until @frames.empty?
+        ret = do_parse_one(@frames[-1], extregs: extregs, freebsd: freebsd)
+        return ret if ret != :next
+        while @frames[-1]&.empty?
+          @frames.pop
+        end
+      end
+      @frames.length
+    end
+
+    SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
+    CMP_INSNS = Set.new(%w[!< != !> < = >]).freeze
+    WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
+    ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>[^\\[\\]])|(?<comment>(?<commentbody>#[^\n\\]]+)(?<commenttrail>\\][^\n]+)?)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
+    EXTREGS_OPS = "((?<extop>!?[<>=]|[SsLl:;])[\f\r\t\v ](?<extreg>[a-z][a-z0-9_]*))".freeze
+    BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ](?<bothtruelong>[a-z][a-z0-9_]*)[\f\r\t\v ]|(?<bothtrueshort>[^\\[\\]]))e(?:[\f\r\t\v ](?<bothfalselong>[a-z][a-z0-9_]*)|(?<bothfalseshort>[^\\[\\]]))".freeze
+    FREEBSD_OPS = "(?<freebsdop>!?[<>=])(?<freebsdtrue>[^\\[\\]])e(?<freebsdfalse>[^\\[\\]])".freeze
+
+    def do_parse_line(line, extregs: false, freebsd: false, toplevel: true)
+      pattern = Regexp.new([
+        (extregs && freebsd ? "#{BOTH_OPS}|" : ""),
+        (extregs ? "#{EXTREGS_OPS}|" : ""),
+        (freebsd ? "#{FREEBSD_OPS}|" : ""),
+        ALL_OPS
+      ].join)
+      line.scan(pattern) do
+        caps = $~.named_captures
+        unless @strings.empty? || caps['start'] || caps['end']
+          if caps['commentbody']
+            @strings.last[2] += caps['commentbody']
+          else
+            @strings.last[2] += $&
+          end
+        end
+        @error.puts "parse (e: #{extregs}; f: #{freebsd}): #{caps.compact.inspect}" if @debug
+        case
+        when caps['insn']
+          @ops.last << [:insn, caps['insn'].to_sym]
+        when caps['num']
+          @ops.last << [:num, caps['value'], !caps['sign'].nil?]
+        when caps['space']
+        when caps['unknown']
+          @ops.last << [:unknown, caps['unknown']]
+        when caps['start']
+          @strings << [:string, [], ""]
+          @ops << []
+        when caps['end']
+          s = @strings.pop
+          s[1] = @ops.pop
+          @ops.last << s
+        when caps['commenttrail']
+          unless @strings.empty?
+            do_parse_line(caps['commenttrail'], extregs: extregs, freebsd: freebsd, toplevel: false)
+          end
+        when caps['special'] == "q"
+          @ops.last << [:quit, :q]
+        when caps['special'] == "Q"
+          @ops.last << [:quit, :Q]
+        when caps['special'] == "x"
+          @ops.last << [:exec, :x]
+        when caps['special'] == "?"
+          @ops.last << [:read]
+        when caps['exec']
+          @ops.last << [:shell, :!, caps['cmd']]
+        when caps['op'] && CMP_INSNS.include?(caps['op'])
+          @ops.last << [:cmp, caps['op'].to_sym, caps['reg'], nil]
+        when caps['extop'] && CMP_INSNS.include?(caps['extop'])
+          @ops.last << [:cmp, caps['extop'].to_sym, caps['extreg'], nil]
+        when caps['bothop'] && CMP_INSNS.include?(caps['bothop'])
+          @ops.last << [:cmp, caps['bothop'].to_sym, caps['bothtruelong'] || caps['bothtrueshort'], caps['bothfalselong'] || caps['bothfalseshort']]
+        when caps['freebsdop'] && CMP_INSNS.include?(caps['freebsdop'])
+          @ops.last << [:cmp, caps['freebsdop'].to_sym, caps['freebsdtrue'], caps['freebsdfalse']]
+        when caps['op']
+          @ops.last << [:mem, caps['op'].to_sym, caps['reg']]
+        when caps['extop']
+          @ops.last << [:mem, caps['extop'].to_sym, caps['extreg']]
+        else
+        end
+        @error.puts "ops: #{@ops.inspect}" if @debug
+        @error.puts "strings: #{@strings.inspect}" if @debug
+      end
+      return nil unless toplevel
+      ops = @ops[0]
+      @ops[0] = []
+      ops
+    end
+
+    def do_exec_ops(ops)
+      # We will normally process the entire set of ops here, but any command
+      # which can modify the @frames variable must slice off the ops already
+      # processed and return a value (:next, if no other special case occurs) to
+      # make sure that we start processing from the correct point.
+      ops.each_with_index do |op, i|
+        @error.puts "exec: #{op.inspect}" if @debug
+        case op[0]
+        when :insn
+          dispatch(op[1])
+        when :exec
+          ops.slice!(0..i)
+          resp = dispatch(op[1])
+          return @break ? nil : resp if resp.is_a?(Integer) && resp <= (@frames.length - 1)
+          return :next
+        when :num
+          push(number(op[1], op[2]))
+        when :cmp
+          ops.slice!(0..i)
+          dispatch(op[1], op[2], op[3])
+          return :next
+        when :mem
+          dispatch(op[1], op[2])
+        when :read
+          ops.slice!(0..i)
+          do_parse(@input.gets)
+          return :next
+        when :shell
+          dispatch_insecure(op[1], op[2])
+        when :quit
+          case op[1]
+          when :q
+            ops.slice!(0..i)
+            return if @frames.length == 1
+            @frames.pop(2)
+            return :next
+          when :Q
+            ops.slice!(0..i)
+            level = pop.to_i
+            @break = false
+            if level > @frames.length
+              @frames.pop(@frames.length - 1)
+            else
+              @frames.pop(level)
+            end
+            return :next
+          end
+        when :string
+          push(Stringy.new(op[1], op[2]))
+        when :unknown
+          raise InvalidCommandError, op[1].to_sym
+        end
+      end
+      # We executed all of our instructions, so pop the frame.
+      @frames.pop
+      :next
+    end
+
+    def do_parse_one(line, extregs: false, freebsd: false)
+      first = line[0]
+      if @string
+        line.replace(parse_string(line))
+      elsif first == "#"
+        line.sub!(/\A#[^\n]+/, '')
+      elsif SIMPLE_INSNS.include?(first)
+        line.slice!(0)
+        dispatch(first.to_sym)
+      elsif first == "x"
+        line.slice!(0)
+        resp = dispatch(first.to_sym)
+        return @break ? nil : resp if resp.is_a?(Integer) && resp <= (@frames.length - 1)
+      elsif first == "?"
+        line.slice!(0)
+        do_parse(@input.gets)
+      elsif WHITESPACE.include?(first)
+        line.sub!(/\A\s+/, '')
+      elsif line.sub!(/\A(_)?([\dA-F]+(?:\.([\dA-F]+))?|\.([\dA-F]+))/, '')
+        push(number($~[2], $~[1]))
+      elsif extregs && line.sub!(/\A(!?[<>=]|[SsLl:;])[\f\r\t\v ]([a-z][a-z0-9_]*)/, '')
+        dispatch($~[1].to_sym, $~[2])
+      elsif extregs && freebsd && line.sub!(/\A(!?[<>=])(?:[\f\r\t\v\ ]([a-z][a-z0-9_]*) |(.))e(?:[\f\r\t\v ]([a-z][a-z0-9_]*) |(.))#/, '')
+        dispatch($~[1].to_sym, $~[2] || $~[3], $~[4] || $~[5])
+      elsif freebsd && line.sub!(/\A(!?[<>=])(.)e(.)/, '')
+        dispatch($~[1].to_sym, $~[2], $~[3])
+      elsif line.sub!(/\A(!?[<>=]|[SsLl:;])(.)/, '')
+        dispatch($~[1].to_sym, $~[2])
+      elsif first == '['
+        line.replace(parse_string(line))
+      elsif first == ']'
+        raise UnbalancedBracketsError
+      elsif first == 'q'
+        return if @frames.length == 1
+        @frames.pop(2)
+      elsif first == 'Q'
+        level = pop.to_i
+        @break = false
+        if level > @frames.length
+          @frames.pop(@frames.length - 1)
+        else
+          @frames.pop(level)
+        end
+      elsif line.sub!(/\A(!)([^\n]+)/, '')
+        dispatch_insecure($~[1].to_sym, $~[2])
+      else
+        raise InvalidCommandError, line[0].to_sym
+      end
+      :next
+    end
+
+    def number(s, negative = false)
+      int, frac = s.split('.')
+      value = integer(int)
+      frac_digits = frac.to_s.length
+      if frac
+        value *= 10 ** frac_digits
+        frac_value = integer(frac)
+        frac_value *= 10 ** frac_digits
+        frac_value /= @ibase ** frac_digits
+        value += frac_value.to_i
+      end
+      # For ease of internal conversion and compatibility with the GNU
+      # implementation, the scale is always computed in base 10.  Also for GNU
+      # compatibility, we always compute the number of fractional digits as the
+      # number entered.
+      val = Numeric.new(value, frac_digits, @scale)
+      negative ? -val : val
+    end
+
+    # dc has an odd way of parsing integers. It allows input using any
+    # characters that are valid in hexadecimal, but maintains place value using
+    # the input base.  Thus in base 16, FE is 254; in base 12, it's 194
+    # (15 * 12 + 14); and in base 10, it's 164 (15 * 10 + 14).  Yes, this is
+    # bizarre, but people rely on being able to say Ai to reset the input base
+    # to 10 regardless of its current state.
+    def integer(s)
+      value = 0
+      s.each_char do |c|
+        value *= @ibase
+        value += c.to_i(16)
+      end
+      value
+    end
+
+    def int(x)
+      Numeric.new(x, 0, @scale)
+    end
+
+    def base_setop(sym)
+      method(sym).call(pop.to_i)
+    end
+
+    def dispatch(op, *args)
+      func = DISPATCH[op]
+      if func.is_a?(Hash)
+        fns = @extensions.map { |e| func[e] }.compact
+        raise UnsupportedExtensionError.new(op, func.keys) if fns.empty?
+        func = fns.first
+      end
+      instance_exec(*args, &func)
+    end
+
+    def dispatch_insecure(op, arg)
+      raise InsecureCommandError, op if secure?
+      case op
+      when :!
+        system(arg)
+      end
+    end
+
+    def convert_string(s)
+      # FreeBSD uses C-style strings (boo!)
+      s == "\x00" && extension?(:freebsd) && !extension?(:gnu) ? '' : s
+    end
+
+    def stringify
+      val = pop
+      val = if val.is_a? Stringy
+              v = val.to_s
+              v.empty? ? '' : v[0]
+            else
+              convert_string((val.to_i % 256).chr)
+            end
+      push(Stringy.new([], val))
+    end
+
+    def printable(val)
+      val.is_a?(DC::Numeric) ? val.to_s(@obase).upcase : val.to_s
+    end
+
+    # Take a number and convert it to a series of bytes.
+    def num_to_bytes(val)
+      val = val.to_i.to_s(16)
+      val = "0#{val}" if val.length.odd?
+      [val].pack('H*')
+    end
+
+    def cmpop(op, treg, ereg = nil)
+      top, second = pop(2)
+      if top.send(op, second)
+        do_execute(@registers[treg][0])
+      elsif !ereg.nil?
+        do_execute(@registers[ereg][0])
+      end
+    end
+
+    def extcmpop(op)
+      top, second = pop(2)
+      push(int(top.send(op, second) ? 1 : 0))
+    end
+
+    def binop(op)
+      top, second = pop(2)
+      push(second.send(op, top))
+    end
+
+    def parse_string(s)
+      offset = 0
+      @string ||= ''
+      unless s[/[\[\]]/]
+        @string << s
+        return ''
+      end
+      s.scan(/([^\[\]]*)([\[\]])([^\[\]]+\z)?/) do |code, delim, trail|
+        @string_depth += (delim == ']' ? -1 : 1)
+        offset += code.length + delim.length
+        if @string_depth == 0
+          push(Stringy.new([], @string[1..-1] + code))
+          @string = nil
+          return s[offset..-1]
+        end
+        @string << code << delim << trail.to_s
+      end
+      ''
+    end
+  end
+end
+
+def file_from_name(f)
+  f == '-' ? $stdin : File.new(f)
+end
+
+def find_math_library(suffix)
+  suffix = "-#{suffix}" if suffix
+  loc = File.join(ENV['HOME'], ".local", "share", "dct-dc", "math", "library#{suffix}.fth")
+  return loc if File.exist? loc
+  raise "Can't find math library"
+end
+
+def parse_options(args)
+  options = { scripts: [], mathlib: false, mode: :dc, debug: false }
+  OptionParser.new do |opts|
+    opts.on('-e', '--expression SCRIPT', 'Run the specified script') do |s|
+      options[:scripts] << s
+    end
+
+    opts.on('-f', '--file FILE', 'Run the specified file as a script') do |f|
+      options[:scripts] << file_from_name(f)
+    end
+
+    opts.on('--compile', 'Compile the given scripts from Forth to dc') do
+      options[:mode] = :compile
+    end
+
+    opts.on('--forth[=KIND]', 'Compile the given scripts from Forth and execute them', [nil, :dc]) do |kind|
+      options[:mode] = kind ? :"forth_#{kind}" : :forth_dc
+    end
+
+    opts.on('--debug', 'Debug compilation') do
+      options[:debug] = true
+    end
+
+    opts.on('-l', '--mathlib', 'Define the standard math library') do
+      [nil, "extended"].each do |suffix|
+        path = find_math_library(suffix)
+        data = File.read(path)
+        mathlib = DC::CodeGenerator::Generator.new(true)
+        mathlib.process(data)
+        options[:scripts] << mathlib.emit
+      end
+      options[:mathlib] = true
+    end
+  end.parse!(args)
+  [options, args]
+end
+
+def script(args)
+  Signal.trap("INT", "SYSTEM_DEFAULT")
+  options, args = parse_options(args)
+
+  calc = DC::Calculator.new($stdin, $stdout, $stderr, all: true, insecure: true, debug: options[:debug])
+
+  inputs = options[:scripts] + args.map { |f| file_from_name(f) }
+  inputs << $stdin if inputs.length <= (options[:mathlib] ? 2 : 0)
+  inputs.each do |source|
+    if options[:mode] != :dc
+      gen = DC::CodeGenerator::Generator.new(true, debug: options[:debug])
+      source.each_line do |line|
+        gen.process(line)
+      end
+      if options[:mode] == :compile
+        $stdout.puts gen.emit
+      else
+        gen.emit.each_line do |line|
+          return 0 unless calc.parse(line)
+        end
+      end
+    else
+      source.each_line do |line|
+        return 0 unless calc.parse(line)
+      end
+    end
+  end
+  0
+end
+
+exit(script(ARGV)) if $PROGRAM_NAME == __FILE__

@@ -1,0 +1,477 @@
+require_relative 'spec_helper'
+
+describe :dct_dc do
+  before(:all) do
+    @dir = TestDir.new
+    # Generated from `randomgen --seed dct-dc --named-set 32:hex`, with decimal
+    # points added in different places.
+    @val1 = "AC6EA2FE97461EA4B4BCB9D5.69F14B21"
+    @val2 = "189C851B74EF4C676529329B1BA6.23BB"
+  end
+
+  context 'dc' do
+    it 'should generate expected output for small integers' do
+      input = "1 2+p1 2-p3 7*p8 2/p"
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "3\n-1\n21\n4\n"
+    end
+
+    it 'truncates division properly' do
+      input = "7 2/p"
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "3\n"
+    end
+
+    it 'compute fractional division properly' do
+      input = "12k 1 2/p"
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq ".500000000000\n"
+    end
+
+    it 'computes remainders properly' do
+      # GNU dc documents that % is the same as the sequence Sd dld/ Ld*-.
+      a = [4, -4, 2, -2]
+      b = [2, -2, 1, -1]
+      input = []
+      a.each do |av|
+        b.each do |bv|
+          numbers = "#{av.to_s.tr('-', '_')} #{bv.to_s.tr('-', '_')}"
+          input << "#{numbers} % #{numbers} Sd dld/ Ld*-Gp"
+        end
+      end
+      expect(@dir.stream(['bin/dct-dc'], input.join)).to eq ("1\n" * input.length)
+    end
+
+    it 'computes arithmetic with the correct precision' do
+      input = "2.3 5.12+ 2.3 5.12- 2.3 5.12* 4k 2.3 5.12* 0k 3 2/ 1k 3 2/f"
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "1.5\n1\n11.776\n11.77\n-2.82\n7.42\n"
+
+      expect(@dir.stream(['bin/dct-dc'], "0k 123 1.789/p")).to eq "68\n"
+      expect(@dir.stream(['bin/dct-dc'], "0k 123 .789/p")).to eq "155\n"
+    end
+
+    it "processes simple Forth functions correctly" do
+      mathlib = @dir.stream(['bin/dct-dc', "--compile", ".local/share/dct-dc/math/example.fth"], "")
+
+      expect(@dir.stream(['bin/dct-dc'], "#{mathlib} 3ltx")).to eq "3\n2\n1\n"
+    end
+
+    it 'computes SHA-2 constants properly' do
+      primes = [2, 3, 5, 7, 11, 13, 17, 19]
+      input = primes.map { |p| "20k 16o #{p}v d0k1/- 2 64^* 1/p"  }.join
+      expected = <<~EOM
+      6A09E667F3BCC908
+      BB67AE8584CAA73B
+      3C6EF372FE94F82B
+      A54FF53A5F1D36F1
+      510E527FADE682D1
+      9B05688C2B3E6C1F
+      1F83D9ABFB41BD6B
+      5BE0CD19137E2179
+      EOM
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq expected
+      input = primes.map { |p| "20k 16o #{p}.0000000v d0k1/- 2 64^* 1/p"  }.join
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq expected
+
+      input = primes.map { |p| "20k 16o #{p}v d0k1/- 2 32^* 1/p"  }.join
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq <<~EOM
+      6A09E667
+      BB67AE85
+      3C6EF372
+      A54FF53A
+      510E527F
+      9B05688C
+      1F83D9AB
+      5BE0CD19
+      EOM
+    end
+
+    it 'computes MD5 constants properly' do
+      input = (1..64).map { |p| "[_1*]sA 20k 16o #{p}lsx 2 32^* d 0>A 0k1/p" }.join
+      expected = <<~EOM
+      D76AA478
+      E8C7B756
+      242070DB
+      C1BDCEEE
+      F57C0FAF
+      4787C62A
+      A8304613
+      FD469501
+      698098D8
+      8B44F7AF
+      FFFF5BB1
+      895CD7BE
+      6B901122
+      FD987193
+      A679438E
+      49B40821
+      F61E2562
+      C040B340
+      265E5A51
+      E9B6C7AA
+      D62F105D
+      02441453
+      D8A1E681
+      E7D3FBC8
+      21E1CDE6
+      C33707D6
+      F4D50D87
+      455A14ED
+      A9E3E905
+      FCEFA3F8
+      676F02D9
+      8D2A4C8A
+      FFFA3942
+      8771F681
+      6D9D6122
+      FDE5380C
+      A4BEEA44
+      4BDECFA9
+      F6BB4B60
+      BEBFBC70
+      289B7EC6
+      EAA127FA
+      D4EF3085
+      04881D05
+      D9D4D039
+      E6DB99E5
+      1FA27CF8
+      C4AC5665
+      F4292244
+      432AFF97
+      AB9423A7
+      FC93A039
+      655B59C3
+      8F0CCC92
+      FFEFF47D
+      85845DD1
+      6FA87E4F
+      FE2CE6E0
+      A3014314
+      4E0811A1
+      F7537E82
+      BD3AF235
+      2AD7D2BB
+      EB86D391
+      EOM
+      expected.gsub!(/^0+/, '')
+      expect(@dir.stream(['bin/dct-dc', '-l'], input)).to eq expected
+    end
+
+    it 'computes cosine values properly' do
+      input = (1..64).map { |p| "20k #{p} 0.25 + lcxp" }.join
+      expected = <<~EOM
+      .31532236239526866544
+      -.62817362272273908892
+      -.99412967608054621938
+      -.44608748991379279917
+      .51208547724184068315
+      .99944941822449940925
+      .56792417328869486442
+      -.38574793745222181528
+      -.98476517346732362357
+      -.67839385047384529552
+      .25168965007175442153
+      .95037084706767351758
+      .77528547012928792074
+      -.11259379263383547653
+      -.89695484170228886530
+      -.85665974582884236446
+      -.02875563032918716401
+      .82558627908173908790
+      .92088797089110946723
+      .16952950915565845602
+      -.73769360147211713174
+      -.96668461695477324446
+      -.30691025370372961809
+      .63503598141337148312
+      .99313306383749307327
+      .43814818743720433746
+      -.51966811186895829346
+      -.99970394569508544084
+      -.56061658222010609006
+      .39389908153220772271
+      .98626574628249449334
+      .67186423229817912161
+      -.26024615840042719041
+      -.95308743125233102236
+      -.76966451519872589205
+      .12138440663882008784
+      .90083306480550673288
+      .85205995759453716570
+      .01990685484696882078
+      -.83054851844173795076
+      -.91740141414584517897
+      -.16079968049764677082
+      .74364053783436780589
+      .96438107515551181103
+      .29847409944986975211
+      -.64184858680614965230
+      -.99205864238900874427
+      -.43017455727224562899
+      .52721003194900785536
+      .99988014914997473871
+      .55326506840601376890
+      -.40201936471784814805
+      -.98768904792740978232
+      -.66528197543392598999
+      .26878227716848719485
+      .95572934369517213975
+      .76398325920020345880
+      -.13016551051411894776
+      -.90464071015076756286
+      -.84739341283918333663
+      -.01105651971819889525
+      .83544568664194450172
+      .91384298155866670778
+      .15205725363318250367
+      EOM
+      expect(@dir.stream(['bin/dct-dc', '-l'], input)).to eq expected
+    end
+
+    it 'computes comparisons and booleans properly' do
+      [
+        [1, 2, %w[> !< !=], %w[< !> =], %w[) } GN], %w[( { G]],
+        [2, 1, %w[< !> !=], %w[> !< =], %w[( { GN], %w[) } G]],
+        [2, 2, %w[= !> !<], %w[> < !=], %w[{ } G], %w[( ) GN]],
+        [0.05, 1, %w[> !< !=], %w[< !> =], %w[) } GN], %w[( { G]],
+      ].each do |(a, b, truecmp, falsecmp, truebin, falsebin)|
+        truecmp.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp}a")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc #{a} #{b} #{cmp} abc")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]sb #{a} #{b} #{cmp}aeb")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]s def #{a} #{b} #{cmp} abc e def")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]s def #{a} #{b} #{cmp}ae def")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]sd #{a} #{b} #{cmp} abc ed")).to eq "ok\n"
+        end
+        falsecmp.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp}a")).to eq ""
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc #{a} #{b} #{cmp} abc")).to eq ""
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]sb #{a} #{b} #{cmp}aeb")).to eq "false\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]s def #{a} #{b} #{cmp} abc e def")).to eq "false\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]s def #{a} #{b} #{cmp}ae def")).to eq "false\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]sd #{a} #{b} #{cmp} abc ed")).to eq "false\n"
+        end
+        truebin.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp} 1=a")).to eq "ok\n"
+        end
+        falsebin.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp} 0=a")).to eq "ok\n"
+        end
+      end
+      [
+        [0, 0, false, false],
+        [0, 1, false, true],
+        [1, 0, false, true],
+        [1, 1, true, true],
+        ["[abc]", 6, true, true],
+      ].each do |(a, b, andop, orop)|
+        expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} M 1=a")).to eq (andop ? "ok\n" : "")
+        expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} m 1=a")).to eq (orop ? "ok\n": "")
+      end
+    end
+
+    it 'implements loops properly' do
+      expect(@dir.stream(['bin/dct-dc'], "5 [p1-d0<a]sa lax")).to eq "5\n4\n3\n2\n1\n"
+      expect(@dir.stream(['bin/dct-dc'], "5 [p1-d0>blax]sa [,lc-Q]sb ,sc lax")).to eq "5\n4\n3\n2\n1\n0\n"
+      expect(@dir.stream(['bin/dct-dc'], "[ln 1+ d sn p ln 10>b]sb\n0sn0\nlbx\n")).to eq (1..10).map { |n| "#{n}\n" }.join('')
+    end
+
+    it 'implements q properly' do
+      expect(@dir.stream(['bin/dct-dc'], "5pq2p")).to eq "5\n"
+      expect(@dir.stream(['bin/dct-dc'], "[5pq2p]sa lax 3p")).to eq "5\n"
+      expect(@dir.stream(['bin/dct-dc'], "[5pq2p]sa [lax]sb lbx 3p")).to eq "5\n3\n"
+    end
+
+    it 'implements trivial counting properly' do
+      input = <<~EOM
+      [
+      Sx
+      lx[
+      lx 0 0SA [LA1+SA]SB <B LA  0LBX+d-K+k
+      [, lD- Q]sE 0 =Elxp Xd-K+k
+      lx 1 -sx
+       lCx
+      ]SC []SE ,SD lCx  0LCX+LDX+LEX+d-K+k
+       0LxX+d-K+k
+      ]St
+      3 ltxp
+      EOM
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "3\n2\n1\n3\n"
+    end
+
+    it 'implements the sieve of Eratosthenes properly' do
+      # Source: https://web.archive.org/web/20040904170757/http://cpe000103c34069-cm014300001653.cpe.net.cable.rogers.com/weblogs/ben/programming/dc/Prime-Sieve-in-DC.writeback
+      # Modified to make y smaller to avoid stack overflow.
+      input = <<~EOM
+      # Sieve of Eratosthenes in dc, version 1.0
+      # Ben Zanin, 2004-04-23T1634h; public domain
+      3sx 100000sy 0sz
+      [dd :q 2+ SlSm lmll LmLl <h] sh
+      ly 1+ 3 lhx sjsj 2 2:q
+      [lx ;q 0 !=b lx2+sxlx ly >a] sa
+      [lx p Sp ly lxd*szlz <c]     sb
+      [0lz:q lxlz+sz lylz <c]      sc
+      2psj
+      lax
+      EOM
+      primes = [2]
+      (3..100000).each do |n|
+        next unless n.odd?
+        sqrt = Integer::sqrt(n)
+        idx = primes.bsearch_index { |x| x >= sqrt }
+        found = false
+        (0..idx).each do |x|
+          if (n % primes[x]).zero?
+            found = true
+            break
+          end
+        end
+        primes << n unless found
+      end
+      output = primes.map { |n| "#{n}\n" }.join
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq output
+    end
+
+    it 'does common arithmetic operations properly' do
+      expect(@dir.stream(['bin/dct-dc'], "6k 16i #{@val1} #{@val2}+p")).to eq "499231983712626657269523011851643.55333809\n"
+      expect(@dir.stream(['bin/dct-dc'], "6k 16i #{@val1} #{@val2}-p")).to eq "-499125253366128312040972045148624.72566191\n"
+      expect(@dir.stream(['bin/dct-dc'], "6k 16i #{@val1} #{@val2}*p")).to eq "26638753460636528152813078337591935260428539533100333651201457.58253447\n"
+      expect(@dir.stream(['bin/dct-dc'], "6k 16i #{@val1} #{@val2}/p")).to eq ".000106\n"
+      expect(@dir.stream(['bin/dct-dc'], "6k 16i #{@val1} #{@val2}%p")).to eq "452239683998600902027113488.3996193030\n"
+      expect(@dir.stream(['bin/dct-dc'], "6k 16i #{@val1} #{@val2}~f")).to eq "452239683998600902027113488.3996193030\n.000106\n"
+    end
+
+    it 'handles strings properly' do
+      expect(@dir.stream(['bin/dct-dc'], "16i 6F6C6C6548dandan")).to eq "HH"
+      expect(@dir.stream(['bin/dct-dc'], "16i 48656C6C6F0AP")).to eq "Hello\n"
+      expect(@dir.stream(['bin/dct-dc'], "[abc]ap")).to eq "a\n"
+      expect(@dir.stream(['bin/dct-dc'], "[]ap")).to eq "\n"
+      expect(@dir.stream(['bin/dct-dc'], "[abc]pp")).to eq "abc\nabc\n"
+      expect(@dir.stream(['bin/dct-dc'], "0[abc]nk")).to eq "abc"
+      expect(@dir.stream(['bin/dct-dc'], "0[abc]Pk")).to eq "abc"
+      expect(@dir.stream(['bin/dct-dc'], "0[]Pk")).to eq ""
+    end
+
+    it 'handles the stack properly' do
+      expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] 2 [def] 3 [ghi]f")).to eq "ghi\n3\ndef\n2\nabc\n1\n0\n"
+      expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] 2 [def]c 3 [ghi]f")).to eq "ghi\n3\n"
+      expect(@dir.stream(['bin/dct-dc'], "0.123X 0.01234X 4.02X [abcd©]Xf")).to eq "0\n2\n5\n3\n"
+      expect(@dir.stream(['bin/dct-dc'], "0.123Z 0.01234Z 4.02Z [abcd©]Zf")).to eq "6\n3\n4\n3\n"
+      expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] z [def] z [ghi]f")).to eq "ghi\n5\ndef\n3\nabc\n1\n0\n"
+    end
+
+    it 'handles base and scale properly' do
+      expect(@dir.stream(['bin/dct-dc'], "I O Kf")).to eq "0\n10\n10\n"
+      expect(@dir.stream(['bin/dct-dc'], "16o 8i 10k I O Kf")).to eq "8\n10\n8\n"
+      expect(@dir.stream(['bin/dct-dc'], "8o 16i 10k I O Kf")).to eq "20\n10\n20\n"
+      expect(@dir.stream(['bin/dct-dc'], "F 1+i FE Ci FE Ai FEf")).to eq "164\n194\n254\n"
+      expect(@dir.stream(['bin/dct-dc'], "F 1+i .FE 1* Ci .FE 1* Ai .FE 1*f")).to eq "1.64\n1.34\n.99\n"
+    end
+
+    it 'should generate the SHA-512 round constants properly' do
+      values = %w[
+        428A2F98D728AE22 7137449123EF65CD B5C0FBCFEC4D3B2F E9B5DBA58189DBBC
+        3956C25BF348B538 59F111F1B605D019 923F82A4AF194F9B AB1C5ED5DA6D8118
+        D807AA98A3030242 12835B0145706FBE 243185BE4EE4B28C 550C7DC3D5FFB4E2
+        72BE5D74F27B896F 80DEB1FE3B1696B1 9BDC06A725C71235 C19BF174CF692694
+        E49B69C19EF14AD2 EFBE4786384F25E3 0FC19DC68B8CD5B5 240CA1CC77AC9C65
+        2DE92C6F592B0275 4A7484AA6EA6E483 5CB0A9DCBD41FBD4 76F988DA831153B5
+        983E5152EE66DFAB A831C66D2DB43210 B00327C898FB213F BF597FC7BEEF0EE4
+        C6E00BF33DA88FC2 D5A79147930AA725 06CA6351E003826F 142929670A0E6E70
+        27B70A8546D22FFC 2E1B21385C26C926 4D2C6DFC5AC42AED 53380D139D95B3DF
+        650A73548BAF63DE 766A0ABB3C77B2A8 81C2C92E47EDAEE6 92722C851482353B
+        A2BFE8A14CF10364 A81A664BBC423001 C24B8B70D0F89791 C76C51A30654BE30
+        D192E819D6EF5218 D69906245565A910 F40E35855771202A 106AA07032BBD1B8
+        19A4C116B8D2D0C8 1E376C085141AB53 2748774CDF8EEB99 34B0BCB5E19B48A8
+        391C0CB3C5C95A63 4ED8AA4AE3418ACB 5B9CCA4F7763E373 682E6FF3D6B2B8A3
+        748F82EE5DEFB2FC 78A5636F43172F60 84C87814A1F0AB72 8CC702081A6439EC
+        90BEFFFA23631E28 A4506CEBDE82BDE9 BEF9A3F7B2C67915 C67178F2E372532B
+        CA273ECEEA26619C D186B8C721C0C207 EADA7DD6CDE0EB1E F57D4F7FEE6ED178
+        06F067AA72176FBA 0A637DC5A2C898A6 113F9804BEF90DAE 1B710B35131C471B
+        28DB77F523047D84 32CAAB7B40C72493 3C9EBE0A15C9BEBC 431D67C49C100D4C
+        4CC5D4BECB3E42B6 597F299CFC657E2A 5FCB6FAB3AD6FAEC 6C44198C4A475817
+      ]
+      prime = -> (x) do
+        # SHA-512 uses primes up to 409; these values are therefore sufficient to
+        # determine primality.
+        [2, 3, 5, 7, 11, 13, 17, 19, 23].each do |p|
+          return true if x == p
+          return false if (x % p) == 0
+        end
+        true
+      end
+      input = []
+      expected = []
+      values.zip((2..409).select { |x| prime.call(x) }).each do |(val, p)|
+        val.gsub!(/^0+/, '')
+        # Use scale 23 because 2^64 is approximately equal to 10^19.2.  That
+        # means we need scale 20, plus an additional scale for the last place
+        # of the log, exp, and mul.  Ensure that more precision than that is
+        # not required for correctness.
+        input << "23k 16o #{p} llx 3/ lex d 0k 1/- 2 64^* 1/p"
+        expected << "#{val}\n"
+      end
+      expect(@dir.stream(['bin/dct-dc', '-l'], "#{@mathlib}\n#{input.join}")).to eq expected.join
+    end
+
+    it 'computes exponentiation properly' do
+      # TODO: positive and negative powers
+      expect(@dir.stream(['bin/dct-dc'], "6k 2 31 31|p")).to eq "2\n"
+      expect(@dir.stream(['bin/dct-dc'], "2 31^ 31%p")).to eq "2\n"
+      expect(@dir.stream(['bin/dct-dc'], "20k 1.053 23^p")).to eq "3.27983908746284995067\n"
+      expect(@dir.stream(['bin/dct-dc'], "20k _1.053 23^p")).to eq "-3.27983908746284995067\n"
+      expect(@dir.stream(['bin/dct-dc'], "20k _1.053 22^p")).to eq "3.11475696815085465401\n"
+      # Based off an RSA test vector.  This is obviously not constant time, so
+      # it's not suitable for real cryptography.
+      base, e, d, mod, res = <<~EOM.chomp.split("\n")
+      27DA4104EACE1991E08BD8E7CFCCD97EC48B896A0E156CE7BDC23FD570AAA9A00ED015101F0C6261C7371CECA327A73C3CECFCF6B2D9ED920C9698046E25C89ADB2360887D99983BF632F9E6EB0E5DF60715902B9AEAA74BF5027AA246510891C74AE366A16F397E2C8CCDC8BD56AA10E0D01585E69F8C4856E76B53ACFD3D782B8171529008FA5EFF030F46956704A3F5D9167348F37021FC277C6C0A8F93B8A23CFBF918990F982A56D0ED2AA08161560755ADC0CE2C3E2AB2929F79BFC0B24FF3E0FF352E6445D8A617F1785D66C32295BB365D61CFB107E9993BBD93421F2D344A86E4127827FA0D0B2535F9B1D547DE12BA2868ACDECF2CB5F92A6A159A
+      00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000260445
+      0997634C477C1A039D44C810B2AAA3C7862B0B88D3708272E1E15F66FC9389709F8A11F3EA6A5AF7EFFA2D01C189C50F0D5BCBE3FA272E56CFC4A4E1D388A9DCD65DF8628902556C8B6BB6A641709B5A35DD2622C73D4640BFA1359D0E76E1F219F8E33EB9BD0B59EC198EB2FCCAAE0346BD8B401E12E3C67CB629569C185A2E0F35A2F741644C1CCA5EBB139D77A89A2953FC5E30048C0E619F07C8D21D1E56B8AF07193D0FDF3F49CD49F2EF3138B5138862F1470BD2D16E34A2B9E7777A6C8C8D4CB94B4E8B5D616CD5393753E7B0F31CC7DA559BA8E98D888914E334773BAF498AD88D9631EB5FE32E53A4145BF0BA548BF2B0A50C63F67B14E398A34B0D
+      CEA80475324C1DC8347827818DA58BAC069D3419C614A6EA1AC6A3B510DCD72CC516954905E9FEF908D45E13006ADF27D467A7D83C111D1A5DF15EF293771AEFB920032A5BB989F8E4F5E1B05093D3F130F984C07A772A3683F4DC6FB28A96815B32123CCDD13954F19D5B8B24A103E771A34C328755C65ED64E1924FFD04D30B2142CC262F6E0048FEF6DBC652F21479EA1C4B1D66D28F4D46EF7185E390CBFA2E02380582F3188BB94EBBF05D31487A09AFF01FCBB4CD4BFD1F0A833B38C11813C84360BB53C7D4481031C40BAD8713BB6B835CB08098ED15BA31EE4BA728A8C8E10F7294E1B4163B7AEE57277BFD881A6F9D43E02C6925AA3A043FB7FB78D
+      1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00302D300D06096086480165030402040500041CC34B1A0D795DAE5B88559191BB2C1CB75A5FD1D18B5002074560E6AD
+      EOM
+      expect(@dir.stream(['bin/dct-dc'], "16o 16i #{base} #{e} #{mod}|p")).to eq "#{res}\n"
+      expect(@dir.stream(['bin/dct-dc'], "16o 16i #{res} #{d} #{mod}|p")).to eq "#{base}\n"
+    end
+
+    it "processes comments correctly" do
+      input = <<~EOM
+      # 1p
+      [2p#3p]x
+      [# 4p
+      # 5p
+      6p
+      ]x
+      EOM
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "2\n6\n"
+    end
+  end
+
+  context 'Forth' do
+    it "doesn't leave detritrus on the stack" do
+      input = <<~'EOM'
+      : t
+          dup 1 <
+          if
+              0 =
+              if
+                  1.5
+                  exit
+              else
+                  2.3
+                  exit
+              then
+          then
+      ;
+
+      \ 5
+      5 t
+      \ 1.5
+      0 t
+      \ 2.3
+      0.5 t
+
+      .s
+      EOM
+      expect(@dir.stream(['bin/dct-dc', '--forth=dc'], input)).to eq "2.3\n1.5\n5\n"
+    end
+  end
+end
