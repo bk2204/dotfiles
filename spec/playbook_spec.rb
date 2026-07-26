@@ -36,7 +36,7 @@ describe :playbooks do
     end
 
     it 'should bootstrap and deploy dotfiles correctly in a graphical development environment with Homebrew' do
-      skip if ENV['DOCKER_IMAGE'] == 'ubuntu:focal'
+      skip if %w[ubuntu:focal ubuntu:jammy debian:bookworm].include?(ENV['DOCKER_IMAGE'])
       @img.run
       expect(@img.setup).to be true
       expect(@img.exec("DEBIAN_FRONTEND=noninteractive apt-get update")).to be true
