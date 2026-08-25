@@ -466,7 +466,7 @@ module DC
       def process_chunk(parser)
         comparisons = { "<" => ">", ">" => "<", "<>" => "!=", "=" => "=" }
         parser.tokens do |token|
-          frame.result << debug(token)
+          frame.result << debug("token: #{token}")
           if frame.state == :toplevel && token == ':'
             push_frame(:funccolon)
           elsif frame.state == :funccolon
@@ -504,7 +504,7 @@ module DC
             frame.locals << token
           elsif token =~ /#(-?\d+(\.\d+)?)/
             num = $1.sub('-', '_')
-            frame.result << "I Ai #{num} i\n"
+            frame.result << "I Ai #{num} ri\n"
           elsif token =~ /(-?\d+(\.\d+)?)/
             num = $1.sub('-', '_')
             frame.result << " #{num} "
@@ -548,14 +548,14 @@ module DC
           elsif token == "begin"
             push_frame(:begin)
             # XXX
-            parent_frame.result << "[c]p#{drop} ,p #{drop}"
+            parent_frame.result << "[at begin]p#{drop} ,p #{drop}"
           elsif frame.state == :begin && token == "while"
             # XXX
-            frame.result << "[[b]p#{drop} ,p lD- 1+pQ]sE 0 =E"
+            frame.result << "[[failed while condition]p#{drop} ,p lD-p Q]sE 0 =E"
           elsif frame.state == :begin && token == "repeat"
             result = pop_frame
             # XXX
-            frame.result << "[\n[a]p#{drop} ,p#{drop} \n#{result.join}\n lCx\n]SC []SE ,SD lCx #{drop_temporaries(%w[C D E])}\n"
+            frame.result << "[\n[looping to begin]p#{drop} ,p#{drop} \n#{result.join}\n lCx\n]SC []SE #{debug("repeat stack counter")} ,pSD lCx #{drop_temporaries(%w[C D E])}\n"
           elsif token == "0="
             frame.result << "0SA [lA1+sA]SB 0 =B #{drop_temporaries(%w[A B])}\n"
           elsif token == "0<"
@@ -583,9 +583,11 @@ module DC
             push_frame(:regstate)
           elsif frame.state == :regstate && token.length == 1
             pop_frame
+            debug_store(token)
             frame.result << "s#{token}"
           elsif frame.state == :regstate && token =~ /\A[a-z][a-z0-9_]*\z/
             pop_frame
+            debug_store(token)
             frame.result << "s #{token}"
           elsif function && function.locals.include?(token) && token.length == 1
             frame.result << "l#{token}"
