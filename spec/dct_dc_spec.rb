@@ -48,6 +48,12 @@ describe :dct_dc do
       EOM
     end
 
+    it 'computes comparisons properly' do
+      expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 1 2>a")).to eq "ok\n"
+      expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 2 1<a")).to eq "ok\n"
+      expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 0.05 1>a")).to eq "ok\n"
+    end
+
     it 'computes powers properly' do
       # TODO: positive and negative powers
     end

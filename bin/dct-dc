@@ -799,7 +799,7 @@ module DC
       other = numericize(other)
       value = self.dup_with_scale(2 * k).value
       ovalue = other.dup_with_scale(k).value
-      v = (value / ovalue)
+      v = (value / ovalue).to_i
       Numeric.new(v, k, @k)
     end
 
@@ -838,7 +838,7 @@ module DC
 
     def <=>(other)
       return @value <=> other unless other.is_a? Numeric
-      @value <=> other.value
+      self.to_r <=> other.to_r
     end
 
     def to_r

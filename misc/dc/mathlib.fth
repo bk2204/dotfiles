@@ -39,12 +39,8 @@
     scale @ dup to s
     6 + 0.44 x * + to r
     x fscale 1 + scale !
-    \ XXX
-    x .
     begin
     x 1 >
-    \ XXX
-    dup .
     while
         d 1 + to d
         x 2 f/ to x
@@ -54,12 +50,8 @@
     x dup 1 + to r to p
     1 dup to f to v
     2 to i
-    \ XXX
-    v .
     begin
     v
-    \ XXX
-    dup .
     while
     p x * to p
     f i * to f
