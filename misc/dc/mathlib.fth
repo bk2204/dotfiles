@@ -96,14 +96,14 @@
         2 to p
 
         begin
-            x 2 < invert
+            x 2 < 0=
         while
             p 2 * to p
             x sqrt to x
         repeat
 
         begin
-            x .5 > invert
+            x .5 > 0=
         while
             p 2 * to p
             x sqrt to x
