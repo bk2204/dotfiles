@@ -250,6 +250,8 @@ module DC
             frame.result << "99999999Qq\n"
           elsif token == "sqrt"
             frame.result << "v\n"
+          elsif token == "pow"
+            frame.result << "^\n"
           elsif token == "fscale"
             # This is the bc scale() function.
             frame.result << "X\n"
