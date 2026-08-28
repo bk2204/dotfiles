@@ -55,13 +55,9 @@
     while
     p x * to p
     f i * to f
-    scale @ .
-    p . f .
     p f f/ to v
     r v + to r
     i 1 + to i
-    v .
-    r .
     repeat
     r
     begin

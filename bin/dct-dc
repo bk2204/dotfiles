@@ -547,15 +547,11 @@ module DC
             frame.result << "0SA [LA1+SA]SB #{comparisons[token]}B LA #{drop_temporaries(%w[B])}\n"
           elsif token == "begin"
             push_frame(:begin)
-            # XXX
-            parent_frame.result << "[at begin]p#{drop} ,p #{drop}"
           elsif frame.state == :begin && token == "while"
-            # XXX
-            frame.result << "[[failed while condition]p#{drop} ,p lD-p Q]sE 0 =E"
+            frame.result << "[, lD- Q]sE 0 =E"
           elsif frame.state == :begin && token == "repeat"
             result = pop_frame
-            # XXX
-            frame.result << "[\n[looping to begin]p#{drop} ,p#{drop} \n#{result.join}\n lCx\n]SC []SE #{debug("repeat stack counter")} ,pSD lCx #{drop_temporaries(%w[C D E])}\n"
+            frame.result << "[\n#{result.join}\n lCx\n]SC []SE ,SD lCx #{drop_temporaries(%w[C D E])}\n"
           elsif token == "0="
             frame.result << "0SA [lA1+sA]SB 0 =B #{drop_temporaries(%w[A B])}\n"
           elsif token == "0<"
