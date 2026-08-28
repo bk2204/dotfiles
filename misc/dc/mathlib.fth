@@ -35,33 +35,43 @@
     { x b s n r d i p f v }
     base @ to b
     #10 base !
-    x 0< if 1 to n x negate to x then
+
+    x 0<
+    if
+        1 to n x negate to x
+    then
+
     scale @ dup to s
     6 + 0.44 x * + to r
     x fscale 1 + scale !
+
     begin
-    x 1 >
+        x 1 >
     while
         d 1 + to d
         x 2 f/ to x
         scale @ 1 + scale !
     repeat
+
     r scale !
     x dup 1 + to r to p
     1 dup to f to v
     2 to i
+
     begin
-    v
+        v
     while
-    p x * to p
-    f i * to f
-    p f f/ to v
-    r v + to r
-    i 1 + to i
+        p x * to p
+        f i * to f
+        p f f/ to v
+        r v + to r
+        i 1 + to i
     repeat
+
     r
     begin
-    d while
+    d
+    while
     d 1 - to d
     dup *
     repeat
@@ -70,13 +80,65 @@
     n 0 = if 1 f/ else 1 swap f/ then
 ;
 
+: l
+        0 0 0 0 0 0 0 0
+    { x b s r p a q i v }
+
+    x 0 <=
+    if
+        1 #10 scale @ pow - 1 f/
+    else
+        base @ to b
+        #10 base !
+        scale @ dup to s
+        6 + scale !
+
+        2 to p
+
+        begin
+            x 2 < invert
+        while
+            p 2 * to p
+            x sqrt to x
+        repeat
+
+        begin
+            x .5 > invert
+        while
+            p 2 * to p
+            x sqrt to x
+        repeat
+
+        x 1 - x 1 + f/
+        dup to r to a
+        a dup * to q
+        1 to v
+
+        3 to i
+        begin
+            v
+        while
+            a q * to a
+            a i f/ to v
+            r v + to r
+            i 2 + to i
+        repeat
+
+        r p * to r
+        s scale !
+        b base !
+        r 1 f/
+    then
+;
+
 : t
     { x }
     x
+
     begin
-    x 0 >
+        x 0 >
     while
-    x .
-    x 1 - to x
+        x .
+        x 1 - to x
     repeat
 ;
