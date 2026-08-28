@@ -54,6 +54,34 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 0.05 1>a")).to eq "ok\n"
     end
 
+    it 'implements loops properly' do
+      expect(@dir.stream(['bin/dct-dc'], "5 [p1-d0<a]sa lax")).to eq "5\n4\n3\n2\n1\n"
+      expect(@dir.stream(['bin/dct-dc'], "5 [p1-d0>blax]sa [,lc-Q]sb ,sc lax")).to eq "5\n4\n3\n2\n1\n0\n"
+    end
+
+    it 'implements q properly' do
+      expect(@dir.stream(['bin/dct-dc'], "5pq2p")).to eq "5\n"
+      expect(@dir.stream(['bin/dct-dc'], "[5pq2p]sa lax 3p")).to eq "5\n"
+      expect(@dir.stream(['bin/dct-dc'], "[5pq2p]sa [lax]sb lbx 3p")).to eq "5\n3\n"
+    end
+
+    it 'implements trivial counting properly' do
+      input = <<~EOM
+      [
+      Sx
+      lx[
+      lx 0 0SA [LA1+SA]SB <B LA  0LBX+d-K+k
+      [, lD- Q]sE 0 =Elxp Xd-K+k
+      lx 1 -sx
+       lCx
+      ]SC []SE ,SD lCx  0LCX+LDX+LEX+d-K+k
+       0LxX+d-K+k
+      ]St
+      3 ltxp
+      EOM
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "3\n2\n1\n3\n"
+    end
+
     it 'computes powers properly' do
       # TODO: positive and negative powers
     end

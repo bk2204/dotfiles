@@ -606,7 +606,7 @@ module DC
       @ibase = @obase = 10
       @scale = Scale.new 0
       @extensions = Set.new
-      @stack_level = 0
+      @frames = []
       @break = true
       %i[gnu freebsd extreg].each do |ext|
         @extensions.add ext if options[ext] || options[:all]
@@ -748,17 +748,21 @@ module DC
       :'!<' => ->(treg, ereg = nil) { cmpop(:>=, treg, ereg) },
       :'(' => { freebsd: -> { extcmpop(:<) } },
       :'{' => { freebsd: -> { extcmpop(:<=) } },
-      :',' => { freebsd: -> { push(int(@stack_level + 1)) } },
+      :',' => { freebsd: -> { push(int(@frames.length)) } },
     }.freeze
 
     def do_parse(line)
       line = line.dup
       line.force_encoding('BINARY')
-      until line.empty? || @unwind
-        ret = do_parse_one(line)
+      @frames << line.chomp
+      until @frames.empty? || @frames.last&.empty?
+        ret = do_parse_one(@frames.last)
+        if @frames.last&.empty?
+          @frames.pop
+        end
         return ret unless ret == :next
       end
-      @stack_level
+      @frames.length - 1
     end
 
     def do_parse_one(line)
@@ -774,11 +778,8 @@ module DC
       elsif line.sub!(%r{\A[-+*/%^|~dpPzZXfiIoOkKvc]}, '')
         dispatch($~[0].to_sym)
       elsif line.sub!(/\Ax/, '')
-        @stack_level += 1
         resp = dispatch($~[0].to_sym)
-        @stack_level -= 1
-        return @break ? nil : resp if resp && resp <= @stack_level
-        @unwind = false
+        return @break ? nil : resp if resp && resp <= (@frames.length - 1)
       elsif extension?(:extregs) && line.sub!(/\A([SsLl:;])#{space}([a-z][a-z0-9_]*)/, '')
         dispatch($~[1].to_sym, $~[2])
       elsif line.sub!(/\A([SsLl:;])(.)/, '')
@@ -804,15 +805,16 @@ module DC
       elsif line.start_with? ']'
         raise UnbalancedBracketsError
       elsif line[0] == 'q'
-        return if @stack_level == 0
-        @unwind = true
-        return @stack_level - 1
+        return if @frames.length == 1
+        @frames.pop(2)
       elsif line[0] == 'Q'
         level = pop.to_i
         @break = false
-        @unwind = true
-        return 1 if level > @stack_level
-        return @stack_level - level + 1
+        if level > @frames.length
+          @frames.pop(@frames.length - 1)
+        else
+          @frames.pop(level)
+        end
       else
         raise InvalidCommandError, line[0].to_sym
       end
@@ -904,13 +906,11 @@ module DC
 
     def cmpop(op, treg, ereg = nil)
       top, second = pop(2)
-      @stack_level += 1
       if top.send(op, second)
         do_parse(@registers[treg][0])
       elsif !ereg.nil?
         do_parse(@registers[ereg][0])
       end
-      @stack_level -= 1
     end
 
     def extcmpop(op)
