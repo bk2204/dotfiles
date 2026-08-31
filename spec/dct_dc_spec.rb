@@ -82,6 +82,39 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], input)).to eq "3\n2\n1\n3\n"
     end
 
+    it 'implements the sieve of Eratosthenes properly' do
+      # Source: https://web.archive.org/web/20040904170757/http://cpe000103c34069-cm014300001653.cpe.net.cable.rogers.com/weblogs/ben/programming/dc/Prime-Sieve-in-DC.writeback
+      # Modified to make y smaller to avoid stack overflow.
+      input = <<~EOM
+      # Sieve of Eratosthenes in dc, version 1.0
+      # Ben Zanin, 2004-04-23T1634h; public domain
+      3sx 10000sy 0sz
+      [dd :q 2+ SlSm lmll LmLl <h] sh
+      ly 1+ 3 lhx sjsj 2 2:q
+      [lx ;q 0 !=b lx2+sxlx ly >a] sa
+      [lx p Sp ly lxd*szlz <c]     sb
+      [0lz:q lxlz+sz lylz <c]      sc
+      2psj
+      lax
+      EOM
+      primes = [2]
+      (3..10000).each do |n|
+        next unless n.odd?
+        sqrt = Integer::sqrt(n)
+        idx = primes.bsearch_index { |x| x >= sqrt }
+        found = false
+        (0..idx).each do |x|
+          if (n % primes[x]).zero?
+            found = true
+            break
+          end
+        end
+        primes << n unless found
+      end
+      output = primes.map { |n| "#{n}\n" }.join
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq output
+    end
+
     it 'computes powers properly' do
       # TODO: positive and negative powers
     end

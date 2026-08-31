@@ -754,6 +754,7 @@ module DC
     def do_execute(line, tail: false)
       if tail
         @frames.push(line.chomp)
+        @frames.length
       else
         do_parse(line)
       end
@@ -765,12 +766,12 @@ module DC
       @frames << line.chomp
       until @frames.empty? || @frames.last&.empty?
         ret = do_parse_one(@frames.last)
-        if @frames.last&.empty?
+        while @frames.last&.empty?
           @frames.pop
         end
         return ret unless ret == :next
       end
-      @frames.length - 1
+      @frames.length
     end
 
     def do_parse_one(line)
@@ -1014,9 +1015,7 @@ def script(args)
       end
       $stdout.puts gen.emit
     else
-      source.each_line do |line|
-        return 0 unless calc.parse(line)
-      end
+      calc.parse(source.read)
     end
   end
   0
