@@ -525,10 +525,10 @@ module DC
 
     def %(other)
       other = numericize(other)
-      value = self.dup_with_scale(k).value
-      ovalue = other.dup_with_scale(k).value
-      v = (value % ovalue).truncate(k)
-      Numeric.new(v, k, @k)
+      scale = other.scale + k
+      value = self.dup_with_scale(scale)
+      ovalue = other.dup_with_scale(scale)
+      value - ((value / ovalue) * ovalue)
     end
 
     def **(other)
