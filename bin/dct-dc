@@ -726,6 +726,14 @@ module DC
         push @registers[reg].shift
         @arrays[reg].shift
       end,
+      :m => { freebsd: -> do
+        a, b = pop(2)
+        push(int((a != 0 || b != 0) ? 1 : 0))
+      end},
+      :M => { freebsd: -> do
+        a, b = pop(2)
+        push(int((a != 0 && b != 0) ? 1 : 0))
+      end},
       :n => ext_op(%i[gnu freebsd], -> { @output.print printable(pop) }),
       :N => { freebsd: -> { push(int(pop == 0 ? 1 : 0)) } },
       :o => -> { base_setop(:obase=) },
@@ -769,7 +777,9 @@ module DC
       :< =>    ->(treg, ereg = nil, tail: false) { cmpop(:<, treg, ereg, tail: tail) },
       :'!<' => ->(treg, ereg = nil, tail: false) { cmpop(:>=, treg, ereg, tail: tail) },
       :'(' => { freebsd: -> { extcmpop(:<) } },
+      :')' => { freebsd: -> { extcmpop(:>) } },
       :'{' => { freebsd: -> { extcmpop(:<=) } },
+      :'}' => { freebsd: -> { extcmpop(:>=) } },
       :',' => { freebsd: -> { push(int(@frames.length)) } },
     }.freeze
 
@@ -825,7 +835,7 @@ module DC
         dispatch($~[1].to_sym, $~[2], tail: line.empty?)
       elsif line.sub!(/\A([nra])/, '')
         dispatch($~[1].to_sym)
-      elsif line.sub!(/\A([NRG({,])/, '')
+      elsif line.sub!(/\A([NRG(){},Mm])/, '')
         dispatch($~[1].to_sym)
       elsif line.sub!(/\A\?/, '')
         do_parse(@input.gets)

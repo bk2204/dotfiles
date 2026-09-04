@@ -52,10 +52,36 @@ describe :dct_dc do
       EOM
     end
 
-    it 'computes comparisons properly' do
-      expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 1 2>a")).to eq "ok\n"
-      expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 2 1<a")).to eq "ok\n"
-      expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa 0.05 1>a")).to eq "ok\n"
+    it 'computes comparisons and booleans properly' do
+      [
+        [1, 2, %w[> !< !=], %w[< !> =], %w[) } GN], %w[( { G]],
+        [2, 1, %w[< !> !=], %w[> !< =], %w[( { GN], %w[) } G]],
+        [2, 2, %w[= !> !<], %w[> < !=], %w[{ } G], %w[( ) GN]],
+        [0.05, 1, %w[> !< !=], %w[< !> =], %w[) } GN], %w[( { G]],
+      ].each do |(a, b, truecmp, falsecmp, truebin, falsebin)|
+        truecmp.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp}a")).to eq "ok\n"
+        end
+        falsecmp.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp}a")).to eq ""
+        end
+        truebin.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp} 1=a")).to eq "ok\n"
+        end
+        falsebin.each do |cmp|
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp} 0=a")).to eq "ok\n"
+        end
+      end
+      [
+        [0, 0, false, false],
+        [0, 1, false, true],
+        [1, 0, false, true],
+        [1, 1, true, true],
+        ["[abc]", 6, true, true],
+      ].each do |(a, b, andop, orop)|
+        expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} M 1=a")).to eq (andop ? "ok\n" : "")
+        expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} m 1=a")).to eq (orop ? "ok\n": "")
+      end
     end
 
     it 'implements loops properly' do
