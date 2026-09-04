@@ -544,6 +544,24 @@ module DC
       Numeric.new(Integer.sqrt(value), scale, @k)
     end
 
+    def modexp(exp, mod)
+      exp = exp.to_i
+      return 1 if exp == 0
+      mod = mod.to_i
+
+      factor = self.to_i
+      result = 1
+      while exp > 0
+        result *= factor if (exp & 1) != 0
+        result %= mod
+        exp >>= 1
+        factor **= 2
+        factor %= mod
+      end
+
+      Numeric.new(result, 0, @k)
+    end
+
     def respond_to_missing?(symbol, *args)
       super(symbol, *args) || @value.respond_to?(symbol, *args)
     end
@@ -686,8 +704,8 @@ module DC
       end,
       :| => lambda do
         mod = pop.to_r
-        exp, base = pop(2).map(&:to_i)
-        push DC::Numeric.new(DC::Math.modexp(base, exp, mod), 0, @scale)
+        exp, base = pop(2)
+        push base.modexp(exp, mod)
       end,
       :~ => lambda do
         denom, num = pop(2)
