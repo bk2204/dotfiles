@@ -432,7 +432,7 @@ module DC
     end
 
     def self.length(x, scale)
-      stringify(x, scale).sub(/^-?0\.0*/, '.').gsub(/[.-]/, '').length
+      stringify(x, scale).sub(/^-?0?\.0*/, '.').gsub(/[.-]/, '').length
     end
 
     def self.scale(x, scale)

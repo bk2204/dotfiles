@@ -143,6 +143,8 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] 2 [def] 3 [ghi]f")).to eq "ghi\n3\ndef\n2\nabc\n1\n0\n"
       expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] 2 [def]c 3 [ghi]f")).to eq "ghi\n3\n"
       expect(@dir.stream(['bin/dct-dc'], "0.123X 0.01234X 4.02X [abcd©]Xf")).to eq "0\n2\n5\n3\n"
+      expect(@dir.stream(['bin/dct-dc'], "0.123Z 0.01234Z 4.02Z [abcd©]Zf")).to eq "6\n3\n4\n3\n"
+      expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] z [def] z [ghi]f")).to eq "ghi\n5\ndef\n3\nabc\n1\n0\n"
     end
 
     it 'computes exponentiation properly' do
