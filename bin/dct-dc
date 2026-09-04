@@ -857,8 +857,11 @@ module DC
       value = integer(int)
       frac_digits = frac.to_s.length
       if frac
-        value *= @ibase ** frac_digits
-        value += integer(frac)
+        value *= 10 ** frac_digits
+        frac_value = integer(frac)
+        frac_value *= 10 ** frac_digits
+        frac_value /= @ibase ** frac_digits
+        value += frac_value.to_i
       end
       # For ease of internal conversion and compatibility with the GNU
       # implementation, the scale is always computed in base 10.  Also for GNU
