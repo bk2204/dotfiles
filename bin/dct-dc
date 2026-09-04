@@ -1040,7 +1040,13 @@ def script(args)
       end
       $stdout.puts gen.emit
     else
-      calc.parse(source.read)
+      if $stdin.tty?
+        source.each_line do |line|
+          return 0 unless calc.parse(line)
+        end
+      else
+        calc.parse(source.read)
+      end
     end
   end
   0
