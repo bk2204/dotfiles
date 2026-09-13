@@ -1050,12 +1050,8 @@ def script(args)
       end
       $stdout.puts gen.emit
     else
-      if $stdin.tty?
-        source.each_line do |line|
-          return 0 unless calc.parse(line)
-        end
-      else
-        calc.parse(source.read)
+      source.each_line do |line|
+        return 0 unless calc.parse(line)
       end
     end
   end
