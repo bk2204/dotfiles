@@ -127,6 +127,7 @@
 [init]
     defaultBranch = dev
     defaultRefFormat = reftable
+    defaultObjectFormat = sha256
 [i18n]
     commitEncoding = UTF-8
 [lfs]
