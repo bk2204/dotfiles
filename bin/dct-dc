@@ -276,7 +276,7 @@ module DC
             push_frame(:envstate, register: "i")
           elsif comparisons.keys.include?(token)
             # Forth and dc differ in the argument order for comparisons.
-            frame.result << "0SA [LA1+SA]SB #{comparisons[token]}B LA #{drop_temporaries(%w[B])}\n"
+            frame.result << "0SA [lA1+sA]SB #{comparisons[token]}B LA #{drop_temporaries(%w[B])}\n"
           elsif token == "begin"
             push_frame(:begin)
           elsif frame.state == :begin && token == "while"
@@ -285,9 +285,9 @@ module DC
             result = pop_frame
             frame.result << "[\n#{result.join}\n lCx\n]SC []SE ,SD lCx #{drop_temporaries(%w[C D E])}\n"
           elsif token == "0="
-            frame.result << "0SA [lA1+sA]SB 0 =B #{drop_temporaries(%w[A B])}\n"
+            frame.result << "0SA [lA1+sA]SB 0 =B LA #{drop_temporaries(%w[B])}\n"
           elsif token == "0<"
-            frame.result << "0SA [lA1+sA]SB 0 >B #{drop_temporaries(%w[A B])}\n"
+            frame.result << "0SA [lA1+sA]SB 0 >B LA #{drop_temporaries(%w[B])}\n"
           elsif token == "if"
             push_frame(:if, temporaries: %w[A B])
           elsif frame.state == :if && token == "else"
