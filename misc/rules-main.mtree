@@ -8,5 +8,6 @@
 .config/neovide/config.toml type=file mode=0640 src=misc/neovide.toml
 .config/dct-jump/config type=file mode=0600 src=misc/dct-jump/main
 .config/containers/containers.conf.d type=dir mode=0700 recurse=true filemode=0600+x dirmode=0700 src=misc/containers
+.local/share/dct-dc/math/library.fth type=file mode=0640 src=misc/dc/mathlib.fth
 .local/state/gh/device-id type=link mode=0777 link=/dev/urandom
 .local/state/kitty/sessions/default type=file mode=0600 contents=ignore
