@@ -228,10 +228,10 @@ module DC
           elsif frame.state == :localdecl && (token.length == 1 || token =~ /\A[a-z][a-z0-9_]*\z/)
             parent_frame.locals << token
             frame.locals << token
-          elsif token =~ /#(-?\d+(\.\d+)?)/
+          elsif token =~ /\A#(-?\d+(\.\d+)?)\z/
             num = $1.sub('-', '_')
             frame.result << "I Ai #{num} ri\n"
-          elsif token =~ /(-?\d+(\.\d+)?)/
+          elsif token =~ /\A(-?\d+(\.\d+)?)\z/
             num = $1.sub('-', '_')
             frame.result << " #{num} "
           elsif %w[+ - *].include?(token)
