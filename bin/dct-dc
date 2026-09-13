@@ -1000,12 +1000,9 @@ def file_from_name(f)
 end
 
 def find_math_library
-  path = nil
-  $LOAD_PATH.each do |p|
-    loc = File.join(p, 'dc', 'math', 'library.rb')
-    return loc if File.exist? loc
-  end
-  raise "Can't find math library" if path.nil?
+  loc = File.join(ENV['HOME'], ".local", "share", "dct-dc", "math", "library.fth")
+  return loc if File.exist? loc
+  raise "Can't find math library"
 end
 
 def parse_options(args)
@@ -1030,7 +1027,9 @@ def parse_options(args)
     opts.on('-l', '--mathlib', 'Define the standard math library') do
       path = find_math_library
       data = File.read(path)
-      options[:scripts] << DC::CodeGenerator::Generator.new(true).process(data).emit
+      mathlib = DC::CodeGenerator::Generator.new(true)
+      mathlib.process(data)
+      options[:scripts] << mathlib.emit
       options[:mathlib] = true
     end
   end.parse!(args)
