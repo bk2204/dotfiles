@@ -173,6 +173,12 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], "0 1 [abc] z [def] z [ghi]f")).to eq "ghi\n5\ndef\n3\nabc\n1\n0\n"
     end
 
+    it 'handles base and scale properly' do
+      expect(@dir.stream(['bin/dct-dc'], "I O Kf")).to eq "0\n10\n10\n"
+      expect(@dir.stream(['bin/dct-dc'], "16o 8i 10k I O Kf")).to eq "8\n10\n8\n"
+      expect(@dir.stream(['bin/dct-dc'], "8o 16i 10k I O Kf")).to eq "20\n10\n20\n"
+    end
+
     it 'computes exponentiation properly' do
       # TODO: positive and negative powers
       expect(@dir.stream(['bin/dct-dc'], "6k 2 31 31|p")).to eq "2\n"
