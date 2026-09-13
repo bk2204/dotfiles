@@ -244,6 +244,8 @@ module DC
             frame.result << "KSa0k 1 / Lak\n"
           elsif token == "to-scale"
             frame.result << "KSa k 1 / Lak\n"
+          elsif token == ".s"
+            frame.result << "f\n"
           elsif token == "swap"
             frame.result << "r\n"
           elsif token == "dup"
