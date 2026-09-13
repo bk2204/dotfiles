@@ -60,16 +60,16 @@ describe :dct_dc do
         [0.05, 1, %w[> !< !=], %w[< !> =], %w[) } GN], %w[( { G]],
       ].each do |(a, b, truecmp, falsecmp, truebin, falsebin)|
         truecmp.each do |cmp|
-          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp}a")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp}a")).to eq "ok\n"
         end
         falsecmp.each do |cmp|
-          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp}a")).to eq ""
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp}a")).to eq ""
         end
         truebin.each do |cmp|
-          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp} 1=a")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp} 1=a")).to eq "ok\n"
         end
         falsebin.each do |cmp|
-          expect(@dir.stream(['bin/dct-dc'], "[[ok]p]sa #{a} #{b} #{cmp} 0=a")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp} 0=a")).to eq "ok\n"
         end
       end
       [
