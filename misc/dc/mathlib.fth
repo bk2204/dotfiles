@@ -38,7 +38,8 @@
 
     x 0<
     if
-        1 to n x negate to x
+        1 to n
+        x negate to x
     then
 
     scale @ dup to s
@@ -70,11 +71,12 @@
 
     r
     begin
-    d
+        d
     while
-    d 1 - to d
-    dup *
+        d 1 - to d
+        dup *
     repeat
+
     s scale !
     b base !
     n 0 = if 1 f/ else 1 swap f/ then
