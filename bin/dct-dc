@@ -147,7 +147,6 @@ module DC
         @frames = []
         @ignored_functions = options[:ignored_functions] || []
         @options = options
-        @factory = NodeFactory.new(self)
       end
 
       def process(s)
