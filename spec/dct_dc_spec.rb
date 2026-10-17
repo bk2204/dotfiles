@@ -118,7 +118,7 @@ describe :dct_dc do
       input = <<~EOM
       # Sieve of Eratosthenes in dc, version 1.0
       # Ben Zanin, 2004-04-23T1634h; public domain
-      3sx 10000sy 0sz
+      3sx 100000sy 0sz
       [dd :q 2+ SlSm lmll LmLl <h] sh
       ly 1+ 3 lhx sjsj 2 2:q
       [lx ;q 0 !=b lx2+sxlx ly >a] sa
@@ -128,7 +128,7 @@ describe :dct_dc do
       lax
       EOM
       primes = [2]
-      (3..10000).each do |n|
+      (3..100000).each do |n|
         next unless n.odd?
         sqrt = Integer::sqrt(n)
         idx = primes.bsearch_index { |x| x >= sqrt }

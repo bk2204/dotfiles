@@ -785,12 +785,8 @@ module DC
     }.freeze
 
     def do_execute(line, tail: false)
-      if tail
-        @frames.push(line.chomp)
-        @frames.length
-      else
-        do_parse(line)
-      end
+      @frames.push(line.chomp)
+      @frames.length
     end
 
     def do_parse(line)
