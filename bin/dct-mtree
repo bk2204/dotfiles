@@ -40,6 +40,7 @@ backend=    choose the backend to use (sh or ruby)
 mtree-src!  print a full mtree format file for the source directory
 mtree-dest! print a full mtree format file for the destination directory
 format!     format the default mtree format into per-line format
+deformat!   format the per-line mtree format into the default format
 escape!     escape standard input suitably for mtree
 unescape!   unescape standard input suitably for mtree
 validate!   validate the input file
@@ -79,6 +80,9 @@ main () {
                 ;;
             --format)
                 cmd=format
+                ;;
+            --deformat)
+                cmd=deformat
                 ;;
             --escape)
                 cmd=escape
@@ -591,6 +595,69 @@ module MTree
         end
     end
 
+    def self.deformat(config)
+        dirname = []
+        defaults = {}
+        lines = config[:stdin].readlines.reject { |l| l =~ /^(#|$)/ }.map { |l| l.gsub(/\\\n/, "") }.join.split(/\n/)
+        lines = lines.sort_by do |l|
+            # Sort by name, but place files before subdirectories.
+            name, values = l.split(" ", 2)
+            values = values ? values.split(/\s+/) : []
+            name = "./#{name}" unless name == "." || name.start_with?("./")
+            if values.include?("type=dir")
+                [name.split("/"), 0, ""]
+            else
+                [File.dirname(name).split("/"), 1, File.basename("")]
+            end
+        end.uniq
+        curline = nil
+        lines.each do |line|
+            line.chomp!
+            line = curline + line unless curline.nil?
+            if line =~ /^(#|$)/
+                next
+            elsif line =~ /^(.*) \\$/
+                curline = $1
+                redo
+            elsif line =~ /^\s*(\S+)\s+(.*)/
+                path = $1
+                path = "./#{path}" unless path == "." || path.start_with?("./")
+                values = $2.split(/\s+/).map { |kv| kv.split(/=/, 2) }.to_h
+                full_path = path[1..].include?("/")
+                last = path.split("/").last
+                curdir = dirname.dup
+                is_dir = values["type"] == "dir"
+                if full_path
+                    dirname = path.split(%r[/])
+                elsif is_dir
+                    dirname << path
+                end
+                dirname.pop unless is_dir
+                common = curdir.zip(dirname).map { |(a, b)| a == b ? a : nil }.compact
+                if common.length < curdir.length
+                    (curdir.length - common.length).times do |i|
+                        config[:stdout].print "# #{File.join(*curdir[0..(common.length + i)])}\n..\n\n"
+                    end
+                end
+                nl = dirname == %w[.] ? "" : "\n"
+                if common.length < dirname.length && dirname != %w[.]
+                    config[:stdout].print nl
+                    nl = ""
+                    dirname[common.length..(dirname.length - (is_dir ? 2 : 0))].reverse.each_with_index do |d, i|
+                        config[:stdout].print "# #{File.join(*dirname[0..(common.length + i)])}\n#{d} type=dir\n"
+                    end
+                end
+                prefix = is_dir ? "" : " " * 4
+                config[:stdout].puts "#{nl}# #{File.join(*dirname)}" if is_dir
+                config[:stdout].puts "#{prefix}#{last} #{format_entries(defaults, values)}"
+            end
+            curline = nil
+        end
+        (dirname.length - 1).times do |i|
+            config[:stdout].print "\n# #{File.join(*dirname[0..(dirname.length - i - 1)])}\n..\n"
+        end
+    end
+
     def self.install(config, entry)
         fullpath = entry[:root] ? config[:installdest] : File.join(config[:installdest], entry[:dest])
         mode = entry[:args]["mode"]&.to_i(8)
@@ -669,7 +736,7 @@ module MTree
         installdest = cmdargs.length >= 4 && cmdargs[3]
         config = { installdest: installdest, dry_run: dryrun, stdin: stdin, stdout: stdout }
 
-        if cmdargs[0].to_sym == :format
+        if %i[format deformat].include?(cmdargs[0].to_sym)
             method.call(MTree, config)
             return 0
         elsif cmdargs[0].to_sym == :escape
@@ -782,12 +849,14 @@ dispatch () {
             do_unescape "perl";;
         ruby:unescape)
             do_ruby unescape;;
-        sh:format)
+        sh:format|sh:deformat)
             printf 'This option is not supported in the sh backend.' >&2
             exit 2
             ;;
         ruby:format)
             do_ruby format;;
+        ruby:deformat)
+            do_ruby deformat;;
         *:dump)
             printf '%s' "$RUBY_SCRIPT"
     esac
