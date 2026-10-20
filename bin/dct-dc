@@ -841,9 +841,9 @@ module DC
         dispatch($~[1].to_sym, $~[2])
       elsif line.sub!(/\A(!)([^\n]+)/, '')
         dispatch_insecure($~[1].to_sym, $~[2])
-      elsif line.start_with? '['
+      elsif first == '['
         line.replace(parse_string(line))
-      elsif line.start_with? ']'
+      elsif first == ']'
         raise UnbalancedBracketsError
       elsif first == 'q'
         return if @frames.length == 1
