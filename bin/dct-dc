@@ -651,8 +651,7 @@ module DC
 
     def extension?(option)
       option = [option] unless option.is_a? Enumerable
-      s = Set.new option
-      @extensions.intersect? s
+      @extensions.intersect? option
     end
 
     def extensions
