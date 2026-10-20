@@ -792,8 +792,12 @@ module DC
       line = line.dup
       line.force_encoding('BINARY')
       @frames << line.chomp
+
+      extregs = extension?(:extregs)
+      freebsd = extension?(:freebsd)
+
       until @frames.empty? || @frames[-1]&.empty?
-        ret = do_parse_one(@frames[-1])
+        ret = do_parse_one(@frames[-1], extregs: extregs, freebsd: freebsd)
         while @frames[-1]&.empty?
           @frames.pop
         end
@@ -805,7 +809,7 @@ module DC
     SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
     WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
 
-    def do_parse_one(line)
+    def do_parse_one(line, extregs: false, freebsd: false)
       space = "[\f\r\t\v ]"
       first = line[0]
       if @string
@@ -826,11 +830,11 @@ module DC
         line.sub!(/\A\s+/, '')
       elsif line.sub!(/\A(_)?([\dA-F]+(?:\.([\dA-F]+))?|\.([\dA-F]+))/, '')
         push(number($~[2], $~[1]))
-      elsif extension?(:extregs) && line.sub!(/\A(!?[<>=]|[SsLl:;])#{space}([a-z][a-z0-9_]*)/, '')
+      elsif extregs && line.sub!(/\A(!?[<>=]|[SsLl:;])#{space}([a-z][a-z0-9_]*)/, '')
         dispatch($~[1].to_sym, $~[2])
-      elsif extension?(:extregs) && extension?(:freebsd) && line.sub!(/\A(!?[<>=])(?:#{space}([a-z][a-z0-9_]*) |(.))e(?:#{space}([a-z][a-z0-9_]*) |(.))#/, '')
+      elsif extregs && freebsd && line.sub!(/\A(!?[<>=])(?:#{space}([a-z][a-z0-9_]*) |(.))e(?:#{space}([a-z][a-z0-9_]*) |(.))#/, '')
         dispatch($~[1].to_sym, $~[2] || $~[3], $~[4] || $~[5])
-      elsif extension?(:freebsd) && line.sub!(/\A(!?[<>=])(.)e(.)/, '')
+      elsif freebsd && line.sub!(/\A(!?[<>=])(.)e(.)/, '')
         dispatch($~[1].to_sym, $~[2], $~[3])
       elsif line.sub!(/\A(!?[<>=]|[SsLl:;])(.)/, '')
         dispatch($~[1].to_sym, $~[2])
