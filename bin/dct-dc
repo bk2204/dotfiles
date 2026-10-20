@@ -792,9 +792,9 @@ module DC
       line = line.dup
       line.force_encoding('BINARY')
       @frames << line.chomp
-      until @frames.empty? || @frames.last&.empty?
-        ret = do_parse_one(@frames.last)
-        while @frames.last&.empty?
+      until @frames.empty? || @frames[-1]&.empty?
+        ret = do_parse_one(@frames[-1])
+        while @frames[-1]&.empty?
           @frames.pop
         end
         return ret unless ret == :next
