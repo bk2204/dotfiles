@@ -803,21 +803,31 @@ module DC
       @frames.length
     end
 
+    SIMPLE_INSNS = "-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('').sort.freeze
+
     def do_parse_one(line)
       space = "[\f\r\t\v ]"
+      first = line[0]
       if @string
         line.replace(parse_string(line))
+      elsif first == "#"
+        line.sub!(/\A#[^\n]+/, '')
+      elsif SIMPLE_INSNS.bsearch { |el| first <=> el }
+        line.slice!(0)
+        dispatch(first.to_sym)
+      elsif first == "x"
+        line.slice!(0)
+        resp = dispatch(first.to_sym, tail: line.empty?)
+        return @break ? nil : resp if resp.is_a?(Integer) && resp <= (@frames.length - 1)
+      elsif first == "?"
+        line.slice!(0)
+        do_parse(@input.gets)
+      elsif "\f\r\t\v\n ".include?(first)
+        line.sub!(/\A\s+/, '')
       elsif line.sub!(/\A(_)?([\dA-F]+(?:\.([\dA-F]+))?)/, '')
         push(number($~[2], $~[1]))
       elsif line.sub!(/\A(_)?(\.([\dA-F]+))/, '')
         push(number($~[2], $~[1]))
-      elsif line.sub!(/\A\s+/, '')
-      elsif line.sub!(/\A#[^\n]+/, '')
-      elsif line.sub!(%r{\A[-+*/%^|~dpPzZXfiIoOkKvc]}, '')
-        dispatch($~[0].to_sym)
-      elsif line.sub!(/\Ax/, '')
-        resp = dispatch($~[0].to_sym, tail: line.empty?)
-        return @break ? nil : resp if resp.is_a?(Integer) && resp <= (@frames.length - 1)
       elsif extension?(:extregs) && line.sub!(/\A([SsLl:;])#{space}([a-z][a-z0-9_]*)/, '')
         dispatch($~[1].to_sym, $~[2])
       elsif line.sub!(/\A([SsLl:;])(.)/, '')
@@ -830,22 +840,16 @@ module DC
         dispatch($~[1].to_sym, $~[2], $~[3], tail: line.empty?)
       elsif line.sub!(/\A(!?[<>=])(.)/, '')
         dispatch($~[1].to_sym, $~[2], tail: line.empty?)
-      elsif line.sub!(/\A([nra])/, '')
-        dispatch($~[1].to_sym)
-      elsif line.sub!(/\A([NRG(){},Mm])/, '')
-        dispatch($~[1].to_sym)
-      elsif line.sub!(/\A\?/, '')
-        do_parse(@input.gets)
       elsif line.sub!(/\A(!)([^\n]+)/, '')
         dispatch_insecure($~[1].to_sym, $~[2])
       elsif line.start_with? '['
         line.replace(parse_string(line))
       elsif line.start_with? ']'
         raise UnbalancedBracketsError
-      elsif line[0] == 'q'
+      elsif first == 'q'
         return if @frames.length == 1
         @frames.pop(2)
-      elsif line[0] == 'Q'
+      elsif first == 'Q'
         level = pop.to_i
         @break = false
         if level > @frames.length
