@@ -796,7 +796,7 @@ module DC
       extregs = extension?(:extregs)
       freebsd = extension?(:freebsd)
 
-      until @frames.empty? || @frames[-1]&.empty?
+      until @frames.empty?
         ret = do_parse_one(@frames[-1], extregs: extregs, freebsd: freebsd)
         while @frames[-1]&.empty?
           @frames.pop
