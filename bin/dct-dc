@@ -803,6 +803,7 @@ module DC
     end
 
     SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
+    WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
 
     def do_parse_one(line)
       space = "[\f\r\t\v ]"
@@ -821,7 +822,7 @@ module DC
       elsif first == "?"
         line.slice!(0)
         do_parse(@input.gets)
-      elsif "\f\r\t\v\n ".include?(first)
+      elsif WHITESPACE.include?(first)
         line.sub!(/\A\s+/, '')
       elsif line.sub!(/\A(_)?([\dA-F]+(?:\.([\dA-F]+))?)/, '')
         push(number($~[2], $~[1]))
