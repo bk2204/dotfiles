@@ -802,7 +802,7 @@ module DC
       @frames.length
     end
 
-    SIMPLE_INSNS = "-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('').sort.freeze
+    SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
 
     def do_parse_one(line)
       space = "[\f\r\t\v ]"
@@ -811,7 +811,7 @@ module DC
         line.replace(parse_string(line))
       elsif first == "#"
         line.sub!(/\A#[^\n]+/, '')
-      elsif SIMPLE_INSNS.bsearch { |el| first <=> el }
+      elsif SIMPLE_INSNS.include?(first)
         line.slice!(0)
         dispatch(first.to_sym)
       elsif first == "x"
