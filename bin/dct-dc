@@ -838,8 +838,6 @@ module DC
         dispatch($~[1].to_sym, $~[2], $~[3])
       elsif line.sub!(/\A(!?[<>=]|[SsLl:;])(.)/, '')
         dispatch($~[1].to_sym, $~[2])
-      elsif line.sub!(/\A(!)([^\n]+)/, '')
-        dispatch_insecure($~[1].to_sym, $~[2])
       elsif first == '['
         line.replace(parse_string(line))
       elsif first == ']'
@@ -855,6 +853,8 @@ module DC
         else
           @frames.pop(level)
         end
+      elsif line.sub!(/\A(!)([^\n]+)/, '')
+        dispatch_insecure($~[1].to_sym, $~[2])
       else
         raise InvalidCommandError, line[0].to_sym
       end
