@@ -758,7 +758,7 @@ module DC
       :v => lambda do
         push(pop.sqrt)
       end,
-      :x => -> (tail: false) { do_execute(pop, tail: tail) if @stack[0].is_a? String },
+      :x => -> { do_execute(pop) if @stack[0].is_a? String },
       :X => lambda do
         top = pop
         push(int(top.is_a?(String) ? 0 : top.scale))
@@ -771,12 +771,12 @@ module DC
       :/ => -> { binop(:/) },
       :% => -> { binop(:%) },
       :^ => -> { binop(:**) },
-      :!= =>   ->(treg, ereg = nil, tail: false) { cmpop(:!=, treg, ereg, tail: tail) },
-      :'=' =>  ->(treg, ereg = nil, tail: false) { cmpop(:==, treg, ereg, tail: tail) },
-      :> =>    ->(treg, ereg = nil, tail: false) { cmpop(:>, treg, ereg, tail: tail) },
-      :'!>' => ->(treg, ereg = nil, tail: false) { cmpop(:<=, treg, ereg, tail: tail) },
-      :< =>    ->(treg, ereg = nil, tail: false) { cmpop(:<, treg, ereg, tail: tail) },
-      :'!<' => ->(treg, ereg = nil, tail: false) { cmpop(:>=, treg, ereg, tail: tail) },
+      :!= =>   ->(treg, ereg = nil) { cmpop(:!=, treg, ereg) },
+      :'=' =>  ->(treg, ereg = nil) { cmpop(:==, treg, ereg) },
+      :> =>    ->(treg, ereg = nil) { cmpop(:>, treg, ereg) },
+      :'!>' => ->(treg, ereg = nil) { cmpop(:<=, treg, ereg) },
+      :< =>    ->(treg, ereg = nil) { cmpop(:<, treg, ereg) },
+      :'!<' => ->(treg, ereg = nil) { cmpop(:>=, treg, ereg) },
       :'(' => { freebsd: -> { extcmpop(:<) } },
       :')' => { freebsd: -> { extcmpop(:>) } },
       :'{' => { freebsd: -> { extcmpop(:<=) } },
@@ -784,7 +784,7 @@ module DC
       :',' => { freebsd: -> { push(int(@frames.length)) } },
     }.freeze
 
-    def do_execute(line, tail: false)
+    def do_execute(line)
       @frames.push(line.chomp)
       @frames.length
     end
@@ -817,7 +817,7 @@ module DC
         dispatch(first.to_sym)
       elsif first == "x"
         line.slice!(0)
-        resp = dispatch(first.to_sym, tail: line.empty?)
+        resp = dispatch(first.to_sym)
         return @break ? nil : resp if resp.is_a?(Integer) && resp <= (@frames.length - 1)
       elsif first == "?"
         line.slice!(0)
@@ -833,13 +833,13 @@ module DC
       elsif line.sub!(/\A([SsLl:;])(.)/, '')
         dispatch($~[1].to_sym, $~[2])
       elsif extension?(:extregs) && line.sub!(/\A(!?[<>=])#{space}([a-z][a-z0-9_]*)/, '')
-        dispatch($~[1].to_sym, $~[2], tail: line.empty?)
+        dispatch($~[1].to_sym, $~[2])
       elsif extension?(:extregs) && extension?(:freebsd) && line.sub!(/\A(!?[<>=])(?:#{space}([a-z][a-z0-9_]*) |(.))e(?:#{space}([a-z][a-z0-9_]*) |(.))#/, '')
-        dispatch($~[1].to_sym, $~[2] || $~[3], $~[4] || $~[5], tail: line.empty?)
+        dispatch($~[1].to_sym, $~[2] || $~[3], $~[4] || $~[5])
       elsif extension?(:freebsd) && line.sub!(/\A(!?[<>=])(.)e(.)/, '')
-        dispatch($~[1].to_sym, $~[2], $~[3], tail: line.empty?)
+        dispatch($~[1].to_sym, $~[2], $~[3])
       elsif line.sub!(/\A(!?[<>=])(.)/, '')
-        dispatch($~[1].to_sym, $~[2], tail: line.empty?)
+        dispatch($~[1].to_sym, $~[2])
       elsif line.sub!(/\A(!)([^\n]+)/, '')
         dispatch_insecure($~[1].to_sym, $~[2])
       elsif line.start_with? '['
@@ -905,18 +905,14 @@ module DC
       method(sym).call(pop.to_i)
     end
 
-    def dispatch(op, *args, tail: nil)
+    def dispatch(op, *args)
       func = DISPATCH[op]
       if func.is_a?(Hash)
         fns = @extensions.map { |e| func[e] }.compact
         raise UnsupportedExtensionError.new(op, func.keys) if fns.empty?
         func = fns.first
       end
-      if tail.nil?
-        instance_exec(*args, &func)
-      else
-        instance_exec(*args, tail: tail, &func)
-      end
+      instance_exec(*args, &func)
     end
 
     def dispatch_insecure(op, arg)
@@ -953,12 +949,12 @@ module DC
       [val].pack('H*')
     end
 
-    def cmpop(op, treg, ereg = nil, tail: false)
+    def cmpop(op, treg, ereg = nil)
       top, second = pop(2)
       if top.send(op, second)
-        do_execute(@registers[treg][0], tail: tail)
+        do_execute(@registers[treg][0])
       elsif !ereg.nil?
-        do_execute(@registers[ereg][0], tail: tail)
+        do_execute(@registers[ereg][0])
       end
     end
 
