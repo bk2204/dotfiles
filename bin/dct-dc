@@ -801,7 +801,7 @@ module DC
         while @frames[-1]&.empty?
           @frames.pop
         end
-        return ret unless ret == :next
+        return ret if ret != :next
       end
       @frames.length
     end
