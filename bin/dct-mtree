@@ -481,6 +481,8 @@ do_install () {
 }
 
 RUBY_SCRIPT='
+require "stringio"
+
 module MTree
     def self.unescape(s)
         escapes = {
@@ -598,8 +600,17 @@ module MTree
     def self.deformat(config)
         dirname = []
         defaults = {}
-        lines = config[:stdin].readlines.reject { |l| l =~ /^(#|$)/ }.map { |l| l.gsub(/\\\n/, "") }.join.split(/\n/)
-        lines = lines.sort_by do |l|
+        lines = config[:stdin].readlines.reject { |l| l =~ /^(#|$)/ }.map { |l| l.gsub(/\\\n/, "") }.join
+        if lines =~ /\n\s+/
+            # If we have an indented line, then our sorting below will corrupt
+            # this.  Turn it into line-per-item format first so we can process
+            # it correctly.
+            cfg = { stdin: StringIO.new(lines), stdout: StringIO.new }
+            format(cfg)
+            cfg[:stdout].rewind
+            lines = cfg[:stdout].readlines.reject { |l| l =~ /^(#|$)/ }.map { |l| l.gsub(/\\\n/, "") }.join
+        end
+        lines = lines.split(/\n/).sort_by do |l|
             # Sort by name, but place files before subdirectories.
             name, values = l.split(" ", 2)
             values = values ? values.split(/\s+/) : []
