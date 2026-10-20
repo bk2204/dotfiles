@@ -1107,15 +1107,17 @@ describe :dct_mtree do
 
     it 'should format files correctly' do
       expect(@dir.stream([@mtree, '--backend=ruby', '--format'], DEFAULT, chdir: @tempdir)).to eq EXPECTED
+      expect(@dir.stream([@mtree, '--backend=ruby', '--format'], EXPECTED_DEFORMAT, chdir: @tempdir)).to eq EXPECTED
     end
 
     it 'should deformat files correctly' do
+      expect(@dir.stream([@mtree, '--backend=ruby', '--deformat'], DEFAULT, chdir: @tempdir)).to eq EXPECTED_DEFORMAT
       expect(@dir.stream([@mtree, '--backend=ruby', '--deformat'], EXPECTED, chdir: @tempdir)).to eq EXPECTED_DEFORMAT
     end
 
     it 'should round-trip formatted files correctly' do
       expect(@dir.stream([@mtree, '--backend=ruby', '--format'], EXPECTED, chdir: @tempdir)).to eq EXPECTED
-      expect(@dir.stream([@mtree, '--backend=ruby', '--format'], EXPECTED_DEFORMAT, chdir: @tempdir)).to eq EXPECTED
+      expect(@dir.stream([@mtree, '--backend=ruby', '--deformat'], EXPECTED_DEFORMAT, chdir: @tempdir)).to eq EXPECTED_DEFORMAT
     end
   end
 end
