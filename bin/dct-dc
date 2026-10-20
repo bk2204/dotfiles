@@ -783,15 +783,23 @@ module DC
       :',' => { freebsd: -> { push(int(@frames.length)) } },
     }.freeze
 
+    def strip_line(line)
+      line = line.chomp
+      unless line.include?('[')
+        line.gsub!(/(?:^|([^eSsLl:;<>=0-9A-F])|([eSsLl:;<>=0-9A-F]\s))\s+/, '\1\2')
+      end
+      line
+    end
+
     def do_execute(line)
-      @frames.push(line.chomp)
+      @frames.push(strip_line(line))
       @frames.length
     end
 
     def do_parse(line)
       line = line.dup
       line.force_encoding('BINARY')
-      @frames << line.chomp
+      @frames << strip_line(line)
 
       extregs = extension?(:extregs)
       freebsd = extension?(:freebsd)
