@@ -818,7 +818,6 @@ module DC
     WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
 
     def do_parse_one(line, extregs: false, freebsd: false)
-      space = "[\f\r\t\v ]"
       first = line[0]
       if @string
         line.replace(parse_string(line))
@@ -838,9 +837,9 @@ module DC
         line.sub!(/\A\s+/, '')
       elsif line.sub!(/\A(_)?([\dA-F]+(?:\.([\dA-F]+))?|\.([\dA-F]+))/, '')
         push(number($~[2], $~[1]))
-      elsif extregs && line.sub!(/\A(!?[<>=]|[SsLl:;])#{space}([a-z][a-z0-9_]*)/, '')
+      elsif extregs && line.sub!(/\A(!?[<>=]|[SsLl:;])[\f\r\t\v ]([a-z][a-z0-9_]*)/, '')
         dispatch($~[1].to_sym, $~[2])
-      elsif extregs && freebsd && line.sub!(/\A(!?[<>=])(?:#{space}([a-z][a-z0-9_]*) |(.))e(?:#{space}([a-z][a-z0-9_]*) |(.))#/, '')
+      elsif extregs && freebsd && line.sub!(/\A(!?[<>=])(?:[\f\r\t\v\ ]([a-z][a-z0-9_]*) |(.))e(?:[\f\r\t\v ]([a-z][a-z0-9_]*) |(.))#/, '')
         dispatch($~[1].to_sym, $~[2] || $~[3], $~[4] || $~[5])
       elsif freebsd && line.sub!(/\A(!?[<>=])(.)e(.)/, '')
         dispatch($~[1].to_sym, $~[2], $~[3])
