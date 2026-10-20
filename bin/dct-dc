@@ -798,10 +798,10 @@ module DC
 
       until @frames.empty?
         ret = do_parse_one(@frames[-1], extregs: extregs, freebsd: freebsd)
+        return ret if ret != :next
         while @frames[-1]&.empty?
           @frames.pop
         end
-        return ret if ret != :next
       end
       @frames.length
     end
