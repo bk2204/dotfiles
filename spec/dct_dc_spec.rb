@@ -61,9 +61,19 @@ describe :dct_dc do
       ].each do |(a, b, truecmp, falsecmp, truebin, falsebin)|
         truecmp.each do |cmp|
           expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp}a")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc #{a} #{b} #{cmp} abc")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]sb #{a} #{b} #{cmp}aeb")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]s def #{a} #{b} #{cmp} abc e def")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]s def #{a} #{b} #{cmp}ae def")).to eq "ok\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]sd #{a} #{b} #{cmp} abc ed")).to eq "ok\n"
         end
         falsecmp.each do |cmp|
           expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp}a")).to eq ""
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc #{a} #{b} #{cmp} abc")).to eq ""
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]sb #{a} #{b} #{cmp}aeb")).to eq "false\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]s def #{a} #{b} #{cmp} abc e def")).to eq "false\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa [[false]f]s def #{a} #{b} #{cmp}ae def")).to eq "false\n"
+          expect(@dir.stream(['bin/dct-dc'], "[[ok]f]s abc [[false]f]sd #{a} #{b} #{cmp} abc ed")).to eq "false\n"
         end
         truebin.each do |cmp|
           expect(@dir.stream(['bin/dct-dc'], "[[ok]f]sa #{a} #{b} #{cmp} 1=a")).to eq "ok\n"

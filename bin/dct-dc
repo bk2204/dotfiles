@@ -650,7 +650,7 @@ module DC
       @extensions = Set.new
       @frames = []
       @break = true
-      %i[gnu freebsd extreg].each do |ext|
+      %i[gnu freebsd extregs].each do |ext|
         @extensions.add ext if options[ext] || options[:all]
       end
       @extensions.add :insecure if options[:insecure]
@@ -866,15 +866,15 @@ module DC
     CMP_INSNS = Set.new(%w[!< != !> < = >]).freeze
     WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
     ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>.)|(?<comment>#[^\n]+)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
-    EXTREGS_OPS = "(?<extop>(!?[<>=]|[SsLl:;])[\f\r\t\v ](?<extreg>[a-z][a-z0-9_]*))".freeze
-    BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ]([?<bothtrue>a-z][a-z0-9_]*) |(.))e(?:[\f\r\t\v ](?<bothfalse>[a-z][a-z0-9_]*) |(.))".freeze
+    EXTREGS_OPS = "((?<extop>!?[<>=]|[SsLl:;])[\f\r\t\v ](?<extreg>[a-z][a-z0-9_]*))".freeze
+    BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ](?<bothtruelong>[a-z][a-z0-9_]*)[\f\r\t\v ]|(?<bothtrueshort>.))e(?:[\f\r\t\v ](?<bothfalselong>[a-z][a-z0-9_]*)|(?<bothfalseshort>.))".freeze
     FREEBSD_OPS = "(?<freebsdop>!?[<>=])(?<freebsdtrue>.)e(?<freebsdfalse>.)".freeze
 
     def do_parse_line(line, extregs: false, freebsd: false)
       pattern = Regexp.new([
-        (extregs ? "#{EXTREGS_OPS}|" : ""),
         (extregs && freebsd ? "#{BOTH_OPS}|" : ""),
-        (extregs && freebsd ? "#{FREEBSD_OPS}|" : ""),
+        (extregs ? "#{EXTREGS_OPS}|" : ""),
+        (freebsd ? "#{FREEBSD_OPS}|" : ""),
         ALL_OPS
       ].join)
       @ops ||= [[]]
@@ -911,10 +911,10 @@ module DC
           @ops.last << [:shell, :!, caps['cmd']]
         when caps['op'] && CMP_INSNS.include?(caps['op'])
           @ops.last << [:cmp, caps['op'].to_sym, caps['reg'], nil]
-        when caps.include?(:extop) && CMP_INSNS.include?(caps['extop'])
+        when caps['extop'] && CMP_INSNS.include?(caps['extop'])
           @ops.last << [:cmp, caps['extop'].to_sym, caps['extreg'], nil]
         when caps['bothop'] && CMP_INSNS.include?(caps['bothop'])
-          @ops.last << [:cmp, caps['bothop'].to_sym, caps['bothtrue'], caps['bothfalse']]
+          @ops.last << [:cmp, caps['bothop'].to_sym, caps['bothtruelong'] || caps['bothtrueshort'], caps['bothfalselong'] || caps['bothfalseshort']]
         when caps['freebsdop'] && CMP_INSNS.include?(caps['freebsdop'])
           @ops.last << [:cmp, caps['freebsdop'].to_sym, caps['freebsdtrue'], caps['freebsdfalse']]
         when caps['op']
