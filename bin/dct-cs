@@ -192,12 +192,22 @@ class Processor
     # TODO: actually bind ports.
   end
 
+  def local_socket
+    if ENV["XDG_RUNTIME_DIR"]
+      "#{ENV["XDG_RUNTIME_DIR"]}/lawn/server-0.sock"
+    elsif RUBY_PLATFORM =~ /darwin/
+      "#{ENV["HOME"]}/.local/run/lawn/server-0.sock"
+    else
+      "/run/user/#{Process.uid}/lawn/server-0.sock"
+    end
+  end
+
   def mount_port(id, parameters, **options)
     return if port_mounted?(id)
     portno = port(id)
     args = %w[gh cs ssh -c] + [id, "--server-port", portno.to_s, "--", "-A"]
     if options[:socket]
-      args += ["-R", "/home/#{parameters[:username]}/.local/run/lawn/server-#{@rng.alphanumeric(10)}.sock:/run/user/1000/lawn/server-0.sock"]
+      args += ["-R", "/home/#{parameters[:username]}/.local/run/lawn/server-#{@rng.alphanumeric(10)}.sock:#{local_socket}"]
     end
     if options[:session]
       args += %w[dct-cs session start]
@@ -219,7 +229,7 @@ class Processor
   def do_ssh(id, params, args, **options)
     extra_args = []
     if options[:socket]
-      extra_args += ["-R", "/home/#{params[:username]}/.local/run/lawn/server-#{@rng.alphanumeric(10)}.sock:/run/user/1000/lawn/server-0.sock"]
+      extra_args += ["-R", "/home/#{params[:username]}/.local/run/lawn/server-#{@rng.alphanumeric(10)}.sock:#{local_socket}"]
     end
     args = if port_mounted?(id)
              portno = port(id)
