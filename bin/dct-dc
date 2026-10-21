@@ -654,6 +654,7 @@ module DC
         @extensions.add ext if options[ext] || options[:all]
       end
       @extensions.add :insecure if options[:insecure]
+      @new = true
     end
 
     def scale
@@ -698,7 +699,11 @@ module DC
     end
 
     def parse(line)
-      do_parse(line) ? true : false
+      if @new
+        do_parse_new(line) ? true : false
+      else
+        do_parse(line) ? true : false
+      end
     end
 
     def secure?
@@ -811,7 +816,31 @@ module DC
     end
 
     def do_execute(line)
-      @frames.push(strip_line(line))
+      if @new
+        @frames.push(line.ops.dup)
+        @frames.length
+      else
+        @frames.push(strip_line(line))
+        @frames.length
+      end
+    end
+
+    def do_parse_new(line)
+      line = line.dup
+      line.force_encoding('BINARY')
+
+      extregs = extension?(:extregs)
+      freebsd = extension?(:freebsd)
+
+      @frames << do_parse_line(line, extregs: extregs, freebsd: freebsd)
+
+      until @frames.empty?
+        ret = do_exec_ops(@frames[-1])
+        return ret if ret != :next
+        while @frames[-1]&.empty?
+          @frames.pop
+        end
+      end
       @frames.length
     end
 
@@ -834,7 +863,128 @@ module DC
     end
 
     SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
+    CMP_INSNS = Set.new(%w[!< != !> < = >]).freeze
     WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
+    ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>.)|(?<comment>#[^\n]+)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
+    EXTREGS_OPS = "(?<extop>(!?[<>=]|[SsLl:;])[\f\r\t\v ](?<extreg>[a-z][a-z0-9_]*))".freeze
+    BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ]([?<bothtrue>a-z][a-z0-9_]*) |(.))e(?:[\f\r\t\v ](?<bothfalse>[a-z][a-z0-9_]*) |(.))".freeze
+    FREEBSD_OPS = "(?<freebsdop>!?[<>=])(?<freebsdtrue>.)e(?<freebsdfalse>.)".freeze
+
+    def do_parse_line(line, extregs: false, freebsd: false)
+      pattern = Regexp.new([
+        (extregs ? "#{EXTREGS_OPS}|" : ""),
+        (extregs && freebsd ? "#{BOTH_OPS}|" : ""),
+        (extregs && freebsd ? "#{FREEBSD_OPS}|" : ""),
+        ALL_OPS
+      ].join)
+      @ops ||= [[]]
+      @strings ||= []
+      line.scan(pattern) do
+        caps = $~.named_captures
+        unless @strings.empty? || caps['end']
+          @strings.last[2] += $&
+        end
+        case
+        when caps['insn']
+          @ops.last << [:insn, caps['insn'].to_sym]
+        when caps['num']
+          @ops.last << [:num, caps['value'], !caps['sign'].nil?]
+        when caps['space']
+        when caps['unknown']
+          @ops.last << [:unknown, caps['unknown']]
+        when caps['start']
+          @strings << [:string, [], ""]
+          @ops << []
+        when caps['end']
+          s = @strings.pop
+          s[1] = @ops.pop
+          @ops.last << s
+        when caps['special'] == "q"
+          @ops.last << [:quit, :q]
+        when caps['special'] == "Q"
+          @ops.last << [:quit, :Q]
+        when caps['special'] == "x"
+          @ops.last << [:exec, :x]
+        when caps['special'] == "?"
+          @ops.last << [:read]
+        when caps['exec']
+          @ops.last << [:shell, :!, caps['cmd']]
+        when caps['op'] && CMP_INSNS.include?(caps['op'])
+          @ops.last << [:cmp, caps['op'].to_sym, caps['reg'], nil]
+        when caps.include?(:extop) && CMP_INSNS.include?(caps['extop'])
+          @ops.last << [:cmp, caps['extop'].to_sym, caps['extreg'], nil]
+        when caps['bothop'] && CMP_INSNS.include?(caps['bothop'])
+          @ops.last << [:cmp, caps['bothop'].to_sym, caps['bothtrue'], caps['bothfalse']]
+        when caps['freebsdop'] && CMP_INSNS.include?(caps['freebsdop'])
+          @ops.last << [:cmp, caps['freebsdop'].to_sym, caps['freebsdtrue'], caps['freebsdfalse']]
+        when caps['op']
+          @ops.last << [:mem, caps['op'].to_sym, caps['reg']]
+        when caps['extop']
+          @ops.last << [:mem, caps['extop'].to_sym, caps['extreg']]
+        else
+        end
+      end
+      ops = @ops[0]
+      @ops[0] = []
+      ops
+    end
+
+    def do_exec_ops(ops)
+      # We will normally process the entire set of ops here, but any command
+      # which can modify the @frames variable must slice off the ops already
+      # processed and return a value (:next, if no other special case occurs) to
+      # make sure that we start processing from the correct point.
+      ops.each_with_index do |op, i|
+        case op[0]
+        when :insn
+          dispatch(op[1])
+        when :exec
+          ops.slice!(0..i)
+          resp = dispatch(op[1])
+          return @break ? nil : resp if resp.is_a?(Integer) && resp <= (@frames.length - 1)
+          return :next
+        when :num
+          push(number(op[1], op[2]))
+        when :cmp
+          ops.slice!(0..i)
+          dispatch(op[1], op[2], op[3])
+          return :next
+        when :mem
+          dispatch(op[1], op[2])
+        when :read
+          ops.slice!(0..i)
+          do_parse(@input.gets)
+          return :next
+        when :shell
+          dispatch_insecure(op[1], op[2])
+        when :quit
+          case op[1]
+          when :q
+            ops.slice!(0..i)
+            return if @frames.length == 1
+            @frames.pop(2)
+            return :next
+          when :Q
+            ops.slice!(0..i)
+            level = pop.to_i
+            @break = false
+            if level > @frames.length
+              @frames.pop(@frames.length - 1)
+            else
+              @frames.pop(level)
+            end
+            return :next
+          end
+        when :string
+          push(Stringy.new(op[1], op[2]))
+        when :unknown
+          raise InvalidCommandError, op[1].to_sym
+        end
+      end
+      # We executed all of our instructions, so pop the frame.
+      @frames.pop
+      :next
+    end
 
     def do_parse_one(line, extregs: false, freebsd: false)
       first = line[0]
