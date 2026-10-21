@@ -613,6 +613,25 @@ module DC
     end
   end
 
+  class Stringy
+    def initialize(ops, string)
+      @ops = ops
+      @string = string
+    end
+
+    def ops
+      @ops
+    end
+
+    def length
+      @string.length
+    end
+
+    def to_s
+      @string
+    end
+  end
+
   # A calculator implementing the dc language.
   class Calculator
     attr_reader :stack, :registers, :input, :output
@@ -663,8 +682,8 @@ module DC
         if val.nil?
           raise InternalCalculatorError, 'Trying to push invalid value'
         end
-        if val.is_a? Integer
-          raise InternalCalculatorError, 'Trying to push Integer'
+        if val.is_a?(Integer) || val.is_a?(String)
+          raise InternalCalculatorError, 'Trying to push Integer or String'
         end
       end
       @stack.unshift(*args)
@@ -757,10 +776,10 @@ module DC
       :v => lambda do
         push(pop.sqrt)
       end,
-      :x => -> { do_execute(pop) if @stack[0].is_a? String },
+      :x => -> { do_execute(pop) if @stack[0].is_a? Stringy },
       :X => lambda do
         top = pop
-        push(int(top.is_a?(String) ? 0 : top.scale))
+        push(int(top.is_a?(Stringy) ? 0 : top.scale))
       end,
       :z => -> { push int(@stack.length) },
       :Z => -> { push int(pop.length) },
@@ -784,7 +803,7 @@ module DC
     }.freeze
 
     def strip_line(line)
-      line = line.chomp
+      line = line.to_s.chomp
       unless line.include?('[')
         line.gsub!(/(?:^|([^eSsLl:;<>=0-9A-F])|([eSsLl:;<>=0-9A-F]\s))\s+/, '\1\2')
       end
@@ -935,16 +954,17 @@ module DC
 
     def stringify
       val = pop
-      val = if val.is_a? String
-              val.empty? ? '' : val[0]
+      val = if val.is_a? Stringy
+              v = val.to_s
+              v.empty? ? '' : v[0]
             else
               convert_string((val.to_i % 256).chr)
             end
-      push(val)
+      push(Stringy.new([], val))
     end
 
     def printable(val)
-      val.is_a?(DC::Numeric) ? val.to_s(@obase).upcase : val
+      val.is_a?(DC::Numeric) ? val.to_s(@obase).upcase : val.to_s
     end
 
     # Take a number and convert it to a series of bytes.
@@ -984,7 +1004,7 @@ module DC
         @string_depth += (delim == ']' ? -1 : 1)
         offset += code.length + delim.length
         if @string_depth == 0
-          push(@string[1..-1] + code)
+          push(Stringy.new([], @string[1..-1] + code))
           @string = nil
           return s[offset..-1]
         end
