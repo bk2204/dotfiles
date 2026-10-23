@@ -869,12 +869,12 @@ module DC
     SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
     CMP_INSNS = Set.new(%w[!< != !> < = >]).freeze
     WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
-    ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>[^\\[\\]])|(?<comment>#[^\n]+)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
+    ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>[^\\[\\]])|(?<comment>(?<commentbody>#[^\n\\]]+)(?<commenttrail>\\][^\n]+)?)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
     EXTREGS_OPS = "((?<extop>!?[<>=]|[SsLl:;])[\f\r\t\v ](?<extreg>[a-z][a-z0-9_]*))".freeze
     BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ](?<bothtruelong>[a-z][a-z0-9_]*)[\f\r\t\v ]|(?<bothtrueshort>[^\\[\\]]))e(?:[\f\r\t\v ](?<bothfalselong>[a-z][a-z0-9_]*)|(?<bothfalseshort>[^\\[\\]]))".freeze
     FREEBSD_OPS = "(?<freebsdop>!?[<>=])(?<freebsdtrue>[^\\[\\]])e(?<freebsdfalse>[^\\[\\]])".freeze
 
-    def do_parse_line(line, extregs: false, freebsd: false)
+    def do_parse_line(line, extregs: false, freebsd: false, toplevel: true)
       pattern = Regexp.new([
         (extregs && freebsd ? "#{BOTH_OPS}|" : ""),
         (extregs ? "#{EXTREGS_OPS}|" : ""),
@@ -884,7 +884,11 @@ module DC
       line.scan(pattern) do
         caps = $~.named_captures
         unless @strings.empty? || caps['start'] || caps['end']
-          @strings.last[2] += $&
+          if caps['commentbody']
+            @strings.last[2] += caps['commentbody']
+          else
+            @strings.last[2] += $&
+          end
         end
         @error.puts "parse (e: #{extregs}; f: #{freebsd}): #{caps.compact.inspect}" if @debug
         case
@@ -902,6 +906,10 @@ module DC
           s = @strings.pop
           s[1] = @ops.pop
           @ops.last << s
+        when caps['commenttrail']
+          unless @strings.empty?
+            do_parse_line(caps['commenttrail'], extregs: extregs, freebsd: freebsd, toplevel: false)
+          end
         when caps['special'] == "q"
           @ops.last << [:quit, :q]
         when caps['special'] == "Q"
@@ -929,6 +937,7 @@ module DC
         @error.puts "ops: #{@ops.inspect}" if @debug
         @error.puts "strings: #{@strings.inspect}" if @debug
       end
+      return nil unless toplevel
       ops = @ops[0]
       @ops[0] = []
       ops

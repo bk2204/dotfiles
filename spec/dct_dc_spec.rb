@@ -225,5 +225,17 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], "16o 16i #{base} #{e} #{mod}|p")).to eq "#{res}\n"
       expect(@dir.stream(['bin/dct-dc'], "16o 16i #{res} #{d} #{mod}|p")).to eq "#{base}\n"
     end
+
+    it "processes comments correctly" do
+      input = <<~EOM
+      # 1p
+      [2p#3p]x
+      [# 4p
+      # 5p
+      6p
+      ]x
+      EOM
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "2\n6\n"
+    end
   end
 end
