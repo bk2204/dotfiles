@@ -637,12 +637,13 @@ module DC
     attr_reader :stack, :registers, :input, :output
     attr_accessor :ibase, :obase
 
-    def initialize(input = $stdin, output = $stdout, options = {})
+    def initialize(input = $stdin, output = $stdout, error = $stderr, options = {})
       @stack = []
       @registers = Hash.new { |hash, key| hash[key] = [] }
       @arrays = Hash.new { |hash, key| hash[key] = [] }
       @input = input
       @output = output
+      @error = error
       @string_depth = 0
       @string = nil
       @ibase = @obase = 10
@@ -650,6 +651,7 @@ module DC
       @extensions = Set.new
       @frames = []
       @break = true
+      @debug = true if options.delete(:debug)
       %i[gnu freebsd extregs].each do |ext|
         @extensions.add ext if options[ext] || options[:all]
       end
@@ -884,6 +886,7 @@ module DC
         unless @strings.empty? || caps['end']
           @strings.last[2] += $&
         end
+        @error.puts "parse (e: #{extregs}; f: #{freebsd}): #{caps.compact.inspect}" if @debug
         case
         when caps['insn']
           @ops.last << [:insn, caps['insn'].to_sym]
@@ -923,6 +926,8 @@ module DC
           @ops.last << [:mem, caps['extop'].to_sym, caps['extreg']]
         else
         end
+        @error.puts "ops: #{@ops.inspect}" if @debug
+        @error.puts "strings: #{@strings.inspect}" if @debug
       end
       ops = @ops[0]
       @ops[0] = []
@@ -935,6 +940,7 @@ module DC
       # processed and return a value (:next, if no other special case occurs) to
       # make sure that we start processing from the correct point.
       ops.each_with_index do |op, i|
+        @error.puts "exec: #{op.inspect}" if @debug
         case op[0]
         when :insn
           dispatch(op[1])
@@ -1209,7 +1215,7 @@ end
 def script(args)
   options, args = parse_options(args)
 
-  calc = DC::Calculator.new($stdin, $stdout, all: true, insecure: true)
+  calc = DC::Calculator.new($stdin, $stdout, $stderr, all: true, insecure: true, debug: options[:debug])
 
   inputs = options[:scripts] + args.map { |f| file_from_name(f) }
   inputs << $stdin if inputs.length <= (options[:mathlib] ? 1 : 0)
