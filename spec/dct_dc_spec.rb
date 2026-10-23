@@ -25,6 +25,25 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], input)).to eq ".500000000000\n"
     end
 
+    it 'computes remainders properly' do
+      # GNU dc documents that % is the same as the sequence Sd dld/ Ld*-.
+      a = [4, -4, 2, -2]
+      b = [2, -2, 1, -1]
+      input = []
+      a.each do |av|
+        b.each do |bv|
+          numbers = "#{av.to_s.tr('-', '_')} #{bv.to_s.tr('-', '_')}"
+          input << "#{numbers} % #{numbers} Sd dld/ Ld*-Gp"
+        end
+      end
+      expect(@dir.stream(['bin/dct-dc'], input.join)).to eq ("1\n" * input.length)
+    end
+
+    it 'computes arithmetic with the correct precision' do
+      input = "2.3 5.12+ 2.3 5.12- 2.3 5.12* 4k 2.3 5.12* 0k 3 2/ 1k 3 2/f"
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq "1.5\n1\n11.776\n11.77\n-2.82\n7.42\n"
+    end
+
     it 'computes SHA-2 constants properly' do
       primes = [2, 3, 5, 7, 11, 13, 17, 19]
       input = primes.map { |p| "20k 16o #{p}v d0k1/- 2 64^* 1/p"  }.join
@@ -97,6 +116,7 @@ describe :dct_dc do
     it 'implements loops properly' do
       expect(@dir.stream(['bin/dct-dc'], "5 [p1-d0<a]sa lax")).to eq "5\n4\n3\n2\n1\n"
       expect(@dir.stream(['bin/dct-dc'], "5 [p1-d0>blax]sa [,lc-Q]sb ,sc lax")).to eq "5\n4\n3\n2\n1\n0\n"
+      expect(@dir.stream(['bin/dct-dc'], "[ln 1+ d sn p ln 10>b]sb\n0sn0\nlbx\n")).to eq (1..10).map { |n| "#{n}\n" }.join('')
     end
 
     it 'implements q properly' do
