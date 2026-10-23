@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, see <https://www.gnu.org/licenses/>.
 
+require 'bigdecimal'
+require 'bigdecimal/util'
 require 'optparse'
 require 'set'
 
@@ -541,8 +543,10 @@ module DC
 
     def sqrt
       scale = [@scale, k].max
-      value = @value * (100 ** scale)
-      Numeric.new(Integer.sqrt(value), scale, @k)
+      d = @value.to_d / (10 ** @scale)
+      res = d.sqrt(scale) * (10 ** scale)
+      r = Numeric.new(res, scale, @k)
+      r
     end
 
     def modexp(exp, mod)

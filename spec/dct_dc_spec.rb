@@ -53,7 +53,7 @@ describe :dct_dc do
     it 'computes SHA-2 constants properly' do
       primes = [2, 3, 5, 7, 11, 13, 17, 19]
       input = primes.map { |p| "20k 16o #{p}v d0k1/- 2 64^* 1/p"  }.join
-      expect(@dir.stream(['bin/dct-dc'], input)).to eq <<~EOM
+      expected = <<~EOM
       6A09E667F3BCC908
       BB67AE8584CAA73B
       3C6EF372FE94F82B
@@ -63,6 +63,9 @@ describe :dct_dc do
       1F83D9ABFB41BD6B
       5BE0CD19137E2179
       EOM
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq expected
+      input = primes.map { |p| "20k 16o #{p}.0000000v d0k1/- 2 64^* 1/p"  }.join
+      expect(@dir.stream(['bin/dct-dc'], input)).to eq expected
 
       input = primes.map { |p| "20k 16o #{p}v d0k1/- 2 32^* 1/p"  }.join
       expect(@dir.stream(['bin/dct-dc'], input)).to eq <<~EOM
