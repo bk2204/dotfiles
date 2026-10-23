@@ -216,6 +216,8 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], "I O Kf")).to eq "0\n10\n10\n"
       expect(@dir.stream(['bin/dct-dc'], "16o 8i 10k I O Kf")).to eq "8\n10\n8\n"
       expect(@dir.stream(['bin/dct-dc'], "8o 16i 10k I O Kf")).to eq "20\n10\n20\n"
+      expect(@dir.stream(['bin/dct-dc'], "F 1+i FE Ci FE Ai FEf")).to eq "164\n194\n254\n"
+      expect(@dir.stream(['bin/dct-dc'], "F 1+i .FE 1* Ci .FE 1* Ai .FE 1*f")).to eq "1.64\n1.34\n.99\n"
     end
 
     it 'computes exponentiation properly' do
