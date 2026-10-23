@@ -651,6 +651,8 @@ module DC
       @extensions = Set.new
       @frames = []
       @break = true
+      @ops = [[]]
+      @strings = []
       @debug = true if options.delete(:debug)
       %i[gnu freebsd extregs].each do |ext|
         @extensions.add ext if options[ext] || options[:all]
@@ -879,8 +881,6 @@ module DC
         (freebsd ? "#{FREEBSD_OPS}|" : ""),
         ALL_OPS
       ].join)
-      @ops ||= [[]]
-      @strings ||= []
       line.scan(pattern) do
         caps = $~.named_captures
         unless @strings.empty? || caps['start'] || caps['end']
