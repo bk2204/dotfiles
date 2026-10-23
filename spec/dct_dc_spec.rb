@@ -44,6 +44,12 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], input)).to eq "1.5\n1\n11.776\n11.77\n-2.82\n7.42\n"
     end
 
+    it "processes simple Forth functions correctly" do
+      mathlib = @dir.stream(['bin/dct-dc', "--compile", ".local/share/dct-dc/math/example.fth"], "")
+
+      expect(@dir.stream(['bin/dct-dc'], "#{mathlib} 3ltx")).to eq "3\n2\n1\n"
+    end
+
     it 'computes SHA-2 constants properly' do
       primes = [2, 3, 5, 7, 11, 13, 17, 19]
       input = primes.map { |p| "20k 16o #{p}v d0k1/- 2 64^* 1/p"  }.join
