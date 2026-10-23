@@ -867,10 +867,10 @@ module DC
     SIMPLE_INSNS = Set.new("-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm".split('')).freeze
     CMP_INSNS = Set.new(%w[!< != !> < = >]).freeze
     WHITESPACE = Set.new("\f\r\t\v\n ".split('')).freeze
-    ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>.)|(?<comment>#[^\n]+)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
+    ALL_OPS = "(?<insn>[-+*/%^|~dpPzZXfiIoOkKvcnraNRG(){},Mm])|(?<special>[?xqQ])|(?<num>(?<sign>_)?(?<value>(?:[\\dA-F]+(?:\\.([\\dA-F]+))?|\\.(?:[\\dA-F]+))))|(?<start>\\[)|(?<end>\\])|(?<space>[\f\r\t\v ])|(?<op>!?[<>=]|[SsLl:;])(?<reg>[^\\[\\]])|(?<comment>#[^\n]+)|(?<exec>!(?<cmd>[^\n]+))|(?<unknown>.)".freeze
     EXTREGS_OPS = "((?<extop>!?[<>=]|[SsLl:;])[\f\r\t\v ](?<extreg>[a-z][a-z0-9_]*))".freeze
-    BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ](?<bothtruelong>[a-z][a-z0-9_]*)[\f\r\t\v ]|(?<bothtrueshort>.))e(?:[\f\r\t\v ](?<bothfalselong>[a-z][a-z0-9_]*)|(?<bothfalseshort>.))".freeze
-    FREEBSD_OPS = "(?<freebsdop>!?[<>=])(?<freebsdtrue>.)e(?<freebsdfalse>.)".freeze
+    BOTH_OPS = "(?<bothop>!?[<>=])(?:[\f\r\t\v\ ](?<bothtruelong>[a-z][a-z0-9_]*)[\f\r\t\v ]|(?<bothtrueshort>[^\\[\\]]))e(?:[\f\r\t\v ](?<bothfalselong>[a-z][a-z0-9_]*)|(?<bothfalseshort>[^\\[\\]]))".freeze
+    FREEBSD_OPS = "(?<freebsdop>!?[<>=])(?<freebsdtrue>[^\\[\\]])e(?<freebsdfalse>[^\\[\\]])".freeze
 
     def do_parse_line(line, extregs: false, freebsd: false)
       pattern = Regexp.new([
