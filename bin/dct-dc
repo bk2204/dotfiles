@@ -883,7 +883,7 @@ module DC
       @strings ||= []
       line.scan(pattern) do
         caps = $~.named_captures
-        unless @strings.empty? || caps['end']
+        unless @strings.empty? || caps['start'] || caps['end']
           @strings.last[2] += $&
         end
         @error.puts "parse (e: #{extregs}; f: #{freebsd}): #{caps.compact.inspect}" if @debug
