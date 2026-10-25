@@ -271,6 +271,8 @@ describe :dct_dc do
       expect(@dir.stream(['bin/dct-dc'], "6k 2 31 31|p")).to eq "2\n"
       expect(@dir.stream(['bin/dct-dc'], "2 31^ 31%p")).to eq "2\n"
       expect(@dir.stream(['bin/dct-dc'], "20k 1.053 23^p")).to eq "3.27983908746284995067\n"
+      expect(@dir.stream(['bin/dct-dc'], "20k _1.053 23^p")).to eq "-3.27983908746284995067\n"
+      expect(@dir.stream(['bin/dct-dc'], "20k _1.053 22^p")).to eq "3.11475696815085465401\n"
       # Based off an RSA test vector.  This is obviously not constant time, so
       # it's not suitable for real cryptography.
       base, e, d, mod, res = <<~EOM.chomp.split("\n")
