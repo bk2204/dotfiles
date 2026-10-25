@@ -537,7 +537,8 @@ module DC
     def **(other)
       other = numericize(other)
       scale = [@scale, k].max
-      value = self.dup_with_scale(scale).value ** other.dup_with_scale(scale).value / 10 ** scale
+      value = (self.to_d / (10 ** @scale)).power(other.to_i, scale)
+      value = (value * (10 ** scale)).to_i
       Numeric.new(value, scale, @k).dup_with_scale(k)
     end
 
