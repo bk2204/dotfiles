@@ -1220,6 +1220,7 @@ def parse_options(args)
 end
 
 def script(args)
+  Signal.trap("INT", "SYSTEM_DEFAULT")
   options, args = parse_options(args)
 
   calc = DC::Calculator.new($stdin, $stdout, $stderr, all: true, insecure: true, debug: options[:debug])
