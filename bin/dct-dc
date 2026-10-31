@@ -268,10 +268,8 @@ module DC
             frame.result << "p #{drop}\n"
           elsif token == "negate"
             frame.result << "_1*\n"
-          elsif token == "return"
-            # This is not a normal Forth word, but we implement it here for ease
-            # of conversion from bc.
-            # TODO
+          elsif token == "exit"
+            frame.result << ", 0;#{data_register} -1+ #{epilogue}Q"
           elsif token == "scale"
             # This is the bc scale register.
             push_frame(:envstate, register: "k")
