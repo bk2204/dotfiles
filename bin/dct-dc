@@ -187,7 +187,7 @@ module DC
       end
 
       def drop_temporaries(temps)
-        " 0#{temps.map { |t| t.length > 1 ? "L #{t}X+" : "L#{t}X+" }.join}d-K+k"
+        " 0#{temps.map { |t| t.length > 1 ? "L #{t} X+" : "L#{t}X+" }.join}d-K+k"
       end
 
       def process_chunk(parser)
@@ -317,11 +317,11 @@ module DC
           elsif frame.state == :regstate && token =~ /\A[a-z][a-z0-9_]*\z/
             pop_frame
             debug_store(token)
-            frame.result << "s #{token}"
+            frame.result << "s #{token} "
           elsif function && function.locals.include?(token) && token.length == 1
             frame.result << "l#{token}"
           elsif function && function.locals.include?(token) && token =~ /\A[a-z][a-z0-9_]*\z/
-            frame.result << "l #{token}"
+            frame.result << "l #{token} "
           elsif token.length == 1
             frame.result << "l#{token}x\n"
           elsif token =~ /\A[a-z][a-z0-9_]*\z/
