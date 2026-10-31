@@ -187,7 +187,7 @@ module DC
       end
 
       def drop_temporaries(temps)
-        " 0#{temps.map { |t| "L#{t}X+" }.join}d-K+k"
+        " 0#{temps.map { |t| t.length > 1 ? "L #{t}X+" : "L#{t}X+" }.join}d-K+k"
       end
 
       def process_chunk(parser)
