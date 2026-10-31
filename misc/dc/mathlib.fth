@@ -132,3 +132,117 @@
         r 1 f/
     then
 ;
+
+: s
+        0 0  0 0  0 0
+    { x b sc r ar q i }
+
+    x 0 <
+    if
+        x negate s negate
+        exit
+    then
+
+    base @ to b
+    #10 base !
+    scale @ dup to sc
+
+    1.1 * 2 + scale !
+
+    1 a to ar
+
+    0 scale !
+
+    x ar f/ 2 + 4 f/ to q
+    x 4 q * ar * - to x
+
+    q 2 %
+    if
+        x negate to x
+    then
+
+    sc 2 + scale !
+
+    x dup to ar to r
+    x dup * negate to q
+
+    3 to i
+    begin
+        ar
+    while
+        q i dup 1 - * f/ ar * to ar
+        r ar + to r
+        i 2 + to i
+    repeat
+
+    sc scale !
+    b base !
+    r 1 f/
+;
+
+: a
+        0 0  0 1 0  0 0 0 0 0
+    { x b sc r n ar m t f i u }
+
+    base @ to b
+    #10 base !
+    scale @ to sc
+
+    x 0 <
+    if
+        -1 to n
+        x negate to x
+    then
+
+    sc 65 <
+    if
+        x 1 =
+        if
+            sc scale !
+            b base !
+            0.7853981633974483096156608458198757210492923498437764552437361480 n f/
+            exit
+        then
+
+        x 0.2 =
+        if
+            sc scale !
+            b base !
+            0.1973955598498807583700497651947902934475851037878521015176889402 n f/
+            exit
+        then
+    then
+
+    x 0.2 >
+    if
+        scale @ 5 + scale !
+        0.2 a to ar
+    then
+    scale @ 3 + scale !
+
+    begin
+        x 0.2 >
+    while
+        m 1 + to m
+        x 0.2 - 1 0.2 x * + f/ to x
+    repeat
+
+    x dup to u to r
+    x dup * negate to f
+    1 to t
+
+    3 to i
+    begin
+        t
+    while
+        u f * to u
+        u i f/ to t
+        r t + to r
+        i 2 + to i
+    repeat
+    m ar * r + n f/ to r
+
+    sc scale !
+    b base !
+    r 1 f/
+;
