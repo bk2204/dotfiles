@@ -105,7 +105,7 @@
         repeat
 
         begin
-            x .5 > 0=
+            x 0.5 > 0=
         while
             p 2 * to p
             x sqrt to x
