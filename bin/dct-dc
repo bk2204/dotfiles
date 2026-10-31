@@ -198,10 +198,10 @@ module DC
             push_frame(:funccolon)
           elsif frame.state == :funccolon
             push_frame(:function, function: token, locals: Set.new)
-            #frame.result << prologue
+            frame.result << prologue
           elsif frame.state == :function && token == ';'
             frame.result << drop_temporaries(frame.locals)
-            #frame.result << epilogue
+            frame.result << epilogue
             result = "[\n#{frame.result.join}\n]S#{frame.function_register}\n"
             pop_frame
             raise GeneratorFrameError if frame.state != :funccolon
@@ -375,17 +375,12 @@ module DC
 
       def prologue
         reg = data_register
-        @toplevel ? '' : "0S#{reg} I0:#{reg} Ai [[trap]SaSbLaLb "
+        "0S#{reg} ,0:#{reg}"
       end
 
       def epilogue
-        s = ''
         reg = data_register
-        @code_registers.values.each do |r|
-          s << "L#{r}#{drop} "
-        end
-        s << "]x 0;#{reg}i L#{reg}#{drop} SaSbLaLbZ4-+" unless @toplevel
-        s
+        "L#{reg}#{drop}"
       end
 
       # We could use the FreeBSD "R" for this, but that doesn't work on GNU dc.
