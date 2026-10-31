@@ -235,7 +235,7 @@ module DC
           elsif token =~ /\A(-?\d+(\.\d+)?)\z/
             num = $1.sub('-', '_')
             frame.result << " #{num} "
-          elsif %w[+ - *].include?(token)
+          elsif %w[+ - * %].include?(token)
             frame.result << token
           elsif token == "f/"
             frame.result << "/"
