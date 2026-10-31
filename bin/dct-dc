@@ -263,7 +263,7 @@ module DC
             # This is the bc scale() function.
             frame.result << "X\n"
           elsif token == "length"
-            frame.result << "d XSA ZSB [lA]SC[lB]SD lBlA>C lBlA!>d #{drop_temporaries(%w[A B C D])}\n"
+            frame.result << "d XSA ZSB [lA]SC[lB]SD lBlA>C lBlA!>D #{drop_temporaries(%w[A B C D])}\n"
           elsif token == "."
             frame.result << "p #{drop}\n"
           elsif token == "negate"
