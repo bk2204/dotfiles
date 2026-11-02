@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 OPTS_SPEC="\
 find-pr [<options>] <revision> [<base>]
@@ -8,9 +8,13 @@ prints the number to standard output.  The history traversed is that of the
 specified base, or HEAD if not specified.
 --
 h,help!   show the help
+jump!     jump to the PR based on the remote in the repository
+print!    print the PR URL on the remote in the repository
 "
 
 eval "$(echo "$OPTS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
+mode=print-num
 
 while [ $# -gt 0 ]
 do
@@ -19,6 +23,12 @@ do
     case "$arg" in
         --help)
             exit 0
+            ;;
+        --jump)
+            mode=jump-url
+            ;;
+        --print)
+            mode=print-url
             ;;
         --)
             break
@@ -29,7 +39,7 @@ done
 REV="$1"
 HEAD="${2:-HEAD}"
 
-(
+NUM=$( (
   git log --ancestry-path --format='A %H %s' "$REV..$HEAD";
   git log --first-parent --format='F %H %s' "$REV..$HEAD";
 ) | \
@@ -49,4 +59,19 @@ HEAD="${2:-HEAD}"
   else
     puts a[f.last]
   end
-'
+  ')
+
+case "$mode" in
+    print-num)
+        echo "$NUM"
+        ;;
+    jump-url)
+        dct-jump ghl p"$NUM"
+        ;;
+    print-url)
+        dct-jump --print ghl p"$NUM"
+        ;;
+    *)
+        exit 2
+        ;;
+esac
