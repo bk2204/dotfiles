@@ -72,6 +72,24 @@ DCTJump.configure do |c|
     c.open(github_url(repo, m[1] ? github_repo_suffix(m[1][1], m[1][2].to_i) : ''))
   end
 
+  c.on('ghl', /\A([ipd])?(\d+)?\z/) do |m|
+    repo = nil
+    IO.popen(%w[git remote -v], 'r') do |pipe|
+      pipe.each_line do |ln|
+        ln.chomp!
+        if ln =~ /\A(\S+)\t(\S+) .*\z/
+          url = $2
+          if url =~ %r[\A(https|ssh)://([^@]+@)?github\.com/([A-Za-z0-9-]+\/[A-Za-z0-9-]+)(.git)?\z]
+            repo = $3
+          elsif url =~ %r[\Agit@github\.com:([A-Za-z0-9-]+\/[A-Za-z0-9-]+)(.git)?\z]
+            repo = $1
+          end
+        end
+      end
+    end
+    c.open(github_url(repo, m[0] ? github_repo_suffix(m[0][1], m[0][2].to_i) : ''))
+  end
+
   c.on('repos') do
     c.data[:repos].each do |(name, repo)|
       $stdout.puts "#{name}\t#{repo}"
