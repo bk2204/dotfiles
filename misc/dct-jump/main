@@ -2,6 +2,21 @@ def uri_encode(s)
   s.b.gsub(/[^A-Za-z0-9._~-]/) { |m| "%%%02x" % m.ord }
 end
 
+def github_repo_suffix(typechar, num)
+  case typechar
+  when 'i', nil
+    "issues/#{num}"
+  when 'p'
+    "pull/#{num}"
+  when 'd'
+    "discussions/#{num}"
+  end
+end
+
+def github_url(repo, suffix)
+  "https://github.com/#{repo}/#{suffix}"
+end
+
 DCTJump.configure do |c|
   c.editor = ->(foreground: false) do
     command = ['zsh', '-c', "dct-editor \"$@\"", "dct-editor"]
@@ -49,36 +64,12 @@ DCTJump.configure do |c|
   repos_re = Regexp.new("(#{c.data[:repos].keys.join('|')})")
 
   c.on(/\A#{repos_re}\z/, /\A([ipd])?(\d+)?\z/) do |m|
-    suffix = if m[1]
-               case m[1][1]
-               when 'i', nil
-                 "issues/#{m[1][2]}"
-               when 'p'
-                 "pull/#{m[1][2]}"
-               when 'd'
-                 "discussions/#{m[1][2]}"
-               end
-             else
-               ''
-             end
-    c.open("https://github.com/#{c.data[:repos][m[0][1]]}/#{suffix}")
+    c.open(github_url(c.data[:repos][m[0][1]], m[1] ? github_repo_suffix(m[1][1], m[1][2].to_i) : ''))
   end
 
   c.on('gh', /\A(#{repos_re}|[A-Za-z0-9-]+\/[A-Za-z0-9-]+)\z/, /\A([ipd])?(\d+)?\z/) do |m|
-    suffix = if m[1]
-               case m[1][1]
-               when 'i', nil
-                 "issues/#{m[1][2]}"
-               when 'p'
-                 "pull/#{m[1][2]}"
-               when 'd'
-                 "discussions/#{m[1][2]}"
-               end
-             else
-               ''
-             end
     repo = c.data[:repos][m[0][1]] || m[0][1]
-    c.open("https://github.com/#{repo}/#{suffix}")
+    c.open(github_url(repo, m[1] ? github_repo_suffix(m[1][1], m[1][2].to_i) : ''))
   end
 
   c.on('repos') do
