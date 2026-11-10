@@ -269,7 +269,14 @@ module DC
           elsif token == "negate"
             frame.result << "_1*\n"
           elsif token == "exit"
-            frame.result << ", 0;#{data_register} -1+ #{epilogue}Q"
+            frame.result << ", 0;#{data_register} -1+\n"
+            frame.result << "#{drop_temporaries(function.locals)}\n"
+            @frames.reverse_each do |fr|
+              break if fr.function_frame?
+              next unless fr.temporaries
+              frame.result << "#{drop_temporaries(fr.temporaries)}"
+            end
+            frame.result << "#{epilogue}Q\n"
           elsif token == "scale"
             # This is the bc scale register.
             push_frame(:envstate, register: "k")
