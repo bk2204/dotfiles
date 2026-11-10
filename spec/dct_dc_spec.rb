@@ -42,6 +42,9 @@ describe :dct_dc do
     it 'computes arithmetic with the correct precision' do
       input = "2.3 5.12+ 2.3 5.12- 2.3 5.12* 4k 2.3 5.12* 0k 3 2/ 1k 3 2/f"
       expect(@dir.stream(['bin/dct-dc'], input)).to eq "1.5\n1\n11.776\n11.77\n-2.82\n7.42\n"
+
+      expect(@dir.stream(['bin/dct-dc'], "0k 123 1.789/p")).to eq "68\n"
+      expect(@dir.stream(['bin/dct-dc'], "0k 123 .789/p")).to eq "155\n"
     end
 
     it "processes simple Forth functions correctly" do

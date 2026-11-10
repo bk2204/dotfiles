@@ -520,10 +520,12 @@ module DC
 
     def /(other)
       other = numericize(other)
-      value = self.dup_with_scale(2 * k).value
-      ovalue = other.dup_with_scale(k).value
-      v = (value / ovalue).to_i
-      Numeric.new(v, k, @k)
+      length = [self.length, other.length, k].max
+      value = self.to_d
+      ovalue = other.to_d
+      v = value.div(ovalue, length + k)
+      v *= (10 ** k).to_i
+      Numeric.new(v.to_i, k, @k)
     end
 
     def %(other)
@@ -537,7 +539,7 @@ module DC
     def **(other)
       other = numericize(other)
       scale = [@scale, k].max
-      value = (self.to_d / (10 ** @scale)).power(other.to_i, scale)
+      value = (self.value.to_d / (10 ** @scale)).power(other.to_i, scale)
       value = (value * (10 ** scale)).to_i
       Numeric.new(value, scale, @k).dup_with_scale(k)
     end
@@ -587,6 +589,10 @@ module DC
 
     def to_r
       (@value.to_r / (10.to_r ** @scale)).to_r
+    end
+
+    def to_d
+      (@value.to_d / (10 ** @scale).to_d).to_d
     end
 
     def to_i
@@ -664,6 +670,7 @@ module DC
       end
       @extensions.add :insecure if options[:insecure]
       @new = true
+      BigDecimal.mode(BigDecimal::ROUND_MODE, :truncate)
     end
 
     def scale
