@@ -84,7 +84,7 @@ describe :dct_dc do
     end
 
     it 'computes MD5 constants properly' do
-      input = (1..64).map { |p| "[_1*]sA 20k 16o #{p}lsx 2 32^* d 0>A 1/p" }.join
+      input = (1..64).map { |p| "[_1*]sA 20k 16o #{p}lsx 2 32^* d 0>A 0k1/p" }.join
       expected = <<~EOM
       D76AA478
       E8C7B756
@@ -151,6 +151,7 @@ describe :dct_dc do
       2AD7D2BB
       EB86D391
       EOM
+      expected.gsub!(/^0+/, '')
       expect(@dir.stream(['bin/dct-dc', '-l'], input)).to eq expected
     end
 
