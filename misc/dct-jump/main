@@ -64,12 +64,12 @@ DCTJump.configure do |c|
   repos_re = Regexp.new("(#{c.data[:repos].keys.join('|')})")
 
   c.on(/\A#{repos_re}\z/, /\A([ipd])?(\d+)?\z/) do |m|
-    c.open(github_url(c.data[:repos][m[0][1]], m[1] ? github_repo_suffix(m[1][1], m[1][2].to_i) : ''))
+    c.open(github_url(c.data[:repos][m[0][1]], m[1] ? github_repo_suffix(m[1][1], m[1][2]&.to_i) : ''))
   end
 
   c.on('gh', /\A(#{repos_re}|[A-Za-z0-9-]+\/[A-Za-z0-9-]+)\z/, /\A([ipd])?(\d+)?\z/) do |m|
     repo = c.data[:repos][m[0][1]] || m[0][1]
-    c.open(github_url(repo, m[1] ? github_repo_suffix(m[1][1], m[1][2].to_i) : ''))
+    c.open(github_url(repo, m[1] ? github_repo_suffix(m[1][1], m[1][2]&.to_i) : ''))
   end
 
   c.on('ghl', /\A([ipd])?(\d+)?\z/) do |m|
@@ -87,7 +87,7 @@ DCTJump.configure do |c|
         end
       end
     end
-    c.open(github_url(repo, m[0] ? github_repo_suffix(m[0][1], m[0][2].to_i) : ''))
+    c.open(github_url(repo, m[0] ? github_repo_suffix(m[0][1], m[0][2]&.to_i) : ''))
   end
 
   c.on('repos') do
