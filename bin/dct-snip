@@ -149,8 +149,7 @@ class SnippetProgram
       if path.nil?
         return 127
       end
-      system([path, path], *args[1..])
-      $?.exitstatus
+      exec([path, path], *args[1..])
     when :print
       if args.length != 1
         $stderr.puts("A single argument of a snippet to print is required")
