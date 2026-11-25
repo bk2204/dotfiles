@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+#/ segfault
+#/
+#/ This command segfaults.  It exists to test things like core dump handling.
+
+# We assume that 8 is not a valid address.  We choose 8, since that is naturally
+# aligned on all systems, whereas 1 might produce a SIGBUS instead on
+# architectures requiring natural alignment.
+#
+# Note that 0 does not segfault, since that is NULL on most systems.
+unpack("P", pack("J", 8));
